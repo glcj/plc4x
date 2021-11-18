@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>plc4j-go-mspec-test</artifactId>
-  <name>PLC4J: Driver: Go Mpsec Test</name>
+  <name>PLC4J: Driver: Go Mspec Test</name>
   <description></description>
 
 <build>
@@ -227,39 +227,6 @@
 </build>
 
 <dependencies>
-  <dependency>
-    <groupId>org.apache.plc4x</groupId>
-    <artifactId>plc4j-api</artifactId>
-    <version>@project.version@</version>
-  </dependency>
-  <dependency>
-    <groupId>org.apache.plc4x</groupId>
-    <artifactId>plc4j-spi</artifactId>
-    <version>@project.version@</version>
-  </dependency>
-  <dependency>
-    <groupId>org.apache.plc4x</groupId>
-    <artifactId>plc4j-transport-tcp</artifactId>
-    <version>@project.version@</version>
-  </dependency>
-  <dependency>
-    <groupId>io.netty</groupId>
-    <artifactId>netty-buffer</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-lang3</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-annotations</artifactId>
-  </dependency>
-  <dependency>
-    <groupId>org.apache.plc4x</groupId>
-    <artifactId>plc4j-utils-test-utils</artifactId>
-    <version>@project.version@</version>
-    <scope>test</scope>
-  </dependency>
   <dependency>
     <groupId>org.apache.plc4x</groupId>
     <artifactId>plc4x-code-generation-language-go</artifactId>

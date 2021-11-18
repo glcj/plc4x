@@ -112,7 +112,7 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) LengthInBitsConditiona
 	lengthInBits += 8
 
 	// Simple field (magicKey)
-	lengthInBits += uint16((64))
+	lengthInBits += 64
 
 	// Optional Field (Alarmtype)
 	if m.Alarmtype != nil {
@@ -131,7 +131,7 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) LengthInBytes() uint16
 	return m.LengthInBits() / 8
 }
 
-func S7PayloadUserDataItemCpuFunctionMsgSubscriptionParse(readBuffer utils.ReadBuffer) (*S7PayloadUserDataItem, error) {
+func S7PayloadUserDataItemCpuFunctionMsgSubscriptionParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItem, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadUserDataItemCpuFunctionMsgSubscription"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -157,7 +157,7 @@ func S7PayloadUserDataItemCpuFunctionMsgSubscriptionParse(readBuffer utils.ReadB
 	}
 
 	// Simple Field (magicKey)
-	magicKey, _magicKeyErr := readBuffer.ReadString("magicKey", uint32((64)))
+	magicKey, _magicKeyErr := readBuffer.ReadString("magicKey", uint32(64))
 	if _magicKeyErr != nil {
 		return nil, errors.Wrap(_magicKeyErr, "Error parsing 'magicKey' field")
 	}
@@ -165,11 +165,17 @@ func S7PayloadUserDataItemCpuFunctionMsgSubscriptionParse(readBuffer utils.ReadB
 	// Optional Field (Alarmtype) (Can be skipped, if a given expression evaluates to false)
 	var Alarmtype *AlarmStateType = nil
 	if bool((Subscription) >= (128)) {
+		if pullErr := readBuffer.PullContext("Alarmtype"); pullErr != nil {
+			return nil, pullErr
+		}
 		_val, _err := AlarmStateTypeParse(readBuffer)
 		if _err != nil {
 			return nil, errors.Wrap(_err, "Error parsing 'Alarmtype' field")
 		}
 		Alarmtype = &_val
+		if closeErr := readBuffer.CloseContext("Alarmtype"); closeErr != nil {
+			return nil, closeErr
+		}
 	}
 
 	// Optional Field (Reserve) (Can be skipped, if a given expression evaluates to false)
@@ -221,7 +227,7 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) Serialize(writeBuffer 
 
 		// Simple Field (magicKey)
 		magicKey := string(m.MagicKey)
-		_magicKeyErr := writeBuffer.WriteString("magicKey", uint8((64)), "UTF-8", (magicKey))
+		_magicKeyErr := writeBuffer.WriteString("magicKey", uint32(64), "UTF-8", (magicKey))
 		if _magicKeyErr != nil {
 			return errors.Wrap(_magicKeyErr, "Error serializing 'magicKey' field")
 		}
@@ -229,8 +235,14 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) Serialize(writeBuffer 
 		// Optional Field (Alarmtype) (Can be skipped, if the value is null)
 		var Alarmtype *AlarmStateType = nil
 		if m.Alarmtype != nil {
+			if pushErr := writeBuffer.PushContext("Alarmtype"); pushErr != nil {
+				return pushErr
+			}
 			Alarmtype = m.Alarmtype
 			_AlarmtypeErr := Alarmtype.Serialize(writeBuffer)
+			if popErr := writeBuffer.PopContext("Alarmtype"); popErr != nil {
+				return popErr
+			}
 			if _AlarmtypeErr != nil {
 				return errors.Wrap(_AlarmtypeErr, "Error serializing 'Alarmtype' field")
 			}

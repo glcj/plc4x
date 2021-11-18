@@ -25,8 +25,8 @@ import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.s7.readwrite.*;
 import org.apache.plc4x.java.s7.readwrite.context.S7DriverContext;
 import org.apache.plc4x.java.s7.readwrite.field.S7Field;
-import org.apache.plc4x.java.s7.readwrite.types.MemoryArea;
-import org.apache.plc4x.java.s7.readwrite.types.TransportSize;
+import org.apache.plc4x.java.s7.readwrite.MemoryArea;
+import org.apache.plc4x.java.s7.readwrite.TransportSize;
 import org.apache.plc4x.java.spi.context.DriverContext;
 import org.apache.plc4x.java.spi.messages.DefaultPlcReadRequest;
 import org.apache.plc4x.java.spi.messages.DefaultPlcWriteRequest;
@@ -40,13 +40,13 @@ import org.apache.plc4x.java.s7.readwrite.field.S7SzlField;
 public class S7Optimizer extends BaseOptimizer {
 
     public static final int EMPTY_READ_REQUEST_SIZE = new S7MessageRequest(0, new S7ParameterReadVarRequest(
-        new S7VarRequestParameterItem[0]), null).getLengthInBytes();
+        Collections.emptyList()), null).getLengthInBytes();
     public static final int EMPTY_READ_RESPONSE_SIZE = new S7MessageResponseData(0, new S7ParameterReadVarResponse(
-        (short) 0), new S7PayloadReadVarResponse(new S7VarPayloadDataItem[0]), (short) 0, (short) 0).getLengthInBytes();
+        (short) 0), new S7PayloadReadVarResponse(Collections.emptyList()), (short) 0, (short) 0).getLengthInBytes();
     public static final int EMPTY_WRITE_REQUEST_SIZE = new S7MessageRequest(0, new S7ParameterWriteVarRequest(
-        new S7VarRequestParameterItem[0]), new S7PayloadWriteVarRequest(new S7VarPayloadDataItem[0])).getLengthInBytes();
+        Collections.emptyList()), new S7PayloadWriteVarRequest(Collections.emptyList())).getLengthInBytes();
     public static final int EMPTY_WRITE_RESPONSE_SIZE = new S7MessageResponseData(0, new S7ParameterWriteVarResponse(
-        (short) 0), new S7PayloadWriteVarResponse(new S7VarPayloadStatusItem[0]), (short) 0, (short) 0).getLengthInBytes();
+        (short) 0), new S7PayloadWriteVarResponse(Collections.emptyList()), (short) 0, (short) 0).getLengthInBytes();
     public static final int S7_ADDRESS_ANY_SIZE = 2 +
         new S7AddressAny(TransportSize.INT, 1, 1, MemoryArea.DATA_BLOCKS, 1, (byte) 0).getLengthInBytes();
 

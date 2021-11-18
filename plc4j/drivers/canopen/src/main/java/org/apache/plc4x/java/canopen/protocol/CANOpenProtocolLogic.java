@@ -55,9 +55,9 @@ import org.apache.plc4x.java.canopen.readwrite.CANOpenPDOPayload;
 import org.apache.plc4x.java.canopen.readwrite.CANOpenPayload;
 import org.apache.plc4x.java.canopen.readwrite.IndexAddress;
 import org.apache.plc4x.java.canopen.readwrite.io.DataItemIO;
-import org.apache.plc4x.java.canopen.readwrite.types.CANOpenService;
-import org.apache.plc4x.java.canopen.readwrite.types.NMTState;
-import org.apache.plc4x.java.canopen.readwrite.types.NMTStateRequest;
+import org.apache.plc4x.java.canopen.readwrite.CANOpenService;
+import org.apache.plc4x.java.canopen.readwrite.NMTState;
+import org.apache.plc4x.java.canopen.readwrite.NMTStateRequest;
 import org.apache.plc4x.java.spi.ConversationContext;
 import org.apache.plc4x.java.spi.configuration.HasConfiguration;
 import org.apache.plc4x.java.spi.context.DriverContext;
@@ -219,7 +219,7 @@ public class CANOpenProtocolLogic extends Plc4xCANProtocolBase<CANOpenFrame>
 
         try {
             String fieldName = writeRequest.getFieldNames().iterator().next();
-            WriteBufferByteBased buffer = DataItemIO.staticSerialize(writeValue, field.getCanOpenDataType(), writeValue.getLength(), true);
+            WriteBufferByteBased buffer = DataItemIO.staticSerialize(writeValue, field.getCanOpenDataType(), writeValue.getLength(), ByteOrder.LITTLE_ENDIAN);
             if (buffer != null) {
                 final CANOpenPDOPayload payload = new CANOpenPDOPayload(new CANOpenPDO(buffer.getData()));
                 context.sendToWire(new CANOpenFrame((short) field.getNodeId(), field.getService(), payload));
@@ -368,7 +368,7 @@ public class CANOpenProtocolLogic extends Plc4xCANProtocolBase<CANOpenFrame>
                         CANOpenPDOField field = (CANOpenPDOField) handle.getField();
                         byte[] data = ((CANOpenPDOPayload) payload).getPdo().getData();
                         try {
-                            PlcValue value = DataItemIO.staticParse(new ReadBufferByteBased(data, true), field.getCanOpenDataType(), data.length);
+                            PlcValue value = DataItemIO.staticParse(new ReadBufferByteBased(data, ByteOrder.LITTLE_ENDIAN), field.getCanOpenDataType(), data.length);
                             DefaultPlcSubscriptionEvent event = new DefaultPlcSubscriptionEvent(
                                 Instant.now(),
                                 Collections.singletonMap(

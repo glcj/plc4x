@@ -18,20 +18,26 @@
  */
 package org.apache.plc4x.plugins.codegenerator.language.mspec.model.fields;
 
-import org.apache.plc4x.plugins.codegenerator.types.fields.TryField;
+import org.apache.plc4x.plugins.codegenerator.types.terms.Term;
 
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
-public abstract class DefaultField extends DefaultTaggedField implements TryField {
+public abstract class DefaultField {
 
-    private final boolean isTry;
+    private final Map<String, Term> attributes;
 
-    protected DefaultField(List<String> tags, boolean isTry) {
-        super(tags);
-        this.isTry = isTry;
+    protected DefaultField(Map<String, Term> attributes) {
+        super();
+        this.attributes = Objects.requireNonNull(attributes);
     }
 
-    public boolean isTry() {
-        return isTry;
+    public Optional<Term> getAttribute(String attributeName) {
+        if(attributes.containsKey(attributeName)) {
+            return Optional.of(attributes.get(attributeName));
+        }
+        return Optional.empty();
     }
+
 }

@@ -134,17 +134,17 @@ func COTPPacketParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacket, 
 	var typeSwitchError error
 	switch {
 	case tpduCode == 0xF0: // COTPPacketData
-		_parent, typeSwitchError = COTPPacketDataParse(readBuffer)
+		_parent, typeSwitchError = COTPPacketDataParse(readBuffer, cotpLen)
 	case tpduCode == 0xE0: // COTPPacketConnectionRequest
-		_parent, typeSwitchError = COTPPacketConnectionRequestParse(readBuffer)
+		_parent, typeSwitchError = COTPPacketConnectionRequestParse(readBuffer, cotpLen)
 	case tpduCode == 0xD0: // COTPPacketConnectionResponse
-		_parent, typeSwitchError = COTPPacketConnectionResponseParse(readBuffer)
+		_parent, typeSwitchError = COTPPacketConnectionResponseParse(readBuffer, cotpLen)
 	case tpduCode == 0x80: // COTPPacketDisconnectRequest
-		_parent, typeSwitchError = COTPPacketDisconnectRequestParse(readBuffer)
+		_parent, typeSwitchError = COTPPacketDisconnectRequestParse(readBuffer, cotpLen)
 	case tpduCode == 0xC0: // COTPPacketDisconnectResponse
-		_parent, typeSwitchError = COTPPacketDisconnectResponseParse(readBuffer)
+		_parent, typeSwitchError = COTPPacketDisconnectResponseParse(readBuffer, cotpLen)
 	case tpduCode == 0x70: // COTPPacketTpduError
-		_parent, typeSwitchError = COTPPacketTpduErrorParse(readBuffer)
+		_parent, typeSwitchError = COTPPacketTpduErrorParse(readBuffer, cotpLen)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -178,11 +178,17 @@ func COTPPacketParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacket, 
 	curPos = readBuffer.GetPos() - startPos
 	var payload *S7Message = nil
 	if bool((curPos) < (cotpLen)) {
+		if pullErr := readBuffer.PullContext("payload"); pullErr != nil {
+			return nil, pullErr
+		}
 		_val, _err := S7MessageParse(readBuffer)
 		if _err != nil {
 			return nil, errors.Wrap(_err, "Error parsing 'payload' field")
 		}
 		payload = CastS7Message(_val)
+		if closeErr := readBuffer.CloseContext("payload"); closeErr != nil {
+			return nil, closeErr
+		}
 	}
 
 	if closeErr := readBuffer.CloseContext("COTPPacket"); closeErr != nil {
@@ -243,8 +249,14 @@ func (m *COTPPacket) SerializeParent(writeBuffer utils.WriteBuffer, child ICOTPP
 	// Optional Field (payload) (Can be skipped, if the value is null)
 	var payload *S7Message = nil
 	if m.Payload != nil {
+		if pushErr := writeBuffer.PushContext("payload"); pushErr != nil {
+			return pushErr
+		}
 		payload = m.Payload
 		_payloadErr := payload.Serialize(writeBuffer)
+		if popErr := writeBuffer.PopContext("payload"); popErr != nil {
+			return popErr
+		}
 		if _payloadErr != nil {
 			return errors.Wrap(_payloadErr, "Error serializing 'payload' field")
 		}

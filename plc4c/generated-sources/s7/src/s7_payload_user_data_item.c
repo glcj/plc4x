@@ -112,7 +112,6 @@ uint8_t PLC4C_S7_READ_WRITE_S7_PAYLOAD_USER_DATA_ITEM_CPU_FUNCTION_ALARM_QUERY_R
 // Parse function.
 plc4c_return_code plc4c_s7_read_write_s7_payload_user_data_item_parse(plc4c_spi_read_buffer* readBuffer, uint8_t cpuFunctionType, uint8_t cpuSubfunction, plc4c_s7_read_write_s7_payload_user_data_item** _message) {
   uint16_t startPos = plc4c_spi_read_get_pos(readBuffer);
-  uint16_t curPos;
   plc4c_return_code _res = OK;
 
   // Allocate enough memory to contain this data structure.
@@ -419,7 +418,7 @@ plc4c_return_code plc4c_s7_read_write_s7_payload_user_data_item_parse(plc4c_spi_
                     
     // Simple Field (magicKey)
     char* magicKey = "";
-    _res = plc4c_spi_read_string(readBuffer, 64, "'UTF-8'", (char**) &magicKey);
+    _res = plc4c_spi_read_string(readBuffer, 64, "UTF-8", (char**) &magicKey);
     if(_res != OK) {
       return _res;
     }
@@ -1010,7 +1009,7 @@ plc4c_return_code plc4c_s7_read_write_s7_payload_user_data_item_serialize(plc4c_
       }
 
       // Simple Field (magicKey)
-      _res = plc4c_spi_write_string(writeBuffer, 64, "'UTF-8'", _message->s7_payload_user_data_item_cpu_function_msg_subscription_magic_key);
+      _res = plc4c_spi_write_string(writeBuffer, 64, "UTF-8", _message->s7_payload_user_data_item_cpu_function_msg_subscription_magic_key);
       if(_res != OK) {
         return _res;
       }
@@ -1370,7 +1369,7 @@ uint16_t plc4c_s7_read_write_s7_payload_user_data_item_length_in_bits(plc4c_s7_r
 
 
       // Simple field (magicKey)
-      lengthInBits += -1;
+      lengthInBits += 64;
 
 
       // Optional Field (Alarmtype)

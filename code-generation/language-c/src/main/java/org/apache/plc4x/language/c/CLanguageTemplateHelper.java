@@ -229,8 +229,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                 }
                 case FLOAT:
                     FloatTypeReference floatTypeReference = (FloatTypeReference) simpleTypeReference;
-                    int sizeInBits = ((floatTypeReference.getBaseType() == SimpleTypeReference.SimpleBaseType.FLOAT) ? 1 : 0) +
-                        floatTypeReference.getExponent() + floatTypeReference.getMantissa();
+                    int sizeInBits = floatTypeReference.getSizeInBits();
                     if (sizeInBits <= 32) {
                         return "float";
                     }
@@ -241,6 +240,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                 case UFLOAT:
                     throw new FreemarkerException("Unsupported unsigned float type.");
                 case STRING:
+                case VSTRING:
                     return "char*";
                 case TIME:
                     return "time_t";//throw new FreemarkerException("Unsupported time type.");
@@ -304,6 +304,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                 }
                 return " : " + simpleTypeReference.getSizeInBits();
             case STRING:
+            case VSTRING:
             case TIME:
             case DATE:
             case DATETIME:
@@ -340,6 +341,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                     }
                     break;
                 case STRING:
+                case VSTRING:
                     return "\"" + valueString + "\"";
             }
         }
@@ -406,9 +408,15 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                 }
                 throw new FreemarkerException("Unsupported float type with " + floatTypeReference.getSizeInBits() + " bits");
             case STRING:
-                StringTypeReference stringTypeReference = (StringTypeReference) simpleTypeReference;
-                return "plc4c_spi_read_string(readBuffer, " + toParseExpression(thisType, field, stringTypeReference.getLengthExpression(), null) + ", \"" +
-                    stringTypeReference.getEncoding() + "\"" + ", (char**) " + valueString + ")";
+            case VSTRING:
+                final Term encodingTerm = field.getEncoding().orElse(new DefaultStringLiteral("UTF-8"));
+                if (!(encodingTerm instanceof StringLiteral)) {
+                    throw new RuntimeException("Encoding must be a quoted string value");
+                }
+                String encoding = ((StringLiteral) encodingTerm).getValue();
+                String length = Integer.toString(simpleTypeReference.getSizeInBits());
+                return "plc4c_spi_read_string(readBuffer, " + length + ", \"" +
+                    encoding + "\"" + ", (char**) " + valueString + ")";
             default:
                 throw new FreemarkerException("Unsupported type " + simpleTypeReference.getBaseType().name());
         }
@@ -460,9 +468,15 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                 }
                 throw new FreemarkerException("Unsupported float type with " + floatTypeReference.getSizeInBits() + " bits");
             case STRING:
-                StringTypeReference stringTypeReference = (StringTypeReference) simpleTypeReference;
-                return "plc4c_spi_write_string(writeBuffer, " + toSerializationExpression(thisType, field, stringTypeReference.getLengthExpression(), null) + ", \"" +
-                    stringTypeReference.getEncoding() + "\", " + fieldName + ")";
+            case VSTRING:
+                final Term encodingTerm = field.getEncoding().orElse(new DefaultStringLiteral("UTF-8"));
+                if (!(encodingTerm instanceof StringLiteral)) {
+                    throw new RuntimeException("Encoding must be a quoted string value");
+                }
+                String encoding = ((StringLiteral) encodingTerm).getValue();
+                String length = Integer.toString(simpleTypeReference.getSizeInBits());
+                return "plc4c_spi_write_string(writeBuffer, " + length + ", \"" +
+                    encoding + "\", " + fieldName + ")";
             default:
                 throw new FreemarkerException("Unsupported type " + simpleTypeReference.getBaseType().name());
         }
@@ -483,6 +497,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                 case UFLOAT:
                     return "0.0f";
                 case STRING:
+                case VSTRING:
                     return "\"\"";
                 case TIME:
                     throw new FreemarkerException("Unsupported time type.");
@@ -506,6 +521,10 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
         } else {
             return "(" + languageTypeName + ") " + reservedField.getReferenceValue();
         }
+    }
+
+    public String toSpecialParseExpression(TypeDefinition baseType, Field field, Term term, List<Argument> parserArguments) {
+        return toParseExpression(baseType, field, term, parserArguments);
     }
 
     public String toParseExpression(TypeDefinition baseType, Field field, Term term, List<Argument> parserArguments) {
@@ -592,6 +611,10 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
             return tracer + toStringLiteralExpression((StringLiteral) term);
         } else if (term instanceof VariableLiteral) {
             tracer = tracer.dive("variable literal instanceOf");
+            VariableLiteral variableLiteral = (VariableLiteral) term;
+            if ("curPos".equals(variableLiteral.getName())) {
+                return "(plc4c_spi_read_get_pos(readBuffer) - startPos)";
+            }
             return tracer + toVariableLiteralExpression(baseType, (VariableLiteral) term, variableExpressionGenerator, tracer);
         } else {
             throw new FreemarkerException("Unsupported Literal type " + term.getClass().getName());
@@ -665,12 +688,20 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
         }
 
         // Try to find the type of the addressed property.
-        final Optional<TypeReference> propertyTypeOptional =
+        Optional<TypeReference> propertyTypeOptional =
             getTypeReferenceForProperty((ComplexTypeDefinition) baseType, name);
 
         // If we couldn't find the type, we didn't find the property.
         if (!propertyTypeOptional.isPresent()) {
-            throw new FreemarkerException("Could not find property with name '" + name + "' in type " + baseType.getName());
+            final List<Argument> arguments = baseType.getAllParserArguments().orElse(Collections.emptyList());
+            for (Argument argument : arguments) {
+                if(argument.getName().equals(name)) {
+                    propertyTypeOptional = Optional.of(argument.getType());
+                }
+            }
+            if(!propertyTypeOptional.isPresent()) {
+                throw new FreemarkerException("Could not find property with name '" + name + "' in type " + baseType.getName());
+            }
         }
 
         final TypeReference propertyType = propertyTypeOptional.get();
@@ -719,11 +750,14 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
 
     private String toTypeVariableParseExpression(Field field, VariableLiteral variableLiteral, Tracer tracer) {
         tracer = tracer.dive("type");
-        if ((variableLiteral.getChild().isPresent()) && "encoding".equals(variableLiteral.getChild().get().getName()) && (field instanceof TypedField) && (((TypedField) field).getType() instanceof StringTypeReference)) {
+        if (variableLiteral.getChild().isPresent() && "encoding".equals(variableLiteral.getChild().get().getName()) && (field instanceof TypedField) && ((((TypedField) field).getType() instanceof StringTypeReference) || (((TypedField) field).getType() instanceof VstringTypeReference))) {
             // TODO: replace with map join
-            TypedField typedField = (TypedField) field;
-            StringTypeReference stringTypeReference = (StringTypeReference) typedField.getType();
-            return tracer + "\"" + stringTypeReference.getEncoding().substring(1, stringTypeReference.getEncoding().length() - 1) + "\"";
+            final Term encodingTerm = field.getEncoding().orElse(new DefaultStringLiteral("UTF-8"));
+            if (!(encodingTerm instanceof StringLiteral)) {
+                throw new RuntimeException("Encoding must be a quoted string value");
+            }
+            String encoding = ((StringLiteral) encodingTerm).getValue();
+            return tracer + "\"" + encoding + "\"";
         } else {
             throw new FreemarkerException("_type is currently pretty much hard-coded for some use cases, please check CLanguageTemplateHelper.toVariableParseExpression");
         }
@@ -810,16 +844,12 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
      */
     private String toStaticCallVariableParseExpression(TypeDefinition baseType, Field field, VariableLiteral variableLiteral, List<Argument> parserArguments, Tracer tracer) {
         tracer = tracer.dive("STATIC_CALL");
-        if (!variableLiteral.getArgs().isPresent()) {
-            throw new FreemarkerException("'STATIC_CALL' needs at least one args");
-        }
-        List<Term> terms = variableLiteral.getArgs().get();
-        if (!(terms.get(0) instanceof StringLiteral)) {
-            throw new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral");
-        }
-        String functionName = ((StringLiteral) terms.get(0)).getValue();
-        // We'll cut off the java package structure and just take the segment after the last "."
-        functionName = functionName.substring(functionName.lastIndexOf('.') + 1, functionName.length() - 1);
+        List<Term> terms = variableLiteral.getArgs().orElseThrow(() -> new FreemarkerException("'STATIC_CALL' needs at least one args"));
+        String functionName = terms.get(0).asLiteral()
+            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a Literal"))
+            .asStringLiteral()
+            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral"))
+            .getValue();
         // But to make the function name unique, well add the driver prefix to it.
         StringBuilder sb = new StringBuilder(getCTypeName(functionName));
         if (terms.size() > 1) {
@@ -901,10 +931,11 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                     if (!(typedField.getType() instanceof StringTypeReference)) {
                         throw new FreemarkerException("Can only access 'encoding' for string types.");
                     }
-                    StringTypeReference stringTypeReference = (StringTypeReference) typedField.getType();
-                    String encoding = stringTypeReference.getEncoding();
-                    // Cut off the single quotes.
-                    encoding = encoding.substring(1, encoding.length() - 1);
+                    final Term encodingTerm = field.getEncoding().orElse(new DefaultStringLiteral("UTF-8"));
+                    if (!(encodingTerm instanceof StringLiteral)) {
+                        throw new RuntimeException("Encoding must be a quoted string value");
+                    }
+                    String encoding = ((StringLiteral) encodingTerm).getValue();
                     return tracer + "\"" + encoding + "\"";
                 default:
                     return tracer + "";
@@ -993,10 +1024,11 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                                 if (!(typedField.getType() instanceof StringTypeReference)) {
                                     throw new FreemarkerException("Can only access 'encoding' for string types.");
                                 }
-                                StringTypeReference stringTypeReference = (StringTypeReference) typedField.getType();
-                                String encoding = stringTypeReference.getEncoding();
-                                // Cut off the single quotes.
-                                encoding = encoding.substring(1, encoding.length() - 1);
+                                final Term encodingTerm = field.getEncoding().orElse(new DefaultStringLiteral("UTF-8"));
+                                if (!(encodingTerm instanceof StringLiteral)) {
+                                    throw new RuntimeException("Encoding must be a quoted string value");
+                                }
+                                String encoding = ((StringLiteral) encodingTerm).getValue();
                                 sb.append("\"").append(encoding).append("\"");
                                 break;
                         }
@@ -1015,16 +1047,12 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
 
     private String toStaticCallSerializationExpression(TypeDefinition baseType, Field field, List<Argument> serializerArguments, VariableLiteral vl, Tracer tracer) {
         tracer = tracer.dive("toStaticCallSerializationExpression");
-        if (!vl.getArgs().isPresent()) {
-            throw new FreemarkerException("'STATIC_CALL' needs at least one attribute");
-        }
-        List<Term> args = vl.getArgs().get();
-        if (!(args.get(0) instanceof StringLiteral)) {
-            throw new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral");
-        }
-        String functionName = ((StringLiteral) args.get(0)).getValue();
-        // We'll cut off the java package structure and just take the segment after the last "."
-        functionName = functionName.substring(functionName.lastIndexOf('.') + 1, functionName.length() - 1);
+        List<Term> args = vl.getArgs().orElseThrow(() -> new FreemarkerException("'STATIC_CALL' needs at least one attribute"));
+        String functionName = args.get(0).asLiteral()
+            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a Literal"))
+            .asStringLiteral()
+            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral"))
+            .getValue();
         // But to make the function name unique, well add the driver prefix to it.
         StringBuilder sb = new StringBuilder(getCTypeName(functionName));
         sb.append("(");
@@ -1073,10 +1101,11 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                             if (!(typedField.getType() instanceof StringTypeReference)) {
                                 throw new FreemarkerException("Can only access 'encoding' for string types.");
                             }
-                            StringTypeReference stringTypeReference = (StringTypeReference) typedField.getType();
-                            String encoding = stringTypeReference.getEncoding();
-                            // Cut off the single quotes.
-                            encoding = encoding.substring(1, encoding.length() - 1);
+                            final Term encodingTerm = field.getEncoding().orElse(new DefaultStringLiteral("UTF-8"));
+                            if (!(encodingTerm instanceof StringLiteral)) {
+                                throw new RuntimeException("Encoding must be a quoted string value");
+                            }
+                            String encoding = ((StringLiteral) encodingTerm).getValue();
                             sb.append("\"").append(encoding).append("\"");
                             break;
                     }
@@ -1123,6 +1152,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                 FloatTypeReference floatTypeReference = (FloatTypeReference) simpleTypeReference;
                 return floatTypeReference.getSizeInBits();
             case STRING:
+            case VSTRING:
                 StringTypeReference stringTypeReference = (StringTypeReference) simpleTypeReference;
                 return stringTypeReference.getSizeInBits();
             default:

@@ -104,13 +104,13 @@ func (m *BACnetComplexTagDouble) LengthInBytes() uint16 {
 	return m.LengthInBits() / 8
 }
 
-func BACnetComplexTagDoubleParse(readBuffer utils.ReadBuffer, lengthValueType uint8, extLength uint8) (*BACnetComplexTag, error) {
+func BACnetComplexTagDoubleParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, lengthValueType uint8, extLength uint8) (*BACnetComplexTag, error) {
 	if pullErr := readBuffer.PullContext("BACnetComplexTagDouble"); pullErr != nil {
 		return nil, pullErr
 	}
 
 	// Simple Field (value)
-	value, _valueErr := readBuffer.ReadFloat64("value", true, 11, 52)
+	value, _valueErr := readBuffer.ReadFloat64("value", 64)
 	if _valueErr != nil {
 		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
 	}

@@ -24,7 +24,8 @@ import org.apache.plc4x.plugins.codegenerator.types.definitions.*;
 import org.apache.plc4x.plugins.codegenerator.types.enums.EnumValue;
 import org.apache.plc4x.plugins.codegenerator.types.fields.*;
 import org.apache.plc4x.plugins.codegenerator.types.references.*;
-import org.apache.plc4x.plugins.codegenerator.types.terms.*;
+import org.apache.plc4x.plugins.codegenerator.types.terms.Term;
+import org.apache.plc4x.plugins.codegenerator.types.terms.VariableLiteral;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -44,6 +45,7 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
 
     public static final String CUR_POS = "curPos";
     public static final String START_POS = "startPos";
+    @Deprecated
     public static final String LAST_ITEM = "lastItem";
     public static final String IMPLICIT = "implicit";
     public static final String VIRTUAL = "virtual";
@@ -208,7 +210,7 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
         if (baseType instanceof DiscriminatedComplexTypeDefinition) {
             DiscriminatedComplexTypeDefinition discriminatedComplexTypeDefinition = (DiscriminatedComplexTypeDefinition) baseType;
             if (!discriminatedComplexTypeDefinition.isAbstract()) {
-                String typeReferenceName = ((ComplexTypeReference) discriminatedComplexTypeDefinition.getParentType().getTypeReference()).getName();
+                String typeReferenceName = discriminatedComplexTypeDefinition.getParentType().getName();
                 complexTypeReferences.add(typeReferenceName);
             }
         }
@@ -317,13 +319,7 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
         return Optional.empty();
     }
 
-    /**
-     * Enums are always based on a main type. This helper accesses this information in a safe manner.
-     *
-     * @param typeReference type reference
-     * @return simple type reference for the enum type referenced by the given type reference
-     */
-    public SimpleTypeReference getEnumBaseTypeReference(TypeReference typeReference) {
+    protected EnumTypeDefinition getEnumTypeDefinition(TypeReference typeReference) {
         if (!(typeReference instanceof ComplexTypeReference)) {
             throw new FreemarkerException("type reference for enum types must be of type complex type");
         }
@@ -335,9 +331,22 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
         if (!(typeDefinition instanceof EnumTypeDefinition)) {
             throw new FreemarkerException("Referenced type with name " + typeName + " is not an enum type");
         }
-        EnumTypeDefinition enumTypeDefinition = (EnumTypeDefinition) typeDefinition;
+        return (EnumTypeDefinition) typeDefinition;
+    }
+
+    /**
+     * Enums are always based on a main type. This helper accesses this information in a safe manner.
+     *
+     * @param typeReference type reference
+     * @return simple type reference for the enum type referenced by the given type reference
+     */
+    public SimpleTypeReference getEnumBaseTypeReference(TypeReference typeReference) {
         // Enum types always have simple type references.
-        return (SimpleTypeReference) enumTypeDefinition.getType();
+        return (SimpleTypeReference) getEnumTypeDefinition(typeReference).getType();
+    }
+
+    public SimpleTypeReference getEnumFieldTypeReference(TypeReference typeReference, String constantName) {
+        return (SimpleTypeReference) getEnumTypeDefinition(typeReference).getConstantType(constantName);
     }
 
     /* *********************************************************************************
@@ -720,11 +729,13 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
         }
         return term.isFixedValueExpression();
     }
+
     protected int evaluateFixedValueExpression(Term term) {
         Objects.requireNonNull(term);
         final Expression expression = new ExpressionBuilder(term.stringRepresentation()).build();
         return (int) expression.evaluate();
     }
+
     /**
      * @deprecated use field method.
      */
@@ -760,6 +771,7 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
         }
         return type;
     }
+
     /**
      * @deprecated use field method.
      */
@@ -843,6 +855,7 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
         }
         return thisType.getDiscriminatorCaseToKeyValueMap();
     }
+
     public TypeReference getArgumentType(TypeReference typeReference, int index) {
         Objects.requireNonNull(typeReference, "type reference must not be null");
         ComplexTypeReference complexTypeReference = typeReference.asComplexTypeReference().orElseThrow(() -> new FreemarkerException("Only complex type references supported here."));
@@ -850,7 +863,11 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
             throw new FreemarkerException("Could not find definition of complex type " + complexTypeReference.getName());
         }
         TypeDefinition complexTypeDefinition = getTypeDefinitions().get(complexTypeReference.getName());
-        List<Argument> parserArguments = complexTypeDefinition.getParserArguments().orElseThrow(() -> new FreemarkerException("No parser arguments present"));
+        List<Argument> parserArguments = new LinkedList<>();
+        if (complexTypeDefinition.getParentType() != null) {
+            parserArguments.addAll(complexTypeDefinition.getParentType().getParserArguments().orElse(Collections.emptyList()));
+        }
+        parserArguments.addAll(complexTypeDefinition.getParserArguments().orElse(Collections.emptyList()));
         if (parserArguments.size() <= index) {
             throw new FreemarkerException("Type " + complexTypeReference.getName() + " specifies too few parser arguments. Available:" + parserArguments.size() + " index:" + index);
         }
@@ -988,7 +1005,7 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
             && ((EnumTypeDefinition) typeDefinition).getConstantType(fieldName) instanceof SimpleTypeReference) {
             return (SimpleTypeReference) ((EnumTypeDefinition) typeDefinition).getConstantType(fieldName);
         }
-        return null;
+        throw new IllegalArgumentException("not an enum type or enum constant is not a simple type");
     }
 
     /**
@@ -1141,6 +1158,7 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
 
     /**
      * can be used to throw a exception from the template
+     *
      * @param message the message
      * @return the exception
      */

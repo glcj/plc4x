@@ -26,21 +26,24 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 public class ReadBufferByteBased implements ReadBuffer {
 
     private final MyDefaultBitInput bi;
-    private final boolean littleEndian;
+    private ByteOrder byteOrder;
     private final long totalBytes;
 
     public ReadBufferByteBased(byte[] input) {
-        this(input, false);
+        this(input, ByteOrder.BIG_ENDIAN);
     }
 
-    public ReadBufferByteBased(byte[] input, boolean littleEndian) {
+    public ReadBufferByteBased(byte[] input, ByteOrder byteOrder) {
+        Objects.requireNonNull(input);
+        Objects.requireNonNull(byteOrder);
         ArrayByteInput abi = new ArrayByteInput(input);
         this.bi = new MyDefaultBitInput(abi);
-        this.littleEndian = littleEndian;
+        this.byteOrder = byteOrder;
         this.totalBytes = input.length;
     }
 
@@ -68,6 +71,16 @@ public class ReadBufferByteBased implements ReadBuffer {
     @Override
     public boolean hasMore(int numBits) {
         return (numBits / 8) <= (totalBytes - getPos());
+    }
+
+    @Override
+    public ByteOrder getByteOrder() {
+        return byteOrder;
+    }
+
+    @Override
+    public void setByteOrder(ByteOrder byteOrder) {
+        this.byteOrder = byteOrder;
     }
 
     public byte peekByte(int offset) throws ParseException {
@@ -154,7 +167,7 @@ public class ReadBufferByteBased implements ReadBuffer {
             throw new ParseException("unsigned int can only contain max 16 bits");
         }
         try {
-            if (littleEndian) {
+            if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                 int intValue = bi.readInt(true, bitLength);
                 return Integer.reverseBytes(intValue) >>> 16;
             }
@@ -173,7 +186,7 @@ public class ReadBufferByteBased implements ReadBuffer {
             throw new ParseException("unsigned long can only contain max 32 bits");
         }
         try {
-            if (littleEndian) {
+            if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                 final long longValue = bi.readLong(true, bitLength);
                 return Long.reverseBytes(longValue) >>> 32;
             }
@@ -195,7 +208,7 @@ public class ReadBufferByteBased implements ReadBuffer {
         try {
             // Read as signed value
             long val = bi.readLong(false, bitLength);
-            if (littleEndian) {
+            if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                 val = Long.reverseBytes(val);
             }
             if (val >= 0) {
@@ -233,7 +246,7 @@ public class ReadBufferByteBased implements ReadBuffer {
             throw new ParseException("short can only contain max 16 bits");
         }
         try {
-            if (littleEndian) {
+            if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                 return Short.reverseBytes(bi.readShort(false, bitLength));
             }
             return bi.readShort(false, bitLength);
@@ -251,7 +264,7 @@ public class ReadBufferByteBased implements ReadBuffer {
             throw new ParseException("int can only contain max 32 bits");
         }
         try {
-            if (littleEndian) {
+            if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                 return Integer.reverseBytes(bi.readInt(false, bitLength));
             }
             return bi.readInt(false, bitLength);
@@ -269,7 +282,7 @@ public class ReadBufferByteBased implements ReadBuffer {
             throw new ParseException("long can only contain max 64 bits");
         }
         try {
-            if (littleEndian) {
+            if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
                 return Long.reverseBytes(bi.readLong(false, bitLength));
             }
             return bi.readLong(false, bitLength);
@@ -340,7 +353,7 @@ public class ReadBufferByteBased implements ReadBuffer {
     }
 
     @Override
-    public BigDecimal readBigDecimal(String logicalName, int bitLength, WithReaderArgs... readerArgs) throws ParseException {
+    public BigDecimal readBigDecimal(String logicalName, int bitLength, WithReaderArgs... readerArgs) {
         throw new UnsupportedOperationException("not implemented yet");
     }
 

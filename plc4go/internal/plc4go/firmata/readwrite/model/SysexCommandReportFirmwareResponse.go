@@ -30,7 +30,7 @@ import (
 type SysexCommandReportFirmwareResponse struct {
 	MajorVersion uint8
 	MinorVersion uint8
-	FileName     []int8
+	FileName     []byte
 	Parent       *SysexCommand
 }
 
@@ -55,7 +55,7 @@ func (m *SysexCommandReportFirmwareResponse) Response() bool {
 func (m *SysexCommandReportFirmwareResponse) InitializeParent(parent *SysexCommand) {
 }
 
-func NewSysexCommandReportFirmwareResponse(majorVersion uint8, minorVersion uint8, fileName []int8) *SysexCommand {
+func NewSysexCommandReportFirmwareResponse(majorVersion uint8, minorVersion uint8, fileName []byte) *SysexCommand {
 	child := &SysexCommandReportFirmwareResponse{
 		MajorVersion: majorVersion,
 		MinorVersion: minorVersion,
@@ -104,7 +104,7 @@ func (m *SysexCommandReportFirmwareResponse) LengthInBitsConditional(lastItem bo
 
 	// Manual Array Field (fileName)
 	fileName := m.FileName
-	lengthInBits += FirmataUtilsLengthSysexString(fileName) * 8
+	lengthInBits += LengthSysexString(fileName) * 8
 
 	return lengthInBits
 }
@@ -113,7 +113,7 @@ func (m *SysexCommandReportFirmwareResponse) LengthInBytes() uint16 {
 	return m.LengthInBits() / 8
 }
 
-func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer) (*SysexCommand, error) {
+func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandReportFirmwareResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -134,14 +134,14 @@ func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer) (*Syse
 	}
 	// Manual Array Field (fileName)
 	// Terminated array
-	_fileNameList := make([]int8, 0)
-	for !((bool)(FirmataUtilsIsSysexEnd(readBuffer))) {
-		_fileNameList = append(_fileNameList, ((int8)(FirmataUtilsParseSysexString(readBuffer))))
+	_fileNameList := make([]byte, 0)
+	for !((bool)(IsSysexEnd(readBuffer))) {
+		_fileNameList = append(_fileNameList, ((byte)(ParseSysexString(readBuffer))))
 
 	}
-	fileName := make([]int8, len(_fileNameList))
+	fileName := make([]byte, len(_fileNameList))
 	for i := 0; i < len(_fileNameList); i++ {
-		fileName[i] = int8(_fileNameList[i])
+		fileName[i] = byte(_fileNameList[i])
 	}
 	if closeErr := readBuffer.CloseContext("fileName", utils.WithRenderAsList(true)); closeErr != nil {
 		return nil, closeErr
@@ -187,8 +187,8 @@ func (m *SysexCommandReportFirmwareResponse) Serialize(writeBuffer utils.WriteBu
 			if pushErr := writeBuffer.PushContext("fileName", utils.WithRenderAsList(true)); pushErr != nil {
 				return pushErr
 			}
-			for _, Element := range m.FileName {
-				FirmataUtilsSerializeSysexString(writeBuffer, Element)
+			for _, _value := range m.FileName {
+				SerializeSysexString(writeBuffer, _value)
 			}
 			if popErr := writeBuffer.PopContext("fileName", utils.WithRenderAsList(true)); popErr != nil {
 				return popErr

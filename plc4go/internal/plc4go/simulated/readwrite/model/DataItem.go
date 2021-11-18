@@ -320,7 +320,7 @@ func DataItemParse(readBuffer utils.ReadBuffer, dataType string, numberOfValues 
 	case dataType == "REAL" && numberOfValues == 1: // REAL
 
 		// Simple Field (value)
-		value, _valueErr := readBuffer.ReadFloat32("value", true, 8, 23)
+		value, _valueErr := readBuffer.ReadFloat32("value", 32)
 		if _valueErr != nil {
 			return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
 		}
@@ -331,7 +331,7 @@ func DataItemParse(readBuffer utils.ReadBuffer, dataType string, numberOfValues 
 		// Array Field (value)
 		var value []api.PlcValue
 		for i := 0; i < int(numberOfValues); i++ {
-			_item, _itemErr := readBuffer.ReadFloat32("value", true, 8, 23)
+			_item, _itemErr := readBuffer.ReadFloat32("value", 32)
 			if _itemErr != nil {
 				return nil, errors.Wrap(_itemErr, "Error parsing 'value' field")
 			}
@@ -342,7 +342,7 @@ func DataItemParse(readBuffer utils.ReadBuffer, dataType string, numberOfValues 
 	case dataType == "LREAL" && numberOfValues == 1: // LREAL
 
 		// Simple Field (value)
-		value, _valueErr := readBuffer.ReadFloat64("value", true, 11, 52)
+		value, _valueErr := readBuffer.ReadFloat64("value", 64)
 		if _valueErr != nil {
 			return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
 		}
@@ -353,7 +353,7 @@ func DataItemParse(readBuffer utils.ReadBuffer, dataType string, numberOfValues 
 		// Array Field (value)
 		var value []api.PlcValue
 		for i := 0; i < int(numberOfValues); i++ {
-			_item, _itemErr := readBuffer.ReadFloat64("value", true, 11, 52)
+			_item, _itemErr := readBuffer.ReadFloat64("value", 64)
 			if _itemErr != nil {
 				return nil, errors.Wrap(_itemErr, "Error parsing 'value' field")
 			}
@@ -408,7 +408,7 @@ func DataItemParse(readBuffer utils.ReadBuffer, dataType string, numberOfValues 
 	case dataType == "STRING": // STRING
 
 		// Simple Field (value)
-		value, _valueErr := readBuffer.ReadString("value", uint32((255)))
+		value, _valueErr := readBuffer.ReadString("value", uint32(255))
 		if _valueErr != nil {
 			return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
 		}
@@ -417,7 +417,7 @@ func DataItemParse(readBuffer utils.ReadBuffer, dataType string, numberOfValues 
 	case dataType == "WSTRING": // STRING
 
 		// Simple Field (value)
-		value, _valueErr := readBuffer.ReadString("value", uint32((255)))
+		value, _valueErr := readBuffer.ReadString("value", uint32(255))
 		if _valueErr != nil {
 			return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
 		}
@@ -689,13 +689,13 @@ func DataItemSerialize(writeBuffer utils.WriteBuffer, value api.PlcValue, dataTy
 	case dataType == "STRING": // STRING
 
 		// Simple Field (value)
-		if _err := writeBuffer.WriteString("value", uint8((255)), "UTF-8", value.GetString()); _err != nil {
+		if _err := writeBuffer.WriteString("value", uint32(255), "UTF-8", value.GetString()); _err != nil {
 			return errors.Wrap(_err, "Error serializing 'value' field")
 		}
 	case dataType == "WSTRING": // STRING
 
 		// Simple Field (value)
-		if _err := writeBuffer.WriteString("value", uint8((255)), "UTF-8", value.GetString()); _err != nil {
+		if _err := writeBuffer.WriteString("value", uint32(255), "UTF-8", value.GetString()); _err != nil {
 			return errors.Wrap(_err, "Error serializing 'value' field")
 		}
 	default:

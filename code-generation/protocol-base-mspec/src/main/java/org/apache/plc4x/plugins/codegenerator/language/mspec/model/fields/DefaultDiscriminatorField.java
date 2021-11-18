@@ -22,18 +22,15 @@ import org.apache.plc4x.plugins.codegenerator.types.fields.DiscriminatorField;
 import org.apache.plc4x.plugins.codegenerator.types.references.TypeReference;
 import org.apache.plc4x.plugins.codegenerator.types.terms.Term;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class DefaultDiscriminatorField extends DefaultField implements DiscriminatorField {
 
     private final TypeReference type;
     private final String name;
 
-    public DefaultDiscriminatorField(List<String> tags, boolean isTry, TypeReference type, String name) {
-        super(tags, isTry);
+    public DefaultDiscriminatorField(Map<String, Term> attributes, TypeReference type, String name) {
+        super(attributes);
         this.type = Objects.requireNonNull(type);
         this.name = Objects.requireNonNull(name);
     }
@@ -44,10 +41,6 @@ public class DefaultDiscriminatorField extends DefaultField implements Discrimin
 
     public String getName() {
         return name;
-    }
-
-    public Optional<List<Term>> getParams() {
-        return Optional.of(Collections.emptyList());
     }
 
 }
