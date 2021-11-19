@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.model.PlcField;
@@ -50,7 +51,7 @@ import org.apache.plc4x.java.s7.readwrite.S7PayloadAlarmS;
 import org.apache.plc4x.java.s7.readwrite.S7PayloadAlarmSQ;
 import org.apache.plc4x.java.s7.readwrite.S7PayloadNotify;
 import org.apache.plc4x.java.s7.readwrite.S7PayloadNotify8;
-import org.apache.plc4x.java.s7.readwrite.types.AlarmType;
+import org.apache.plc4x.java.s7.readwrite.AlarmType;
 
 /**
  *
@@ -206,8 +207,8 @@ public class S7AlarmEvent implements S7Event {
                 AssociatedQueryValueType datacoming = event.getValueComing();
                 AssociatedQueryValueType datagoing = event.getValueGoing();
                 
-                byte[] buffercoming = new byte[datacoming.getData().length];
-                byte[] buffergoing  = new byte[datagoing.getData().length];
+                byte[] buffercoming = new byte[datacoming.getData().size()];
+                byte[] buffergoing  = new byte[datagoing.getData().size()];
                                 
                 int j = 0;
                 for (short s:datacoming.getData()) {
@@ -267,7 +268,9 @@ public class S7AlarmEvent implements S7Event {
             this.timeStamp = ldt.toInstant(ZoneOffset.UTC);
             map.put(S7SysEvent.Fields.TIMESTAMP.name(),this.timeStamp);            
 
-            AlarmMessageAckObjectPushType[] items = msg.getMessageObjects();
+            List<AlarmMessageAckObjectPushType> items = msg.getMessageObjects();
+            
+            
             for (AlarmMessageAckObjectPushType item:items){
                 map.put(Fields.EVENT_ID.name(), item.getEventId()); 
                 map.put(Fields.TYPE.name(), "ALARMACK_IND");  
@@ -319,7 +322,7 @@ public class S7AlarmEvent implements S7Event {
             this.timeStamp = ldt.toInstant(ZoneOffset.UTC);
             map.put(S7SysEvent.Fields.TIMESTAMP.name(),this.timeStamp);
 
-            AlarmMessageObjectPushType[] items = msg.getMessageObjects();
+            List<AlarmMessageObjectPushType> items = msg.getMessageObjects();
             for (AlarmMessageObjectPushType item:items){
                 map.put(Fields.EVENT_ID.name(), item.getEventId());
 
@@ -375,14 +378,14 @@ public class S7AlarmEvent implements S7Event {
                 map.put(Fields.SIG_7_DATA_COMING.name(), item.getAckStateComing().getSIG_7());
                 map.put(Fields.SIG_8_DATA_COMING.name(), item.getAckStateComing().getSIG_8());             
 
-                AssociatedValueType[] values = item.getAssociatedValues();
+                List<AssociatedValueType> values = item.getAssociatedValues();
                 int i=1;
                 int j = 0;
                 for (AssociatedValueType value:values) {
                     map.put("SIG_"+i+"_DATA_STATUS", value.getReturnCode().getValue());
                     map.put("SIG_"+i+"_DATA_SIZE", value.getTransportSize().getValue());
                     map.put("SIG_"+i+"_DATA_LENGTH", (short) value.getValueLength());
-                    byte[] data = new byte[value.getData().length];
+                    byte[] data = new byte[value.getData().size()];
                     j = 0;
                     for (short s:value.getData()) {
                         data[j] = (byte) s;

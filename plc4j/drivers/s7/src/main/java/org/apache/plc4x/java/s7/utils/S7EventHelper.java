@@ -37,11 +37,12 @@ import org.apache.plc4x.java.api.types.PlcResponseCode;
 import org.apache.plc4x.java.s7.events.S7AlarmEvent;
 import org.apache.plc4x.java.s7.events.S7ModeEvent;
 import org.apache.plc4x.java.s7.events.S7SysEvent;
-import org.apache.plc4x.java.s7.readwrite.types.DataTransportErrorCode;
-import org.apache.plc4x.java.s7.readwrite.types.DataTransportSize;
-import org.apache.plc4x.java.s7.readwrite.types.ModeTransitionType;
+import org.apache.plc4x.java.s7.readwrite.DataTransportErrorCode;
+import org.apache.plc4x.java.s7.readwrite.DataTransportSize;
+import org.apache.plc4x.java.s7.readwrite.ModeTransitionType;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
 
 
@@ -1400,7 +1401,7 @@ public class S7EventHelper {
         return res;
     }
     
-    public static void ByteToBcd(final WriteBuffer buffer, short _value) throws ParseException {
+    public static void ByteToBcd(final WriteBuffer buffer, short _value) throws SerializationException,ParseException {
         short incomingByte = _value;
         byte outputByte = 0;
         byte dec = (byte)((incomingByte / 10) % 10);
@@ -1422,7 +1423,7 @@ public class S7EventHelper {
         return res;
     } 
     
-    public static void IntToS7msec(final WriteBuffer buffer, int _value) throws ParseException {
+    public static void IntToS7msec(final WriteBuffer buffer, int _value) throws SerializationException,ParseException {
         int local = 0;
         if (_value > 999) {
             local = 999;
@@ -1438,7 +1439,7 @@ public class S7EventHelper {
         buffer.writeUnsignedByte(4, (byte) unidad);
     }
 
-    public static void LeftShift3(final WriteBuffer buffer, int _value) throws ParseException {
+    public static void LeftShift3(final WriteBuffer buffer, int _value) throws SerializationException,ParseException {
         int valor = _value << 3;
         buffer.writeUnsignedInt(16, valor);
     }

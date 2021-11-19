@@ -37,10 +37,10 @@ import org.apache.plc4x.java.spi.values.PlcNull;
 import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.spi.values.IEC61131ValueHandler;
 import org.apache.plc4x.java.s7.readwrite.*;
+import org.apache.plc4x.java.s7.readwrite.S7VarPayloadStatusItem;
 import org.apache.plc4x.java.s7.readwrite.context.S7DriverContext;
 import org.apache.plc4x.java.s7.readwrite.field.S7StringField;
 import org.apache.plc4x.java.s7.readwrite.io.DataItemIO;
-import org.apache.plc4x.java.s7.readwrite.types.*;
 import org.apache.plc4x.java.s7.readwrite.field.S7Field;
 import org.apache.plc4x.java.spi.ConversationContext;
 import org.apache.plc4x.java.spi.Plc4xProtocolBase;
@@ -58,6 +58,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -90,6 +91,8 @@ import org.apache.plc4x.java.s7.readwrite.field.S7AckField;
 import org.apache.plc4x.java.s7.readwrite.field.S7SzlField;
 import org.apache.plc4x.java.s7.readwrite.field.S7SubscriptionField;
 import org.apache.plc4x.java.s7.readwrite.io.S7PayloadUserDataItemIO;
+import org.apache.plc4x.java.s7.readwrite.types.S7ControllerType;
+import org.apache.plc4x.java.s7.readwrite.types.S7SubscriptionFieldType;
 import org.apache.plc4x.java.s7.utils.S7ParamErrorCode;
 import org.apache.plc4x.java.spi.ConversationContext.ContextHandler;
 import org.apache.plc4x.java.spi.ConversationContext.SendRequestContext;
@@ -247,9 +250,9 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
      
         if (request.getFields().get(0) instanceof S7SzlField) {
             S7SzlField szlfield = (S7SzlField) request.getFields().get(0);
-            final S7MessageUserData s7SslMessageRequest = new S7MessageUserData(1, new S7ParameterUserData(new S7ParameterUserDataItem[]{
+            final S7MessageUserData s7SslMessageRequest = new S7MessageUserData(1, new S7ParameterUserData(Arrays.asList(
                 new S7ParameterUserDataItemCPUFunctions((short) 0x11, (byte) 0x4, (byte) 0x4, (short) 0x01, (short) 0x00, null, null, null)
-            }), new S7PayloadUserData(new S7PayloadUserDataItem[]{
+            )), new S7PayloadUserData(Arrays.asList(
                 new S7PayloadUserDataItemCpuFunctionReadSzlRequest(DataTransportErrorCode.OK, 
                         DataTransportSize.OCTET_STRING, 
                         0x04,
@@ -257,7 +260,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                                 (byte) ((szlfield.getSzlId() & 0x0f00) >> 8), 
                                 SzlSublist.enumForValue((short) (szlfield.getSzlId() & 0x00ff))), 
                         szlfield.getIndex())
-            }));         
+            )));         
             return toPlcReadResponse(readRequest, readInternal(s7SslMessageRequest));   
             
         } else if (request.getFields().get(0) instanceof S7AckField) {
@@ -265,8 +268,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             List<S7PayloadUserDataItem> payloadItems = new ArrayList<>(request.getNumberOfFields());
             encodeAlarmAckRequest(request, parameterItems, payloadItems);
             final S7MessageUserData s7MessageRequest = new S7MessageUserData(-1, 
-                new S7ParameterUserData(parameterItems.toArray(new S7ParameterUserDataItem[0])),
-                new S7PayloadUserData(payloadItems.toArray(new S7PayloadUserDataItemCpuFunctionAlarmAckRequest[0])));                    
+                new S7ParameterUserData(parameterItems),
+                new S7PayloadUserData(payloadItems));                    
             return toPlcReadResponse(readRequest, readInternal(s7MessageRequest ));               
         }
     
@@ -278,7 +281,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         // Create a read request template.
         // tpuId will be inserted before sending in #readInternal so we insert -1 as dummy here
         final S7MessageRequest s7MessageRequest = new S7MessageRequest(-1,
-            new S7ParameterReadVarRequest(requestItems.toArray(new S7VarRequestParameterItem[0])),
+            new S7ParameterReadVarRequest(requestItems),
             null);
         
         // Just send a single response and chain it as Response
@@ -393,8 +396,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
         TPKTPacket tpktPacket = new TPKTPacket(new COTPPacketData(null,
             new S7MessageRequest(tpduId,
-                new S7ParameterWriteVarRequest(parameterItems.toArray(new S7VarRequestParameterItem[0])),
-                new S7PayloadWriteVarRequest(payloadItems.toArray(new S7VarPayloadDataItem[0]))),
+                new S7ParameterWriteVarRequest(parameterItems),
+                new S7PayloadWriteVarRequest(payloadItems)),
             true, (short) tpduId));
 
         // Start a new request-transaction (Is ended in the response-handler)
@@ -461,8 +464,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                         parameterItems.clear();
                         payloadItems.clear();
                         encodeEventSubcriptionRequest(request, parameterItems, payloadItems);
-                        txParameters = new S7ParameterUserData(parameterItems.toArray(new S7ParameterUserDataItem[0]));
-                        txPayloads = new S7PayloadUserData(payloadItems.toArray(new S7PayloadUserDataItemCpuFunctionMsgSubscription[0]));
+                        txParameters = new S7ParameterUserData(parameterItems);
+                        txPayloads = new S7PayloadUserData(payloadItems);
 
                         //TODO: Diferent message type in the Payload
                         TPKTPacket tpktPacket = new TPKTPacket(new COTPPacketData(null,
@@ -509,8 +512,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                         parameterItems.clear();
                         payloadItems.clear();
                         encodeAlarmQueryRequest(request, parameterItems, payloadItems);
-                        txParameters = new S7ParameterUserData(parameterItems.toArray(new S7ParameterUserDataItem[0]));
-                        txPayloads = new S7PayloadUserData(payloadItems.toArray(new S7PayloadUserDataItemCpuFunctionAlarmQueryRequest[0]));
+                        txParameters = new S7ParameterUserData(parameterItems);
+                        txPayloads = new S7PayloadUserData(payloadItems);
 
 
                         //TODO: Diferent message type in the Payload
@@ -549,8 +552,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                         payloadItems.clear();
                         encodeCycledS7ANYSubscriptionRequest(request.getField(fieldName), parameterItems, payloadItems);
                         if (!parameterItems.isEmpty() && !payloadItems.isEmpty()){
-                            txParameters = new S7ParameterUserData(parameterItems.toArray(new S7ParameterUserDataItem[0]));
-                            txPayloads = new S7PayloadUserData(payloadItems.toArray(new S7PayloadUserDataItemCyclicServicesSubscribeRequest[0]));
+                            txParameters = new S7ParameterUserData(parameterItems);
+                            txPayloads = new S7PayloadUserData(payloadItems);
 
                             //TODO: Diferent message type in the Payload
                             TPKTPacket tpktPacket = new TPKTPacket(new COTPPacketData(null,
@@ -589,8 +592,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                         payloadItems.clear();
                         encodeCycledDBREADSubscriptionRequest(request.getField(fieldName), parameterItems, payloadItems);
                         if (!parameterItems.isEmpty() && !payloadItems.isEmpty()){
-                            txParameters = new S7ParameterUserData(parameterItems.toArray(new S7ParameterUserDataItem[0]));
-                            txPayloads = new S7PayloadUserData(payloadItems.toArray(new S7PayloadUserDataItemCyclicServicesSubscribeRequest[0]));
+                            txParameters = new S7ParameterUserData(parameterItems);
+                            txPayloads = new S7PayloadUserData(payloadItems);
 
                             //TODO: Diferent message type in the Payload
                             TPKTPacket tpktPacket = new TPKTPacket(new COTPPacketData(null,
@@ -627,8 +630,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     case CYCLIC_UNSUBSCRIPTION:{
                         System.out.println("CYCLIC_UNSUBSCRIPTION");
                         encodeCycledUnSubscriptionRequest(request.getField(fieldName), parameterItems, payloadItems);
-                        txParameters = new S7ParameterUserData(parameterItems.toArray(new S7ParameterUserDataItem[0]));
-                        txPayloads = new S7PayloadUserData(payloadItems.toArray(new S7PayloadUserDataItemCyclicServicesUnsubscribeRequest[0]));                        
+                        txParameters = new S7ParameterUserData(parameterItems);
+                        txPayloads = new S7PayloadUserData(payloadItems);                        
                         
                         //TODO: Diferent message type in the Payload
                         TPKTPacket tpktPacket = new TPKTPacket(new COTPPacketData(null,
@@ -794,7 +797,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         parameterItems.clear();
         parameterItems.add(parameter);
         
-        AlarmMessageObjectAckType[] messageObjects = null;
+        ArrayList<AlarmMessageObjectAckType> messageObjects = null;
         BitSet bs = new BitSet();
         for (String fieldName : request.getFieldNames()) {
             if (request.getField(fieldName) instanceof S7AckField) {
@@ -802,7 +805,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 if (field instanceof S7AckField) {
                     ArrayList<Integer> arrAlarmIds = ((S7AckField) field).getAlarmIds();
                     ArrayList<Integer> arrAlarmSigs = ((S7AckField) field).getAlarmSigs();
-                    messageObjects = new AlarmMessageObjectAckType[arrAlarmIds.size()];
+                    //messageObjects = new AlarmMessageObjectAckType[arrAlarmIds.size()];
+                    messageObjects = new ArrayList();
                     int j = 0;
                     for (int i = 0; i < arrAlarmIds.size(); i++) {
                             bs = BitSet.valueOf(new byte[]{arrAlarmSigs.get(i).byteValue()});
@@ -814,7 +818,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                                                                               new State(bs.get(7),bs.get(6),bs.get(5),bs.get(4),bs.get(3),bs.get(2),bs.get(1),bs.get(0)),
                                                                               new State(bs.get(7),bs.get(6),bs.get(5),bs.get(4),bs.get(3),bs.get(2),bs.get(1),bs.get(0))                                
                                                                         );
-                            messageObjects[i] = messageObject;
+                            //messageObjects[i] = messageObject;
+                            messageObjects.add(messageObject);
                     }
                 }
             }
@@ -889,11 +894,11 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         PlcField field = ((DefaultPlcSubscriptionField) plcfield).getPlcField(); 
         S7SubscriptionField s7field = (S7SubscriptionField) field;
 
-        CycServiceItemAnyType[] items = new CycServiceItemAnyType[s7field.getS7field().length];
-        
+        //List<CycServiceItemAnyType> items = new CycServiceItemAnyType[s7field.getS7field().length];
+        List<CycServiceItemType> items = new ArrayList();
         int i=0;
         for (S7Field userfield:s7field.getS7field()){
-            items[i] = new CycServiceItemAnyType(
+            items.add(i, new CycServiceItemAnyType(
                     (short) 0x0a,
                     (short) 0x10, //S7ANY
                     userfield.getDataType(),
@@ -901,20 +906,20 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     userfield.getBlockNumber(),
                     userfield.getMemoryArea(),
                     (long) (((userfield.getByteOffset() << 3) | (userfield.getBitOffset() & 0x0007)))                    
-            );
+            ));
             i++;
         }
         
         //Length in bytes
         //4+12*items.legth
-        int lengthInBytes = 4 + items.length * 12;
+        int lengthInBytes = 4 + items.size() * 12;
 
         S7PayloadUserDataItemCyclicServicesSubscribeRequest payload =
                 new S7PayloadUserDataItemCyclicServicesSubscribeRequest(
                         DataTransportErrorCode.OK,
                         DataTransportSize.OCTET_STRING,
                         lengthInBytes,
-                        items.length,
+                        items.size(),
                         s7field.getTimeBase(),
                         s7field.getMultiplier(),
                         items
@@ -949,8 +954,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
         double cycitemcount = Math.ceil(((double)s7field.getS7field().length / (double) 50));
         
-        CycServiceItemDbReadType[] cycitems = new CycServiceItemDbReadType[(int) cycitemcount];
-        
+        //CycServiceItemDbReadType[] cycitems = new CycServiceItemDbReadType[(int) cycitemcount];
+        List<CycServiceItemType> cycitems = new ArrayList();
         ArrayList<SubItem> subitems = new ArrayList(); 
         for (S7Field userfield:s7field.getS7field()){
             subitems.add(new SubItem((short) userfield.getNumberOfElements(),
@@ -963,26 +968,26 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         int j=0;   
         int lengthInBytes = 4;        
         do{
-            SubItem[] arraysubitems = subitems.subList(initpos, endpos)
-                    .toArray(new SubItem[0]);
-                    
-            cycitems[j] = new CycServiceItemDbReadType(                                        
-                    (short) (arraysubitems.length*5+2),
+            //SubItem[] arraysubitems = subitems.subList(initpos, endpos)
+            //        .toArray(new SubItem[0]);
+            List<SubItem> arraysubitems = subitems.subList(initpos, endpos);        
+            cycitems.add(j,new CycServiceItemDbReadType(                                        
+                    (short) (arraysubitems.size()*5+2),
                     (short) 0xb0,
-                    (short) arraysubitems.length,
-                    arraysubitems);
-            lengthInBytes += 4 + arraysubitems.length * 5;
+                    (short) arraysubitems.size(),
+                    arraysubitems));
+            lengthInBytes += 4 + arraysubitems.size() * 5;
             initpos = endpos++;
             endpos = ((initpos+49) < subitems.size())?(initpos+49):subitems.size();
             j++;
-        } while (j < cycitems.length);
+        } while (j < cycitems.size());
 
         S7PayloadUserDataItemCyclicServicesSubscribeRequest payload =
                 new S7PayloadUserDataItemCyclicServicesSubscribeRequest(
                         DataTransportErrorCode.OK,
                         DataTransportSize.OCTET_STRING,
                         lengthInBytes,
-                        cycitems.length,
+                        cycitems.size(),
                         s7field.getTimeBase(),
                         s7field.getMultiplier(),
                         cycitems
@@ -1083,51 +1088,51 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         }
         
         S7ParameterUserData parameter = (S7ParameterUserData) responseMessage.getParameter();
-        S7ParameterUserDataItem[] parameters = parameter.getItems();
-        S7ParameterUserDataItemCPUFunctions itemparameter = (S7ParameterUserDataItemCPUFunctions) parameters[0];        
+        List<S7ParameterUserDataItem> parameters = parameter.getItems();
+        S7ParameterUserDataItemCPUFunctions itemparameter = (S7ParameterUserDataItemCPUFunctions) parameters.get(0);        
         errorCode = itemparameter.getErrorCode().shortValue();
         
         
         // In all other cases all went well.
         S7PayloadUserData payload = (S7PayloadUserData) responseMessage.getPayload();
 
-        S7PayloadUserDataItem[] payloadItems = payload.getItems();
+        List<S7PayloadUserDataItem> payloadItems = payload.getItems();
 
         //Only one item for any number of subscription (4)
-        if (payloadItems.length == 0) {
+        if (payloadItems.size() == 0) {
             throw new PlcProtocolException(
                     "The number of requested items doesn't match the number of returned items");
         }
 
         boolean responseOk = false;
-        if (payloadItems[0] instanceof S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) {
+        if (payloadItems.get(0) instanceof S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) {
                 S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse item =
                 (S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse)
-                payloadItems[0];
+                payloadItems.get(0);
                 if ((item.getReturnCode() == DataTransportErrorCode.OK) &&
                     (item.getTransportSize() == DataTransportSize.OCTET_STRING)) {
                     responseOk = true;
                 }
-        } else if (payloadItems[0] instanceof S7PayloadUserDataItemCpuFunctionMsgSubscriptionSysResponse) {
+        } else if (payloadItems.get(0)  instanceof S7PayloadUserDataItemCpuFunctionMsgSubscriptionSysResponse) {
                  S7PayloadUserDataItemCpuFunctionMsgSubscriptionSysResponse item =
                 (S7PayloadUserDataItemCpuFunctionMsgSubscriptionSysResponse)
-                payloadItems[0];
+                payloadItems.get(0) ;
                 if ((item.getReturnCode() == DataTransportErrorCode.OK) &&
                     (item.getTransportSize() == DataTransportSize.OCTET_STRING)) {
                     responseOk = true;
                 }
-        } else if (payloadItems[0] instanceof S7PayloadUserDataItemCpuFunctionMsgSubscriptionAlarmResponse) {
+        } else if (payloadItems.get(0) instanceof S7PayloadUserDataItemCpuFunctionMsgSubscriptionAlarmResponse) {
                  S7PayloadUserDataItemCpuFunctionMsgSubscriptionAlarmResponse item =
                 (S7PayloadUserDataItemCpuFunctionMsgSubscriptionAlarmResponse)
-                payloadItems[0];
+                payloadItems.get(0);
                 if ((item.getReturnCode() == DataTransportErrorCode.OK) &&
                     (item.getTransportSize() == DataTransportSize.OCTET_STRING)) {
                     responseOk = true;
                 }
-        }  else if (payloadItems[0] instanceof S7PayloadUserDataItemCpuFunctionAlarmAckResponse) {
+        }  else if (payloadItems.get(0) instanceof S7PayloadUserDataItemCpuFunctionAlarmAckResponse) {
             S7PayloadUserDataItemCpuFunctionAlarmAckResponse items =
             (S7PayloadUserDataItemCpuFunctionAlarmAckResponse) 
-            payloadItems[0];
+            payloadItems.get(0) ;
             String fieldName = (String) plcSubscriptionRequest.getFieldNames().toArray()[0];
 
             values.put(strField, new ResponseItem(PlcResponseCode.OK, null));            
@@ -1141,20 +1146,20 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             }
            return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values);    
            
-        }   else if (payloadItems[0] instanceof S7PayloadUserDataItemCpuFunctionAlarmAckErrorResponse) {
+        }   else if (payloadItems.get(0)  instanceof S7PayloadUserDataItemCpuFunctionAlarmAckErrorResponse) {
             
             S7PayloadUserDataItemCpuFunctionAlarmAckResponse items =
             (S7PayloadUserDataItemCpuFunctionAlarmAckResponse) 
-            payloadItems[0];
+            payloadItems.get(0);
             //String fieldName = (String) S7PayloadUserDataItemCyclicServicesPush .getFieldNames().toArray()[0];
             logger.warn("Request field: " + strField + ": " + S7ParamErrorCode.valueOf(errorCode)+ " " + S7ParamErrorCode.valueOf(errorCode).getEvent());          
             values.put(strField, new ResponseItem(PlcResponseCode.NOT_FOUND, null));              
            return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values);  
            
-        }   else if (payloadItems[0] instanceof S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) {
+        }   else if (payloadItems.get(0) instanceof S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) {
 
             S7PayloadUserDataItemCpuFunctionAlarmQueryResponse items =
-            (S7PayloadUserDataItemCpuFunctionAlarmQueryResponse)  payloadItems[0];
+            (S7PayloadUserDataItemCpuFunctionAlarmQueryResponse)  payloadItems.get(0);
           
             ByteBuf buffer = Unpooled.directBuffer(items.getItems().length*2);
             ByteBuf rxbuffer = Unpooled.directBuffer(items.getItems().length*2);
@@ -1177,8 +1182,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                       
                         msg = loopfuture.get();
                         if (msg != null) {
-                            loopparameter =  (S7ParameterUserDataItemCPUFunctions) ((S7ParameterUserData) msg.getParameter()).getItems()[0];
-                            looppayload = (S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) ((S7PayloadUserData) msg.getPayload()).getItems()[0];
+                            loopparameter =  (S7ParameterUserDataItemCPUFunctions) ((S7ParameterUserData) msg.getParameter()).getItems().get(0);
+                            looppayload = (S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) ((S7PayloadUserData) msg.getPayload()).getItems().get(0);
 
                             buffer.writeBytes(looppayload.getItems());
 
@@ -1197,9 +1202,9 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 rxbuffer.writeBytes(buffer);
 
             } else {
-               rxbuffer.writeByte(payloadItems[0].getReturnCode().getValue());
-               rxbuffer.writeByte(payloadItems[0].getTransportSize().getValue());
-               rxbuffer.writeShort(payloadItems[0].getDataLength());               
+               rxbuffer.writeByte(payloadItems.get(0).getReturnCode().getValue());
+               rxbuffer.writeByte(payloadItems.get(0).getTransportSize().getValue());
+               rxbuffer.writeShort(payloadItems.get(0).getDataLength());               
                rxbuffer.writeBytes(buffer);                
             }
           
@@ -1228,32 +1233,32 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             values.put(strField, new ResponseItem(rescode, null));
             return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values); 
             
-        }  else if (payloadItems[0] instanceof S7PayloadUserDataItemCyclicServicesSubscribeResponse) {
+        }  else if (payloadItems.get(0) instanceof S7PayloadUserDataItemCyclicServicesSubscribeResponse) {
             //S7ParameterUserData parameter = (S7ParameterUserData) responseMessage.getParameter();  
             //logger.info("Aqui debe responder a Cyclic transfer");
             S7ParameterUserDataItemCPUFunctions msgparameter = (S7ParameterUserDataItemCPUFunctions)
-                    parameter.getItems()[0];
+                    parameter.getItems().get(0);
             
                 S7CyclicEvent cycevent = new S7CyclicEvent(plcSubscriptionRequest,
                         msgparameter.getSequenceNumber(), 
-                        (S7PayloadUserDataItemCyclicServicesSubscribeResponse) payloadItems[0]); 
+                        (S7PayloadUserDataItemCyclicServicesSubscribeResponse) payloadItems.get(0)); 
             eventqueue.add(cycevent);                  
             values.put(strField, new ResponseItem(PlcResponseCode.OK, cycHandle));  
             return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values);    
             
-        } else if (payloadItems[0] instanceof S7PayloadUserDataItemCyclicServicesChangeDrivenSubscribeResponse) {  
+        } else if (payloadItems.get(0) instanceof S7PayloadUserDataItemCyclicServicesChangeDrivenSubscribeResponse) {  
             //logger.info("Aqui debe responder a Cyclic transfer Change Driven");
             S7ParameterUserDataItemCPUFunctions msgparameter = (S7ParameterUserDataItemCPUFunctions)
-                    parameter.getItems()[0];
+                    parameter.getItems().get(0);
             
                 S7CyclicEvent cycevent = new S7CyclicEvent(plcSubscriptionRequest,
                         msgparameter.getSequenceNumber(), 
-                        (S7PayloadUserDataItemCyclicServicesChangeDrivenSubscribeResponse) payloadItems[0]); 
+                        (S7PayloadUserDataItemCyclicServicesChangeDrivenSubscribeResponse) payloadItems.get(0)); 
             eventqueue.add(cycevent);                  
             values.put(strField, new ResponseItem(PlcResponseCode.OK, cycHandle));  
             return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values);  
             
-        }  else if (payloadItems[0] instanceof S7PayloadUserDataItemCyclicServicesErrorResponse) {
+        }  else if (payloadItems.get(0) instanceof S7PayloadUserDataItemCyclicServicesErrorResponse) {
             //S7ParameterUserData parameter = (S7ParameterUserData) responseMessage.getParameter();
             //S7ParameterUserDataItem[] parameters = parameter.getItems();
             //S7ParameterUserDataItemCPUFunctions itemparameter = (S7ParameterUserDataItemCPUFunctions) parameters[0];
@@ -1264,7 +1269,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             } else 
                 values.put(strField, new ResponseItem(PlcResponseCode.INTERNAL_ERROR, null));
             return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values);                          
-        } else if (payloadItems[0] instanceof S7PayloadUserDataItemCyclicServicesUnsubscribeResponse) {
+        } else if (payloadItems.get(0) instanceof S7PayloadUserDataItemCyclicServicesUnsubscribeResponse) {
             values.put(strField, new ResponseItem(PlcResponseCode.OK, null));  
             return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values);             
         }
@@ -1305,14 +1310,14 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         } else
         if (parameter instanceof S7ParameterUserData) {
             S7ParameterUserData parameterud = (S7ParameterUserData) parameter;
-            S7ParameterUserDataItem[] parameterudis = parameterud.getItems();
+            List<S7ParameterUserDataItem> parameterudis = parameterud.getItems();
             for (S7ParameterUserDataItem parameterudi:parameterudis){
                 if (parameterudi instanceof S7ParameterUserDataItemCPUFunctions) {
                     S7ParameterUserDataItemCPUFunctions myparameter = (S7ParameterUserDataItemCPUFunctions) parameterudi;
                     //TODO: Check from mspec. We can try using "instanceof"
                     if ((myparameter.getCpuFunctionGroup() == 0x04) && (myparameter.getCpuFunctionType() == 0x00) && (myparameter.getCpuSubfunction() == 0x03)) {
                         S7PayloadUserData payload = (S7PayloadUserData) s7msg.getPayload();
-                        S7PayloadUserDataItem[] items = payload.getItems();
+                        List<S7PayloadUserDataItem> items = payload.getItems();
                         for (S7PayloadUserDataItem item:items){
                             if (item instanceof S7PayloadDiagnosticMessage){
                                 eventqueue.add(item);
@@ -1328,20 +1333,20 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                                (myparameter.getCpuSubfunction() == 0x13) ||
                                (myparameter.getCpuSubfunction() == 0x16))) {
                         S7PayloadUserData payload = (S7PayloadUserData) s7msg.getPayload();
-                        S7PayloadUserDataItem[] items = payload.getItems();
+                        List<S7PayloadUserDataItem> items = payload.getItems();
                         for (Object item:items){
                             eventqueue.add(item);
                         }
                     } else if ((myparameter.getCpuFunctionGroup() == 0x02) && (myparameter.getCpuFunctionType() == 0x00) && (myparameter.getCpuSubfunction() == 0x01)){
                             S7ParameterUserDataItemCPUFunctions parameteritem = 
                                     (S7ParameterUserDataItemCPUFunctions)
-                                    ((S7ParameterUserData) parameter).getItems()[0];
+                                    ((S7ParameterUserData) parameter).getItems().get(0);
                             
                             S7PayloadUserData payload = (S7PayloadUserData) s7msg.getPayload();
                             
                             S7PayloadUserDataItemCyclicServicesPush payloaditem = 
                                     (S7PayloadUserDataItemCyclicServicesPush)
-                                    payload.getItems()[0];
+                                    payload.getItems().get(0);
                             
                             S7CyclicEvent cycevent = new S7CyclicEvent(null,
                                     parameteritem.getSequenceNumber(),
@@ -1351,13 +1356,13 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     } else if  ((myparameter.getCpuFunctionGroup() == 0x02) && (myparameter.getCpuFunctionType() == 0x00) && (myparameter.getCpuSubfunction() == 0x05)) {   
                             S7ParameterUserDataItemCPUFunctions parameteritem = 
                                     (S7ParameterUserDataItemCPUFunctions)
-                                    ((S7ParameterUserData) parameter).getItems()[0];
+                                    ((S7ParameterUserData) parameter).getItems().get(0);
                             
                             S7PayloadUserData payload = (S7PayloadUserData) s7msg.getPayload();
                             
                             S7PayloadUserDataItemCyclicServicesChangeDrivenPush payloaditem = 
                                     (S7PayloadUserDataItemCyclicServicesChangeDrivenPush)
-                                    payload.getItems()[0];
+                                    payload.getItems().get(0);
                             
                             S7CyclicEvent cycevent = new S7CyclicEvent(null,
                                     parameteritem.getSequenceNumber(),
@@ -1410,16 +1415,16 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     }
 
     private TPKTPacket createIdentifyRemoteMessage() {
-        S7MessageUserData identifyRemoteMessage = new S7MessageUserData(1, new S7ParameterUserData(new S7ParameterUserDataItem[]{
+        S7MessageUserData identifyRemoteMessage = new S7MessageUserData(1, new S7ParameterUserData(Arrays.asList(
                 new S7ParameterUserDataItemCPUFunctions((short) 0x11, (byte) 0x4, (byte) 0x4, (short) 0x01, (short) 0x00, null, null, null)
-            }), new S7PayloadUserData(new S7PayloadUserDataItem[]{
+        )), new S7PayloadUserData(Arrays.asList(
                 new S7PayloadUserDataItemCpuFunctionReadSzlRequest(DataTransportErrorCode.OK, 
                         DataTransportSize.OCTET_STRING, 
                         0x04,
                         new SzlId(SzlModuleTypeClass.CPU, (byte) 0x00, 
                         SzlSublist.MODULE_IDENTIFICATION), 
                         0x0000)
-            }));
+        )));
         COTPPacketData cotpPacketData = new COTPPacketData(null, identifyRemoteMessage, true, (short) 2);
         return new TPKTPacket(cotpPacketData);
     }
@@ -1428,28 +1433,28 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     * 
     */
     private TPKTPacket createSzlReassembledRequest(int tpduId, short sequenceNumber) {
-        S7MessageUserData identifyRemoteMessage = new S7MessageUserData(tpduId, new S7ParameterUserData(new S7ParameterUserDataItem[]{
+        S7MessageUserData identifyRemoteMessage = new S7MessageUserData(tpduId, new S7ParameterUserData(Arrays.asList(
                 new S7ParameterUserDataItemCPUFunctions((short) 0x12, (byte) 0x4, (byte) 0x4, (short) 0x01, sequenceNumber, (short) 0x00, (short) 0x00, 0)
-            }), new S7PayloadUserData(new S7PayloadUserDataItem[]{
+        )), new S7PayloadUserData(Arrays.asList(
                 new S7PayloadUserDataItemCpuFunctionReadSzlNoDataRequest(
                         DataTransportErrorCode.NOT_FOUND, 
                         DataTransportSize.NULL, 
                         0x00)
-            }));
+        )));
         COTPPacketData cotpPacketData = new COTPPacketData(null, identifyRemoteMessage, true, (short) 2);
         return new TPKTPacket(cotpPacketData);
     } 
     
     //TODO: S7PayloadUserDataItemCpuFunctionReadSzlNoDataRequest to S7PayloadUserDataItemCpuFunctionAlarmQueryNoDataRequest 
     private TPKTPacket createAlarmQueryReassembledRequest(int tpduId, short sequenceNumber) {
-        S7MessageUserData identifyRemoteMessage = new S7MessageUserData(tpduId, new S7ParameterUserData(new S7ParameterUserDataItem[]{
+        S7MessageUserData identifyRemoteMessage = new S7MessageUserData(tpduId, new S7ParameterUserData(Arrays.asList(
                 new S7ParameterUserDataItemCPUFunctions((short) 0x12, (byte) 0x4, (byte) 0x4, (short) 0x13, sequenceNumber, (short) 0x00, (short) 0x00, 0)
-            }), new S7PayloadUserData(new S7PayloadUserDataItem[]{
+        )), new S7PayloadUserData(Arrays.asList(
                 new S7PayloadUserDataItemCpuFunctionReadSzlNoDataRequest(
                         DataTransportErrorCode.NOT_FOUND, 
                         DataTransportSize.NULL, 
                         0x00)
-            }));
+            )));
         COTPPacketData cotpPacketData = new COTPPacketData(null, identifyRemoteMessage, true, (short) 2);
         return new TPKTPacket(cotpPacketData);
     }        
@@ -1485,11 +1490,11 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
     private COTPPacketConnectionRequest createCOTPConnectionRequest(int calledTsapId, int callingTsapId, COTPTpduSize cotpTpduSize) {
         return new COTPPacketConnectionRequest(
-            new COTPParameter[]{
+            Arrays.asList(
                 new COTPParameterCalledTsap(calledTsapId),
                 new COTPParameterCallingTsap(callingTsapId),
                 new COTPParameterTpduSize(cotpTpduSize)
-            }, null, (short) 0x0000, (short) 0x000F, COTPProtocolClass.CLASS_0);
+            ), null, (short) 0x0000, (short) 0x000F, COTPProtocolClass.CLASS_0);
     }
     
     private PlcResponse decodeReadResponse(S7Message responseMessage, PlcReadRequest plcReadRequest) throws PlcProtocolException {
@@ -1509,7 +1514,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         } else if(responseMessage instanceof S7MessageUserData) {
             S7MessageUserData messageResponse = (S7MessageUserData) responseMessage;
             S7ParameterUserData parameters = (S7ParameterUserData) messageResponse.getParameter();
-            parameteritem = (S7ParameterUserDataItemCPUFunctions) parameters.getItems()[0];
+            parameteritem = (S7ParameterUserDataItemCPUFunctions) parameters.getItems().get(0);
             errorClass = 0;
             errorCode = parameteritem.getErrorCode().shortValue();
         } else {
@@ -1544,12 +1549,12 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         if (responseMessage instanceof S7MessageUserData) {
             
             S7PayloadUserData payload = (S7PayloadUserData) responseMessage.getPayload();             
-            if (plcReadRequest.getNumberOfFields() != payload.getItems().length) {
+            if (plcReadRequest.getNumberOfFields() != payload.getItems().size()) {
                 throw new PlcProtocolException(
                     "The number of requested items doesn't match the number of returned items");
             } 
             
-            S7PayloadUserDataItem[] payloadItems = payload.getItems();             
+            List<S7PayloadUserDataItem> payloadItems = payload.getItems();             
 
             PlcResponseCode responseCode = PlcResponseCode.INTERNAL_ERROR;
             PlcValue plcValue = null;            
@@ -1559,7 +1564,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 if (plcReadRequest.getField(fieldName) instanceof S7SzlField ) {
 
                     S7SzlField field = (S7SzlField) plcReadRequest.getField(fieldName);
-                    S7PayloadUserDataItemCpuFunctionReadSzlResponse payloadItem = (S7PayloadUserDataItemCpuFunctionReadSzlResponse) payloadItems[index];               
+                    S7PayloadUserDataItemCpuFunctionReadSzlResponse payloadItem = (S7PayloadUserDataItemCpuFunctionReadSzlResponse) payloadItems.get(index);               
                     responseCode = decodeResponseCode(payloadItem.getReturnCode());
                     
                     if (responseCode == PlcResponseCode.OK) {
@@ -1578,7 +1583,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                                 if (msg != null) {
                                     S7ParameterUserData parameter = (S7ParameterUserData) msg.getParameter();
                                     S7PayloadUserData payload2 = (S7PayloadUserData) msg.getPayload();
-                                    S7PayloadUserDataItemCpuFunctionReadSzlResponse payloadItem2 = (S7PayloadUserDataItemCpuFunctionReadSzlResponse) payload2.getItems()[0];
+                                    S7PayloadUserDataItemCpuFunctionReadSzlResponse payloadItem2 = (S7PayloadUserDataItemCpuFunctionReadSzlResponse) payload2.getItems().get(0);
                                     for (byte b:payloadItem2.getItems()) plcvalues.add(new PlcSINT(b));
                                 }
                                plcValue = new PlcList(plcvalues); 
@@ -1593,9 +1598,9 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 } if (plcReadRequest.getField(fieldName) instanceof S7AckField ) {
                     S7AckField field = (S7AckField) plcReadRequest.getField(fieldName);
                     S7PayloadUserDataItemCpuFunctionAlarmAckResponse payloadItem = 
-                        (S7PayloadUserDataItemCpuFunctionAlarmAckResponse) payloadItems[index];               
+                        (S7PayloadUserDataItemCpuFunctionAlarmAckResponse) payloadItems.get(index);               
                     responseCode = decodeResponseCode(payloadItem.getReturnCode());  
-                    short[] data = payloadItem.getMessageObjects();
+                    List<Short> data = payloadItem.getMessageObjects();
                     LinkedList plcvalues = new LinkedList<PlcSINT>();
                     for (short b:data ) plcvalues.add(new PlcSINT((byte) b));  
                     plcValue = new PlcList(plcvalues);                       
@@ -1617,19 +1622,19 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         // If the numbers of items don't match, we're in big trouble as the only
         // way to know how to interpret the responses is by aligning them with the
         // items from the request as this information is not returned by the PLC.
-        if (plcReadRequest.getNumberOfFields() != payload.getItems().length) {
+        if (plcReadRequest.getNumberOfFields() != payload.getItems().size()) {
             throw new PlcProtocolException(
                 "The number of requested items doesn't match the number of returned items");
         }
 
 
-        S7VarPayloadDataItem[] payloadItems = payload.getItems();            
+        List<S7VarPayloadDataItem> payloadItems = payload.getItems();            
 
         int index = 0;
         for (String fieldName : plcReadRequest.getFieldNames()) {
             S7Field field = (S7Field) plcReadRequest.getField(fieldName);
            
-            S7VarPayloadDataItem payloadItem = payloadItems[index];
+            S7VarPayloadDataItem payloadItem = payloadItems.get(index);
      
             PlcResponseCode responseCode = decodeResponseCode(payloadItem.getReturnCode());
             PlcValue plcValue = null;
@@ -1755,15 +1760,15 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         // If the numbers of items don't match, we're in big trouble as the only
         // way to know how to interpret the responses is by aligning them with the
         // items from the request as this information is not returned by the PLC.
-        if (plcWriteRequest.getNumberOfFields() != payload.getItems().length) {
+        if (plcWriteRequest.getNumberOfFields() != payload.getItems().size()) {
             throw new PlcProtocolException(
                 "The number of requested items doesn't match the number of returned items");
         }
 
-        S7VarPayloadStatusItem[] payloadItems = payload.getItems();
+        List<S7VarPayloadStatusItem> payloadItems = payload.getItems();
         int index = 0;
         for (String fieldName : plcWriteRequest.getFieldNames()) {
-            S7VarPayloadStatusItem payloadItem = payloadItems[index];
+            S7VarPayloadStatusItem payloadItem = payloadItems.get(index);
 
             PlcResponseCode responseCode = decodeResponseCode(payloadItem.getReturnCode());
             responses.put(fieldName, responseCode);
@@ -1793,7 +1798,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 byte[] data = byteBuffer.array();
                 return new S7VarPayloadDataItem(DataTransportErrorCode.OK, transportSize, data);
             }
-        } catch (ParseException e) {
+        } catch (SerializationException e) {
             logger.warn("Error serializing field item of type: '{}'", field.getDataType().name(), e);
         }
         return null;

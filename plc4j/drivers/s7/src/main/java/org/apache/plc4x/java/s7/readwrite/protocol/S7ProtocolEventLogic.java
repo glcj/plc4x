@@ -54,7 +54,7 @@ import org.apache.plc4x.java.s7.readwrite.S7PayloadDiagnosticMessage;
 import org.apache.plc4x.java.s7.readwrite.S7PayloadUserData;
 import org.apache.plc4x.java.s7.readwrite.S7PayloadUserDataItem;
 import org.apache.plc4x.java.s7.readwrite.S7PayloadUserDataItemCyclicServicesPush;
-import org.apache.plc4x.java.s7.readwrite.types.EventType;
+import org.apache.plc4x.java.s7.readwrite.EventType;
 import org.apache.plc4x.java.s7.readwrite.utils.S7PlcSubscriptionHandle;
 import org.apache.plc4x.java.spi.generation.MessageIO;
 import org.apache.plc4x.java.spi.messages.PlcSubscriber;

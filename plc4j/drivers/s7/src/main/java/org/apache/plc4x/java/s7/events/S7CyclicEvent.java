@@ -79,14 +79,15 @@ public class S7CyclicEvent implements S7Event {
         map.put(Fields.JOBID.name(), jobid);
         map.put(Fields.ITEMSCOUNT.name(), event.getItemsCount());        
         for (int i=0; i<event.getItemsCount(); i++){
-            map.put(Fields.RETURNCODE_.name()+i, event.getItems()[i].getReturnCode().getValue());
-            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems()[i].getTransportSize().getValue());
-            byte[] buffer = new byte[event.getItems()[i].getData().length];
+            //map.put(Fields.RETURNCODE_.name()+i, event.getItems()[i].getReturnCode().getValue());
+            map.put(Fields.RETURNCODE_.name()+i, event.getItems().get(i).getReturnCode().getValue());
+            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems().get(i).getTransportSize().getValue());
+            byte[] buffer = new byte[event.getItems().get(i).getData().size()];
             j = 0;
-            for(short s:event.getItems()[i].getData()){
-                buffer[j] = (byte) s;
-                j ++;
-            }
+            event.getItems().get(i).getData().forEach(s->{
+                    buffer[j] = s.byteValue();
+                    j ++;                
+                });
             map.put(Fields.DATA_.name()+i, buffer);  
         }
     }
@@ -100,14 +101,14 @@ public class S7CyclicEvent implements S7Event {
         map.put(Fields.JOBID.name(), jobid);
         map.put(Fields.ITEMSCOUNT.name(), event.getItemsCount());        
         for (int i=0; i<event.getItemsCount(); i++){
-            map.put(Fields.RETURNCODE_.name()+i, event.getItems()[i].getReturnCode().getValue());
-            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems()[i].getTransportSize().getValue());
-            byte[] buffer = new byte[event.getItems()[i].getData().length];
+            map.put(Fields.RETURNCODE_.name()+i, event.getItems().get(i).getReturnCode().getValue());
+            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems().get(i).getTransportSize().getValue());
+            byte[] buffer = new byte[event.getItems().get(i).getData().size()];
             j = 0;
-            for(short s:event.getItems()[i].getData()){
-                buffer[j] = (byte) s;
-                j ++;
-            }
+            event.getItems().get(i).getData().forEach(s->{
+                    buffer[j] = s.byteValue();
+                    j ++;                
+                });
             map.put(Fields.DATA_.name()+i, buffer);  
         }
     }    
@@ -121,14 +122,14 @@ public class S7CyclicEvent implements S7Event {
         map.put(Fields.JOBID.name(), jobid);
         map.put(Fields.ITEMSCOUNT.name(), event.getItemsCount());
         for (int i=0; i<event.getItemsCount(); i++){
-            map.put(Fields.RETURNCODE_.name()+i, event.getItems()[i].getReturnCode().getValue());
-            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems()[i].getTransportSize().getValue());
-            byte[] buffer = new byte[event.getItems()[i].getData().length];
+            map.put(Fields.RETURNCODE_.name()+i, event.getItems().get(i).getReturnCode().getValue());
+            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems().get(i).getTransportSize().getValue());
+            byte[] buffer = new byte[event.getItems().get(i).getData().size()];
             j = 0;
-            for(short s:event.getItems()[i].getData()){
-                buffer[j] = (byte) s;
-                j ++;
-            }
+            event.getItems().get(i).getData().forEach(s->{
+                    buffer[j] = s.byteValue();
+                    j ++;                
+                });
             map.put(Fields.DATA_.name()+i, buffer); 
         }            
     }
@@ -142,14 +143,14 @@ public class S7CyclicEvent implements S7Event {
         map.put(Fields.JOBID.name(), jobid);
         map.put(Fields.ITEMSCOUNT.name(), event.getItemsCount());
         for (int i=0; i<event.getItemsCount(); i++){
-            map.put(Fields.RETURNCODE_.name()+i, event.getItems()[i].getReturnCode().getValue());
-            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems()[i].getTransportSize().getValue());
-            byte[] buffer = new byte[event.getItems()[i].getData().length];
+            map.put(Fields.RETURNCODE_.name()+i, event.getItems().get(i).getReturnCode().getValue());
+            map.put(Fields.TRANSPORTSIZE_.name()+i, event.getItems().get(i).getTransportSize().getValue());
+            byte[] buffer = new byte[event.getItems().get(i).getData().size()];
             j = 0;
-            for(short s:event.getItems()[i].getData()){
-                buffer[j] = (byte) s;
-                j ++;
-            }
+            event.getItems().get(i).getData().forEach(s->{
+                    buffer[j] = s.byteValue();
+                    j ++;                
+                });
             map.put(Fields.DATA_.name()+i, buffer); 
         }            
     }    

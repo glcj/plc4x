@@ -190,16 +190,15 @@
     [discriminator uint 8 itemType]
     [typeSwitch 'itemType'
         ['0x12' S7ParameterUserDataItemCPUFunctions
-
-            [implicit uint 8  'itemLength' 'lengthInBytes - 2']
-            [simple   uint 8  'method']
-            [simple   uint 4  'cpuFunctionType']
-            [simple   uint 4  'cpuFunctionGroup']
-            [simple   uint 8  'cpuSubfunction']
-            [simple   uint 8  'sequenceNumber']
-            [optional uint 8  'dataUnitReferenceNumber' '(cpuFunctionType == 8) || ((cpuFunctionType == 0) && (cpuFunctionGroup == 2))']
-            [optional uint 8  'lastDataUnit' '(cpuFunctionType == 8) || ((cpuFunctionType == 0) && (cpuFunctionGroup == 2))']
-            [optional uint 16 'errorCode' '(cpuFunctionType == 8) || ((cpuFunctionType == 0) && (cpuFunctionGroup == 2))']
+            [implicit uint 8  itemLength 'lengthInBytes - 2']
+            [simple   uint 8 method]
+            [simple   uint 4  cpuFunctionType]
+            [simple   uint 4  cpuFunctionGroup]
+            [simple   uint 8  cpuSubfunction]
+            [simple   uint 8  sequenceNumber]
+            [optional uint 8  dataUnitReferenceNumber '(cpuFunctionType == 8) || ((cpuFunctionType == 0) && (cpuFunctionGroup == 2))']
+            [optional uint 8  lastDataUnit '(cpuFunctionType == 8) || ((cpuFunctionType == 0) && (cpuFunctionGroup == 2))']
+            [optional uint 16 errorCode '(cpuFunctionType == 8) || ((cpuFunctionType == 0) && (cpuFunctionGroup == 2))']
         ]
     ]
 ]
@@ -224,16 +223,17 @@
 [discriminatedType S7Payload (uint 8 messageType, S7Parameter parameter)
     [typeSwitch 'parameter.parameterType', 'messageType'
         ['0x04','0x03' S7PayloadReadVarResponse
-            [array S7VarPayloadDataItem items count 'CAST(parameter, S7ParameterReadVarResponse).numItems']
+            [array S7VarPayloadDataItem     items count 'CAST(parameter, S7ParameterReadVarResponse).numItems']
         ]
-        ['0x05','0x01' S7PayloadWriteVarRequest [S7Parameter 'parameter']
-            [array S7VarPayloadDataItem 'items' count 'COUNT(CAST(parameter, S7ParameterWriteVarRequest).items)' ['lastItem']]
+        ['0x05','0x01' S7PayloadWriteVarRequest 
+            [array S7VarPayloadDataItem     items count 'COUNT(CAST(parameter, S7ParameterWriteVarRequest).items)']
         ]
         ['0x05','0x03' S7PayloadWriteVarResponse
-            [array S7VarPayloadStatusItem items count 'CAST(parameter, S7ParameterWriteVarResponse).numItems']
+            [array S7VarPayloadStatusItem   items count 'CAST(parameter, S7ParameterWriteVarResponse).numItems']
         ]
-        ['0x00','0x07' S7PayloadUserData [S7Parameter 'parameter']
-            [array S7PayloadUserDataItem 'items' count 'COUNT(CAST(parameter, S7ParameterUserData).items)' ['CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionGroup', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionType', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuSubfunction']]
+        ['0x00','0x07' S7PayloadUserData 
+            //[array S7PayloadUserDataItem    items count 'COUNT(CAST(parameter, S7ParameterUserData).items)' ['CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionGroup', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionType', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuSubfunction']]
+            [array S7PayloadUserDataItem('CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionGroup', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionType', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuSubfunction') items count 'COUNT(CAST(parameter, S7ParameterUserData).items)']
         ]
     ]
 ]
@@ -283,114 +283,114 @@
 //      . si es tipo 4 usa el desplazamiento
 //      . si es tipo 3, la longitud es la indicada
 //      . verificar calculo con los otros tipos
-[type 'AssociatedValueType'
-    [simple DataTransportErrorCode 'returnCode']
-    [simple DataTransportSize      'transportSize']
-    [manual uint 16                'valueLength'   'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.RightShift3", readBuffer, transportSize)' 'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.LeftShift3", writeBuffer, _value.valueLength)' '2']
-    [array  uint 8                 'data'          count    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.EventItemLength", readBuffer, valueLength)']
+[type AssociatedValueType
+    [simple DataTransportErrorCode returnCode]
+    [simple DataTransportSize      transportSize]
+    [manual uint 16                valueLength   'STATIC_CALL("RightShift3", readBuffer, 'transportSize')' 'STATIC_CALL("LeftShift3", writeBuffer, valueLength)' '2']
+    [array  uint 8                 data          count    'STATIC_CALL("EventItemLength", readBuffer, 'valueLength')']
 ]
 
-[type 'AssociatedQueryValueType'
-    [simple DataTransportErrorCode 'returnCode']
-    [simple DataTransportSize      'transportSize']
-    [simple uint 16                'valueLength']
-    [array  uint 8                 'data'          count    'valueLength']
+[type AssociatedQueryValueType
+    [simple DataTransportErrorCode returnCode]
+    [simple DataTransportSize      transportSize]
+    [simple uint 16                valueLength]
+    [array  uint 8                 data          count    'valueLength']
 ]
 
 //TODO: Convert BCD to uint
-[type 'DateAndTime'
-    [manual uint 8  'year'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.BcdToInt", readBuffer)'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.ByteToBcd", writeBuffer, _value.year)'    '1']
-    [manual uint 8  'month'   'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.BcdToInt", readBuffer)'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.ByteToBcd", writeBuffer, _value.month)'   '1']
-    [manual uint 8  'day'     'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.BcdToInt", readBuffer)'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.ByteToBcd", writeBuffer, _value.day)'     '1']
-    [manual uint 8  'hour'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.BcdToInt", readBuffer)'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.ByteToBcd", writeBuffer, _value.hour)'    '1']
-    [manual uint 8  'minutes' 'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.BcdToInt", readBuffer)'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.ByteToBcd", writeBuffer, _value.minutes)' '1']
-    [manual uint 8  'seconds' 'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.BcdToInt", readBuffer)'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.ByteToBcd", writeBuffer, _value.seconds)' '1']
-    [manual uint 12 'msec'    'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.S7msecToInt", readBuffer)' 'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.IntToS7msec", writeBuffer, _value.msec)'  '2']
-    [simple uint 4  'dow']
+[type DateAndTime
+    [manual uint 8  year    'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, year)'    '1']
+    [manual uint 8  month   'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, month)'   '1']
+    [manual uint 8  day     'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, day)'     '1']
+    [manual uint 8  hour    'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, hour)'    '1']
+    [manual uint 8  minutes 'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, minutes)' '1']
+    [manual uint 8  seconds 'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, seconds)' '1']
+    [manual uint 12 msec    'STATIC_CALL("S7msecToInt", readBuffer)' 'STATIC_CALL("IntToS7msec", writeBuffer,msec)'  '2']
+    [simple uint 4  dow]
 ]
 
-[type 'State'
-    [simple bit 'SIG_8']
-    [simple bit 'SIG_7']
-    [simple bit 'SIG_6']
-    [simple bit 'SIG_5']
-    [simple bit 'SIG_4']
-    [simple bit 'SIG_3']
-    [simple bit 'SIG_2']
-    [simple bit 'SIG_1']
+[type State
+    [simple bit SIG_8]
+    [simple bit SIG_7]
+    [simple bit SIG_6]
+    [simple bit SIG_5]
+    [simple bit SIG_4]
+    [simple bit SIG_3]
+    [simple bit SIG_2]
+    [simple bit SIG_1]
 ]
 
-[type 'AlarmMessageObjectPushType'
-    [const  uint 8              'variableSpec'     '0x12']
-    [simple uint 8              'lengthSpec']
-    [simple SyntaxIdType        'syntaxId']
-    [simple uint 8              'numberOfValues']
-    [simple uint 32             'eventId']
-    [simple State               'eventState']
-    [simple State               'localState']
-    [simple State               'ackStateGoing']
-    [simple State               'ackStateComing']
-    [array  AssociatedValueType 'AssociatedValues' count 'numberOfValues' ]
+[type AlarmMessageObjectPushType
+    [const  uint 8              variableSpec     '0x12']
+    [simple uint 8              lengthSpec]
+    [simple SyntaxIdType        syntaxId]
+    [simple uint 8              numberOfValues]
+    [simple uint 32             eventId]
+    [simple State               eventState]
+    [simple State               localState]
+    [simple State               ackStateGoing]
+    [simple State               ackStateComing]
+    [array  AssociatedValueType AssociatedValues count 'numberOfValues' ]
 ]
 
-[type 'AlarmMessageAckObjectPushType'
-    [const  uint 8       'variableSpec' '0x12']
-    [simple uint 8       'lengthSpec']
-    [simple SyntaxIdType 'syntaxId']
-    [simple uint 8       'numberOfValues']
-    [simple uint 32      'eventId']
-    [simple State        'ackStateGoing']
-    [simple State        'ackStateComing']
+[type AlarmMessageAckObjectPushType
+    [const  uint 8       variableSpec '0x12']
+    [simple uint 8       lengthSpec]
+    [simple SyntaxIdType syntaxId]
+    [simple uint 8       numberOfValues]
+    [simple uint 32      eventId]
+    [simple State        ackStateGoing]
+    [simple State        ackStateComing]
 ]
 
-[type 'AlarmMessagePushType'
-    [simple DateAndTime                'TimeStamp']
-    [simple uint 8                     'functionId']
-    [simple uint 8                     'numberOfObjects']
-    [array  AlarmMessageObjectPushType 'messageObjects' count 'numberOfObjects' ]
+[type AlarmMessagePushType
+    [simple DateAndTime                TimeStamp]
+    [simple uint 8                     functionId]
+    [simple uint 8                     numberOfObjects]
+    [array  AlarmMessageObjectPushType messageObjects count 'numberOfObjects' ]
 ]
 
-[type 'AlarmMessageAckPushType'
-    [simple DateAndTime                   'TimeStamp']
-    [simple uint 8                        'functionId']
-    [simple uint 8                        'numberOfObjects']
-    [array  AlarmMessageAckObjectPushType 'messageObjects' count 'numberOfObjects' ]
+[type AlarmMessageAckPushType
+    [simple DateAndTime                   TimeStamp]
+    [simple uint 8                        functionId]
+    [simple uint 8                        numberOfObjects]
+    [array  AlarmMessageAckObjectPushType messageObjects count 'numberOfObjects' ]
 ]
 
 //TODO: Apply for S7-300
-[type 'AlarmMessageQueryType' [uint 16 'dataLength']
-    [simple uint 8                      'functionId']
-    [simple uint 8                      'numberOfObjects']
-    [simple DataTransportErrorCode      'returnCode']
-    [simple DataTransportSize           'transportSize']
-    [const  uint 16                     'DataLength'     '0xFFFF']
-    [array  AlarmMessageObjectQueryType 'messageObjects' count   'STATIC_CALL("org.apache.plc4x.java.s7.utils.S7EventHelper.countAMOQT", readBuffer, dataLength)' ]
+[type AlarmMessageQueryType(uint 16 dataLength)
+    [simple uint 8                      functionId]
+    [simple uint 8                      numberOfObjects]
+    [simple DataTransportErrorCode      returnCode]
+    [simple DataTransportSize           transportSize]
+    [const  uint 16                     DataLength     '0xFFFF']
+    [array  AlarmMessageObjectQueryType messageObjects count   'STATIC_CALL("countAMOQT", readBuffer, dataLength)' ]
 ]
 
 //TODO: Apply for S7-400
-[type 'Alarm8MessageQueryType'
-    [simple uint 8                      'functionId']
-    [simple uint 8                      'numberOfObjects']
-    [simple DataTransportErrorCode      'returnCode']
-    [simple DataTransportSize           'transportSize']
-    [simple  uint 16                     'byteCount']
-    [array  AlarmMessageObjectQueryType 'messageObjects' count   'byteCount / 12' ]
+[type Alarm8MessageQueryType
+    [simple uint 8                      functionId]
+    [simple uint 8                      numberOfObjects]
+    [simple DataTransportErrorCode      returnCode]
+    [simple DataTransportSize           transportSize]
+    [simple  uint 16                    byteCount]
+    [array  AlarmMessageObjectQueryType messageObjects count   'byteCount / 12' ]
 ]
 
 //TODO: Check for Alarm_8
-[type 'AlarmMessageObjectQueryType'
-    [simple   uint 8              'lengthDataset']
+[type AlarmMessageObjectQueryType
+    [simple   uint 8              lengthDataset]
     [reserved uint 16             '0x0000']
-    [simple   AlarmType           'alarmType']
-    [simple   uint 32             'eventId']
+    [simple   AlarmType           alarmType]
+    [simple   uint 32             eventId]
     [reserved uint 8             '0x00']
-    [simple   State               'eventState']
-    [simple   State               'ackStateGoing']
-    [simple   State               'ackStateComing']
-    [optional   DateAndTime         'timeComing' 'lengthDataset > 10']
-    [optional   AssociatedQueryValueType 'valueComing' 'lengthDataset > 10']
-    [optional   DateAndTime         'timeGoing' 'lengthDataset > 10']
-    [optional   AssociatedQueryValueType 'valueGoing' 'lengthDataset > 10']
+    [simple   State               eventState]
+    [simple   State               ackStateGoing]
+    [simple   State               ackStateComing]
+    [optional   DateAndTime         timeComing 'lengthDataset > 10']
+    [optional   AssociatedQueryValueType valueComing 'lengthDataset > 10']
+    [optional   DateAndTime         timeGoing 'lengthDataset > 10']
+    [optional   AssociatedQueryValueType valueGoing 'lengthDataset > 10']
 ]
 
 [type AlarmMessageObjectAckType
@@ -419,29 +419,29 @@
 // Cycle service Payloads
 ////////////////////////////////////////////////////////////////
 //Under test
-[discriminatedType  'CycServiceItemType'
-    [const    uint 8 'functionId'       '0x12']
-    [simple   uint 8 'byteLength']
-    [simple   uint 8 'syntaxId']
+[discriminatedType  CycServiceItemType
+    [const    uint 8 functionId       '0x12']
+    [simple   uint 8 byteLength]
+    [simple   uint 8 syntaxId]
     [typeSwitch 'syntaxId'
         ['0x10' CycServiceItemAnyType
-            [simple  TransportSize   'transportSize']
-            [simple uint 16 'length']
-            [simple uint 16 'dbNumber']            
-            [simple MemoryArea 'memoryArea']
-            [simple uint 24 'address']
+            [simple  TransportSize   transportSize]
+            [simple uint 16 length]
+            [simple uint 16 dbNumber]            
+            [simple MemoryArea memoryArea]
+            [simple uint 24 address]
         ]
         ['0xb0' CycServiceItemDbReadType
-            [simple   uint 8 'numberOfAreas']            
-            [array SubItem 'items' count 'numberOfAreas']
+            [simple   uint 8 numberOfAreas]            
+            [array SubItem items count 'numberOfAreas']
         ]
     ]
 ]
 
-[type 'SubItem'
-    [simple uint 8 'bytesToRead']
-    [simple uint 16 'dbNumber']
-    [simple uint 16 'startAddress']
+[type SubItem
+    [simple uint 8 bytesToRead]
+    [simple uint 16 dbNumber]
+    [simple uint 16 startAddress]
 ]
 
 
@@ -474,38 +474,38 @@
 // 0x16 NOTIFY8_IND
 ////////////////////////////////////////////////////////////////
 
-[discriminatedType 'S7PayloadUserDataItem' [ uint 4 'cpuFunctionGroup', uint 4 'cpuFunctionType', uint 8 'cpuSubfunction']
-    [simple         DataTransportErrorCode 'returnCode']
-    [simple         DataTransportSize      'transportSize']
-    [simple         uint 16                'dataLength']
+[discriminatedType S7PayloadUserDataItem(uint 4 cpuFunctionGroup, uint 4 cpuFunctionType, uint 8 cpuSubfunction)
+    [simple         DataTransportErrorCode returnCode]
+    [simple         DataTransportSize      transportSize]
+    [simple         uint 16                dataLength]
 
     [typeSwitch     'cpuFunctionGroup', 'cpuFunctionType', 'cpuSubfunction', 'dataLength'
 
         ['0x02', '0x00', '0x01' S7PayloadUserDataItemCyclicServicesPush
-            [simple uint 16 'itemsCount']
-            [array AssociatedValueType 'items' count 'itemsCount']
+            [simple uint 16 itemsCount]
+            [array AssociatedValueType items count 'itemsCount']
         ]
 
         ['0x02', '0x00', '0x05' S7PayloadUserDataItemCyclicServicesChangeDrivenPush
-            [simple uint 16 'itemsCount']
-            [array AssociatedQueryValueType 'items' count 'itemsCount']
+            [simple uint 16 itemsCount]
+            [array AssociatedQueryValueType items count 'itemsCount']
         ]
 
         ['0x02', '0x04', '0x01' S7PayloadUserDataItemCyclicServicesSubscribeRequest
-            [simple uint 16 'itemsCount']
-            [simple TimeBase 'timeBase']
-            [simple uint 8 'timeFactor']
-            [array CycServiceItemType 'item' count 'itemsCount']
+            [simple uint 16 itemsCount]
+            [simple TimeBase timeBase]
+            [simple uint 8 timeFactor]
+            [array CycServiceItemType item count 'itemsCount']
         ]
 
         ['0x02', '0x04', '0x04' S7PayloadUserDataItemCyclicServicesUnsubscribeRequest
-            [simple  uint 8  'function']
-            [simple  uint 8  'jobId']
+            [simple  uint 8  function]
+            [simple  uint 8  jobId]
         ]
 
         ['0x02', '0x08', '0x01' S7PayloadUserDataItemCyclicServicesSubscribeResponse
-            [simple uint 16 'itemsCount']
-            [array AssociatedValueType 'items' count 'itemsCount']
+            [simple uint 16 itemsCount]
+            [array AssociatedValueType items count 'itemsCount']
         ]
 
         ['0x02', '0x08', '0x04' S7PayloadUserDataItemCyclicServicesUnsubscribeResponse
@@ -515,68 +515,68 @@
         ]
 
         ['0x02', '0x08', '0x05'  S7PayloadUserDataItemCyclicServicesChangeDrivenSubscribeResponse
-            [simple uint 16 'itemsCount']
-            [array AssociatedQueryValueType  'items' count 'itemsCount']
+            [simple uint 16 itemsCount]
+            [array AssociatedQueryValueType  items count 'itemsCount']
         ]
 
         //USER and SYSTEM Messages
         ['0x04', '0x00', '0x03' S7PayloadDiagnosticMessage
-            [simple uint 16     'EventId']
-            [simple uint 8      'PriorityClass']
-            [simple uint 8      'ObNumber']
-            [simple uint 16     'DatId']
-            [simple uint 16     'Info1']
-            [simple uint 32     'Info2']
-            [simple DateAndTime 'TimeStamp']
+            [simple uint 16     EventId]
+            [simple uint 8      PriorityClass]
+            [simple uint 8      ObNumber]
+            [simple uint 16     DatId]
+            [simple uint 16     Info1]
+            [simple uint 32     Info2]
+            [simple DateAndTime TimeStamp]
         ]
 
         //PUSH message reception S7300 & S7400 (ALARM_SQ, ALARM_S, ALARM_SC, ...)
         ['0x04', '0x00', '0x05' S7PayloadAlarm8
-            [simple AlarmMessagePushType 'alarmMessage']
+            [simple AlarmMessagePushType alarmMessage]
         ]
         ['0x04', '0x00', '0x06' S7PayloadNotify
-            [simple AlarmMessagePushType 'alarmMessage']
+            [simple AlarmMessagePushType alarmMessage]
         ]
         ['0x04', '0x00', '0x0c' S7PayloadAlarmAckInd
-            [simple AlarmMessageAckPushType 'alarmMessage']
+            [simple AlarmMessageAckPushType alarmMessage]
         ]
         ['0x04', '0x00', '0x11' S7PayloadAlarmSQ
-            [simple AlarmMessagePushType 'alarmMessage']
+            [simple AlarmMessagePushType alarmMessage]
         ]
         ['0x04', '0x00', '0x12' S7PayloadAlarmS
-            [simple AlarmMessagePushType 'alarmMessage']
+            [simple AlarmMessagePushType alarmMessage]
         ]
 
         //TODO: Only for S7ProtocolLogic call in code. S7-300
-        ['0x04', '0x00', '0x13' S7PayloadAlarmQuery [uint 16 'dataLength']
-            [simple AlarmMessageQueryType 'alarmMessage' ['dataLength']]
+        ['0x04', '0x00', '0x13' S7PayloadAlarmQuery(uint 16 dataLength)
+            [simple AlarmMessageQueryType('dataLength') alarmMessage]
         ]        
         //TODO: Only for S7ProtocolLogic call in code. S7-400
         //      The code 0xF0 is not from the controller.
         ['0x04', '0x00', '0xF0' S7PayloadAlarm8Query
-            [simple Alarm8MessageQueryType 'alarmMessage']
+            [simple Alarm8MessageQueryType alarmMessage]
         ]  
 
         ['0x04', '0x00', '0x16' S7PayloadNotify8
-            [simple AlarmMessagePushType 'alarmMessage']
+            [simple AlarmMessagePushType alarmMessage]
         ]
 
         //Request for specific functions of the SZL system
         ['0x04','0x04', '0x01', '0x00' S7PayloadUserDataItemCpuFunctionReadSzlNoDataRequest
         ]
         ['0x04', '0x04', '0x01' S7PayloadUserDataItemCpuFunctionReadSzlRequest
-            [simple   SzlId                  'szlId']
-            [simple   uint 16                'szlIndex']
+            [simple   SzlId                  szlId]
+            [simple   uint 16                szlIndex]
         ]
         ['0x04', '0x08', '0x01', '0x00' S7PayloadUserDataItemCpuFunctionReadSzlErrorResponse
         ]
-        ['0x04', '0x08', '0x01' S7PayloadUserDataItemCpuFunctionReadSzlResponse [uint 16 'dataLength' ]
-            [array byte 'items' count 'dataLength']
+        ['0x04', '0x08', '0x01' S7PayloadUserDataItemCpuFunctionReadSzlResponse(uint 16 dataLength)
+            [array byte items count 'dataLength']
         ]
 
         //Subscription to PUSH messages
         ['0x04', '0x04', '0x02' S7PayloadUserDataItemCpuFunctionMsgSubscription
-            [simple   uint 8         'Subscription']
+            [simple   uint 8         Subscription]
             [reserved uint 8         '0x00']
             [simple   string         64             magicKey           ]
             [optional AlarmStateType Alarmtype    'Subscription >= 128']
@@ -585,47 +585,47 @@
 	['0x04', '0x08', '0x02', '0x00' S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse
         ]
 	['0x04', '0x08', '0x02', '0x02' S7PayloadUserDataItemCpuFunctionMsgSubscriptionSysResponse
-            [simple uint 8 'result']
-            [simple uint 8 'reserved01']
+            [simple uint 8 result]
+            [simple uint 8 reserved01]
         ]
         ['0x04', '0x08', '0x02', '0x05' S7PayloadUserDataItemCpuFunctionMsgSubscriptionAlarmResponse
-            [simple uint 8    'result']
-            [simple uint 8    'reserved01']
-            [simple AlarmStateType 'alarmType']
-            [simple uint 8    'reserved02']
-            [simple uint 8    'reserved03']
+            [simple uint 8    result]
+            [simple uint 8    reserved01]
+            [simple AlarmStateType alarmType]
+            [simple uint 8    reserved02]
+            [simple uint 8    reserved03]
         ]
 
         //ALARM_ACK Acknowledgment of alarms
         ['0x04', '0x04', '0x0b' S7PayloadUserDataItemCpuFunctionAlarmAckRequest
-            [const    uint 8       'functionId'       '0x09']
-            [implicit uint 8                    'numberOfObjects' 'COUNT(messageObjects)']
-            [array    AlarmMessageObjectAckType 'messageObjects'  count 'numberOfObjects' ]
+            [const    uint 8       functionId       '0x09']
+            [implicit uint 8                    numberOfObjects 'COUNT(messageObjects)']
+            [array    AlarmMessageObjectAckType messageObjects  count 'numberOfObjects' ]
         ]
         ['0x04', '0x08', '0x0b', '0x00' S7PayloadUserDataItemCpuFunctionAlarmAckErrorResponse
         ]
         ['0x04', '0x08', '0x0b' S7PayloadUserDataItemCpuFunctionAlarmAckResponse
-            [simple    uint 8 'functionId']
-            [implicit  uint 8 'numberOfObjects' 'COUNT(messageObjects)']
-            [array     uint 8 'messageObjects'  count 'numberOfObjects' ]
+            [simple    uint 8 functionId]
+            [implicit  uint 8 numberOfObjects 'COUNT(messageObjects)']
+            [array     uint 8 messageObjects  count 'numberOfObjects' ]
         ]
 
 
         //ALARM_QUERY Request for alarms stored in the controller
         ['0x04', '0x04', '0x13' S7PayloadUserDataItemCpuFunctionAlarmQueryRequest
-            [const    uint 8       'functionId'       '0x00']
-            [const    uint 8       'numberMessageObj' '0x01']
-            [const    uint 8       'variableSpec'     '0x12']
-            [const    uint 8       'length'           '0x08']
-            [simple   SyntaxIdType 'syntaxId']
+            [const    uint 8       functionId       '0x00']
+            [const    uint 8       numberMessageObj '0x01']
+            [const    uint 8       variableSpec     '0x12']
+            [const    uint 8       length           '0x08']
+            [simple   SyntaxIdType syntaxId]
             [reserved uint 8       '0x00']
-            [simple   QueryType    'queryType']
-            [reserved uint 16       '0x3400']
-            [reserved uint 16       '0x0000']
-            [simple   AlarmType    'alarmType']
+            [simple   QueryType    queryType]
+            [reserved uint 16      '0x3400']
+            [reserved uint 16      '0x0000']
+            [simple   AlarmType    alarmType]
         ]
-        ['0x04', '0x08', '0x13' S7PayloadUserDataItemCpuFunctionAlarmQueryResponse [uint 16 'dataLength' ]
-            [array byte 'items' count 'dataLength']
+        ['0x04', '0x08', '0x13' S7PayloadUserDataItemCpuFunctionAlarmQueryResponse(uint 16 dataLength)
+            [array byte items count 'dataLength']
         ]
     ]
 ]
@@ -956,7 +956,7 @@
     ['0x12' UPDATE]
 ]
 
-[enum uint 8 'TimeBase'
+[enum uint 8 TimeBase
     ['0x00' B01SEC]
     ['0x01' B1SEC]
     ['0X02' B10SEC]

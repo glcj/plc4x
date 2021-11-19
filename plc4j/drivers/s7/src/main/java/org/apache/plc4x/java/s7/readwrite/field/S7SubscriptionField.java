@@ -23,10 +23,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.plc4x.java.api.exceptions.PlcInvalidFieldException;
 import org.apache.plc4x.java.api.model.PlcField;
-import org.apache.plc4x.java.s7.readwrite.types.AlarmType;
-import org.apache.plc4x.java.s7.readwrite.types.EventType;
+import org.apache.plc4x.java.s7.readwrite.AlarmType;
+import org.apache.plc4x.java.s7.readwrite.EventType;
+import org.apache.plc4x.java.s7.readwrite.TimeBase;
 import org.apache.plc4x.java.s7.readwrite.types.S7SubscriptionFieldType;
-import org.apache.plc4x.java.s7.readwrite.types.TimeBase;
 
 /**
  *

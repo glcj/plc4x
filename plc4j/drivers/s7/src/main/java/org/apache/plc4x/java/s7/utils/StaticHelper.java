@@ -23,7 +23,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.spi.generation.ParseException;
-import org.apache.plc4x.java.spi.generation.ReadBuffer;
 import org.apache.plc4x.java.spi.generation.WriteBuffer;
 
 import java.nio.charset.StandardCharsets;
@@ -33,6 +32,9 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.plc4x.java.s7.readwrite.DataTransportSize;
+import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.SerializationException;
 
 public class StaticHelper {
 
@@ -241,11 +243,13 @@ public class StaticHelper {
             io.writeByte(k);
             io.writeByte(m); 
             io.writeByteArray(chars); 
-        } catch (ParseException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(StaticHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    
+
+
+        
  
 }
