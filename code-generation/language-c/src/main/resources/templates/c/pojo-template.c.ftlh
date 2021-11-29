@@ -60,14 +60,14 @@
 // enum constant to directly access a given types discriminator values)
 const ${helper.getCTypeName(type.name)}_discriminator ${helper.getCTypeName(type.name)}_discriminators[] = {
     <#if type.getDiscriminatorCaseToKeyValueMap()?has_content>
-        <#list type.getDiscriminatorCaseToKeyValueMap() as name, typeValues>
+        <#list type.getDiscriminatorCaseToKeyValueMap() as name, typeTerms>
   {/* ${helper.getCTypeName(name)} */
 <#if true>   </#if><@compress single_line=true>
-               <#list typeValues as key, value>
+               <#list typeTerms as key, term>
                    <#if !helper.isComplexTypeReference(helper.getDiscriminatorTypes()[key])>
-                .${key} = <#if value??>${value}<#else>-1</#if><#sep>,
+                .${key} = <#if term??>${helper.toParseExpression(type, null, term, parserArguments)}<#else>-1</#if><#sep>,
                    <#else>
-                .${key} = <#if value??>${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[key])}_${value}<#else>-1</#if><#sep>,
+                .${key} = <#if term??>${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[key])}_${term.asLiteral().orElseThrow().asVariableLiteral().orElseThrow().name}<#else>-1</#if><#sep>,
                    </#if>
                </#list>}<#sep >,
             </@compress>
@@ -94,7 +94,7 @@ ${helper.getCTypeName(type.name)} ${helper.getCTypeName(type.name)}_null() {
 
 // Constant values.
     <#list helper.getAllConstFields() as constField, parentType>
-static const ${helper.getLanguageTypeNameForField(constField)} ${helper.getCTypeName(parentType.name)?upper_case}_${helper.camelCaseToSnakeCase(constField.name)?upper_case}_const = ${constField.referenceValue};
+static const ${helper.getLanguageTypeNameForField(constField)} ${helper.getCTypeName(parentType.name)?upper_case}_${helper.camelCaseToSnakeCase(constField.name)?upper_case}_const = ${helper.toParseExpression(type, constField, constField.referenceValue, parserArguments)};
 ${helper.getLanguageTypeNameForField(constField)} ${helper.getCTypeName(parentType.name)?upper_case}_${helper.camelCaseToSnakeCase(constField.name)?upper_case}() {
   return ${helper.getCTypeName(parentType.name)?upper_case}_${helper.camelCaseToSnakeCase(constField.name)?upper_case}_const;
 }
@@ -381,9 +381,9 @@ plc4c_return_code ${helper.getCTypeName(type.name)}_parse(plc4c_spi_read_buffer*
 <#if indentContent>  </#if>  // Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
         <#list switchField.cases as case>
             <#if !helper.isComplexTypeReference(helper.getDiscriminatorTypes()[field.discriminatorExpressions[0].name])>
-<#if indentContent>  </#if>  <#if case.discriminatorValues?has_content>if(<#list case.discriminatorValues as discriminatorValue><#if case.discriminatorValues?size &gt; 1>(</#if>${helper.toVariableParseExpression(baseType, switchField, switchField.discriminatorExpressions[discriminatorValue?index].asLiteral().orElseThrow().asVariableLiteral().orElseThrow(), parserArguments)} == ${discriminatorValue}<#if case.discriminatorValues?size &gt; 1>)</#if><#sep> && </#sep></#list>) </#if>{ /* ${case.name} */
+<#if indentContent>  </#if>  <#if case.discriminatorValueTerms?has_content>if(<#list case.discriminatorValueTerms as discriminatorValueTerm><#if case.discriminatorValueTerms?size &gt; 1>(</#if>${helper.toVariableParseExpression(baseType, switchField, switchField.discriminatorExpressions[discriminatorValueTerm?index].asLiteral().orElseThrow().asVariableLiteral().orElseThrow(), parserArguments)} == ${helper.toParseExpression(type, null, discriminatorValueTerm, parserArguments)}<#if case.discriminatorValueTerms?size &gt; 1>)</#if><#sep> && </#sep></#list>) </#if>{ /* ${case.name} */
             <#else>
-<#if indentContent>  </#if>  <#if case.discriminatorValues?has_content>if(<#list case.discriminatorValues as discriminatorValue><#if case.discriminatorValues?size &gt; 1>(</#if>${helper.toVariableParseExpression(baseType, switchField, switchField.discriminatorExpressions[discriminatorValue?index].asLiteral().orElseThrow().asVariableLiteral().orElseThrow(), parserArguments)} == ${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[field.discriminatorExpressions[discriminatorValue?index].name])}_${discriminatorValue}<#if case.discriminatorValues?size &gt; 1>)</#if><#sep> && </#sep></#list>) </#if>{ /* ${case.name} */
+<#if indentContent>  </#if>  <#if case.discriminatorValueTerms?has_content>if(<#list case.discriminatorValueTerms as discriminatorValueTerm><#if case.discriminatorValueTerms?size &gt; 1>(</#if>${helper.toVariableParseExpression(baseType, switchField, switchField.discriminatorExpressions[discriminatorValueTerm?index].asLiteral().orElseThrow().asVariableLiteral().orElseThrow(), parserArguments)} == ${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[switchField.discriminatorExpressions[discriminatorValueTerm?index].name])}_${discriminatorValueTerm.asLiteral().orElseThrow().asVariableLiteral().orElseThrow().name}<#if case.discriminatorValueTerms?size &gt; 1>)</#if><#sep> && </#sep></#list>) </#if>{ /* ${case.name} */
            </#if>
 <#if baseType.isDiscriminatedChildTypeDefinition()>
     <#assign discriminatedChildType = type.asDiscriminatedComplexTypeDefinition().orElseThrow()>

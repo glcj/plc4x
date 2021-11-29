@@ -16,15 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.java.spi.codegen.fields;
+package org.apache.plc4x.java.opcua;
 
-import org.apache.plc4x.java.spi.codegen.FieldCommons;
-import org.apache.plc4x.java.spi.codegen.io.DataWriter;
-import org.apache.plc4x.java.spi.generation.SerializationException;
-import org.apache.plc4x.java.spi.generation.WithWriterArgs;
+import org.apache.plc4x.test.driver.DriverTestsuiteRunner;
 
-public interface FieldWriter<T> extends FieldCommons {
+public class OpcuaDriverIT extends DriverTestsuiteRunner {
 
-    void writeField(String logicalName, T value, DataWriter<T> dataWriter, WithWriterArgs... writerArgs) throws SerializationException;
+    public OpcuaDriverIT() {
+        super("/protocols/opcua/DriverTestsuite.xml", true);
+    }
 
 }

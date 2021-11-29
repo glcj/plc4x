@@ -16,16 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.java.spi.codegen.fields;
 
-import org.apache.plc4x.java.spi.codegen.FieldCommons;
-import org.apache.plc4x.java.spi.codegen.io.DataReader;
-import org.apache.plc4x.java.spi.generation.ParseException;
-import org.apache.plc4x.java.spi.generation.WithReaderArgs;
+package org.apache.plc4x.java.spi.utils.ascii;
 
-public interface FieldReader<T> extends FieldCommons {
-
-    // TODO: this is useless here as you always operate on the concrete instance
-    T readField(String logicalName, DataReader<T> dataIO, WithReaderArgs... readerArgs) throws ParseException;
-
+/**
+ * Packages strings into boxes.
+ */
+public interface AsciiBoxer {
+    /**
+     * Box where int param is the proposed width
+     *
+     * @param somethingToBox something that needs to be boxed
+     * @param charWidth      the desired with of chars
+     * @return a boxed string
+     */
+    AsciiBox box(String somethingToBox, int charWidth);
 }

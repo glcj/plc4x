@@ -65,8 +65,7 @@ plc4c_return_code ${helper.getCTypeName(type.name)}_parse(plc4c_spi_read_buffer*
     plc4c_return_code _res = OK;
 
     <#list type.switchField.cases as case>
-        <#if case.discriminatorValues?has_content>if(<#list case.discriminatorValues as discriminatorValue><#if case.discriminatorValues?size &gt; 1>(</#if><#if helper.discriminatorValueNeedsStringEqualityCheck(type.switchField.discriminatorExpressions[discriminatorValue?index])>strcmp(${helper.toParseExpression(type, null, type.switchField.discriminatorExpressions[discriminatorValue?index], parserArguments)}, "${discriminatorValue}") == 0<#else>${helper.toParseExpression(type, null, type.switchField.discriminatorExpressions[discriminatorValue?index], parserArguments)} == <#if helper.isComplexTypeReference(parserArguments[discriminatorValue?index].type)><#if helper.isEnumTypeReference(parserArguments[discriminatorValue?index].type)>${helper.getLanguageTypeNameForTypeReference(parserArguments[discriminatorValue?index].type)}_${discriminatorValue}<#else>${discriminatorValue}</#if><#else>${discriminatorValue}</#if></#if><#if case.discriminatorValues?size &gt; 1>)</#if><#sep> && </#sep></#list>) </#if>{ /* ${case.name} */
-<#--        (*_message)->_type = ${helper.getCTypeName(type.name)}_type_${helper.getCTypeName(case.name)};-->
+        <#if case.discriminatorValueTerms?has_content>if(<#list case.discriminatorValueTerms as discriminatorValueTerm><#if case.discriminatorValueTerms?size &gt; 1>(</#if><#if helper.discriminatorValueNeedsStringEqualityCheck(type.switchField.discriminatorExpressions[discriminatorValueTerm?index])>strcmp(${helper.toParseExpression(type, null, type.switchField.discriminatorExpressions[discriminatorValueTerm?index], parserArguments)}, ${helper.toParseExpression(null, null, discriminatorValueTerm, parserArguments)}) == 0<#else>${helper.toParseExpression(type, null, type.switchField.discriminatorExpressions[discriminatorValueTerm?index], parserArguments)} == <#if helper.isComplexTypeReference(parserArguments[discriminatorValueTerm?index].type)><#if helper.isEnumTypeReference(parserArguments[discriminatorValueTerm?index].type)>${helper.getLanguageTypeNameForTypeReference(parserArguments[discriminatorValueTerm?index].type)}_${discriminatorValueTerm.asLiteral().orElseThrow().asVariableLiteral().orElseThrow().name}<#else>${helper.toParseExpression(type, null, discriminatorValueTerm, parserArguments)}</#if><#else>${helper.toParseExpression(type, null, discriminatorValueTerm, parserArguments)}</#if></#if><#if case.discriminatorValueTerms?size &gt; 1>)</#if><#sep> && </#sep></#list>) </#if>{ /* ${case.name} */
         <#assign skipReturn=false>
         <#list case.fields as field>
             <#switch field.typeName>
@@ -229,7 +228,7 @@ plc4c_return_code ${helper.getCTypeName(type.name)}_parse(plc4c_spi_read_buffer*
   return OK;
 }
 
-plc4c_return_code ${helper.getCTypeName(type.name)}_serialize(plc4c_spi_write_buffer* writeBuffer, plc4c_data** data_item<#if helper.getSerializerArguments(parserArguments)?has_content>, <#list helper.getSerializerArguments(parserArguments) as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type)} ${parserArgument.name}<#sep>, </#sep></#list></#if>) {
+plc4c_return_code ${helper.getCTypeName(type.name)}_serialize(plc4c_spi_write_buffer* writeBuffer, plc4c_data** data_item) {
   plc4c_return_code _res = OK;
 
   return OK;

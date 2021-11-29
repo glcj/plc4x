@@ -19,7 +19,7 @@
 
 [discriminatedType FirmataMessage(bit response) byteOrder='BIG_ENDIAN'
     [discriminator uint 4 messageType]
-    [typeSwitch 'messageType'
+    [typeSwitch messageType
         // Reading operations
         // Data-Format is: in both bytes only the least significant 7 bits
         // count (unsigned 14 bit integer number)
@@ -58,7 +58,7 @@
 
 [discriminatedType FirmataCommand(bit response)
     [discriminator uint 4 commandCode]
-    [typeSwitch 'commandCode'
+    [typeSwitch commandCode
         ['0x0' FirmataCommandSysex
             [simple SysexCommand('response') command]
             [reserved uint 8 '0xF7']
@@ -83,7 +83,7 @@
 
 [discriminatedType SysexCommand(bit response)
     [discriminator uint 8 commandType]
-    [typeSwitch 'commandType','response'
+    [typeSwitch commandType,response
         ['0x00' SysexCommandExtendedId
             [array int 8 id count '2']
         ]
@@ -115,7 +115,7 @@
         ['0x79','true' SysexCommandReportFirmwareResponse
             [simple uint 8 majorVersion]
             [simple uint 8 minorVersion]
-            [manualArray byte 'fileName' terminated 'STATIC_CALL("isSysexEnd", readBuffer)' 'STATIC_CALL("parseSysexString", readBuffer)' 'STATIC_CALL("serializeSysexString", writeBuffer, _value)' 'STATIC_CALL("lengthSysexString", fileName)']
+            [manualArray byte fileName terminated 'STATIC_CALL("isSysexEnd", readBuffer)' 'STATIC_CALL("parseSysexString", readBuffer)' 'STATIC_CALL("serializeSysexString", writeBuffer, _value)' 'STATIC_CALL("lengthSysexString", fileName)']
         ]
         ['0x7A' SysexCommandSamplingInterval
         ]

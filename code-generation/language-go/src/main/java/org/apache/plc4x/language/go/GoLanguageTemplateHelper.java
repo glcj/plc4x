@@ -359,6 +359,22 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
         return getWriteBufferWriteMethodCall(logicalName, simpleTypeReference, fieldName, field);
     }
 
+    public String getWriteBufferWriteMethodCall(String logicalName, SimpleTypeReference simpleTypeReference, Term valueTerm, TypedField field, String... writerArgs) {
+        if(valueTerm instanceof BooleanLiteral) {
+            return getWriteBufferWriteMethodCall(logicalName, simpleTypeReference, Boolean.toString(((BooleanLiteral) valueTerm).getValue()), field, writerArgs);
+        }
+        if(valueTerm instanceof NumericLiteral) {
+            return getWriteBufferWriteMethodCall(logicalName, simpleTypeReference, ((NumericLiteral) valueTerm).getNumber().toString(), field, writerArgs);
+        }
+        if(valueTerm instanceof HexadecimalLiteral) {
+            return getWriteBufferWriteMethodCall(logicalName, simpleTypeReference, ((HexadecimalLiteral) valueTerm).getHexString(), field, writerArgs);
+        }
+        if(valueTerm instanceof StringLiteral) {
+            return getWriteBufferWriteMethodCall(logicalName, simpleTypeReference, "\"" + ((StringLiteral) valueTerm).getValue() + "\"", field, writerArgs);
+        }
+        throw new RuntimeException("Outputting " + valueTerm.toString() + " not implemented yet. Please continue defining other types in the GoLanguageHelper.getWriteBufferWriteMethodCall.");
+    }
+
     public String getWriteBufferWriteMethodCall(String logicalName, SimpleTypeReference simpleTypeReference, String fieldName, TypedField field, String... writerArgs) {
         String writerArgsString = "";
         if (writerArgs.length > 0) {
@@ -462,12 +478,12 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
         }
     }
 
-    public String toParseExpression(TypedField field, Term term, List<Argument> parserArguments) {
-        return toTypedParseExpression(field, (field != null) ? field.getType() : null, term, parserArguments);
+    public String toParseExpression(Field field, TypeReference resultType, Term term, List<Argument> parserArguments) {
+        return toTypedParseExpression(field, resultType, term, parserArguments);
     }
 
-    public String toSerializationExpression(TypedField field, Term term, List<Argument> serializerArguments) {
-        return toTypedSerializationExpression(field, (field != null) ? field.getType() : null, term, serializerArguments);
+    public String toSerializationExpression(Field field, TypeReference resultType, Term term, List<Argument> serializerArguments) {
+        return toTypedSerializationExpression(field, resultType, term, serializerArguments);
     }
 
     public String toBooleanParseExpression(Field field, Term term, List<Argument> parserArguments) {
@@ -612,6 +628,9 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
             } else {
                 return tracer + getCastExpressionForTypeReference(fieldType) + "(" + ((NumericLiteral) term).getNumber().toString() + ")";
             }
+        } else if (term instanceof HexadecimalLiteral) {
+            tracer = tracer.dive("hexadecimal literal instanceOf");
+            return tracer + ((HexadecimalLiteral) term).getHexString();
         } else if (term instanceof StringLiteral) {
             tracer = tracer.dive("string literal instanceOf");
             return tracer + "\"" + ((StringLiteral) term).getValue() + "\"";
@@ -728,7 +747,8 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
             tracer = tracer.dive("implicit");
             if (serialize) {
                 tracer = tracer.dive("serialize");
-                return tracer + toSerializationExpression(getReferencedImplicitField(variableLiteral), getReferencedImplicitField(variableLiteral).getSerializeExpression(), serializerArguments);
+                final ImplicitField referencedImplicitField = getReferencedImplicitField(variableLiteral);
+                return tracer + toSerializationExpression(referencedImplicitField, referencedImplicitField.getType(), getReferencedImplicitField(variableLiteral).getSerializeExpression(), serializerArguments);
             } else {
                 return tracer + variableLiteral.getName();
                 //return toParseExpression(getReferencedImplicitField(vl), getReferencedImplicitField(vl).getSerializeExpression(), serializerArguments);
@@ -910,16 +930,16 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
             .orElseThrow(() -> new RuntimeException("First argument should be a literal"))
             .asVariableLiteral()
             .orElseThrow(() -> new RuntimeException("First argument should be a Variable literal"));
-        VariableLiteral typeLiteral = arguments.get(1).asLiteral()
-            .orElseThrow(() -> new RuntimeException("Second argument should be a literal"))
-            .asVariableLiteral()
-            .orElseThrow(() -> new RuntimeException("Second argument should be a Variable literal"));
-        final TypeDefinition typeDefinition = getTypeDefinitions().get(typeLiteral.getName());
+        StringLiteral typeLiteral = arguments.get(1).asLiteral()
+            .orElseThrow(() -> new RuntimeException("Second argument should be a String literal"))
+            .asStringLiteral()
+            .orElseThrow(() -> new RuntimeException("Second argument should be a String literal"));
+        final TypeDefinition typeDefinition = getTypeDefinitions().get(typeLiteral.getValue());
         StringBuilder sb = new StringBuilder();
         if (typeDefinition.isComplexTypeDefinition()) {
             sb.append("Cast");
         }
-        sb.append(typeLiteral.getName());
+        sb.append(typeLiteral.getValue());
         sb.append("(").append(toVariableExpression(field, typeReference, firstArgument, parserArguments, serializerArguments, serialize, suppressPointerAccess)).append(")");
         return tracer + sb.toString() + variableLiteral.getChild().map(child -> "." + capitalize(toVariableExpression(field, typeReference, child, parserArguments, serializerArguments, false, suppressPointerAccess))).orElse("");
     }
@@ -989,7 +1009,7 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                 final TypeReference type = typedField.getType();
                 if (field instanceof ManualField) {
                     ManualField manualField = (ManualField) field;
-                    sb.append("(").append(toSerializationExpression(manualField, manualField.getLengthExpression(), parserArguments)).append(") + ");
+                    sb.append("(").append(toSerializationExpression(manualField, getIntTypeReference(), manualField.getLengthExpression(), parserArguments)).append(") + ");
                 } else if (type instanceof SimpleTypeReference) {
                     SimpleTypeReference simpleTypeReference = (SimpleTypeReference) type;
                     sizeInBits += simpleTypeReference.getSizeInBits();

@@ -42,6 +42,7 @@ batchSetDefinition
  ;
 
 dataIoDefinition
+// TODO: remove typeSwitchField as it's a uncessary indirection
  : LBRACKET typeSwitchField (LBRACKET params=multipleExpressions RBRACKET)? RBRACKET
  ;
 
@@ -78,7 +79,7 @@ checksumField
  ;
 
 constField
- : 'const' type=typeReference name=idExpression expected=expression
+ : 'const' type=typeReference name=idExpression expected=valueLiteral
  ;
 
 discriminatorField
@@ -122,7 +123,7 @@ simpleField
  ;
 
 typeSwitchField
- : 'typeSwitch' discriminators=multipleExpressions caseStatement*
+ : 'typeSwitch' discriminators=multipleVariableLiterals caseStatement*
  ;
 
 unknownField
@@ -184,8 +185,18 @@ multipleExpressions
  : expression (',' expression)*
  ;
 
+multipleVariableLiterals
+ : variableLiteral (',' variableLiteral)*
+ ;
+
+variableLiteral
+ : IDENTIFIER_LITERAL
+ | IDENTIFIER_LITERAL '.' variableLiteral // Field Reference or method call
+ | variableLiteral '[' + INTEGER_LITERAL + ']' // Array index
+ ;
+
 innerExpression
- : BOOLEAN_LITERAL
+ : valueLiteral
  // Explicitly allow the loop type keywords in expressions
  | ARRAY_LOOP_TYPE
  | IDENTIFIER_LITERAL ('(' (innerExpression (',' innerExpression)* )? ')')? ('[' innerExpression ']')?
@@ -196,8 +207,13 @@ innerExpression
  | '(' innerExpression ')'
  | '"' innerExpression '"'
  | '!' innerExpression
+ ;
+
+valueLiteral
+ : BOOLEAN_LITERAL
  | HEX_LITERAL
  | INTEGER_LITERAL
+ | FLOAT_LITERAL
  | STRING_LITERAL
  ;
 
@@ -256,6 +272,10 @@ INTEGER_CHARACTERS
 fragment
 INTEGER_CHARACTER
  : [0-9]
+ ;
+
+FLOAT_LITERAL
+ : INTEGER_LITERAL.INTEGER_LITERAL
  ;
 
 // Hexadecimal literals
