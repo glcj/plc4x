@@ -41,6 +41,15 @@ public class S7Configuration implements Configuration, TcpTransportConfiguration
     @ConfigurationParameter("remote-slot")
     @IntDefaultValue(0)
     public int remoteSlot = 0;
+    
+    @ConfigurationParameter("remote-rack2")
+    @IntDefaultValue(0)
+    public int remoteRack2 = 0;
+
+    @ConfigurationParameter("remote-slot2")
+    @IntDefaultValue(0)
+    public int remoteSlot2 = 0;    
+    
 
     @ConfigurationParameter("pdu-size")
     @IntDefaultValue(1024)
@@ -88,6 +97,22 @@ public class S7Configuration implements Configuration, TcpTransportConfiguration
     public void setRemoteSlot(int remoteSlot) {
         this.remoteSlot = remoteSlot;
     }
+    
+    public int getRemoteRack2() {
+        return remoteRack2;
+    }
+
+    public void setRemoteRack2(int remoteRack) {
+        this.remoteRack2 = remoteRack;
+    }
+
+    public int getRemoteSlot2() {
+        return remoteSlot2;
+    }
+
+    public void setRemoteSlot2(int remoteSlot) {
+        this.remoteSlot2 = remoteSlot;
+    }    
 
     public int getPduSize() {
         return pduSize;

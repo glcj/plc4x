@@ -255,7 +255,6 @@ public class S7SubscriptionField implements PlcField {
         }
         
         {
-            System.out.println("***** Paso por aqui: " + fieldString);
             Matcher matcher = EVENT_CANCEL_JOB_QUERY_PATTERN.matcher(fieldString);
             if (matcher.matches()){
                 String[] arrIdAndSig;

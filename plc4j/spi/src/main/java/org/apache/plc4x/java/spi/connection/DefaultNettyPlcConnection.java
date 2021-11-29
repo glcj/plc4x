@@ -203,6 +203,7 @@ public class DefaultNettyPlcConnection extends AbstractPlcConnection implements 
                             .map(ConnectionStateListener.class::cast);
                         if (evt instanceof ConnectedEvent) {
                             sessionSetupCompleteFuture.complete(null);
+                            System.out.println("");
                             eventListeners.forEach(ConnectionStateListener::connected);
                         } else if (evt instanceof DisconnectedEvent) {
                             sessionDisconnectCompleteFuture.complete(null);

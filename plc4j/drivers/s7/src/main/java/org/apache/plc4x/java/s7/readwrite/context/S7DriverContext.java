@@ -36,6 +36,8 @@ public class S7DriverContext implements DriverContext, HasConfiguration<S7Config
     private int maxAmqCaller;
     private int maxAmqCallee;
     private S7ControllerType controllerType;
+    
+    private int calledTsapId2;    
 
     @Override
     public void setConfiguration(S7Configuration configuration) {
@@ -43,6 +45,10 @@ public class S7DriverContext implements DriverContext, HasConfiguration<S7Config
             configuration.localRack, configuration.localSlot);
         this.calledTsapId = S7TsapIdEncoder.encodeS7TsapId(DeviceGroup.PG_OR_PC,
             configuration.remoteRack, configuration.remoteSlot);
+        
+        this.calledTsapId2 = S7TsapIdEncoder.encodeS7TsapId(DeviceGroup.PG_OR_PC,
+            configuration.remoteRack2, configuration.remoteSlot2);        
+     
 
         this.controllerType = configuration.controllerType == null ? S7ControllerType.ANY : S7ControllerType.valueOf(configuration.controllerType);
         // The Siemens LOGO device seems to only work with very limited settings,
@@ -85,6 +91,14 @@ public class S7DriverContext implements DriverContext, HasConfiguration<S7Config
     public void setCalledTsapId(int calledTsapId) {
         this.calledTsapId = calledTsapId;
     }
+    
+    public int getCalledTsapId2() {
+        return calledTsapId2;
+    }
+
+    public void setCalledTsapId2(int calledTsapId) {
+        this.calledTsapId2 = calledTsapId;
+    }    
 
     public COTPTpduSize getCotpTpduSize() {
         return cotpTpduSize;

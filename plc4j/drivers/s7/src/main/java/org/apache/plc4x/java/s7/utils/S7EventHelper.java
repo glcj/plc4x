@@ -127,6 +127,25 @@ import org.apache.plc4x.java.spi.generation.WriteBuffer;
 
 public class S7EventHelper {
   
+    /*
+    * It enables the generation of the internal "ping" in the driver.
+    * Default value: false
+    */
+    public static final String PROPERTY_PLC4X_FORCE_PING = "PROPERTY_PLC4X_FORCE_PING";    
+    
+    /*
+    * Defines the field that the ping should point to.
+    * Default:% MX1.0: BOOL
+    */
+    public static final String PROPERTY_PLC4X_FORCE_FIELD = "PROPERTY_PLC4X_FORCE_FIELD";    
+    
+    /*
+    * Sets the frequency of ping execution in the driver. The supervision is adjusted to twice this value 
+    * automatically.
+    * Default value: 1000
+    */
+    public static final String PROPERTY_PLC4X_PING_FRECUENCY_MS = "PROPERTY_PLC4X_PING_FRECUENCY_MS";        
+    
     /**
      * 
      */

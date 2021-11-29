@@ -60,7 +60,9 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -80,6 +82,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.IntStream;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionResponse;
 import org.apache.plc4x.java.api.messages.PlcUnsubscriptionRequest;
@@ -96,6 +100,8 @@ import org.apache.plc4x.java.s7.readwrite.types.S7SubscriptionFieldType;
 import org.apache.plc4x.java.s7.utils.S7ParamErrorCode;
 import org.apache.plc4x.java.spi.ConversationContext.ContextHandler;
 import org.apache.plc4x.java.spi.ConversationContext.SendRequestContext;
+import org.apache.plc4x.java.spi.events.ConnectEvent;
+import org.apache.plc4x.java.spi.events.DisconnectedEvent;
 import org.apache.plc4x.java.spi.messages.DefaultPlcSubscriptionRequest;
 import org.apache.plc4x.java.spi.messages.DefaultPlcSubscriptionResponse;
 import org.apache.plc4x.java.spi.messages.DefaultPlcUnsubscriptionRequest;
@@ -115,11 +121,11 @@ import org.apache.plc4x.java.spi.values.PlcUINT;
  */
 public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
-    public static final Duration REQUEST_TIMEOUT = Duration.ofMillis(10000);
+    public static final Duration REQUEST_TIMEOUT = Duration.ofMillis(120000);
 
     private final Logger logger = LoggerFactory.getLogger(S7ProtocolLogic.class);
     private final AtomicInteger tpduGenerator = new AtomicInteger(10);
-
+    
     /*
      * Take into account that the size of this buffer depends on the final device.
      * S7-300 goes from 20 to 300 and for S7-400 it goes from 300 to 10000.
@@ -135,11 +141,24 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     private final S7PlcSubscriptionHandle sysHandle = new S7PlcSubscriptionHandle(EventType.SYS,EventLogic);
     private final S7PlcSubscriptionHandle usrHandle = new S7PlcSubscriptionHandle(EventType.USR,EventLogic);
     private final S7PlcSubscriptionHandle almHandle = new S7PlcSubscriptionHandle(EventType.ALM,EventLogic);
-    private final S7PlcSubscriptionHandle cycHandle = new S7PlcSubscriptionHandle(EventType.CYC,EventLogic);    
+    private final S7PlcSubscriptionHandle cycHandle = new S7PlcSubscriptionHandle(EventType.CYC,EventLogic);
+
+    /*
+    * For the reconnection functionality by a "TimeOut" of the connection,
+    * you must keep track of open transactions. In general, an S7 device 
+    * supports a couple of simultaneous requests.
+    * So far it is the way to indicate to the user that he must redo 
+    * his request.
+    */
+    private HashMap<Object,MutablePair<RequestTransactionManager.RequestTransaction, Object>> active_requests = new HashMap<>();
+    
 
     private S7DriverContext s7DriverContext;
     private RequestTransactionManager tm;
+ 
+    DefaultPlcReadRequest pingfieldrequest = null;    
 
+    
     @Override
     public void setDriverContext(DriverContext driverContext) {
         super.setDriverContext(driverContext);
@@ -168,24 +187,30 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         logger.info("S7 Driver running in ACTIVE mode.");
         logger.debug("Sending COTP Connection Request");
         // Open the session on ISO Transport Protocol first.
-        TPKTPacket packet = new TPKTPacket(createCOTPConnectionRequest(
-            s7DriverContext.getCalledTsapId(), s7DriverContext.getCallingTsapId(), s7DriverContext.getCotpTpduSize()));
+        TPKTPacket packet = null;
+        if (isPrimaryChannel()) {
+            packet = new TPKTPacket(createCOTPConnectionRequest(
+                s7DriverContext.getCalledTsapId(), s7DriverContext.getCallingTsapId(), s7DriverContext.getCotpTpduSize()));
+        } else {
+            packet = new TPKTPacket(createCOTPConnectionRequest(
+                s7DriverContext.getCalledTsapId2(), s7DriverContext.getCallingTsapId(), s7DriverContext.getCotpTpduSize()));            
+        }
 
         context.sendRequest(packet)
             .onTimeout(e -> {
-                logger.warn("Timeout during Connection establishing, closing channel...");
-                context.getChannel().close();
+                logger.info("Timeout during Connection establishing, closing channel...");
+                //context.getChannel().close();
             })
             .expectResponse(TPKTPacket.class, REQUEST_TIMEOUT)
             .check(p -> p.getPayload() instanceof COTPPacketConnectionResponse)
             .unwrap(p -> (COTPPacketConnectionResponse) p.getPayload())
             .handle(cotpPacketConnectionResponse -> {
-                logger.debug("Got COTP Connection Response");
-                logger.debug("Sending S7 Connection Request");
+                logger.info("Got COTP Connection Response");
+                logger.info("Sending S7 Connection Request");
                 context.sendRequest(createS7ConnectionRequest(cotpPacketConnectionResponse))
                     .onTimeout(e -> {
-                        logger.warn("Timeout during Connection establishing, closing channel...");
-                        context.getChannel().close();
+                        logger.info("Timeout during Connection establishing, closing channel...");
+                        //context.getChannel().close();
                     })
                     .expectResponse(TPKTPacket.class, REQUEST_TIMEOUT)
                     .unwrap(TPKTPacket::getPayload)
@@ -201,21 +226,24 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                         s7DriverContext.setMaxAmqCallee(setupCommunication.getMaxAmqCallee());
                         s7DriverContext.setPduSize(setupCommunication.getPduLength());
 
-                            // Update the number of concurrent requests to the negotiated number.
-                            // I have never seen anything else than equal values for caller and
-                            // callee, but if they were different, we're only limiting the outgoing
-                            // requests.
-                            tm.setNumberOfConcurrentRequests(s7DriverContext.getMaxAmqCallee());
+                        // Update the number of concurrent requests to the negotiated number.
+                        // I have never seen anything else than equal values for caller and
+                        // callee, but if they were different, we're only limiting the outgoing
+                        // requests.
+                        tm.setNumberOfConcurrentRequests(s7DriverContext.getMaxAmqCallee());
 
-                            // If the controller type is explicitly set, were finished with the login
-                            // process. If it's set to ANY, we have to query the serial number information
-                            // in order to detect the type of PLC.
-                            if (s7DriverContext.getControllerType() != S7ControllerType.ANY) {
-                                // Send an event that connection setup is complete.
-                                context.fireConnected();
-                                return;
-                            }
+                            
 
+                        // If the controller type is explicitly set, were finished with the login
+                        // process. If it's set to ANY, we have to query the serial number information
+                        // in order to detect the type of PLC.
+                        if (s7DriverContext.getControllerType() != S7ControllerType.ANY) {
+                            // Send an event that connection setup is complete.
+                            context.fireConnected();
+                            cleanFutures();
+                            return;
+                        }
+                            
                         // Prepare a message to request the remote to identify itself.
                         logger.debug("Sending S7 Identification Request");
                         TPKTPacket tpktPacket = createIdentifyRemoteMessage();
@@ -234,17 +262,37 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                                 logger.debug("Got S7 Identification Response");
                                 S7PayloadUserData payloadUserData = (S7PayloadUserData) messageUserData.getPayload();
                                 extractControllerTypeAndFireConnected(context, payloadUserData);
+                                cleanFutures();                                
                             });
                     });
             });
+             
     }
 
+    @Override
+    public void onDisconnect(ConversationContext<TPKTPacket> context) {        
+        logger.info("***** onDisconnect *****");           
+        cleanFutures();
+    }
+
+    @Override
+    public void onDiscover(ConversationContext<TPKTPacket> context) {
+        super.onDiscover(context); //To change body of generated methods, choose Tools | Templates.
+        logger.info("***** onDiscover *****");        
+    }
+
+                
     /*
     * Support read varibles from PLC (S7Field) and system status list (S7SzlField).
     * 
     */
     @Override
     public CompletableFuture<PlcReadResponse> read(PlcReadRequest readRequest) {
+        if (!isConnected()) {
+            CompletableFuture<PlcReadResponse> future = new CompletableFuture<PlcReadResponse>();
+            future.completeExceptionally(new PlcRuntimeException("Disconnected"));                       
+            return future;
+        }
         DefaultPlcReadRequest request = (DefaultPlcReadRequest) readRequest;
         List<S7VarRequestParameterItem> requestItems = new ArrayList<>(request.getNumberOfFields());
      
@@ -296,15 +344,24 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
      * @return 
      */
     private CompletableFuture<PlcReadResponse> toPlcReadResponse(PlcReadRequest readRequest, CompletableFuture<S7Message> response) {
-        CompletableFuture<PlcReadResponse>  future = new CompletableFuture<>();        
-        PlcReadResponse plcitems;    
+        CompletableFuture<PlcReadResponse>  client_future = new CompletableFuture<>();  
+        active_requests.get(response).setRight(client_future);  
         try {
-            plcitems = (PlcReadResponse) decodeReadResponse(response.get(), readRequest);
-            future.complete(plcitems);
+           
+            context.getChannel().eventLoop().execute(()->{
+                try
+                {
+                    PlcReadResponse plcitems = (PlcReadResponse) decodeReadResponse(response.get(), readRequest);
+                    client_future.complete(plcitems);  
+                } catch (Exception ex) {
+                    logger.info(ex.toString());
+                }
+            });
+
         } catch (Exception ex) {
             logger.info(ex.toString());
         }        
-        return future;
+        return client_future;
     }
 
     /**
@@ -329,7 +386,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         // Start a new request-transaction (Is ended in the response-handler)
         RequestTransactionManager.RequestTransaction transaction = tm.startRequest();
         transaction.submit(() -> context.sendRequest(tpktPacket)
-            .onTimeout(new TransactionErrorCallback<>(future, transaction))
+            //.onTimeout(new TransactionErrorCallback<>(future, transaction))
             .onError(new TransactionErrorCallback<>(future, transaction))
             .expectResponse(TPKTPacket.class, REQUEST_TIMEOUT)
             .check(p -> p.getPayload() instanceof COTPPacketData)
@@ -338,10 +395,12 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             .unwrap(COTPPacket::getPayload)
             .check(p -> p.getTpduReference() == tpduId)
             .handle(p -> {
+                active_requests.remove(future);                
                 future.complete(p);
                 // Finish the request-transaction.
                 transaction.endRequest();
             }));
+        active_requests.put(future, new MutablePair<>(transaction, null));        
         return future;
     }
     
@@ -360,7 +419,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         // Start a new request-transaction (Is ended in the response-handler)
         RequestTransactionManager.RequestTransaction transaction = tm.startRequest();
         transaction.submit(() -> context.sendRequest(tpktPacket)
-            .onTimeout(new TransactionErrorCallback<>(future, transaction))
+            //.onTimeout(new TransactionErrorCallback<>(future, transaction))
             .onError(new TransactionErrorCallback<>(future, transaction))
             .expectResponse(TPKTPacket.class, REQUEST_TIMEOUT)
             .check(p -> p.getPayload() instanceof COTPPacketData)
@@ -369,10 +428,12 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             .unwrap(COTPPacket::getPayload)
             .check(p -> p.getTpduReference() == tpduId)
             .handle(p -> {
+                active_requests.remove(future);
                 future.complete(p);
                 // Finish the request-transaction.
                 transaction.endRequest();
             }));
+        active_requests.put(future, new MutablePair<>(transaction, null));
         return future;
     }    
     
@@ -628,7 +689,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 
                     break;
                     case CYCLIC_UNSUBSCRIPTION:{
-                        System.out.println("CYCLIC_UNSUBSCRIPTION");
+                        logger.info("CYCLIC_UNSUBSCRIPTION");
                         encodeCycledUnSubscriptionRequest(request.getField(fieldName), parameterItems, payloadItems);
                         txParameters = new S7ParameterUserData(parameterItems);
                         txPayloads = new S7PayloadUserData(payloadItems);                        
@@ -1382,6 +1443,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     @Override
     public void close(ConversationContext<TPKTPacket> context) {
         // TODO Implement Closing on Protocol Level
+        context.getChannel().pipeline().fireUserEventTriggered(new DisconnectedEvent());
         EventLogic.stop();
     }
 
@@ -1410,7 +1472,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             ByteBuf szlitem = Unpooled.wrappedBuffer(readSzlResponseItem.getItems());
             String articleNumber = szlitem.toString(2, 20, Charset.defaultCharset());
             s7DriverContext.setControllerType(decodeControllerType(articleNumber));            
-            context.fireConnected();            
+            context.fireConnected(); 
         }
     }
 
@@ -1496,6 +1558,15 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 new COTPParameterTpduSize(cotpTpduSize)
             ), null, (short) 0x0000, (short) 0x000F, COTPProtocolClass.CLASS_0);
     }
+    
+    /*
+    * TODO: Ping service. Check RFC905, section 13.5.
+    *       Why the CP close the connection when recived this packed?
+    */
+    private COTPDataAcknowledgement createCOTPDataAcknowledgement(int calledTsapId, int callingTsapId, COTPTpduSize cotpTpduSize) {
+        return new COTPDataAcknowledgement(
+            null, null, (short) callingTsapId, (int) 0x00000000, (short) 0x0001);
+    }    
     
     private PlcResponse decodeReadResponse(S7Message responseMessage, PlcReadRequest plcReadRequest) throws PlcProtocolException {
         //logger.info("decodeReadResponse: " + responseMessage);
@@ -1671,7 +1742,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         context.sendRequest(request)
         .onTimeout(e -> {
             logger.warn("Timeout during Connection establishing, closing channel...");
-            context.getChannel().close();
+            //context.getChannel().close();
         })
         .expectResponse(TPKTPacket.class, Duration.ofMillis(1000))
         .check(p -> p.getPayload() instanceof COTPPacketData)
@@ -1701,7 +1772,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         context.sendRequest(request)
         .onTimeout(e -> {
             logger.warn("Timeout during Connection establishing, closing channel...");
-            context.getChannel().close();
+            //context.getChannel().close();
         })
         .expectResponse(TPKTPacket.class, Duration.ofMillis(1000))
         .check(p -> p.getPayload() instanceof COTPPacketData)
@@ -1777,7 +1848,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
         return new DefaultPlcWriteResponse(plcWriteRequest, responses);
     }
-
+    
+          
     private S7VarPayloadDataItem serializePlcValue(S7Field field, PlcValue plcValue) {
         try {
             DataTransportSize transportSize = field.getDataType().getDataTransportSize();
@@ -1915,6 +1987,38 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         return new S7AddressAny(transportSize, numElements, s7Field.getBlockNumber(),
             s7Field.getMemoryArea(), s7Field.getByteOffset(), s7Field.getBitOffset());
     }
+    
+    private boolean isConnected(){
+        return context.getChannel().attr(S7HMuxImpl.IS_CONNECTED).get();
+    }
+    
+    private boolean isPrimaryChannel(){
+        boolean b = (context.getChannel().attr(S7HMuxImpl.IS_PRIMARY).get() == null)?true:context.getChannel().attr(S7HMuxImpl.IS_PRIMARY).get();
+        return b;
+    }    
+    
+    
+    private void cleanFutures(){
+        //TODO: Debe ser ejecutado si la conexion esta levanta.
+        active_requests.forEach((f,p)->{
+            CompletableFuture<Object> cf = (CompletableFuture<Object>) f;
+            try {
+                if (!cf.isDone()) {
+                    logger.info("CF");
+                    cf.cancel(true);
+                    logger.info("ClientCF");
+                    ((CompletableFuture<Object>) p.getRight()).completeExceptionally(new PlcRuntimeException("Disconnected"));                     
+                    logger.info("TM");
+                    p.getLeft().endRequest();
+                };
+            } catch (Exception ex){
+                logger.info(ex.toString());
+            }
+        });
+        active_requests.clear();     
+    }
+
+
 
     /**
      * A generic purpose error handler which terminates transaction and calls back given future with error message.
@@ -1928,15 +2032,18 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             this.future = future;
             this.transaction = transaction;
         }
-
+       
+        
         @Override
         public void accept(TimeoutException e) {
+            System.out.println("Transaction TimeoutException: " + e.toString());
             transaction.endRequest();
             future.completeExceptionally(e);
         }
 
         @Override
         public void accept(TPKTPacket tpktPacket, E e) {
+            System.out.println("Transaction TPKTPacket: " + e.toString());            
             transaction.endRequest();
             future.completeExceptionally(e);
         }

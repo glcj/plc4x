@@ -16,36 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.java.s7.readwrite;
+package org.apache.plc4x.java.s7.readwrite.protocol;
 
-import org.apache.plc4x.java.api.PlcConnection;
-import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.apache.plc4x.java.s7.readwrite.configuration.S7Configuration;
-import org.apache.plc4x.java.spi.configuration.Configuration;
+import io.netty.channel.Channel;
 
 /**
  *
  * @author cgarcia
  */
-public class S7HADriver extends S7Driver {
-
+public interface S7HMux {
     
-    @Override
-    public String getProtocolCode() {
-        return "s7h";
-    }    
-    
-    @Override
-    public String getProtocolName() {
-        return "Siemens S7 (High Availability)";
-    }
-    
-    @Override
-    public PlcConnection getConnection(String connectionString) throws PlcConnectionException {
-        System.out.println("La conexion: " + connectionString);
-        return super.getConnection(connectionString); //To change body of generated methods, choose Tools | Templates.
-    }
-
-
+public void setPrimaryChannel(Channel primary_channel);  
+public void setSecondaryChannel(Channel secondary_channel); 
     
 }

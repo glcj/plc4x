@@ -36,6 +36,11 @@
     [implicit      uint 8 headerLength 'lengthInBytes - (((payload != null) ? payload.lengthInBytes : 0) + 1)']
     [discriminator uint 8 tpduCode]
     [typeSwitch 'tpduCode'
+        ['0x60' COTPDataAcknowledgement
+            [simple uint 16           destinationReference]
+            [simple uint 32           tpdu]
+            [simple uint 16           credit]
+        ]
         ['0xF0' COTPPacketData
             [simple bit    eot]
             [simple uint 7 tpduRef]
