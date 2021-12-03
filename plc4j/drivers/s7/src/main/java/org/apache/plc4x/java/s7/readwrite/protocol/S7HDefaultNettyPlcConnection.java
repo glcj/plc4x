@@ -139,6 +139,14 @@ public class S7HDefaultNettyPlcConnection extends DefaultNettyPlcConnection impl
             if (secondaryChannelFactory != null )
             doSecondaryTcpConnections();
             
+            //If it is not possible to generate a TCP connection.
+            //Safety shutdownn all executors in the channels.
+            if (primary_channel == null)         
+            if (secondary_channel == null) {
+                sendChannelDisconectEvent();
+                throw new PlcConnectionException("Connection is not possible.");
+            }         
+            
             scf = channel.eventLoop().scheduleWithFixedDelay(this, 1, 1, TimeUnit.SECONDS);
             
             /*            
@@ -229,7 +237,19 @@ public class S7HDefaultNettyPlcConnection extends DefaultNettyPlcConnection impl
         if (secondary_channel.isActive())
             secondary_channel.pipeline().addFirst(MULTIPLEXOR,s7hmux);             
         ((S7HMux) s7hmux).setSecondaryChannel(secondary_channel);        
-    }    
+    }  
+    
+    /*
+    * All handlers on the channel are notified that a disconnection has been 
+    * generated, generally during the first connection.
+    * In this way, a controlled shutdown of the execution services is achieved.
+    * The user application must take the measures to make the connection again.
+    */
+    protected void sendChannelDisconectEvent() {
+        logger.trace("Channels was not created, firing DisconnectEvent Event");
+        // Send an event to the pipeline telling the Protocol filters what's going on.
+        channel.pipeline().fireUserEventTriggered(new DisconnectEvent());
+    }        
 
     /*
     * To avoid creating new tasks associated with the supervision of the 

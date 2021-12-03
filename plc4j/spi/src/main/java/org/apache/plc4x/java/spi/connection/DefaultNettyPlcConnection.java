@@ -228,7 +228,7 @@ public class DefaultNettyPlcConnection extends AbstractPlcConnection implements 
         // Send an event to the pipeline telling the Protocol filters what's going on.
         channel.pipeline().fireUserEventTriggered(new ConnectEvent());
     }
-
+    
     @Override
     public void addEventListener(EventListener listener) {
         listeners.add(listener);
