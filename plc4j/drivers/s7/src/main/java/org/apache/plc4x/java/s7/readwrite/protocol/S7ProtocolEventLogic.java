@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
  * @author cgarcia
  */
 public class S7ProtocolEventLogic implements PlcSubscriber {
-    private final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(S7ProtocolEventLogic.class);
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(S7ProtocolEventLogic.class);
     
     private final BlockingQueue eventqueue;
     private final BlockingQueue dispachqueue = new ArrayBlockingQueue<>(1024);
@@ -86,7 +86,9 @@ public class S7ProtocolEventLogic implements PlcSubscriber {
         runnProcessor = new ObjectProcessor(eventqueue,dispachqueue);
         runnDispacher = new EventDispacher(dispachqueue);
         processor = new Thread(runnProcessor);
+        processor.setName("plc4x-event-processor");
         dispacher = new Thread(runnDispacher);        
+        dispacher.setName("plc4x-event-dispacher");
     }
     
     public void start() {
@@ -186,10 +188,10 @@ public class S7ProtocolEventLogic implements PlcSubscriber {
                         }
                     }                    
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(S7ProtocolEventLogic.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.info(ex.toString());
                 }
             }
-            LOGGER.info("ObjectProcessor Bye!");            
+            logger.debug("ObjectProcessor Bye!");            
         }
 
         public void doShutdown(){
@@ -250,7 +252,7 @@ public class S7ProtocolEventLogic implements PlcSubscriber {
                     Logger.getLogger(S7ProtocolEventLogic.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            LOGGER.info("EventDispacher Bye!");
+            logger.debug("EventDispacher Bye!");
         }
 
         public void doShutdown(){

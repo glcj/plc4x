@@ -26,6 +26,7 @@ import io.netty.channel.Channel;
  */
 public interface S7HMux {
     
+public void setEmbededhannel(Channel embeded_channel);     
 public void setPrimaryChannel(Channel primary_channel);  
 public void setSecondaryChannel(Channel secondary_channel); 
     

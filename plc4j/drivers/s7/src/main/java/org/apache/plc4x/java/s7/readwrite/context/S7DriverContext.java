@@ -36,8 +36,13 @@ public class S7DriverContext implements DriverContext, HasConfiguration<S7Config
     private int maxAmqCaller;
     private int maxAmqCallee;
     private S7ControllerType controllerType;
+ 
     
-    private int calledTsapId2;    
+    private int calledTsapId2; 
+    private int readTimeout;
+    private boolean ping;
+    private int pingTime;   
+    private int retryTime;
 
     @Override
     public void setConfiguration(S7Configuration configuration) {
@@ -66,6 +71,10 @@ public class S7DriverContext implements DriverContext, HasConfiguration<S7Config
         this.pduSize = cotpTpduSize.getSizeInBytes() - 16;
         this.maxAmqCaller = configuration.maxAmqCaller;
         this.maxAmqCallee = configuration.maxAmqCallee;
+        
+        this.readTimeout = configuration.readTimeout;
+        this.ping = configuration.ping;
+        this.pingTime = configuration.pingTime;
     }
 
     public boolean isPassiveMode() {
@@ -96,8 +105,8 @@ public class S7DriverContext implements DriverContext, HasConfiguration<S7Config
         return calledTsapId2;
     }
 
-    public void setCalledTsapId2(int calledTsapId) {
-        this.calledTsapId2 = calledTsapId;
+    public void setCalledTsapId2(int calledTsapId2) {
+        this.calledTsapId2 = calledTsapId2;
     }    
 
     public COTPTpduSize getCotpTpduSize() {
@@ -139,6 +148,38 @@ public class S7DriverContext implements DriverContext, HasConfiguration<S7Config
     public void setControllerType(S7ControllerType controllerType) {
         this.controllerType = controllerType;
     }
+    
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    } 
+    
+    public boolean getPing() {
+        return ping;
+    }
+
+    public void setPing(boolean ping) {
+        this.ping = ping;
+    }      
+    
+    public int getPingTime() {
+        return pingTime;
+    }
+
+    public void setPingTime(int pingTime) {
+        this.pingTime = pingTime;
+    }  
+
+    public int getRetryTime() {
+        return pingTime;
+    }
+
+    public void setRetryTime(int retryTime) {
+        this.retryTime = retryTime;
+    }   
 
     /**
      * Iterate over all values until one is found that the given tpdu size will fit.

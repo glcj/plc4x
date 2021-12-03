@@ -22,6 +22,7 @@ import org.apache.plc4x.java.s7.readwrite.utils.S7PlcSubscriptionHandle;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
 import io.netty.util.ByteProcessor;
 import org.apache.plc4x.java.api.exceptions.PlcProtocolException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
@@ -73,6 +74,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -82,6 +86,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.IntStream;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
@@ -126,6 +131,12 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     private final Logger logger = LoggerFactory.getLogger(S7ProtocolLogic.class);
     private final AtomicInteger tpduGenerator = new AtomicInteger(10);
     
+    private ExecutorService clientExecutorService = Executors.newFixedThreadPool(4, new BasicThreadFactory.Builder()
+                                                    .namingPattern("plc4x-app-thread-%d")
+                                                    .daemon(true)
+                                                    .priority(Thread.MAX_PRIORITY)
+                                                    .build());
+    
     /*
      * Take into account that the size of this buffer depends on the final device.
      * S7-300 goes from 20 to 300 and for S7-400 it goes from 300 to 10000.
@@ -147,6 +158,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     * For the reconnection functionality by a "TimeOut" of the connection,
     * you must keep track of open transactions. In general, an S7 device 
     * supports a couple of simultaneous requests.
+    * The rhythm of execution must be determined by the TransactionManager.
     * So far it is the way to indicate to the user that he must redo 
     * his request.
     */
@@ -182,7 +194,11 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             context.fireConnected();
             return;
         }
-
+        
+        //Set feature for all handlers in the pipeline from
+        //the driver configuration.
+        setChannelFeatures();
+        
         // Only the TCP transport supports login.
         logger.info("S7 Driver running in ACTIVE mode.");
         logger.debug("Sending COTP Connection Request");
@@ -195,7 +211,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             packet = new TPKTPacket(createCOTPConnectionRequest(
                 s7DriverContext.getCalledTsapId2(), s7DriverContext.getCallingTsapId(), s7DriverContext.getCotpTpduSize()));            
         }
-
+        
         context.sendRequest(packet)
             .onTimeout(e -> {
                 logger.info("Timeout during Connection establishing, closing channel...");
@@ -205,8 +221,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             .check(p -> p.getPayload() instanceof COTPPacketConnectionResponse)
             .unwrap(p -> (COTPPacketConnectionResponse) p.getPayload())
             .handle(cotpPacketConnectionResponse -> {
-                logger.info("Got COTP Connection Response");
-                logger.info("Sending S7 Connection Request");
+                logger.debug("Got COTP Connection Response");
+                logger.debug("Sending S7 Connection Request");
                 context.sendRequest(createS7ConnectionRequest(cotpPacketConnectionResponse))
                     .onTimeout(e -> {
                         logger.info("Timeout during Connection establishing, closing channel...");
@@ -231,9 +247,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                         // callee, but if they were different, we're only limiting the outgoing
                         // requests.
                         tm.setNumberOfConcurrentRequests(s7DriverContext.getMaxAmqCallee());
-
                             
-
                         // If the controller type is explicitly set, were finished with the login
                         // process. If it's set to ANY, we have to query the serial number information
                         // in order to detect the type of PLC.
@@ -269,16 +283,28 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
              
     }
 
+    /*
+    * It performs the sequential and safe shutdown of the driver. 
+    * Completion of pending requests, executors and associated tasks.
+    */
     @Override
     public void onDisconnect(ConversationContext<TPKTPacket> context) {        
-        logger.info("***** onDisconnect *****");           
-        cleanFutures();
+        //1. Clear all pending requests and their associated transaction          
+        cleanFutures(); 
+        //2. Here we shutdown the local task executor.
+        clientExecutorService.shutdown();
+        //3. Performs the shutdown of the transaction executor.
+        tm.shutdown();
+        //4. Finish the execution of the tasks for the handling of Events. 
+        EventLogic.stop();
+        //5. Executes the closing of the main channel.
+        context.getChannel().close();
+        //6. Here is the stop of any task or state machine that is added.
     }
 
     @Override
     public void onDiscover(ConversationContext<TPKTPacket> context) {
-        super.onDiscover(context); //To change body of generated methods, choose Tools | Templates.
-        logger.info("***** onDiscover *****");        
+        super.onDiscover(context);         
     }
 
                 
@@ -347,8 +373,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         CompletableFuture<PlcReadResponse>  client_future = new CompletableFuture<>();  
         active_requests.get(response).setRight(client_future);  
         try {
-           
-            context.getChannel().eventLoop().execute(()->{
+            clientExecutorService.execute(()->{
                 try
                 {
                     PlcReadResponse plcitems = (PlcReadResponse) decodeReadResponse(response.get(), readRequest);
@@ -357,7 +382,6 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     logger.info(ex.toString());
                 }
             });
-
         } catch (Exception ex) {
             logger.info(ex.toString());
         }        
@@ -395,10 +419,14 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             .unwrap(COTPPacket::getPayload)
             .check(p -> p.getTpduReference() == tpduId)
             .handle(p -> {
-                active_requests.remove(future);                
-                future.complete(p);
+                try {
+                active_requests.remove(future); 
+                future.complete(p);              
                 // Finish the request-transaction.
-                transaction.endRequest();
+                transaction.endRequest();               
+                } catch (Exception ex){
+                    ex.printStackTrace();
+                }                
             }));
         active_requests.put(future, new MutablePair<>(transaction, null));        
         return future;
@@ -439,6 +467,11 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     
     @Override
     public CompletableFuture<PlcWriteResponse> write(PlcWriteRequest writeRequest) {
+        if (!isConnected()) {
+            CompletableFuture<PlcWriteResponse> future = new CompletableFuture<PlcWriteResponse>();
+            future.completeExceptionally(new PlcRuntimeException("Disconnected"));                       
+            return future;
+        }        
         CompletableFuture<PlcWriteResponse> future = new CompletableFuture<>();
         DefaultPlcWriteRequest request = (DefaultPlcWriteRequest) writeRequest;
         List<S7VarRequestParameterItem> parameterItems = new ArrayList<>(request.getNumberOfFields());
@@ -485,7 +518,17 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
     @Override
     public CompletableFuture<PlcSubscriptionResponse> subscribe(PlcSubscriptionRequest subscriptionRequest) {
-
+        if (!isConnected()) {
+            CompletableFuture<PlcSubscriptionResponse> future = new CompletableFuture<PlcSubscriptionResponse>();
+            future.completeExceptionally(new PlcRuntimeException("Disconnected"));                       
+            return future;
+        } 
+        if (!isFeatureSupported()) {
+            CompletableFuture<PlcSubscriptionResponse> future = new CompletableFuture<PlcSubscriptionResponse>();
+            future.completeExceptionally(new PlcRuntimeException("Not Supported"));                       
+            return future;
+        }          
+        
         CompletableFuture<PlcSubscriptionResponse> response =  new CompletableFuture<>();
         HashMap<String, PlcSubscriptionResponse> valuesResponse = new HashMap<>();
 
@@ -756,6 +799,16 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
     @Override
     public CompletableFuture<PlcUnsubscriptionResponse> unsubscribe(PlcUnsubscriptionRequest unsubscriptionRequest) {
+        if (!isConnected()) {
+            CompletableFuture<PlcUnsubscriptionResponse> future = new CompletableFuture<PlcUnsubscriptionResponse>();
+            future.completeExceptionally(new PlcRuntimeException("Disconnected"));                       
+            return future;
+        }      
+        if (!isFeatureSupported()) {
+            CompletableFuture<PlcUnsubscriptionResponse> future = new CompletableFuture<PlcUnsubscriptionResponse>();
+            future.completeExceptionally(new PlcRuntimeException("Not Supported"));                       
+            return future;
+        }          
         CompletableFuture<PlcUnsubscriptionResponse> future = new CompletableFuture<>();
         DefaultPlcUnsubscriptionRequest request = (DefaultPlcUnsubscriptionRequest) unsubscriptionRequest;
 
@@ -1443,8 +1496,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     @Override
     public void close(ConversationContext<TPKTPacket> context) {
         // TODO Implement Closing on Protocol Level
-        context.getChannel().pipeline().fireUserEventTriggered(new DisconnectedEvent());
-        EventLogic.stop();
+        logger.info("S7ProtocoloLogic decode");
+        EventLogic.stop();        
     }
 
     private void extractControllerTypeAndFireConnected(ConversationContext<TPKTPacket> context, S7PayloadUserData payloadUserData) {
@@ -1525,7 +1578,11 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         for (COTPParameter parameter : cotpPacketConnectionResponse.getParameters()) {
             if (parameter instanceof COTPParameterCalledTsap) {
                 COTPParameterCalledTsap cotpParameterCalledTsap = (COTPParameterCalledTsap) parameter;
-                s7DriverContext.setCalledTsapId(cotpParameterCalledTsap.getTsapId());
+                if (isPrimaryChannel()) {
+                    s7DriverContext.setCalledTsapId(cotpParameterCalledTsap.getTsapId());
+                } else {
+                    s7DriverContext.setCalledTsapId2(cotpParameterCalledTsap.getTsapId());    
+                }
             } else if (parameter instanceof COTPParameterCallingTsap) {
                 COTPParameterCallingTsap cotpParameterCallingTsap = (COTPParameterCallingTsap) parameter;
                 if(cotpParameterCallingTsap.getTsapId() != s7DriverContext.getCallingTsapId()) {
@@ -1987,17 +2044,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         return new S7AddressAny(transportSize, numElements, s7Field.getBlockNumber(),
             s7Field.getMemoryArea(), s7Field.getByteOffset(), s7Field.getBitOffset());
     }
-    
-    private boolean isConnected(){
-        return context.getChannel().attr(S7HMuxImpl.IS_CONNECTED).get();
-    }
-    
-    private boolean isPrimaryChannel(){
-        boolean b = (context.getChannel().attr(S7HMuxImpl.IS_PRIMARY).get() == null)?true:context.getChannel().attr(S7HMuxImpl.IS_PRIMARY).get();
-        return b;
-    }    
-    
-    
+ 
     private void cleanFutures(){
         //TODO: Debe ser ejecutado si la conexion esta levanta.
         active_requests.forEach((f,p)->{
@@ -2015,9 +2062,35 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 logger.info(ex.toString());
             }
         });
-        active_requests.clear();     
+        active_requests.clear();   
+
     }
 
+    private boolean isConnected(){
+        return context.getChannel().attr(S7HMuxImpl.IS_CONNECTED).get();
+    }
+    
+    private boolean isPrimaryChannel(){
+        boolean b = (context.getChannel().attr(S7HMuxImpl.IS_PRIMARY).get() == null)?true:context.getChannel().attr(S7HMuxImpl.IS_PRIMARY).get();
+        return b;
+    }    
+   
+    /*
+    * 
+    */
+    private void setChannelFeatures(){
+        context.getChannel().attr(S7HMuxImpl.READ_TIME_OUT).set(s7DriverContext.getReadTimeout());        
+        context.getChannel().attr(S7HMuxImpl.IS_PING_ACTIVE).set(s7DriverContext.getPing());
+        context.getChannel().attr(S7HMuxImpl.PING_TIME).set(s7DriverContext.getPingTime());
+        context.getChannel().attr(S7HMuxImpl.RETRY_TIME).set(s7DriverContext.getRetryTime());        
+    }
+    
+    private boolean isFeatureSupported(){
+        boolean b = ((s7DriverContext.getControllerType() == S7ControllerType.S7_300) ||
+                    (s7DriverContext.getControllerType() == S7ControllerType.S7_400))
+                    ?true:false;
+        return b;
+    }     
 
 
     /**

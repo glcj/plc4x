@@ -228,17 +228,16 @@
 [discriminatedType S7Payload (uint 8 messageType, S7Parameter parameter)
     [typeSwitch parameter.parameterType, messageType
         ['0x04','0x03' S7PayloadReadVarResponse
-            [array S7VarPayloadDataItem     items count 'CAST(parameter, S7ParameterReadVarResponse).numItems']
+            [array S7VarPayloadDataItem     items count 'CAST(parameter, "S7ParameterReadVarResponse").numItems']
         ]
         ['0x05','0x01' S7PayloadWriteVarRequest 
-            [array S7VarPayloadDataItem     items count 'COUNT(CAST(parameter, S7ParameterWriteVarRequest).items)']
+            [array S7VarPayloadDataItem     items count 'COUNT(CAST(parameter, "S7ParameterWriteVarRequest").items)']
         ]
         ['0x05','0x03' S7PayloadWriteVarResponse
-            [array S7VarPayloadStatusItem   items count 'CAST(parameter, S7ParameterWriteVarResponse).numItems']
+            [array S7VarPayloadStatusItem   items count 'CAST(parameter, "S7ParameterWriteVarResponse").numItems']
         ]
-        ['0x00','0x07' S7PayloadUserData 
-            //[array S7PayloadUserDataItem    items count 'COUNT(CAST(parameter, S7ParameterUserData).items)' ['CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionGroup', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionType', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuSubfunction']]
-            [array S7PayloadUserDataItem('CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionGroup', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuFunctionType', 'CAST(CAST(parameter, S7ParameterUserData).items[0], S7ParameterUserDataItemCPUFunctions).cpuSubfunction') items count 'COUNT(CAST(parameter, S7ParameterUserData).items)']
+        ['0x00','0x07' S7PayloadUserData             
+            [array S7PayloadUserDataItem('CAST(CAST(parameter, "S7ParameterUserData").items[0], "S7ParameterUserDataItemCPUFunctions").cpuFunctionGroup', 'CAST(CAST(parameter, "S7ParameterUserData").items[0], "S7ParameterUserDataItemCPUFunctions").cpuFunctionType', 'CAST(CAST(parameter, "S7ParameterUserData").items[0], "S7ParameterUserDataItemCPUFunctions").cpuSubfunction') items count 'COUNT(CAST(parameter, "S7ParameterUserData").items)']
         ]
     ]
 ]
@@ -291,8 +290,8 @@
 [type AssociatedValueType
     [simple DataTransportErrorCode returnCode]
     [simple DataTransportSize      transportSize]
-    [manual uint 16                valueLength   'STATIC_CALL("RightShift3", readBuffer, 'transportSize')' 'STATIC_CALL("LeftShift3", writeBuffer, valueLength)' '2']
-    [array  uint 8                 data          count    'STATIC_CALL("EventItemLength", readBuffer, 'valueLength')']
+    [manual uint 16                valueLength  'STATIC_CALL("RightShift3", readBuffer, transportSize)' 'STATIC_CALL("LeftShift3", writeBuffer, valueLength)' '2']
+    [array  uint 8                 data          count    'STATIC_CALL("EventItemLength", readBuffer, valueLength)']
 ]
 
 [type AssociatedQueryValueType
@@ -368,7 +367,7 @@
     [simple uint 8                      numberOfObjects]
     [simple DataTransportErrorCode      returnCode]
     [simple DataTransportSize           transportSize]
-    [const  uint 16                     DataLength     '0xFFFF']
+    [const  uint 16                     DataLength     0xFFFF]
     [array  AlarmMessageObjectQueryType messageObjects count   'STATIC_CALL("countAMOQT", readBuffer, dataLength)' ]
 ]
 
@@ -425,10 +424,10 @@
 ////////////////////////////////////////////////////////////////
 //Under test
 [discriminatedType  CycServiceItemType
-    [const    uint 8 functionId       '0x12']
+    [const    uint 8 functionId       0x12]
     [simple   uint 8 byteLength]
     [simple   uint 8 syntaxId]
-    [typeSwitch 'syntaxId'
+    [typeSwitch syntaxId
         ['0x10' CycServiceItemAnyType
             [simple  TransportSize   transportSize]
             [simple uint 16 length]
@@ -484,7 +483,7 @@
     [simple         DataTransportSize      transportSize]
     [simple         uint 16                dataLength]
 
-    [typeSwitch     'cpuFunctionGroup', 'cpuFunctionType', 'cpuSubfunction', 'dataLength'
+    [typeSwitch     cpuFunctionGroup, cpuFunctionType, cpuSubfunction, dataLength
 
         ['0x02', '0x00', '0x01' S7PayloadUserDataItemCyclicServicesPush
             [simple uint 16 itemsCount]
@@ -603,7 +602,7 @@
 
         //ALARM_ACK Acknowledgment of alarms
         ['0x04', '0x04', '0x0b' S7PayloadUserDataItemCpuFunctionAlarmAckRequest
-            [const    uint 8       functionId       '0x09']
+            [const    uint 8       functionId       0x09]
             [implicit uint 8                    numberOfObjects 'COUNT(messageObjects)']
             [array    AlarmMessageObjectAckType messageObjects  count 'numberOfObjects' ]
         ]
@@ -618,10 +617,10 @@
 
         //ALARM_QUERY Request for alarms stored in the controller
         ['0x04', '0x04', '0x13' S7PayloadUserDataItemCpuFunctionAlarmQueryRequest
-            [const    uint 8       functionId       '0x00']
-            [const    uint 8       numberMessageObj '0x01']
-            [const    uint 8       variableSpec     '0x12']
-            [const    uint 8       length           '0x08']
+            [const    uint 8       functionId       0x00]
+            [const    uint 8       numberMessageObj 0x01]
+            [const    uint 8       variableSpec     0x12]
+            [const    uint 8       length           0x08]
             [simple   SyntaxIdType syntaxId]
             [reserved uint 8       '0x00']
             [simple   QueryType    queryType]
