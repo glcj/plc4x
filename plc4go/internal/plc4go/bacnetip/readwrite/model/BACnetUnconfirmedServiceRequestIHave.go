@@ -28,10 +28,10 @@ import (
 
 // The data-structure of this message
 type BACnetUnconfirmedServiceRequestIHave struct {
+	*BACnetUnconfirmedServiceRequest
 	DeviceIdentifier *BACnetTagApplicationObjectIdentifier
 	ObjectIdentifier *BACnetTagApplicationObjectIdentifier
 	ObjectName       *BACnetTagApplicationCharacterString
-	Parent           *BACnetUnconfirmedServiceRequest
 }
 
 // The corresponding interface
@@ -53,13 +53,13 @@ func (m *BACnetUnconfirmedServiceRequestIHave) InitializeParent(parent *BACnetUn
 
 func NewBACnetUnconfirmedServiceRequestIHave(deviceIdentifier *BACnetTagApplicationObjectIdentifier, objectIdentifier *BACnetTagApplicationObjectIdentifier, objectName *BACnetTagApplicationCharacterString) *BACnetUnconfirmedServiceRequest {
 	child := &BACnetUnconfirmedServiceRequestIHave{
-		DeviceIdentifier: deviceIdentifier,
-		ObjectIdentifier: objectIdentifier,
-		ObjectName:       objectName,
-		Parent:           NewBACnetUnconfirmedServiceRequest(),
+		DeviceIdentifier:                deviceIdentifier,
+		ObjectIdentifier:                objectIdentifier,
+		ObjectName:                      objectName,
+		BACnetUnconfirmedServiceRequest: NewBACnetUnconfirmedServiceRequest(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.BACnetUnconfirmedServiceRequest
 }
 
 func CastBACnetUnconfirmedServiceRequestIHave(structType interface{}) *BACnetUnconfirmedServiceRequestIHave {
@@ -90,7 +90,7 @@ func (m *BACnetUnconfirmedServiceRequestIHave) LengthInBits() uint16 {
 }
 
 func (m *BACnetUnconfirmedServiceRequestIHave) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (deviceIdentifier)
 	lengthInBits += m.DeviceIdentifier.LengthInBits()
@@ -117,10 +117,11 @@ func BACnetUnconfirmedServiceRequestIHaveParse(readBuffer utils.ReadBuffer, len 
 	if pullErr := readBuffer.PullContext("deviceIdentifier"); pullErr != nil {
 		return nil, pullErr
 	}
-	deviceIdentifier, _deviceIdentifierErr := BACnetTagParse(readBuffer)
+	_deviceIdentifier, _deviceIdentifierErr := BACnetTagParse(readBuffer)
 	if _deviceIdentifierErr != nil {
 		return nil, errors.Wrap(_deviceIdentifierErr, "Error parsing 'deviceIdentifier' field")
 	}
+	deviceIdentifier := CastBACnetTagApplicationObjectIdentifier(_deviceIdentifier)
 	if closeErr := readBuffer.CloseContext("deviceIdentifier"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -129,10 +130,11 @@ func BACnetUnconfirmedServiceRequestIHaveParse(readBuffer utils.ReadBuffer, len 
 	if pullErr := readBuffer.PullContext("objectIdentifier"); pullErr != nil {
 		return nil, pullErr
 	}
-	objectIdentifier, _objectIdentifierErr := BACnetTagParse(readBuffer)
+	_objectIdentifier, _objectIdentifierErr := BACnetTagParse(readBuffer)
 	if _objectIdentifierErr != nil {
 		return nil, errors.Wrap(_objectIdentifierErr, "Error parsing 'objectIdentifier' field")
 	}
+	objectIdentifier := CastBACnetTagApplicationObjectIdentifier(_objectIdentifier)
 	if closeErr := readBuffer.CloseContext("objectIdentifier"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -141,10 +143,11 @@ func BACnetUnconfirmedServiceRequestIHaveParse(readBuffer utils.ReadBuffer, len 
 	if pullErr := readBuffer.PullContext("objectName"); pullErr != nil {
 		return nil, pullErr
 	}
-	objectName, _objectNameErr := BACnetTagParse(readBuffer)
+	_objectName, _objectNameErr := BACnetTagParse(readBuffer)
 	if _objectNameErr != nil {
 		return nil, errors.Wrap(_objectNameErr, "Error parsing 'objectName' field")
 	}
+	objectName := CastBACnetTagApplicationCharacterString(_objectName)
 	if closeErr := readBuffer.CloseContext("objectName"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -155,13 +158,13 @@ func BACnetUnconfirmedServiceRequestIHaveParse(readBuffer utils.ReadBuffer, len 
 
 	// Create a partially initialized instance
 	_child := &BACnetUnconfirmedServiceRequestIHave{
-		DeviceIdentifier: CastBACnetTagApplicationObjectIdentifier(deviceIdentifier),
-		ObjectIdentifier: CastBACnetTagApplicationObjectIdentifier(objectIdentifier),
-		ObjectName:       CastBACnetTagApplicationCharacterString(objectName),
-		Parent:           &BACnetUnconfirmedServiceRequest{},
+		DeviceIdentifier:                CastBACnetTagApplicationObjectIdentifier(deviceIdentifier),
+		ObjectIdentifier:                CastBACnetTagApplicationObjectIdentifier(objectIdentifier),
+		ObjectName:                      CastBACnetTagApplicationCharacterString(objectName),
+		BACnetUnconfirmedServiceRequest: &BACnetUnconfirmedServiceRequest{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.BACnetUnconfirmedServiceRequest.Child = _child
+	return _child.BACnetUnconfirmedServiceRequest, nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestIHave) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -211,7 +214,7 @@ func (m *BACnetUnconfirmedServiceRequestIHave) Serialize(writeBuffer utils.Write
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *BACnetUnconfirmedServiceRequestIHave) String() string {

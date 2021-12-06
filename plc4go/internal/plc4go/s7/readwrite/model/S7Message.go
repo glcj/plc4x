@@ -160,10 +160,11 @@ func S7MessageParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
 	}
 
 	// Simple Field (tpduReference)
-	tpduReference, _tpduReferenceErr := readBuffer.ReadUint16("tpduReference", 16)
+	_tpduReference, _tpduReferenceErr := readBuffer.ReadUint16("tpduReference", 16)
 	if _tpduReferenceErr != nil {
 		return nil, errors.Wrap(_tpduReferenceErr, "Error parsing 'tpduReference' field")
 	}
+	tpduReference := _tpduReference
 
 	// Implicit Field (parameterLength) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
 	parameterLength, _parameterLengthErr := readBuffer.ReadUint16("parameterLength", 16)
@@ -303,8 +304,7 @@ func (m *S7Message) SerializeParent(writeBuffer utils.WriteBuffer, child IS7Mess
 	}
 
 	// Switch field (Depending on the discriminator values, passes the serialization to a sub-type)
-	_typeSwitchErr := serializeChildFunction()
-	if _typeSwitchErr != nil {
+	if _typeSwitchErr := serializeChildFunction(); _typeSwitchErr != nil {
 		return errors.Wrap(_typeSwitchErr, "Error serializing sub-type field")
 	}
 

@@ -28,9 +28,9 @@ import (
 
 // The data-structure of this message
 type BACnetUnconfirmedServiceRequestTimeSynchronization struct {
+	*BACnetUnconfirmedServiceRequest
 	SynchronizedDate *BACnetTagApplicationDate
 	SynchronizedTime *BACnetTagApplicationTime
-	Parent           *BACnetUnconfirmedServiceRequest
 }
 
 // The corresponding interface
@@ -52,12 +52,12 @@ func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) InitializeParent(pa
 
 func NewBACnetUnconfirmedServiceRequestTimeSynchronization(synchronizedDate *BACnetTagApplicationDate, synchronizedTime *BACnetTagApplicationTime) *BACnetUnconfirmedServiceRequest {
 	child := &BACnetUnconfirmedServiceRequestTimeSynchronization{
-		SynchronizedDate: synchronizedDate,
-		SynchronizedTime: synchronizedTime,
-		Parent:           NewBACnetUnconfirmedServiceRequest(),
+		SynchronizedDate:                synchronizedDate,
+		SynchronizedTime:                synchronizedTime,
+		BACnetUnconfirmedServiceRequest: NewBACnetUnconfirmedServiceRequest(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.BACnetUnconfirmedServiceRequest
 }
 
 func CastBACnetUnconfirmedServiceRequestTimeSynchronization(structType interface{}) *BACnetUnconfirmedServiceRequestTimeSynchronization {
@@ -88,7 +88,7 @@ func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) LengthInBits() uint
 }
 
 func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (synchronizedDate)
 	lengthInBits += m.SynchronizedDate.LengthInBits()
@@ -112,10 +112,11 @@ func BACnetUnconfirmedServiceRequestTimeSynchronizationParse(readBuffer utils.Re
 	if pullErr := readBuffer.PullContext("synchronizedDate"); pullErr != nil {
 		return nil, pullErr
 	}
-	synchronizedDate, _synchronizedDateErr := BACnetTagParse(readBuffer)
+	_synchronizedDate, _synchronizedDateErr := BACnetTagParse(readBuffer)
 	if _synchronizedDateErr != nil {
 		return nil, errors.Wrap(_synchronizedDateErr, "Error parsing 'synchronizedDate' field")
 	}
+	synchronizedDate := CastBACnetTagApplicationDate(_synchronizedDate)
 	if closeErr := readBuffer.CloseContext("synchronizedDate"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -124,10 +125,11 @@ func BACnetUnconfirmedServiceRequestTimeSynchronizationParse(readBuffer utils.Re
 	if pullErr := readBuffer.PullContext("synchronizedTime"); pullErr != nil {
 		return nil, pullErr
 	}
-	synchronizedTime, _synchronizedTimeErr := BACnetTagParse(readBuffer)
+	_synchronizedTime, _synchronizedTimeErr := BACnetTagParse(readBuffer)
 	if _synchronizedTimeErr != nil {
 		return nil, errors.Wrap(_synchronizedTimeErr, "Error parsing 'synchronizedTime' field")
 	}
+	synchronizedTime := CastBACnetTagApplicationTime(_synchronizedTime)
 	if closeErr := readBuffer.CloseContext("synchronizedTime"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -138,12 +140,12 @@ func BACnetUnconfirmedServiceRequestTimeSynchronizationParse(readBuffer utils.Re
 
 	// Create a partially initialized instance
 	_child := &BACnetUnconfirmedServiceRequestTimeSynchronization{
-		SynchronizedDate: CastBACnetTagApplicationDate(synchronizedDate),
-		SynchronizedTime: CastBACnetTagApplicationTime(synchronizedTime),
-		Parent:           &BACnetUnconfirmedServiceRequest{},
+		SynchronizedDate:                CastBACnetTagApplicationDate(synchronizedDate),
+		SynchronizedTime:                CastBACnetTagApplicationTime(synchronizedTime),
+		BACnetUnconfirmedServiceRequest: &BACnetUnconfirmedServiceRequest{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.BACnetUnconfirmedServiceRequest.Child = _child
+	return _child.BACnetUnconfirmedServiceRequest, nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -181,7 +183,7 @@ func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) Serialize(writeBuff
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) String() string {

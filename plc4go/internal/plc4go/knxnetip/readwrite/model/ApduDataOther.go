@@ -28,8 +28,8 @@ import (
 
 // The data-structure of this message
 type ApduDataOther struct {
+	*ApduData
 	ExtendedApdu *ApduDataExt
-	Parent       *ApduData
 }
 
 // The corresponding interface
@@ -52,10 +52,10 @@ func (m *ApduDataOther) InitializeParent(parent *ApduData) {
 func NewApduDataOther(extendedApdu *ApduDataExt) *ApduData {
 	child := &ApduDataOther{
 		ExtendedApdu: extendedApdu,
-		Parent:       NewApduData(),
+		ApduData:     NewApduData(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.ApduData
 }
 
 func CastApduDataOther(structType interface{}) *ApduDataOther {
@@ -86,7 +86,7 @@ func (m *ApduDataOther) LengthInBits() uint16 {
 }
 
 func (m *ApduDataOther) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (extendedApdu)
 	lengthInBits += m.ExtendedApdu.LengthInBits()
@@ -107,10 +107,11 @@ func ApduDataOtherParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDat
 	if pullErr := readBuffer.PullContext("extendedApdu"); pullErr != nil {
 		return nil, pullErr
 	}
-	extendedApdu, _extendedApduErr := ApduDataExtParse(readBuffer, dataLength)
+	_extendedApdu, _extendedApduErr := ApduDataExtParse(readBuffer, dataLength)
 	if _extendedApduErr != nil {
 		return nil, errors.Wrap(_extendedApduErr, "Error parsing 'extendedApdu' field")
 	}
+	extendedApdu := CastApduDataExt(_extendedApdu)
 	if closeErr := readBuffer.CloseContext("extendedApdu"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -122,10 +123,10 @@ func ApduDataOtherParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDat
 	// Create a partially initialized instance
 	_child := &ApduDataOther{
 		ExtendedApdu: CastApduDataExt(extendedApdu),
-		Parent:       &ApduData{},
+		ApduData:     &ApduData{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.ApduData.Child = _child
+	return _child.ApduData, nil
 }
 
 func (m *ApduDataOther) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -151,7 +152,7 @@ func (m *ApduDataOther) Serialize(writeBuffer utils.WriteBuffer) error {
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *ApduDataOther) String() string {

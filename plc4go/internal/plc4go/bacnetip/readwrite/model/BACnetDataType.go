@@ -33,19 +33,21 @@ type IBACnetDataType interface {
 }
 
 const (
-	BACnetDataType_NULL                     BACnetDataType = 0x0
-	BACnetDataType_BOOLEAN                  BACnetDataType = 0x1
-	BACnetDataType_UNSIGNED_INTEGER         BACnetDataType = 0x2
-	BACnetDataType_SIGNED_INTEGER           BACnetDataType = 0x3
-	BACnetDataType_REAL                     BACnetDataType = 0x4
-	BACnetDataType_DOUBLE                   BACnetDataType = 0x5
-	BACnetDataType_OCTET_STRING             BACnetDataType = 0x6
-	BACnetDataType_CHARACTER_STRING         BACnetDataType = 0x7
-	BACnetDataType_BIT_STRING               BACnetDataType = 0x8
-	BACnetDataType_ENUMERATED               BACnetDataType = 0x9
-	BACnetDataType_DATE                     BACnetDataType = 0xA
-	BACnetDataType_TIME                     BACnetDataType = 0xB
-	BACnetDataType_BACNET_OBJECT_IDENTIFIER BACnetDataType = 0xC
+	BACnetDataType_NULL                       BACnetDataType = 0x0
+	BACnetDataType_BOOLEAN                    BACnetDataType = 0x1
+	BACnetDataType_UNSIGNED_INTEGER           BACnetDataType = 0x2
+	BACnetDataType_SIGNED_INTEGER             BACnetDataType = 0x3
+	BACnetDataType_REAL                       BACnetDataType = 0x4
+	BACnetDataType_DOUBLE                     BACnetDataType = 0x5
+	BACnetDataType_OCTET_STRING               BACnetDataType = 0x6
+	BACnetDataType_CHARACTER_STRING           BACnetDataType = 0x7
+	BACnetDataType_BIT_STRING                 BACnetDataType = 0x8
+	BACnetDataType_ENUMERATED                 BACnetDataType = 0x9
+	BACnetDataType_DATE                       BACnetDataType = 0xA
+	BACnetDataType_TIME                       BACnetDataType = 0xB
+	BACnetDataType_BACNET_OBJECT_IDENTIFIER   BACnetDataType = 0xC
+	BACnetDataType_BACNET_PROPERTY_IDENTIFIER BACnetDataType = 0xD
+	BACnetDataType_BACNET_DEVICE_STATE        BACnetDataType = 0xE
 )
 
 var BACnetDataTypeValues []BACnetDataType
@@ -66,6 +68,8 @@ func init() {
 		BACnetDataType_DATE,
 		BACnetDataType_TIME,
 		BACnetDataType_BACNET_OBJECT_IDENTIFIER,
+		BACnetDataType_BACNET_PROPERTY_IDENTIFIER,
+		BACnetDataType_BACNET_DEVICE_STATE,
 	}
 }
 
@@ -97,6 +101,10 @@ func BACnetDataTypeByValue(value int8) BACnetDataType {
 		return BACnetDataType_TIME
 	case 0xC:
 		return BACnetDataType_BACNET_OBJECT_IDENTIFIER
+	case 0xD:
+		return BACnetDataType_BACNET_PROPERTY_IDENTIFIER
+	case 0xE:
+		return BACnetDataType_BACNET_DEVICE_STATE
 	}
 	return 0
 }
@@ -129,6 +137,10 @@ func BACnetDataTypeByName(value string) BACnetDataType {
 		return BACnetDataType_TIME
 	case "BACNET_OBJECT_IDENTIFIER":
 		return BACnetDataType_BACNET_OBJECT_IDENTIFIER
+	case "BACNET_PROPERTY_IDENTIFIER":
+		return BACnetDataType_BACNET_PROPERTY_IDENTIFIER
+	case "BACNET_DEVICE_STATE":
+		return BACnetDataType_BACNET_DEVICE_STATE
 	}
 	return 0
 }
@@ -191,6 +203,10 @@ func (e BACnetDataType) name() string {
 		return "TIME"
 	case BACnetDataType_BACNET_OBJECT_IDENTIFIER:
 		return "BACNET_OBJECT_IDENTIFIER"
+	case BACnetDataType_BACNET_PROPERTY_IDENTIFIER:
+		return "BACNET_PROPERTY_IDENTIFIER"
+	case BACnetDataType_BACNET_DEVICE_STATE:
+		return "BACNET_DEVICE_STATE"
 	}
 	return ""
 }

@@ -99,10 +99,11 @@ func AssociatedValueTypeParse(readBuffer utils.ReadBuffer) (*AssociatedValueType
 	if pullErr := readBuffer.PullContext("returnCode"); pullErr != nil {
 		return nil, pullErr
 	}
-	returnCode, _returnCodeErr := DataTransportErrorCodeParse(readBuffer)
+	_returnCode, _returnCodeErr := DataTransportErrorCodeParse(readBuffer)
 	if _returnCodeErr != nil {
 		return nil, errors.Wrap(_returnCodeErr, "Error parsing 'returnCode' field")
 	}
+	returnCode := _returnCode
 	if closeErr := readBuffer.CloseContext("returnCode"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -111,24 +112,19 @@ func AssociatedValueTypeParse(readBuffer utils.ReadBuffer) (*AssociatedValueType
 	if pullErr := readBuffer.PullContext("transportSize"); pullErr != nil {
 		return nil, pullErr
 	}
-	transportSize, _transportSizeErr := DataTransportSizeParse(readBuffer)
+	_transportSize, _transportSizeErr := DataTransportSizeParse(readBuffer)
 	if _transportSizeErr != nil {
 		return nil, errors.Wrap(_transportSizeErr, "Error parsing 'transportSize' field")
 	}
+	transportSize := _transportSize
 	if closeErr := readBuffer.CloseContext("transportSize"); closeErr != nil {
 		return nil, closeErr
 	}
 
 	// Manual Field (valueLength)
-	if pullErr := readBuffer.PullContext("valueLength"); pullErr != nil {
-		return nil, pullErr
-	}
 	valueLength, _valueLengthErr := RightShift3(readBuffer)
 	if _valueLengthErr != nil {
 		return nil, errors.Wrap(_valueLengthErr, "Error parsing 'valueLength' field")
-	}
-	if closeErr := readBuffer.CloseContext("valueLength"); closeErr != nil {
-		return nil, closeErr
 	}
 
 	// Array field (data)
@@ -137,12 +133,14 @@ func AssociatedValueTypeParse(readBuffer utils.ReadBuffer) (*AssociatedValueType
 	}
 	// Count array
 	data := make([]uint8, EventItemLength(readBuffer, valueLength))
-	for curItem := uint16(0); curItem < uint16(EventItemLength(readBuffer, valueLength)); curItem++ {
-		_item, _err := readBuffer.ReadUint8("", 8)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'data' field")
+	{
+		for curItem := uint16(0); curItem < uint16(EventItemLength(readBuffer, valueLength)); curItem++ {
+			_item, _err := readBuffer.ReadUint8("", 8)
+			if _err != nil {
+				return nil, errors.Wrap(_err, "Error parsing 'data' field")
+			}
+			data[curItem] = _item
 		}
-		data[curItem] = _item
 	}
 	if closeErr := readBuffer.CloseContext("data", utils.WithRenderAsList(true)); closeErr != nil {
 		return nil, closeErr
@@ -186,13 +184,7 @@ func (m *AssociatedValueType) Serialize(writeBuffer utils.WriteBuffer) error {
 	}
 
 	// Manual Field (valueLength)
-	if pushErr := writeBuffer.PushContext("transportSize"); pushErr != nil {
-		return pushErr
-	}
 	_valueLengthErr := LeftShift3(writeBuffer, m.ValueLength)
-	if popErr := writeBuffer.PopContext("valueLength"); popErr != nil {
-		return popErr
-	}
 	if _valueLengthErr != nil {
 		return errors.Wrap(_valueLengthErr, "Error serializing 'valueLength' field")
 	}

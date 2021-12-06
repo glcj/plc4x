@@ -28,12 +28,12 @@ import (
 
 // The data-structure of this message
 type ModbusPDUReadWriteMultipleHoldingRegistersRequest struct {
+	*ModbusPDU
 	ReadStartingAddress  uint16
 	ReadQuantity         uint16
 	WriteStartingAddress uint16
 	WriteQuantity        uint16
 	Value                []byte
-	Parent               *ModbusPDU
 }
 
 // The corresponding interface
@@ -68,10 +68,10 @@ func NewModbusPDUReadWriteMultipleHoldingRegistersRequest(readStartingAddress ui
 		WriteStartingAddress: writeStartingAddress,
 		WriteQuantity:        writeQuantity,
 		Value:                value,
-		Parent:               NewModbusPDU(),
+		ModbusPDU:            NewModbusPDU(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.ModbusPDU
 }
 
 func CastModbusPDUReadWriteMultipleHoldingRegistersRequest(structType interface{}) *ModbusPDUReadWriteMultipleHoldingRegistersRequest {
@@ -102,7 +102,7 @@ func (m *ModbusPDUReadWriteMultipleHoldingRegistersRequest) LengthInBits() uint1
 }
 
 func (m *ModbusPDUReadWriteMultipleHoldingRegistersRequest) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (readStartingAddress)
 	lengthInBits += 16
@@ -137,28 +137,32 @@ func ModbusPDUReadWriteMultipleHoldingRegistersRequestParse(readBuffer utils.Rea
 	}
 
 	// Simple Field (readStartingAddress)
-	readStartingAddress, _readStartingAddressErr := readBuffer.ReadUint16("readStartingAddress", 16)
+	_readStartingAddress, _readStartingAddressErr := readBuffer.ReadUint16("readStartingAddress", 16)
 	if _readStartingAddressErr != nil {
 		return nil, errors.Wrap(_readStartingAddressErr, "Error parsing 'readStartingAddress' field")
 	}
+	readStartingAddress := _readStartingAddress
 
 	// Simple Field (readQuantity)
-	readQuantity, _readQuantityErr := readBuffer.ReadUint16("readQuantity", 16)
+	_readQuantity, _readQuantityErr := readBuffer.ReadUint16("readQuantity", 16)
 	if _readQuantityErr != nil {
 		return nil, errors.Wrap(_readQuantityErr, "Error parsing 'readQuantity' field")
 	}
+	readQuantity := _readQuantity
 
 	// Simple Field (writeStartingAddress)
-	writeStartingAddress, _writeStartingAddressErr := readBuffer.ReadUint16("writeStartingAddress", 16)
+	_writeStartingAddress, _writeStartingAddressErr := readBuffer.ReadUint16("writeStartingAddress", 16)
 	if _writeStartingAddressErr != nil {
 		return nil, errors.Wrap(_writeStartingAddressErr, "Error parsing 'writeStartingAddress' field")
 	}
+	writeStartingAddress := _writeStartingAddress
 
 	// Simple Field (writeQuantity)
-	writeQuantity, _writeQuantityErr := readBuffer.ReadUint16("writeQuantity", 16)
+	_writeQuantity, _writeQuantityErr := readBuffer.ReadUint16("writeQuantity", 16)
 	if _writeQuantityErr != nil {
 		return nil, errors.Wrap(_writeQuantityErr, "Error parsing 'writeQuantity' field")
 	}
+	writeQuantity := _writeQuantity
 
 	// Implicit Field (byteCount) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
 	byteCount, _byteCountErr := readBuffer.ReadUint8("byteCount", 8)
@@ -184,10 +188,10 @@ func ModbusPDUReadWriteMultipleHoldingRegistersRequestParse(readBuffer utils.Rea
 		WriteStartingAddress: writeStartingAddress,
 		WriteQuantity:        writeQuantity,
 		Value:                value,
-		Parent:               &ModbusPDU{},
+		ModbusPDU:            &ModbusPDU{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.ModbusPDU.Child = _child
+	return _child.ModbusPDU, nil
 }
 
 func (m *ModbusPDUReadWriteMultipleHoldingRegistersRequest) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -245,7 +249,7 @@ func (m *ModbusPDUReadWriteMultipleHoldingRegistersRequest) Serialize(writeBuffe
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *ModbusPDUReadWriteMultipleHoldingRegistersRequest) String() string {

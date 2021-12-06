@@ -30,6 +30,14 @@ jobs:
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Install libpcap for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install libpcap-dev
+
+      - name: Install libpcap for macos
+        if: matrix.os == 'macos-latest'
+        run: brew install libpcap
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
@@ -39,6 +47,32 @@ jobs:
           distribution: 'adopt'
           java-package: jdk
           java-version: ${{ matrix.java }}
+
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Set Platform options
+        id: platform_opts
+        uses: actions/github-script@v5.0.0
+        env:
+          OS: ${{ matrix.os }}
+        with:
+          script: |
+            const { OS } = process.env
+            if (OS.includes("windows")) {
+              core.setOutput('platform_opts', ``)
+            } else if (OS.includes("macos")) {
+              core.setOutput('platform_opts', `-Djna.library.path="$(find /usr/local/Cellar/libpcap/ -name lib)"`)
+            } else if (OS.includes("ubuntu")) {
+              core.setOutput('platform_opts', ``)
+            } else {
+              core.setOutput('platform_opts', ``)
+            }
 
       - name: Calculate platform suffix
         id: platform_suffix
@@ -55,4 +89,4 @@ jobs:
             }
 
       - name: Run mvnw
-        run: ./mvnw${{ steps.platform_suffix.outputs.platform_suffix }} -B install
+        run: ./mvnw${{ steps.platform_suffix.outputs.platform_suffix }} -B -P'with-sandbox,with-c,with-go' ${{ steps.platform_opts.outputs.platform_opts }} install

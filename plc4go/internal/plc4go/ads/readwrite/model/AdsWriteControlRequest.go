@@ -28,10 +28,10 @@ import (
 
 // The data-structure of this message
 type AdsWriteControlRequest struct {
+	*AdsData
 	AdsState    uint16
 	DeviceState uint16
 	Data        []byte
-	Parent      *AdsData
 }
 
 // The corresponding interface
@@ -60,10 +60,10 @@ func NewAdsWriteControlRequest(adsState uint16, deviceState uint16, data []byte)
 		AdsState:    adsState,
 		DeviceState: deviceState,
 		Data:        data,
-		Parent:      NewAdsData(),
+		AdsData:     NewAdsData(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.AdsData
 }
 
 func CastAdsWriteControlRequest(structType interface{}) *AdsWriteControlRequest {
@@ -94,7 +94,7 @@ func (m *AdsWriteControlRequest) LengthInBits() uint16 {
 }
 
 func (m *AdsWriteControlRequest) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (adsState)
 	lengthInBits += 16
@@ -123,16 +123,18 @@ func AdsWriteControlRequestParse(readBuffer utils.ReadBuffer, commandId CommandI
 	}
 
 	// Simple Field (adsState)
-	adsState, _adsStateErr := readBuffer.ReadUint16("adsState", 16)
+	_adsState, _adsStateErr := readBuffer.ReadUint16("adsState", 16)
 	if _adsStateErr != nil {
 		return nil, errors.Wrap(_adsStateErr, "Error parsing 'adsState' field")
 	}
+	adsState := _adsState
 
 	// Simple Field (deviceState)
-	deviceState, _deviceStateErr := readBuffer.ReadUint16("deviceState", 16)
+	_deviceState, _deviceStateErr := readBuffer.ReadUint16("deviceState", 16)
 	if _deviceStateErr != nil {
 		return nil, errors.Wrap(_deviceStateErr, "Error parsing 'deviceState' field")
 	}
+	deviceState := _deviceState
 
 	// Implicit Field (length) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
 	length, _lengthErr := readBuffer.ReadUint32("length", 32)
@@ -156,10 +158,10 @@ func AdsWriteControlRequestParse(readBuffer utils.ReadBuffer, commandId CommandI
 		AdsState:    adsState,
 		DeviceState: deviceState,
 		Data:        data,
-		Parent:      &AdsData{},
+		AdsData:     &AdsData{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.AdsData.Child = _child
+	return _child.AdsData, nil
 }
 
 func (m *AdsWriteControlRequest) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -203,7 +205,7 @@ func (m *AdsWriteControlRequest) Serialize(writeBuffer utils.WriteBuffer) error 
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *AdsWriteControlRequest) String() string {

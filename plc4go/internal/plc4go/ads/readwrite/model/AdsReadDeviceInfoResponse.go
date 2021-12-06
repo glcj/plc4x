@@ -28,12 +28,12 @@ import (
 
 // The data-structure of this message
 type AdsReadDeviceInfoResponse struct {
+	*AdsData
 	Result       ReturnCode
 	MajorVersion uint8
 	MinorVersion uint8
 	Version      uint16
 	Device       []byte
-	Parent       *AdsData
 }
 
 // The corresponding interface
@@ -64,10 +64,10 @@ func NewAdsReadDeviceInfoResponse(result ReturnCode, majorVersion uint8, minorVe
 		MinorVersion: minorVersion,
 		Version:      version,
 		Device:       device,
-		Parent:       NewAdsData(),
+		AdsData:      NewAdsData(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.AdsData
 }
 
 func CastAdsReadDeviceInfoResponse(structType interface{}) *AdsReadDeviceInfoResponse {
@@ -98,7 +98,7 @@ func (m *AdsReadDeviceInfoResponse) LengthInBits() uint16 {
 }
 
 func (m *AdsReadDeviceInfoResponse) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (result)
 	lengthInBits += 32
@@ -133,31 +133,35 @@ func AdsReadDeviceInfoResponseParse(readBuffer utils.ReadBuffer, commandId Comma
 	if pullErr := readBuffer.PullContext("result"); pullErr != nil {
 		return nil, pullErr
 	}
-	result, _resultErr := ReturnCodeParse(readBuffer)
+	_result, _resultErr := ReturnCodeParse(readBuffer)
 	if _resultErr != nil {
 		return nil, errors.Wrap(_resultErr, "Error parsing 'result' field")
 	}
+	result := _result
 	if closeErr := readBuffer.CloseContext("result"); closeErr != nil {
 		return nil, closeErr
 	}
 
 	// Simple Field (majorVersion)
-	majorVersion, _majorVersionErr := readBuffer.ReadUint8("majorVersion", 8)
+	_majorVersion, _majorVersionErr := readBuffer.ReadUint8("majorVersion", 8)
 	if _majorVersionErr != nil {
 		return nil, errors.Wrap(_majorVersionErr, "Error parsing 'majorVersion' field")
 	}
+	majorVersion := _majorVersion
 
 	// Simple Field (minorVersion)
-	minorVersion, _minorVersionErr := readBuffer.ReadUint8("minorVersion", 8)
+	_minorVersion, _minorVersionErr := readBuffer.ReadUint8("minorVersion", 8)
 	if _minorVersionErr != nil {
 		return nil, errors.Wrap(_minorVersionErr, "Error parsing 'minorVersion' field")
 	}
+	minorVersion := _minorVersion
 
 	// Simple Field (version)
-	version, _versionErr := readBuffer.ReadUint16("version", 16)
+	_version, _versionErr := readBuffer.ReadUint16("version", 16)
 	if _versionErr != nil {
 		return nil, errors.Wrap(_versionErr, "Error parsing 'version' field")
 	}
+	version := _version
 	// Byte Array field (device)
 	numberOfBytesdevice := int(uint16(16))
 	device, _readArrayErr := readBuffer.ReadByteArray("device", numberOfBytesdevice)
@@ -176,10 +180,10 @@ func AdsReadDeviceInfoResponseParse(readBuffer utils.ReadBuffer, commandId Comma
 		MinorVersion: minorVersion,
 		Version:      version,
 		Device:       device,
-		Parent:       &AdsData{},
+		AdsData:      &AdsData{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.AdsData.Child = _child
+	return _child.AdsData, nil
 }
 
 func (m *AdsReadDeviceInfoResponse) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -235,7 +239,7 @@ func (m *AdsReadDeviceInfoResponse) Serialize(writeBuffer utils.WriteBuffer) err
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *AdsReadDeviceInfoResponse) String() string {

@@ -28,9 +28,9 @@ import (
 
 // The data-structure of this message
 type ApduDataDeviceDescriptorResponse struct {
+	*ApduData
 	DescriptorType uint8
 	Data           []byte
-	Parent         *ApduData
 }
 
 // The corresponding interface
@@ -54,10 +54,10 @@ func NewApduDataDeviceDescriptorResponse(descriptorType uint8, data []byte) *Apd
 	child := &ApduDataDeviceDescriptorResponse{
 		DescriptorType: descriptorType,
 		Data:           data,
-		Parent:         NewApduData(),
+		ApduData:       NewApduData(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.ApduData
 }
 
 func CastApduDataDeviceDescriptorResponse(structType interface{}) *ApduDataDeviceDescriptorResponse {
@@ -88,7 +88,7 @@ func (m *ApduDataDeviceDescriptorResponse) LengthInBits() uint16 {
 }
 
 func (m *ApduDataDeviceDescriptorResponse) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (descriptorType)
 	lengthInBits += 6
@@ -111,10 +111,11 @@ func ApduDataDeviceDescriptorResponseParse(readBuffer utils.ReadBuffer, dataLeng
 	}
 
 	// Simple Field (descriptorType)
-	descriptorType, _descriptorTypeErr := readBuffer.ReadUint8("descriptorType", 6)
+	_descriptorType, _descriptorTypeErr := readBuffer.ReadUint8("descriptorType", 6)
 	if _descriptorTypeErr != nil {
 		return nil, errors.Wrap(_descriptorTypeErr, "Error parsing 'descriptorType' field")
 	}
+	descriptorType := _descriptorType
 	// Byte Array field (data)
 	numberOfBytesdata := int(utils.InlineIf(bool(bool((dataLength) < (1))), func() interface{} { return uint16(uint16(0)) }, func() interface{} { return uint16(uint16(dataLength) - uint16(uint16(1))) }).(uint16))
 	data, _readArrayErr := readBuffer.ReadByteArray("data", numberOfBytesdata)
@@ -130,10 +131,10 @@ func ApduDataDeviceDescriptorResponseParse(readBuffer utils.ReadBuffer, dataLeng
 	_child := &ApduDataDeviceDescriptorResponse{
 		DescriptorType: descriptorType,
 		Data:           data,
-		Parent:         &ApduData{},
+		ApduData:       &ApduData{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.ApduData.Child = _child
+	return _child.ApduData, nil
 }
 
 func (m *ApduDataDeviceDescriptorResponse) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -163,7 +164,7 @@ func (m *ApduDataDeviceDescriptorResponse) Serialize(writeBuffer utils.WriteBuff
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *ApduDataDeviceDescriptorResponse) String() string {

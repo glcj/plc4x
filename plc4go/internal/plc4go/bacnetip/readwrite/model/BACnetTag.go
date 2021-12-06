@@ -139,10 +139,11 @@ func BACnetTagParse(readBuffer utils.ReadBuffer) (*BACnetTag, error) {
 	}
 
 	// Simple Field (tagNumber)
-	tagNumber, _tagNumberErr := readBuffer.ReadUint8("tagNumber", 4)
+	_tagNumber, _tagNumberErr := readBuffer.ReadUint8("tagNumber", 4)
 	if _tagNumberErr != nil {
 		return nil, errors.Wrap(_tagNumberErr, "Error parsing 'tagNumber' field")
 	}
+	tagNumber := _tagNumber
 
 	// Discriminator Field (tagClass) (Used as input to a switch field)
 	tagClass_temp, _tagClassErr := TagClassParse(readBuffer)
@@ -152,10 +153,11 @@ func BACnetTagParse(readBuffer utils.ReadBuffer) (*BACnetTag, error) {
 	}
 
 	// Simple Field (lengthValueType)
-	lengthValueType, _lengthValueTypeErr := readBuffer.ReadUint8("lengthValueType", 3)
+	_lengthValueType, _lengthValueTypeErr := readBuffer.ReadUint8("lengthValueType", 3)
 	if _lengthValueTypeErr != nil {
 		return nil, errors.Wrap(_lengthValueTypeErr, "Error parsing 'lengthValueType' field")
 	}
+	lengthValueType := _lengthValueType
 
 	// Optional Field (extTagNumber) (Can be skipped, if a given expression evaluates to false)
 	var extTagNumber *uint8 = nil
@@ -304,6 +306,14 @@ func (m *BACnetTag) SerializeParent(writeBuffer utils.WriteBuffer, child IBACnet
 			return errors.Wrap(_extTagNumberErr, "Error serializing 'extTagNumber' field")
 		}
 	}
+	// Virtual field (doesn't actually serialize anything, just makes the value available)
+	if _actualTagNumberErr := writeBuffer.WriteVirtual("actualTagNumber", m.ActualTagNumber); _actualTagNumberErr != nil {
+		return errors.Wrap(_actualTagNumberErr, "Error serializing 'actualTagNumber' field")
+	}
+	// Virtual field (doesn't actually serialize anything, just makes the value available)
+	if _isPrimitiveAndNotBooleanErr := writeBuffer.WriteVirtual("isPrimitiveAndNotBoolean", m.IsPrimitiveAndNotBoolean); _isPrimitiveAndNotBooleanErr != nil {
+		return errors.Wrap(_isPrimitiveAndNotBooleanErr, "Error serializing 'isPrimitiveAndNotBoolean' field")
+	}
 
 	// Optional Field (extLength) (Can be skipped, if the value is null)
 	var extLength *uint8 = nil
@@ -334,10 +344,13 @@ func (m *BACnetTag) SerializeParent(writeBuffer utils.WriteBuffer, child IBACnet
 			return errors.Wrap(_extExtExtLengthErr, "Error serializing 'extExtExtLength' field")
 		}
 	}
+	// Virtual field (doesn't actually serialize anything, just makes the value available)
+	if _actualLengthErr := writeBuffer.WriteVirtual("actualLength", m.ActualLength); _actualLengthErr != nil {
+		return errors.Wrap(_actualLengthErr, "Error serializing 'actualLength' field")
+	}
 
 	// Switch field (Depending on the discriminator values, passes the serialization to a sub-type)
-	_typeSwitchErr := serializeChildFunction()
-	if _typeSwitchErr != nil {
+	if _typeSwitchErr := serializeChildFunction(); _typeSwitchErr != nil {
 		return errors.Wrap(_typeSwitchErr, "Error serializing sub-type field")
 	}
 

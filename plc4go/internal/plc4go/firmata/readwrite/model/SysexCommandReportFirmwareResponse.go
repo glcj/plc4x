@@ -28,10 +28,10 @@ import (
 
 // The data-structure of this message
 type SysexCommandReportFirmwareResponse struct {
+	*SysexCommand
 	MajorVersion uint8
 	MinorVersion uint8
 	FileName     []byte
-	Parent       *SysexCommand
 }
 
 // The corresponding interface
@@ -60,10 +60,10 @@ func NewSysexCommandReportFirmwareResponse(majorVersion uint8, minorVersion uint
 		MajorVersion: majorVersion,
 		MinorVersion: minorVersion,
 		FileName:     fileName,
-		Parent:       NewSysexCommand(),
+		SysexCommand: NewSysexCommand(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.SysexCommand
 }
 
 func CastSysexCommandReportFirmwareResponse(structType interface{}) *SysexCommandReportFirmwareResponse {
@@ -94,7 +94,7 @@ func (m *SysexCommandReportFirmwareResponse) LengthInBits() uint16 {
 }
 
 func (m *SysexCommandReportFirmwareResponse) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (majorVersion)
 	lengthInBits += 8
@@ -119,16 +119,18 @@ func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer, respon
 	}
 
 	// Simple Field (majorVersion)
-	majorVersion, _majorVersionErr := readBuffer.ReadUint8("majorVersion", 8)
+	_majorVersion, _majorVersionErr := readBuffer.ReadUint8("majorVersion", 8)
 	if _majorVersionErr != nil {
 		return nil, errors.Wrap(_majorVersionErr, "Error parsing 'majorVersion' field")
 	}
+	majorVersion := _majorVersion
 
 	// Simple Field (minorVersion)
-	minorVersion, _minorVersionErr := readBuffer.ReadUint8("minorVersion", 8)
+	_minorVersion, _minorVersionErr := readBuffer.ReadUint8("minorVersion", 8)
 	if _minorVersionErr != nil {
 		return nil, errors.Wrap(_minorVersionErr, "Error parsing 'minorVersion' field")
 	}
+	minorVersion := _minorVersion
 	if pullErr := readBuffer.PullContext("fileName", utils.WithRenderAsList(true)); pullErr != nil {
 		return nil, pullErr
 	}
@@ -156,10 +158,10 @@ func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer, respon
 		MajorVersion: majorVersion,
 		MinorVersion: minorVersion,
 		FileName:     fileName,
-		Parent:       &SysexCommand{},
+		SysexCommand: &SysexCommand{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.SysexCommand.Child = _child
+	return _child.SysexCommand, nil
 }
 
 func (m *SysexCommandReportFirmwareResponse) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -187,8 +189,8 @@ func (m *SysexCommandReportFirmwareResponse) Serialize(writeBuffer utils.WriteBu
 			if pushErr := writeBuffer.PushContext("fileName", utils.WithRenderAsList(true)); pushErr != nil {
 				return pushErr
 			}
-			for _, _value := range m.FileName {
-				SerializeSysexString(writeBuffer, _value)
+			for _, m := range m.FileName {
+				SerializeSysexString(writeBuffer, m)
 			}
 			if popErr := writeBuffer.PopContext("fileName", utils.WithRenderAsList(true)); popErr != nil {
 				return popErr
@@ -200,7 +202,7 @@ func (m *SysexCommandReportFirmwareResponse) Serialize(writeBuffer utils.WriteBu
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *SysexCommandReportFirmwareResponse) String() string {

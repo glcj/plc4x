@@ -112,10 +112,11 @@ func S7PayloadUserDataItemParse(readBuffer utils.ReadBuffer, cpuFunctionType uin
 	if pullErr := readBuffer.PullContext("returnCode"); pullErr != nil {
 		return nil, pullErr
 	}
-	returnCode, _returnCodeErr := DataTransportErrorCodeParse(readBuffer)
+	_returnCode, _returnCodeErr := DataTransportErrorCodeParse(readBuffer)
 	if _returnCodeErr != nil {
 		return nil, errors.Wrap(_returnCodeErr, "Error parsing 'returnCode' field")
 	}
+	returnCode := _returnCode
 	if closeErr := readBuffer.CloseContext("returnCode"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -124,10 +125,11 @@ func S7PayloadUserDataItemParse(readBuffer utils.ReadBuffer, cpuFunctionType uin
 	if pullErr := readBuffer.PullContext("transportSize"); pullErr != nil {
 		return nil, pullErr
 	}
-	transportSize, _transportSizeErr := DataTransportSizeParse(readBuffer)
+	_transportSize, _transportSizeErr := DataTransportSizeParse(readBuffer)
 	if _transportSizeErr != nil {
 		return nil, errors.Wrap(_transportSizeErr, "Error parsing 'transportSize' field")
 	}
+	transportSize := _transportSize
 	if closeErr := readBuffer.CloseContext("transportSize"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -237,8 +239,7 @@ func (m *S7PayloadUserDataItem) SerializeParent(writeBuffer utils.WriteBuffer, c
 	}
 
 	// Switch field (Depending on the discriminator values, passes the serialization to a sub-type)
-	_typeSwitchErr := serializeChildFunction()
-	if _typeSwitchErr != nil {
+	if _typeSwitchErr := serializeChildFunction(); _typeSwitchErr != nil {
 		return errors.Wrap(_typeSwitchErr, "Error serializing sub-type field")
 	}
 

@@ -28,9 +28,9 @@ import (
 
 // The data-structure of this message
 type BACnetComplexTagOctetString struct {
+	*BACnetComplexTag
 	Value             string
 	ActualLengthInBit uint16
-	Parent            *BACnetComplexTag
 }
 
 // The corresponding interface
@@ -47,23 +47,23 @@ func (m *BACnetComplexTagOctetString) DataType() BACnetDataType {
 	return BACnetDataType_OCTET_STRING
 }
 
-func (m *BACnetComplexTagOctetString) InitializeParent(parent *BACnetComplexTag, tagNumber uint8, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, isPrimitiveAndNotBoolean bool, actualLength uint32) {
-	m.Parent.TagNumber = tagNumber
-	m.Parent.TagClass = tagClass
-	m.Parent.LengthValueType = lengthValueType
-	m.Parent.ExtTagNumber = extTagNumber
-	m.Parent.ExtLength = extLength
-	m.Parent.ExtExtLength = extExtLength
-	m.Parent.ExtExtExtLength = extExtExtLength
+func (m *BACnetComplexTagOctetString) InitializeParent(parent *BACnetComplexTag, tagNumber uint8, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, actualLength uint32) {
+	m.TagNumber = tagNumber
+	m.TagClass = tagClass
+	m.LengthValueType = lengthValueType
+	m.ExtTagNumber = extTagNumber
+	m.ExtLength = extLength
+	m.ExtExtLength = extExtLength
+	m.ExtExtExtLength = extExtExtLength
 }
 
 func NewBACnetComplexTagOctetString(value string, tagNumber uint8, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32) *BACnetComplexTag {
 	child := &BACnetComplexTagOctetString{
-		Value:  value,
-		Parent: NewBACnetComplexTag(tagNumber, tagClass, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
+		Value:            value,
+		BACnetComplexTag: NewBACnetComplexTag(tagNumber, tagClass, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.BACnetComplexTag
 }
 
 func CastBACnetComplexTagOctetString(structType interface{}) *BACnetComplexTagOctetString {
@@ -94,7 +94,7 @@ func (m *BACnetComplexTagOctetString) LengthInBits() uint16 {
 }
 
 func (m *BACnetComplexTagOctetString) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// A virtual field doesn't have any in- or output.
 
@@ -118,10 +118,11 @@ func BACnetComplexTagOctetStringParse(readBuffer utils.ReadBuffer, tagNumberArgu
 	actualLengthInBit := uint16(_actualLengthInBit)
 
 	// Simple Field (value)
-	value, _valueErr := readBuffer.ReadString("value", uint32(actualLengthInBit))
+	_value, _valueErr := readBuffer.ReadString("value", uint32(actualLengthInBit))
 	if _valueErr != nil {
 		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
 	}
+	value := _value
 
 	if closeErr := readBuffer.CloseContext("BACnetComplexTagOctetString"); closeErr != nil {
 		return nil, closeErr
@@ -131,16 +132,20 @@ func BACnetComplexTagOctetStringParse(readBuffer utils.ReadBuffer, tagNumberArgu
 	_child := &BACnetComplexTagOctetString{
 		Value:             value,
 		ActualLengthInBit: actualLengthInBit,
-		Parent:            &BACnetComplexTag{},
+		BACnetComplexTag:  &BACnetComplexTag{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.BACnetComplexTag.Child = _child
+	return _child.BACnetComplexTag, nil
 }
 
 func (m *BACnetComplexTagOctetString) Serialize(writeBuffer utils.WriteBuffer) error {
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("BACnetComplexTagOctetString"); pushErr != nil {
 			return pushErr
+		}
+		// Virtual field (doesn't actually serialize anything, just makes the value available)
+		if _actualLengthInBitErr := writeBuffer.WriteVirtual("actualLengthInBit", m.ActualLengthInBit); _actualLengthInBitErr != nil {
+			return errors.Wrap(_actualLengthInBitErr, "Error serializing 'actualLengthInBit' field")
 		}
 
 		// Simple Field (value)
@@ -155,7 +160,7 @@ func (m *BACnetComplexTagOctetString) Serialize(writeBuffer utils.WriteBuffer) e
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *BACnetComplexTagOctetString) String() string {

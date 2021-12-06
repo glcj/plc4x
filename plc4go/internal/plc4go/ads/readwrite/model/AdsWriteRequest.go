@@ -28,10 +28,10 @@ import (
 
 // The data-structure of this message
 type AdsWriteRequest struct {
+	*AdsData
 	IndexGroup  uint32
 	IndexOffset uint32
 	Data        []byte
-	Parent      *AdsData
 }
 
 // The corresponding interface
@@ -60,10 +60,10 @@ func NewAdsWriteRequest(indexGroup uint32, indexOffset uint32, data []byte) *Ads
 		IndexGroup:  indexGroup,
 		IndexOffset: indexOffset,
 		Data:        data,
-		Parent:      NewAdsData(),
+		AdsData:     NewAdsData(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.AdsData
 }
 
 func CastAdsWriteRequest(structType interface{}) *AdsWriteRequest {
@@ -94,7 +94,7 @@ func (m *AdsWriteRequest) LengthInBits() uint16 {
 }
 
 func (m *AdsWriteRequest) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (indexGroup)
 	lengthInBits += 32
@@ -123,16 +123,18 @@ func AdsWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, resp
 	}
 
 	// Simple Field (indexGroup)
-	indexGroup, _indexGroupErr := readBuffer.ReadUint32("indexGroup", 32)
+	_indexGroup, _indexGroupErr := readBuffer.ReadUint32("indexGroup", 32)
 	if _indexGroupErr != nil {
 		return nil, errors.Wrap(_indexGroupErr, "Error parsing 'indexGroup' field")
 	}
+	indexGroup := _indexGroup
 
 	// Simple Field (indexOffset)
-	indexOffset, _indexOffsetErr := readBuffer.ReadUint32("indexOffset", 32)
+	_indexOffset, _indexOffsetErr := readBuffer.ReadUint32("indexOffset", 32)
 	if _indexOffsetErr != nil {
 		return nil, errors.Wrap(_indexOffsetErr, "Error parsing 'indexOffset' field")
 	}
+	indexOffset := _indexOffset
 
 	// Implicit Field (length) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
 	length, _lengthErr := readBuffer.ReadUint32("length", 32)
@@ -156,10 +158,10 @@ func AdsWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, resp
 		IndexGroup:  indexGroup,
 		IndexOffset: indexOffset,
 		Data:        data,
-		Parent:      &AdsData{},
+		AdsData:     &AdsData{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.AdsData.Child = _child
+	return _child.AdsData, nil
 }
 
 func (m *AdsWriteRequest) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -203,7 +205,7 @@ func (m *AdsWriteRequest) Serialize(writeBuffer utils.WriteBuffer) error {
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *AdsWriteRequest) String() string {

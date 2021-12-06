@@ -190,7 +190,7 @@ func (m Browser) executeCommunicationObjectQuery(field CommunicationObjectQueryF
 	// Group Address Table reading
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	// First of all, request the starting address of the group address table
+	// First, request the starting address of the group address table
 	readRequestBuilder := m.connection.ReadRequestBuilder()
 	readRequestBuilder.AddQuery("groupAddressTableAddress", knxAddressString+"#1/7")
 	readRequest, err := readRequestBuilder.Build()
@@ -248,10 +248,10 @@ func (m Browser) executeCommunicationObjectQuery(field CommunicationObjectQueryF
 	}
 
 	// Read the data in the group address table
-	readRequestBuilder = m.connection.ReadRequestBuilder()
-	readRequestBuilder.AddQuery("groupAddressTable",
-		fmt.Sprintf("%s#%X:UINT[%d]", knxAddressString, groupAddressTableStartAddress, numGroupAddresses))
-	readRequest, err = readRequestBuilder.Build()
+	readRequest, err = m.connection.ReadRequestBuilder().
+		AddQuery("groupAddressTable",
+			fmt.Sprintf("%s#%X:UINT[%d]", knxAddressString, groupAddressTableStartAddress, numGroupAddresses)).
+		Build()
 	if err != nil {
 		return nil, errors.Wrap(err, "error creating read request")
 	}
@@ -439,19 +439,19 @@ func (m Browser) executeCommunicationObjectQuery(field CommunicationObjectQueryF
 		}
 	} else if (m.connection.DeviceConnections[*knxAddress].deviceDescriptor & 0xFFF0) == uint16(0x0700) /* System7 */ {
 		// For System 7 Devices we unfortunately can't access the information of where the memory address for the
-		// Com Object Table is programmatically, so we have to lookup the address which is extracted from the XML data
+		// Com Object Table is programmatically, so we have to look up the address which is extracted from the XML data
 		// Provided by the manufacturer. Unfortunately in order to be able to do this, we need to get the application
 		// version from the device first.
 
-		readRequestBuilder := m.connection.ReadRequestBuilder()
+		readRequestBuilder = m.connection.ReadRequestBuilder()
 		readRequestBuilder.AddQuery("applicationProgramVersion", knxAddressString+"#3/13")
 		readRequestBuilder.AddQuery("interfaceProgramVersion", knxAddressString+"#4/13")
-		readRequest, err := readRequestBuilder.Build()
+		readRequest, err = readRequestBuilder.Build()
 		if err != nil {
 			return nil, errors.Wrap(err, "error creating read request")
 		}
 
-		rrr := readRequest.Execute()
+		rrr = readRequest.Execute()
 		readRequestResult := <-rrr
 		readResponse := readRequestResult.GetResponse()
 		var programVersionData []byte

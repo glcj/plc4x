@@ -29,12 +29,12 @@ import (
 
 // The data-structure of this message
 type S7ParameterModeTransition struct {
+	*S7Parameter
 	Method           uint8
 	CpuFunctionType  uint8
 	CpuFunctionGroup uint8
 	CurrentMode      uint8
 	SequenceNumber   uint8
-	Parent           *S7Parameter
 }
 
 // The corresponding interface
@@ -65,10 +65,10 @@ func NewS7ParameterModeTransition(method uint8, cpuFunctionType uint8, cpuFuncti
 		CpuFunctionGroup: cpuFunctionGroup,
 		CurrentMode:      currentMode,
 		SequenceNumber:   sequenceNumber,
-		Parent:           NewS7Parameter(),
+		S7Parameter:      NewS7Parameter(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.S7Parameter
 }
 
 func CastS7ParameterModeTransition(structType interface{}) *S7ParameterModeTransition {
@@ -99,7 +99,7 @@ func (m *S7ParameterModeTransition) LengthInBits() uint16 {
 }
 
 func (m *S7ParameterModeTransition) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Reserved Field (reserved)
 	lengthInBits += 16
@@ -156,34 +156,39 @@ func S7ParameterModeTransitionParse(readBuffer utils.ReadBuffer, messageType uin
 	}
 
 	// Simple Field (method)
-	method, _methodErr := readBuffer.ReadUint8("method", 8)
+	_method, _methodErr := readBuffer.ReadUint8("method", 8)
 	if _methodErr != nil {
 		return nil, errors.Wrap(_methodErr, "Error parsing 'method' field")
 	}
+	method := _method
 
 	// Simple Field (cpuFunctionType)
-	cpuFunctionType, _cpuFunctionTypeErr := readBuffer.ReadUint8("cpuFunctionType", 4)
+	_cpuFunctionType, _cpuFunctionTypeErr := readBuffer.ReadUint8("cpuFunctionType", 4)
 	if _cpuFunctionTypeErr != nil {
 		return nil, errors.Wrap(_cpuFunctionTypeErr, "Error parsing 'cpuFunctionType' field")
 	}
+	cpuFunctionType := _cpuFunctionType
 
 	// Simple Field (cpuFunctionGroup)
-	cpuFunctionGroup, _cpuFunctionGroupErr := readBuffer.ReadUint8("cpuFunctionGroup", 4)
+	_cpuFunctionGroup, _cpuFunctionGroupErr := readBuffer.ReadUint8("cpuFunctionGroup", 4)
 	if _cpuFunctionGroupErr != nil {
 		return nil, errors.Wrap(_cpuFunctionGroupErr, "Error parsing 'cpuFunctionGroup' field")
 	}
+	cpuFunctionGroup := _cpuFunctionGroup
 
 	// Simple Field (currentMode)
-	currentMode, _currentModeErr := readBuffer.ReadUint8("currentMode", 8)
+	_currentMode, _currentModeErr := readBuffer.ReadUint8("currentMode", 8)
 	if _currentModeErr != nil {
 		return nil, errors.Wrap(_currentModeErr, "Error parsing 'currentMode' field")
 	}
+	currentMode := _currentMode
 
 	// Simple Field (sequenceNumber)
-	sequenceNumber, _sequenceNumberErr := readBuffer.ReadUint8("sequenceNumber", 8)
+	_sequenceNumber, _sequenceNumberErr := readBuffer.ReadUint8("sequenceNumber", 8)
 	if _sequenceNumberErr != nil {
 		return nil, errors.Wrap(_sequenceNumberErr, "Error parsing 'sequenceNumber' field")
 	}
+	sequenceNumber := _sequenceNumber
 
 	if closeErr := readBuffer.CloseContext("S7ParameterModeTransition"); closeErr != nil {
 		return nil, closeErr
@@ -196,10 +201,10 @@ func S7ParameterModeTransitionParse(readBuffer utils.ReadBuffer, messageType uin
 		CpuFunctionGroup: cpuFunctionGroup,
 		CurrentMode:      currentMode,
 		SequenceNumber:   sequenceNumber,
-		Parent:           &S7Parameter{},
+		S7Parameter:      &S7Parameter{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.S7Parameter.Child = _child
+	return _child.S7Parameter, nil
 }
 
 func (m *S7ParameterModeTransition) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -263,7 +268,7 @@ func (m *S7ParameterModeTransition) Serialize(writeBuffer utils.WriteBuffer) err
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *S7ParameterModeTransition) String() string {

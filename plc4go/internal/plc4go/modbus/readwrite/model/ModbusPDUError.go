@@ -28,8 +28,8 @@ import (
 
 // The data-structure of this message
 type ModbusPDUError struct {
+	*ModbusPDU
 	ExceptionCode ModbusErrorCode
-	Parent        *ModbusPDU
 }
 
 // The corresponding interface
@@ -60,10 +60,10 @@ func (m *ModbusPDUError) InitializeParent(parent *ModbusPDU) {
 func NewModbusPDUError(exceptionCode ModbusErrorCode) *ModbusPDU {
 	child := &ModbusPDUError{
 		ExceptionCode: exceptionCode,
-		Parent:        NewModbusPDU(),
+		ModbusPDU:     NewModbusPDU(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.ModbusPDU
 }
 
 func CastModbusPDUError(structType interface{}) *ModbusPDUError {
@@ -94,7 +94,7 @@ func (m *ModbusPDUError) LengthInBits() uint16 {
 }
 
 func (m *ModbusPDUError) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (exceptionCode)
 	lengthInBits += 8
@@ -115,10 +115,11 @@ func ModbusPDUErrorParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU
 	if pullErr := readBuffer.PullContext("exceptionCode"); pullErr != nil {
 		return nil, pullErr
 	}
-	exceptionCode, _exceptionCodeErr := ModbusErrorCodeParse(readBuffer)
+	_exceptionCode, _exceptionCodeErr := ModbusErrorCodeParse(readBuffer)
 	if _exceptionCodeErr != nil {
 		return nil, errors.Wrap(_exceptionCodeErr, "Error parsing 'exceptionCode' field")
 	}
+	exceptionCode := _exceptionCode
 	if closeErr := readBuffer.CloseContext("exceptionCode"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -130,10 +131,10 @@ func ModbusPDUErrorParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU
 	// Create a partially initialized instance
 	_child := &ModbusPDUError{
 		ExceptionCode: exceptionCode,
-		Parent:        &ModbusPDU{},
+		ModbusPDU:     &ModbusPDU{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.ModbusPDU.Child = _child
+	return _child.ModbusPDU, nil
 }
 
 func (m *ModbusPDUError) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -159,7 +160,7 @@ func (m *ModbusPDUError) Serialize(writeBuffer utils.WriteBuffer) error {
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *ModbusPDUError) String() string {

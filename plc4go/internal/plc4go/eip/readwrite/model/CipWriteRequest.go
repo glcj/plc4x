@@ -28,12 +28,12 @@ import (
 
 // The data-structure of this message
 type CipWriteRequest struct {
+	*CipService
 	RequestPathSize int8
 	Tag             []byte
 	DataType        CIPDataTypeCode
 	ElementNb       uint16
 	Data            []byte
-	Parent          *CipService
 }
 
 // The corresponding interface
@@ -60,10 +60,10 @@ func NewCipWriteRequest(requestPathSize int8, tag []byte, dataType CIPDataTypeCo
 		DataType:        dataType,
 		ElementNb:       elementNb,
 		Data:            data,
-		Parent:          NewCipService(),
+		CipService:      NewCipService(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.CipService
 }
 
 func CastCipWriteRequest(structType interface{}) *CipWriteRequest {
@@ -94,7 +94,7 @@ func (m *CipWriteRequest) LengthInBits() uint16 {
 }
 
 func (m *CipWriteRequest) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (requestPathSize)
 	lengthInBits += 8
@@ -128,10 +128,11 @@ func CipWriteRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipS
 	}
 
 	// Simple Field (requestPathSize)
-	requestPathSize, _requestPathSizeErr := readBuffer.ReadInt8("requestPathSize", 8)
+	_requestPathSize, _requestPathSizeErr := readBuffer.ReadInt8("requestPathSize", 8)
 	if _requestPathSizeErr != nil {
 		return nil, errors.Wrap(_requestPathSizeErr, "Error parsing 'requestPathSize' field")
 	}
+	requestPathSize := _requestPathSize
 	// Byte Array field (tag)
 	numberOfBytestag := int(uint16(requestPathSize) * uint16(uint16(2)))
 	tag, _readArrayErr := readBuffer.ReadByteArray("tag", numberOfBytestag)
@@ -143,19 +144,21 @@ func CipWriteRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipS
 	if pullErr := readBuffer.PullContext("dataType"); pullErr != nil {
 		return nil, pullErr
 	}
-	dataType, _dataTypeErr := CIPDataTypeCodeParse(readBuffer)
+	_dataType, _dataTypeErr := CIPDataTypeCodeParse(readBuffer)
 	if _dataTypeErr != nil {
 		return nil, errors.Wrap(_dataTypeErr, "Error parsing 'dataType' field")
 	}
+	dataType := _dataType
 	if closeErr := readBuffer.CloseContext("dataType"); closeErr != nil {
 		return nil, closeErr
 	}
 
 	// Simple Field (elementNb)
-	elementNb, _elementNbErr := readBuffer.ReadUint16("elementNb", 16)
+	_elementNb, _elementNbErr := readBuffer.ReadUint16("elementNb", 16)
 	if _elementNbErr != nil {
 		return nil, errors.Wrap(_elementNbErr, "Error parsing 'elementNb' field")
 	}
+	elementNb := _elementNb
 	// Byte Array field (data)
 	numberOfBytesdata := int(uint16(dataType.Size()) * uint16(elementNb))
 	data, _readArrayErr := readBuffer.ReadByteArray("data", numberOfBytesdata)
@@ -174,10 +177,10 @@ func CipWriteRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipS
 		DataType:        dataType,
 		ElementNb:       elementNb,
 		Data:            data,
-		Parent:          &CipService{},
+		CipService:      &CipService{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.CipService.Child = _child
+	return _child.CipService, nil
 }
 
 func (m *CipWriteRequest) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -235,7 +238,7 @@ func (m *CipWriteRequest) Serialize(writeBuffer utils.WriteBuffer) error {
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *CipWriteRequest) String() string {

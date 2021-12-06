@@ -28,6 +28,7 @@ import (
 
 // The data-structure of this message
 type BACnetTagApplicationTime struct {
+	*BACnetTag
 	Hour                 int8
 	Minute               int8
 	Second               int8
@@ -37,7 +38,6 @@ type BACnetTagApplicationTime struct {
 	MinuteIsWildcard     bool
 	SecondIsWildcard     bool
 	FractionalIsWildcard bool
-	Parent               *BACnetTag
 }
 
 // The corresponding interface
@@ -55,12 +55,12 @@ func (m *BACnetTagApplicationTime) TagClass() TagClass {
 }
 
 func (m *BACnetTagApplicationTime) InitializeParent(parent *BACnetTag, tagNumber uint8, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, isPrimitiveAndNotBoolean bool, actualLength uint32) {
-	m.Parent.TagNumber = tagNumber
-	m.Parent.LengthValueType = lengthValueType
-	m.Parent.ExtTagNumber = extTagNumber
-	m.Parent.ExtLength = extLength
-	m.Parent.ExtExtLength = extExtLength
-	m.Parent.ExtExtExtLength = extExtExtLength
+	m.TagNumber = tagNumber
+	m.LengthValueType = lengthValueType
+	m.ExtTagNumber = extTagNumber
+	m.ExtLength = extLength
+	m.ExtExtLength = extExtLength
+	m.ExtExtExtLength = extExtExtLength
 }
 
 func NewBACnetTagApplicationTime(hour int8, minute int8, second int8, fractional int8, tagNumber uint8, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32) *BACnetTag {
@@ -69,10 +69,10 @@ func NewBACnetTagApplicationTime(hour int8, minute int8, second int8, fractional
 		Minute:     minute,
 		Second:     second,
 		Fractional: fractional,
-		Parent:     NewBACnetTag(tagNumber, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
+		BACnetTag:  NewBACnetTag(tagNumber, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.BACnetTag
 }
 
 func CastBACnetTagApplicationTime(structType interface{}) *BACnetTagApplicationTime {
@@ -103,7 +103,7 @@ func (m *BACnetTagApplicationTime) LengthInBits() uint16 {
 }
 
 func (m *BACnetTagApplicationTime) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// A virtual field doesn't have any in- or output.
 
@@ -144,40 +144,44 @@ func BACnetTagApplicationTimeParse(readBuffer utils.ReadBuffer) (*BACnetTag, err
 	wildcard := int8(_wildcard)
 
 	// Simple Field (hour)
-	hour, _hourErr := readBuffer.ReadInt8("hour", 8)
+	_hour, _hourErr := readBuffer.ReadInt8("hour", 8)
 	if _hourErr != nil {
 		return nil, errors.Wrap(_hourErr, "Error parsing 'hour' field")
 	}
+	hour := _hour
 
 	// Virtual field
 	_hourIsWildcard := bool((hour) == (wildcard))
 	hourIsWildcard := bool(_hourIsWildcard)
 
 	// Simple Field (minute)
-	minute, _minuteErr := readBuffer.ReadInt8("minute", 8)
+	_minute, _minuteErr := readBuffer.ReadInt8("minute", 8)
 	if _minuteErr != nil {
 		return nil, errors.Wrap(_minuteErr, "Error parsing 'minute' field")
 	}
+	minute := _minute
 
 	// Virtual field
 	_minuteIsWildcard := bool((minute) == (wildcard))
 	minuteIsWildcard := bool(_minuteIsWildcard)
 
 	// Simple Field (second)
-	second, _secondErr := readBuffer.ReadInt8("second", 8)
+	_second, _secondErr := readBuffer.ReadInt8("second", 8)
 	if _secondErr != nil {
 		return nil, errors.Wrap(_secondErr, "Error parsing 'second' field")
 	}
+	second := _second
 
 	// Virtual field
 	_secondIsWildcard := bool((second) == (wildcard))
 	secondIsWildcard := bool(_secondIsWildcard)
 
 	// Simple Field (fractional)
-	fractional, _fractionalErr := readBuffer.ReadInt8("fractional", 8)
+	_fractional, _fractionalErr := readBuffer.ReadInt8("fractional", 8)
 	if _fractionalErr != nil {
 		return nil, errors.Wrap(_fractionalErr, "Error parsing 'fractional' field")
 	}
+	fractional := _fractional
 
 	// Virtual field
 	_fractionalIsWildcard := bool((fractional) == (wildcard))
@@ -198,16 +202,20 @@ func BACnetTagApplicationTimeParse(readBuffer utils.ReadBuffer) (*BACnetTag, err
 		MinuteIsWildcard:     minuteIsWildcard,
 		SecondIsWildcard:     secondIsWildcard,
 		FractionalIsWildcard: fractionalIsWildcard,
-		Parent:               &BACnetTag{},
+		BACnetTag:            &BACnetTag{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.BACnetTag.Child = _child
+	return _child.BACnetTag, nil
 }
 
 func (m *BACnetTagApplicationTime) Serialize(writeBuffer utils.WriteBuffer) error {
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("BACnetTagApplicationTime"); pushErr != nil {
 			return pushErr
+		}
+		// Virtual field (doesn't actually serialize anything, just makes the value available)
+		if _wildcardErr := writeBuffer.WriteVirtual("wildcard", m.Wildcard); _wildcardErr != nil {
+			return errors.Wrap(_wildcardErr, "Error serializing 'wildcard' field")
 		}
 
 		// Simple Field (hour)
@@ -216,12 +224,20 @@ func (m *BACnetTagApplicationTime) Serialize(writeBuffer utils.WriteBuffer) erro
 		if _hourErr != nil {
 			return errors.Wrap(_hourErr, "Error serializing 'hour' field")
 		}
+		// Virtual field (doesn't actually serialize anything, just makes the value available)
+		if _hourIsWildcardErr := writeBuffer.WriteVirtual("hourIsWildcard", m.HourIsWildcard); _hourIsWildcardErr != nil {
+			return errors.Wrap(_hourIsWildcardErr, "Error serializing 'hourIsWildcard' field")
+		}
 
 		// Simple Field (minute)
 		minute := int8(m.Minute)
 		_minuteErr := writeBuffer.WriteInt8("minute", 8, (minute))
 		if _minuteErr != nil {
 			return errors.Wrap(_minuteErr, "Error serializing 'minute' field")
+		}
+		// Virtual field (doesn't actually serialize anything, just makes the value available)
+		if _minuteIsWildcardErr := writeBuffer.WriteVirtual("minuteIsWildcard", m.MinuteIsWildcard); _minuteIsWildcardErr != nil {
+			return errors.Wrap(_minuteIsWildcardErr, "Error serializing 'minuteIsWildcard' field")
 		}
 
 		// Simple Field (second)
@@ -230,6 +246,10 @@ func (m *BACnetTagApplicationTime) Serialize(writeBuffer utils.WriteBuffer) erro
 		if _secondErr != nil {
 			return errors.Wrap(_secondErr, "Error serializing 'second' field")
 		}
+		// Virtual field (doesn't actually serialize anything, just makes the value available)
+		if _secondIsWildcardErr := writeBuffer.WriteVirtual("secondIsWildcard", m.SecondIsWildcard); _secondIsWildcardErr != nil {
+			return errors.Wrap(_secondIsWildcardErr, "Error serializing 'secondIsWildcard' field")
+		}
 
 		// Simple Field (fractional)
 		fractional := int8(m.Fractional)
@@ -237,13 +257,17 @@ func (m *BACnetTagApplicationTime) Serialize(writeBuffer utils.WriteBuffer) erro
 		if _fractionalErr != nil {
 			return errors.Wrap(_fractionalErr, "Error serializing 'fractional' field")
 		}
+		// Virtual field (doesn't actually serialize anything, just makes the value available)
+		if _fractionalIsWildcardErr := writeBuffer.WriteVirtual("fractionalIsWildcard", m.FractionalIsWildcard); _fractionalIsWildcardErr != nil {
+			return errors.Wrap(_fractionalIsWildcardErr, "Error serializing 'fractionalIsWildcard' field")
+		}
 
 		if popErr := writeBuffer.PopContext("BACnetTagApplicationTime"); popErr != nil {
 			return popErr
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *BACnetTagApplicationTime) String() string {

@@ -28,8 +28,8 @@ import (
 
 // The data-structure of this message
 type ModbusPDUReadFifoQueueResponse struct {
+	*ModbusPDU
 	FifoValue []uint16
-	Parent    *ModbusPDU
 }
 
 // The corresponding interface
@@ -60,10 +60,10 @@ func (m *ModbusPDUReadFifoQueueResponse) InitializeParent(parent *ModbusPDU) {
 func NewModbusPDUReadFifoQueueResponse(fifoValue []uint16) *ModbusPDU {
 	child := &ModbusPDUReadFifoQueueResponse{
 		FifoValue: fifoValue,
-		Parent:    NewModbusPDU(),
+		ModbusPDU: NewModbusPDU(),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.ModbusPDU
 }
 
 func CastModbusPDUReadFifoQueueResponse(structType interface{}) *ModbusPDUReadFifoQueueResponse {
@@ -94,7 +94,7 @@ func (m *ModbusPDUReadFifoQueueResponse) LengthInBits() uint16 {
 }
 
 func (m *ModbusPDUReadFifoQueueResponse) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Implicit Field (byteCount)
 	lengthInBits += 16
@@ -139,12 +139,14 @@ func ModbusPDUReadFifoQueueResponseParse(readBuffer utils.ReadBuffer, response b
 	}
 	// Count array
 	fifoValue := make([]uint16, fifoCount)
-	for curItem := uint16(0); curItem < uint16(fifoCount); curItem++ {
-		_item, _err := readBuffer.ReadUint16("", 16)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'fifoValue' field")
+	{
+		for curItem := uint16(0); curItem < uint16(fifoCount); curItem++ {
+			_item, _err := readBuffer.ReadUint16("", 16)
+			if _err != nil {
+				return nil, errors.Wrap(_err, "Error parsing 'fifoValue' field")
+			}
+			fifoValue[curItem] = _item
 		}
-		fifoValue[curItem] = _item
 	}
 	if closeErr := readBuffer.CloseContext("fifoValue", utils.WithRenderAsList(true)); closeErr != nil {
 		return nil, closeErr
@@ -157,10 +159,10 @@ func ModbusPDUReadFifoQueueResponseParse(readBuffer utils.ReadBuffer, response b
 	// Create a partially initialized instance
 	_child := &ModbusPDUReadFifoQueueResponse{
 		FifoValue: fifoValue,
-		Parent:    &ModbusPDU{},
+		ModbusPDU: &ModbusPDU{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.ModbusPDU.Child = _child
+	return _child.ModbusPDU, nil
 }
 
 func (m *ModbusPDUReadFifoQueueResponse) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -204,7 +206,7 @@ func (m *ModbusPDUReadFifoQueueResponse) Serialize(writeBuffer utils.WriteBuffer
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *ModbusPDUReadFifoQueueResponse) String() string {

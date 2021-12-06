@@ -112,16 +112,18 @@ func ApduParse(readBuffer utils.ReadBuffer, dataLength uint8) (*Apdu, error) {
 	}
 
 	// Simple Field (numbered)
-	numbered, _numberedErr := readBuffer.ReadBit("numbered")
+	_numbered, _numberedErr := readBuffer.ReadBit("numbered")
 	if _numberedErr != nil {
 		return nil, errors.Wrap(_numberedErr, "Error parsing 'numbered' field")
 	}
+	numbered := _numbered
 
 	// Simple Field (counter)
-	counter, _counterErr := readBuffer.ReadUint8("counter", 4)
+	_counter, _counterErr := readBuffer.ReadUint8("counter", 4)
 	if _counterErr != nil {
 		return nil, errors.Wrap(_counterErr, "Error parsing 'counter' field")
 	}
+	counter := _counter
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
 	var _parent *Apdu
@@ -180,8 +182,7 @@ func (m *Apdu) SerializeParent(writeBuffer utils.WriteBuffer, child IApdu, seria
 	}
 
 	// Switch field (Depending on the discriminator values, passes the serialization to a sub-type)
-	_typeSwitchErr := serializeChildFunction()
-	if _typeSwitchErr != nil {
+	if _typeSwitchErr := serializeChildFunction(); _typeSwitchErr != nil {
 		return errors.Wrap(_typeSwitchErr, "Error serializing sub-type field")
 	}
 

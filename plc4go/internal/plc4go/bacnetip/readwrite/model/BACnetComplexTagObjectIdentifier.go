@@ -28,9 +28,9 @@ import (
 
 // The data-structure of this message
 type BACnetComplexTagObjectIdentifier struct {
-	ObjectType     uint16
+	*BACnetComplexTag
+	ObjectType     BACnetObjectType
 	InstanceNumber uint32
-	Parent         *BACnetComplexTag
 }
 
 // The corresponding interface
@@ -47,24 +47,24 @@ func (m *BACnetComplexTagObjectIdentifier) DataType() BACnetDataType {
 	return BACnetDataType_BACNET_OBJECT_IDENTIFIER
 }
 
-func (m *BACnetComplexTagObjectIdentifier) InitializeParent(parent *BACnetComplexTag, tagNumber uint8, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, isPrimitiveAndNotBoolean bool, actualLength uint32) {
-	m.Parent.TagNumber = tagNumber
-	m.Parent.TagClass = tagClass
-	m.Parent.LengthValueType = lengthValueType
-	m.Parent.ExtTagNumber = extTagNumber
-	m.Parent.ExtLength = extLength
-	m.Parent.ExtExtLength = extExtLength
-	m.Parent.ExtExtExtLength = extExtExtLength
+func (m *BACnetComplexTagObjectIdentifier) InitializeParent(parent *BACnetComplexTag, tagNumber uint8, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, actualLength uint32) {
+	m.TagNumber = tagNumber
+	m.TagClass = tagClass
+	m.LengthValueType = lengthValueType
+	m.ExtTagNumber = extTagNumber
+	m.ExtLength = extLength
+	m.ExtExtLength = extExtLength
+	m.ExtExtExtLength = extExtExtLength
 }
 
-func NewBACnetComplexTagObjectIdentifier(objectType uint16, instanceNumber uint32, tagNumber uint8, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32) *BACnetComplexTag {
+func NewBACnetComplexTagObjectIdentifier(objectType BACnetObjectType, instanceNumber uint32, tagNumber uint8, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32) *BACnetComplexTag {
 	child := &BACnetComplexTagObjectIdentifier{
-		ObjectType:     objectType,
-		InstanceNumber: instanceNumber,
-		Parent:         NewBACnetComplexTag(tagNumber, tagClass, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
+		ObjectType:       objectType,
+		InstanceNumber:   instanceNumber,
+		BACnetComplexTag: NewBACnetComplexTag(tagNumber, tagClass, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.BACnetComplexTag
 }
 
 func CastBACnetComplexTagObjectIdentifier(structType interface{}) *BACnetComplexTagObjectIdentifier {
@@ -95,7 +95,7 @@ func (m *BACnetComplexTagObjectIdentifier) LengthInBits() uint16 {
 }
 
 func (m *BACnetComplexTagObjectIdentifier) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (objectType)
 	lengthInBits += 10
@@ -116,16 +116,24 @@ func BACnetComplexTagObjectIdentifierParse(readBuffer utils.ReadBuffer, tagNumbe
 	}
 
 	// Simple Field (objectType)
-	objectType, _objectTypeErr := readBuffer.ReadUint16("objectType", 10)
+	if pullErr := readBuffer.PullContext("objectType"); pullErr != nil {
+		return nil, pullErr
+	}
+	_objectType, _objectTypeErr := BACnetObjectTypeParse(readBuffer)
 	if _objectTypeErr != nil {
 		return nil, errors.Wrap(_objectTypeErr, "Error parsing 'objectType' field")
 	}
+	objectType := _objectType
+	if closeErr := readBuffer.CloseContext("objectType"); closeErr != nil {
+		return nil, closeErr
+	}
 
 	// Simple Field (instanceNumber)
-	instanceNumber, _instanceNumberErr := readBuffer.ReadUint32("instanceNumber", 22)
+	_instanceNumber, _instanceNumberErr := readBuffer.ReadUint32("instanceNumber", 22)
 	if _instanceNumberErr != nil {
 		return nil, errors.Wrap(_instanceNumberErr, "Error parsing 'instanceNumber' field")
 	}
+	instanceNumber := _instanceNumber
 
 	if closeErr := readBuffer.CloseContext("BACnetComplexTagObjectIdentifier"); closeErr != nil {
 		return nil, closeErr
@@ -133,12 +141,12 @@ func BACnetComplexTagObjectIdentifierParse(readBuffer utils.ReadBuffer, tagNumbe
 
 	// Create a partially initialized instance
 	_child := &BACnetComplexTagObjectIdentifier{
-		ObjectType:     objectType,
-		InstanceNumber: instanceNumber,
-		Parent:         &BACnetComplexTag{},
+		ObjectType:       objectType,
+		InstanceNumber:   instanceNumber,
+		BACnetComplexTag: &BACnetComplexTag{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.BACnetComplexTag.Child = _child
+	return _child.BACnetComplexTag, nil
 }
 
 func (m *BACnetComplexTagObjectIdentifier) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -148,8 +156,13 @@ func (m *BACnetComplexTagObjectIdentifier) Serialize(writeBuffer utils.WriteBuff
 		}
 
 		// Simple Field (objectType)
-		objectType := uint16(m.ObjectType)
-		_objectTypeErr := writeBuffer.WriteUint16("objectType", 10, (objectType))
+		if pushErr := writeBuffer.PushContext("objectType"); pushErr != nil {
+			return pushErr
+		}
+		_objectTypeErr := m.ObjectType.Serialize(writeBuffer)
+		if popErr := writeBuffer.PopContext("objectType"); popErr != nil {
+			return popErr
+		}
 		if _objectTypeErr != nil {
 			return errors.Wrap(_objectTypeErr, "Error serializing 'objectType' field")
 		}
@@ -166,7 +179,7 @@ func (m *BACnetComplexTagObjectIdentifier) Serialize(writeBuffer utils.WriteBuff
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *BACnetComplexTagObjectIdentifier) String() string {

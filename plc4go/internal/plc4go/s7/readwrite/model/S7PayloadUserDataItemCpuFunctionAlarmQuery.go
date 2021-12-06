@@ -36,10 +36,10 @@ const S7PayloadUserDataItemCpuFunctionAlarmQuery_LENGTH uint8 = 0x08
 
 // The data-structure of this message
 type S7PayloadUserDataItemCpuFunctionAlarmQuery struct {
+	*S7PayloadUserDataItem
 	SyntaxId  SyntaxIdType
 	QueryType QueryType
 	AlarmType AlarmType
-	Parent    *S7PayloadUserDataItem
 }
 
 // The corresponding interface
@@ -65,19 +65,19 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) DataLength() uint16 {
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
-	m.Parent.ReturnCode = returnCode
-	m.Parent.TransportSize = transportSize
+	m.ReturnCode = returnCode
+	m.TransportSize = transportSize
 }
 
 func NewS7PayloadUserDataItemCpuFunctionAlarmQuery(syntaxId SyntaxIdType, queryType QueryType, alarmType AlarmType, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
 	child := &S7PayloadUserDataItemCpuFunctionAlarmQuery{
-		SyntaxId:  syntaxId,
-		QueryType: queryType,
-		AlarmType: alarmType,
-		Parent:    NewS7PayloadUserDataItem(returnCode, transportSize),
+		SyntaxId:              syntaxId,
+		QueryType:             queryType,
+		AlarmType:             alarmType,
+		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.S7PayloadUserDataItem
 }
 
 func CastS7PayloadUserDataItemCpuFunctionAlarmQuery(structType interface{}) *S7PayloadUserDataItemCpuFunctionAlarmQuery {
@@ -108,7 +108,7 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) LengthInBits() uint16 {
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Const Field (functionId)
 	lengthInBits += 8
@@ -189,10 +189,11 @@ func S7PayloadUserDataItemCpuFunctionAlarmQueryParse(readBuffer utils.ReadBuffer
 	if pullErr := readBuffer.PullContext("syntaxId"); pullErr != nil {
 		return nil, pullErr
 	}
-	syntaxId, _syntaxIdErr := SyntaxIdTypeParse(readBuffer)
+	_syntaxId, _syntaxIdErr := SyntaxIdTypeParse(readBuffer)
 	if _syntaxIdErr != nil {
 		return nil, errors.Wrap(_syntaxIdErr, "Error parsing 'syntaxId' field")
 	}
+	syntaxId := _syntaxId
 	if closeErr := readBuffer.CloseContext("syntaxId"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -215,10 +216,11 @@ func S7PayloadUserDataItemCpuFunctionAlarmQueryParse(readBuffer utils.ReadBuffer
 	if pullErr := readBuffer.PullContext("queryType"); pullErr != nil {
 		return nil, pullErr
 	}
-	queryType, _queryTypeErr := QueryTypeParse(readBuffer)
+	_queryType, _queryTypeErr := QueryTypeParse(readBuffer)
 	if _queryTypeErr != nil {
 		return nil, errors.Wrap(_queryTypeErr, "Error parsing 'queryType' field")
 	}
+	queryType := _queryType
 	if closeErr := readBuffer.CloseContext("queryType"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -241,10 +243,11 @@ func S7PayloadUserDataItemCpuFunctionAlarmQueryParse(readBuffer utils.ReadBuffer
 	if pullErr := readBuffer.PullContext("alarmType"); pullErr != nil {
 		return nil, pullErr
 	}
-	alarmType, _alarmTypeErr := AlarmTypeParse(readBuffer)
+	_alarmType, _alarmTypeErr := AlarmTypeParse(readBuffer)
 	if _alarmTypeErr != nil {
 		return nil, errors.Wrap(_alarmTypeErr, "Error parsing 'alarmType' field")
 	}
+	alarmType := _alarmType
 	if closeErr := readBuffer.CloseContext("alarmType"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -255,13 +258,13 @@ func S7PayloadUserDataItemCpuFunctionAlarmQueryParse(readBuffer utils.ReadBuffer
 
 	// Create a partially initialized instance
 	_child := &S7PayloadUserDataItemCpuFunctionAlarmQuery{
-		SyntaxId:  syntaxId,
-		QueryType: queryType,
-		AlarmType: alarmType,
-		Parent:    &S7PayloadUserDataItem{},
+		SyntaxId:              syntaxId,
+		QueryType:             queryType,
+		AlarmType:             alarmType,
+		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.S7PayloadUserDataItem.Child = _child
+	return _child.S7PayloadUserDataItem, nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -351,7 +354,7 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) Serialize(writeBuffer utils
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) String() string {

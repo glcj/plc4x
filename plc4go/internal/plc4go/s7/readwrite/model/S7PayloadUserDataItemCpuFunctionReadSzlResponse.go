@@ -32,10 +32,10 @@ const S7PayloadUserDataItemCpuFunctionReadSzlResponse_SZLITEMLENGTH uint16 = uin
 
 // The data-structure of this message
 type S7PayloadUserDataItemCpuFunctionReadSzlResponse struct {
+	*S7PayloadUserDataItem
 	SzlId    *SzlId
 	SzlIndex uint16
 	Items    []*SzlDataTreeItem
-	Parent   *S7PayloadUserDataItem
 }
 
 // The corresponding interface
@@ -61,19 +61,19 @@ func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) DataLength() uint16 {
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
-	m.Parent.ReturnCode = returnCode
-	m.Parent.TransportSize = transportSize
+	m.ReturnCode = returnCode
+	m.TransportSize = transportSize
 }
 
 func NewS7PayloadUserDataItemCpuFunctionReadSzlResponse(szlId *SzlId, szlIndex uint16, items []*SzlDataTreeItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
 	child := &S7PayloadUserDataItemCpuFunctionReadSzlResponse{
-		SzlId:    szlId,
-		SzlIndex: szlIndex,
-		Items:    items,
-		Parent:   NewS7PayloadUserDataItem(returnCode, transportSize),
+		SzlId:                 szlId,
+		SzlIndex:              szlIndex,
+		Items:                 items,
+		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.S7PayloadUserDataItem
 }
 
 func CastS7PayloadUserDataItemCpuFunctionReadSzlResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionReadSzlResponse {
@@ -104,7 +104,7 @@ func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) LengthInBits() uint16 
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Simple field (szlId)
 	lengthInBits += m.SzlId.LengthInBits()
@@ -142,19 +142,21 @@ func S7PayloadUserDataItemCpuFunctionReadSzlResponseParse(readBuffer utils.ReadB
 	if pullErr := readBuffer.PullContext("szlId"); pullErr != nil {
 		return nil, pullErr
 	}
-	szlId, _szlIdErr := SzlIdParse(readBuffer)
+	_szlId, _szlIdErr := SzlIdParse(readBuffer)
 	if _szlIdErr != nil {
 		return nil, errors.Wrap(_szlIdErr, "Error parsing 'szlId' field")
 	}
+	szlId := CastSzlId(_szlId)
 	if closeErr := readBuffer.CloseContext("szlId"); closeErr != nil {
 		return nil, closeErr
 	}
 
 	// Simple Field (szlIndex)
-	szlIndex, _szlIndexErr := readBuffer.ReadUint16("szlIndex", 16)
+	_szlIndex, _szlIndexErr := readBuffer.ReadUint16("szlIndex", 16)
 	if _szlIndexErr != nil {
 		return nil, errors.Wrap(_szlIndexErr, "Error parsing 'szlIndex' field")
 	}
+	szlIndex := _szlIndex
 
 	// Const Field (szlItemLength)
 	szlItemLength, _szlItemLengthErr := readBuffer.ReadUint16("szlItemLength", 16)
@@ -178,12 +180,14 @@ func S7PayloadUserDataItemCpuFunctionReadSzlResponseParse(readBuffer utils.ReadB
 	}
 	// Count array
 	items := make([]*SzlDataTreeItem, szlItemCount)
-	for curItem := uint16(0); curItem < uint16(szlItemCount); curItem++ {
-		_item, _err := SzlDataTreeItemParse(readBuffer)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'items' field")
+	{
+		for curItem := uint16(0); curItem < uint16(szlItemCount); curItem++ {
+			_item, _err := SzlDataTreeItemParse(readBuffer)
+			if _err != nil {
+				return nil, errors.Wrap(_err, "Error parsing 'items' field")
+			}
+			items[curItem] = _item
 		}
-		items[curItem] = _item
 	}
 	if closeErr := readBuffer.CloseContext("items", utils.WithRenderAsList(true)); closeErr != nil {
 		return nil, closeErr
@@ -195,13 +199,13 @@ func S7PayloadUserDataItemCpuFunctionReadSzlResponseParse(readBuffer utils.ReadB
 
 	// Create a partially initialized instance
 	_child := &S7PayloadUserDataItemCpuFunctionReadSzlResponse{
-		SzlId:    CastSzlId(szlId),
-		SzlIndex: szlIndex,
-		Items:    items,
-		Parent:   &S7PayloadUserDataItem{},
+		SzlId:                 CastSzlId(szlId),
+		SzlIndex:              szlIndex,
+		Items:                 items,
+		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.S7PayloadUserDataItem.Child = _child
+	return _child.S7PayloadUserDataItem, nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -263,7 +267,7 @@ func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) Serialize(writeBuffer 
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) String() string {

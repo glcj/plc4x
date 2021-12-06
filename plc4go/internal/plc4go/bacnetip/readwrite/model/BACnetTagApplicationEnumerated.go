@@ -28,8 +28,8 @@ import (
 
 // The data-structure of this message
 type BACnetTagApplicationEnumerated struct {
-	Data   []int8
-	Parent *BACnetTag
+	*BACnetTag
+	Data []int8
 }
 
 // The corresponding interface
@@ -47,21 +47,21 @@ func (m *BACnetTagApplicationEnumerated) TagClass() TagClass {
 }
 
 func (m *BACnetTagApplicationEnumerated) InitializeParent(parent *BACnetTag, tagNumber uint8, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, isPrimitiveAndNotBoolean bool, actualLength uint32) {
-	m.Parent.TagNumber = tagNumber
-	m.Parent.LengthValueType = lengthValueType
-	m.Parent.ExtTagNumber = extTagNumber
-	m.Parent.ExtLength = extLength
-	m.Parent.ExtExtLength = extExtLength
-	m.Parent.ExtExtExtLength = extExtExtLength
+	m.TagNumber = tagNumber
+	m.LengthValueType = lengthValueType
+	m.ExtTagNumber = extTagNumber
+	m.ExtLength = extLength
+	m.ExtExtLength = extExtLength
+	m.ExtExtExtLength = extExtExtLength
 }
 
 func NewBACnetTagApplicationEnumerated(data []int8, tagNumber uint8, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32) *BACnetTag {
 	child := &BACnetTagApplicationEnumerated{
-		Data:   data,
-		Parent: NewBACnetTag(tagNumber, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
+		Data:      data,
+		BACnetTag: NewBACnetTag(tagNumber, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength),
 	}
-	child.Parent.Child = child
-	return child.Parent
+	child.Child = child
+	return child.BACnetTag
 }
 
 func CastBACnetTagApplicationEnumerated(structType interface{}) *BACnetTagApplicationEnumerated {
@@ -92,7 +92,7 @@ func (m *BACnetTagApplicationEnumerated) LengthInBits() uint16 {
 }
 
 func (m *BACnetTagApplicationEnumerated) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.Parent.ParentLengthInBits())
+	lengthInBits := uint16(m.ParentLengthInBits())
 
 	// Array field
 	if len(m.Data) > 0 {
@@ -117,14 +117,16 @@ func BACnetTagApplicationEnumeratedParse(readBuffer utils.ReadBuffer, actualLeng
 	}
 	// Length array
 	data := make([]int8, 0)
-	_dataLength := actualLength
-	_dataEndPos := readBuffer.GetPos() + uint16(_dataLength)
-	for readBuffer.GetPos() < _dataEndPos {
-		_item, _err := readBuffer.ReadInt8("", 8)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'data' field")
+	{
+		_dataLength := actualLength
+		_dataEndPos := readBuffer.GetPos() + uint16(_dataLength)
+		for readBuffer.GetPos() < _dataEndPos {
+			_item, _err := readBuffer.ReadInt8("", 8)
+			if _err != nil {
+				return nil, errors.Wrap(_err, "Error parsing 'data' field")
+			}
+			data = append(data, _item)
 		}
-		data = append(data, _item)
 	}
 	if closeErr := readBuffer.CloseContext("data", utils.WithRenderAsList(true)); closeErr != nil {
 		return nil, closeErr
@@ -136,11 +138,11 @@ func BACnetTagApplicationEnumeratedParse(readBuffer utils.ReadBuffer, actualLeng
 
 	// Create a partially initialized instance
 	_child := &BACnetTagApplicationEnumerated{
-		Data:   data,
-		Parent: &BACnetTag{},
+		Data:      data,
+		BACnetTag: &BACnetTag{},
 	}
-	_child.Parent.Child = _child
-	return _child.Parent, nil
+	_child.BACnetTag.Child = _child
+	return _child.BACnetTag, nil
 }
 
 func (m *BACnetTagApplicationEnumerated) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -170,7 +172,7 @@ func (m *BACnetTagApplicationEnumerated) Serialize(writeBuffer utils.WriteBuffer
 		}
 		return nil
 	}
-	return m.Parent.SerializeParent(writeBuffer, m, ser)
+	return m.SerializeParent(writeBuffer, m, ser)
 }
 
 func (m *BACnetTagApplicationEnumerated) String() string {
