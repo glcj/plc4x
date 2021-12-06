@@ -16,18 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.plc4x.java.spi.codegen.io;
 
-package utils
+import org.apache.plc4x.java.spi.generation.ParseException;
+import org.apache.plc4x.java.spi.generation.ReadBuffer;
+import org.apache.plc4x.java.spi.generation.WithReaderArgs;
 
-import "github.com/pkg/errors"
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
-// InlineIf is basically a inline if like construct for golang
-func InlineIf(test bool, a func() interface{}, b func() interface{}) interface{} {
-	if test {
-		return a()
-	} else {
-		return b()
-	}
+public class DataReaderSimpleDateTime extends DataReaderSimpleBase<LocalDateTime> {
+
+    public DataReaderSimpleDateTime(ReadBuffer readBuffer) {
+        super(readBuffer, 64);
+    }
+
+    @Override
+    public LocalDateTime read(String logicalName, WithReaderArgs... readerArgs) throws ParseException {
+        long unsignedLong = readBuffer.readUnsignedLong(logicalName, bitLength, readerArgs);
+        return LocalDateTime.ofEpochSecond(unsignedLong, 0, ZoneOffset.UTC);
+    }
 }
-
-var ParseAssertError = errors.New("Wrong assertion")

@@ -168,10 +168,12 @@ func BACnetTagParse(readBuffer utils.ReadBuffer) (*BACnetTag, error) {
 	}
 
 	// Virtual field
-	actualTagNumber := utils.InlineIf(bool((tagNumber) < (15)), func() interface{} { return uint8(tagNumber) }, func() interface{} { return uint8((*extTagNumber)) }).(uint8)
+	_actualTagNumber := utils.InlineIf(bool((tagNumber) < (15)), func() interface{} { return uint8(tagNumber) }, func() interface{} { return uint8((*extTagNumber)) }).(uint8)
+	actualTagNumber := uint8(_actualTagNumber)
 
 	// Virtual field
-	isPrimitiveAndNotBoolean := bool(!(bool(bool(bool((tagClass) == (TagClass_CONTEXT_SPECIFIC_TAGS))) && bool(bool((lengthValueType) == (6)))))) && bool(bool((tagNumber) != (1)))
+	_isPrimitiveAndNotBoolean := bool(!(bool(bool(bool((tagClass) == (TagClass_CONTEXT_SPECIFIC_TAGS))) && bool(bool((lengthValueType) == (6)))))) && bool(bool((tagNumber) != (1)))
+	isPrimitiveAndNotBoolean := bool(_isPrimitiveAndNotBoolean)
 
 	// Optional Field (extLength) (Can be skipped, if a given expression evaluates to false)
 	var extLength *uint8 = nil
@@ -204,13 +206,14 @@ func BACnetTagParse(readBuffer utils.ReadBuffer) (*BACnetTag, error) {
 	}
 
 	// Virtual field
-	actualLength := utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (255))), func() interface{} { return uint32((*extExtExtLength)) }, func() interface{} {
+	_actualLength := utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (255))), func() interface{} { return uint32((*extExtExtLength)) }, func() interface{} {
 		return uint32(uint32(utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (254))), func() interface{} { return uint32((*extExtLength)) }, func() interface{} {
 			return uint32(uint32(utils.InlineIf(bool((lengthValueType) == (5)), func() interface{} { return uint32((*extLength)) }, func() interface{} {
 				return uint32(uint32(utils.InlineIf(isPrimitiveAndNotBoolean, func() interface{} { return uint32(lengthValueType) }, func() interface{} { return uint32(uint32(0)) }).(uint32)))
 			}).(uint32)))
 		}).(uint32)))
 	}).(uint32)
+	actualLength := uint32(_actualLength)
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
 	var _parent *BACnetTag
@@ -221,21 +224,21 @@ func BACnetTagParse(readBuffer utils.ReadBuffer) (*BACnetTag, error) {
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x1: // BACnetTagApplicationBoolean
 		_parent, typeSwitchError = BACnetTagApplicationBooleanParse(readBuffer)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x2: // BACnetTagApplicationUnsignedInteger
-		_parent, typeSwitchError = BACnetTagApplicationUnsignedIntegerParse(readBuffer, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetTagApplicationUnsignedIntegerParse(readBuffer, actualLength)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x3: // BACnetTagApplicationSignedInteger
-		_parent, typeSwitchError = BACnetTagApplicationSignedIntegerParse(readBuffer, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetTagApplicationSignedIntegerParse(readBuffer, actualLength)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x4: // BACnetTagApplicationReal
-		_parent, typeSwitchError = BACnetTagApplicationRealParse(readBuffer, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetTagApplicationRealParse(readBuffer)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x5: // BACnetTagApplicationDouble
-		_parent, typeSwitchError = BACnetTagApplicationDoubleParse(readBuffer, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetTagApplicationDoubleParse(readBuffer)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x6: // BACnetTagApplicationOctetString
-		_parent, typeSwitchError = BACnetTagApplicationOctetStringParse(readBuffer)
+		_parent, typeSwitchError = BACnetTagApplicationOctetStringParse(readBuffer, actualLength)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x7: // BACnetTagApplicationCharacterString
-		_parent, typeSwitchError = BACnetTagApplicationCharacterStringParse(readBuffer)
+		_parent, typeSwitchError = BACnetTagApplicationCharacterStringParse(readBuffer, actualLength)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x8: // BACnetTagApplicationBitString
-		_parent, typeSwitchError = BACnetTagApplicationBitStringParse(readBuffer, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetTagApplicationBitStringParse(readBuffer, actualLength)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0x9: // BACnetTagApplicationEnumerated
-		_parent, typeSwitchError = BACnetTagApplicationEnumeratedParse(readBuffer, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetTagApplicationEnumeratedParse(readBuffer, actualLength)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0xA: // BACnetTagApplicationDate
 		_parent, typeSwitchError = BACnetTagApplicationDateParse(readBuffer)
 	case tagClass == TagClass_APPLICATION_TAGS && tagNumber == 0xB: // BACnetTagApplicationTime

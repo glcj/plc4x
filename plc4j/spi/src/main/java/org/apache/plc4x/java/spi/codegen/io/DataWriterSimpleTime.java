@@ -16,18 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.plc4x.java.spi.codegen.io;
 
-package utils
+import org.apache.plc4x.java.spi.generation.SerializationException;
+import org.apache.plc4x.java.spi.generation.WithWriterArgs;
+import org.apache.plc4x.java.spi.generation.WriteBuffer;
 
-import "github.com/pkg/errors"
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 
-// InlineIf is basically a inline if like construct for golang
-func InlineIf(test bool, a func() interface{}, b func() interface{}) interface{} {
-	if test {
-		return a()
-	} else {
-		return b()
-	}
+public class DataWriterSimpleTime extends DataWriterSimpleBase<LocalTime> {
+
+    public DataWriterSimpleTime(WriteBuffer writeBuffer) {
+        super(writeBuffer, 32);
+    }
+
+    @Override
+    public void write(String logicalName, LocalTime value, WithWriterArgs... writerArgs) throws SerializationException {
+        writeBuffer.writeUnsignedLong(logicalName, bitLength, value.toSecondOfDay());
+    }
+
 }
-
-var ParseAssertError = errors.New("Wrong assertion")

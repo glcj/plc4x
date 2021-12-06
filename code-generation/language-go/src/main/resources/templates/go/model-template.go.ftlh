@@ -851,6 +851,7 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 			return nil, closeErr
 		}
 			<#else>
+		currentPos := readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("${optionalField.name}"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -876,12 +877,16 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 		_val, _err := ${typeName}Parse(readBuffer${refParams})
                 </@compress>
 
-		if _err != nil {
+		switch {
+		case _err != nil && _err != utils.ParseAssertError:
 			return nil, errors.Wrap(_err, "Error parsing '${optionalField.name}' field")<@emitImport import="github.com/pkg/errors" />
-		}
-		${optionalField.name} = Cast${helper.getLanguageTypeNameForField(field)}(_val)
-		if closeErr := readBuffer.CloseContext("${optionalField.name}"); closeErr != nil {
-			return nil, closeErr
+		case _err == utils.ParseAssertError:
+			readBuffer.SetPos(currentPos)
+		default:
+			${optionalField.name} = Cast${helper.getLanguageTypeNameForField(field)}(_val)
+			if closeErr := readBuffer.CloseContext("${optionalField.name}"); closeErr != nil {
+				return nil, closeErr
+			}
 		}
 			</#if>
 	}
@@ -922,6 +927,9 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 	}
 	${assertField.name} = Cast${helper.getLanguageTypeNameForField(field)}(_val)
 			</#if>
+	if ${assertField.name} != ${helper.toParseExpression(assertField, assertField.type, assertField.conditionExpression, parserArguments)} {
+		return nil, utils.ParseAssertError
+	}
 				<#break>
 			<#case "padding">
 				<#assign paddingField = field.asPaddingField().orElseThrow()>
@@ -1077,7 +1085,8 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 				<#assign virtualField = field.asVirtualField().orElseThrow()>
 
 	// Virtual field
-	${virtualField.name} := ${helper.toParseExpression(virtualField, virtualField.type, virtualField.valueExpression, parserArguments)}
+	_${virtualField.name} := ${helper.toParseExpression(virtualField, virtualField.type, virtualField.valueExpression, parserArguments)}
+	${virtualField.name} := ${helper.getLanguageTypeNameForTypeReference(virtualField.type)}(_${virtualField.name})
 				<#break>
 		</#switch>
 	</#list>
@@ -1096,6 +1105,9 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 		<#list type.propertyFields as field>
 		${field.name?cap_first}: <#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>Cast${helper.getLanguageTypeNameForField(field)}(</#if>${field.name}<#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>)</#if>,
 		</#list>
+        <#list type.virtualFields as field>
+            ${field.name?cap_first}: <#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>Cast${helper.getLanguageTypeNameForField(field)}(</#if>${field.name}<#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>)</#if>,
+        </#list>
 		Parent: &${type.parentType.name}{},
 	}
 	_child.Parent.Child = _child

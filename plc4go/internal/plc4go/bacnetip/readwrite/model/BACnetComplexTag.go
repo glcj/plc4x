@@ -139,11 +139,17 @@ func BACnetComplexTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 	if _err != nil {
 		return nil, errors.Wrap(_err, "Error parsing 'tagNumber' field")
 	}
+	if tagNumber != tagNumberArgument {
+		return nil, utils.ParseAssertError
+	}
 
 	// Assert Field (tagClass) (Can be skipped, if a given expression evaluates to false)
 	tagClass, _err := TagClassParse(readBuffer)
 	if _err != nil {
 		return nil, errors.Wrap(_err, "Error parsing 'tagClass' field")
+	}
+	if tagClass != TagClass_CONTEXT_SPECIFIC_TAGS {
+		return nil, utils.ParseAssertError
 	}
 
 	// Simple Field (lengthValueType)
@@ -163,10 +169,12 @@ func BACnetComplexTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 	}
 
 	// Virtual field
-	actualTagNumber := utils.InlineIf(bool((tagNumber) < (15)), func() interface{} { return uint8(tagNumber) }, func() interface{} { return uint8((*extTagNumber)) }).(uint8)
+	_actualTagNumber := utils.InlineIf(bool((tagNumber) < (15)), func() interface{} { return uint8(tagNumber) }, func() interface{} { return uint8((*extTagNumber)) }).(uint8)
+	actualTagNumber := uint8(_actualTagNumber)
 
 	// Virtual field
-	isPrimitiveAndNotBoolean := bool(!(bool(bool((lengthValueType) == (6))))) && bool(bool((tagNumber) != (1)))
+	_isPrimitiveAndNotBoolean := bool(!(bool(bool((lengthValueType) == (6))))) && bool(bool((tagNumber) != (1)))
+	isPrimitiveAndNotBoolean := bool(_isPrimitiveAndNotBoolean)
 
 	// Optional Field (extLength) (Can be skipped, if a given expression evaluates to false)
 	var extLength *uint8 = nil
@@ -199,13 +207,14 @@ func BACnetComplexTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 	}
 
 	// Virtual field
-	actualLength := utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (255))), func() interface{} { return uint32((*extExtExtLength)) }, func() interface{} {
+	_actualLength := utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (255))), func() interface{} { return uint32((*extExtExtLength)) }, func() interface{} {
 		return uint32(uint32(utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (254))), func() interface{} { return uint32((*extExtLength)) }, func() interface{} {
 			return uint32(uint32(utils.InlineIf(bool((lengthValueType) == (5)), func() interface{} { return uint32((*extLength)) }, func() interface{} {
 				return uint32(uint32(utils.InlineIf(isPrimitiveAndNotBoolean, func() interface{} { return uint32(lengthValueType) }, func() interface{} { return uint32(uint32(0)) }).(uint32)))
 			}).(uint32)))
 		}).(uint32)))
 	}).(uint32)
+	actualLength := uint32(_actualLength)
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
 	var _parent *BACnetComplexTag
@@ -216,21 +225,21 @@ func BACnetComplexTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 	case dataType == BACnetDataType_BOOLEAN: // BACnetComplexTagBoolean
 		_parent, typeSwitchError = BACnetComplexTagBooleanParse(readBuffer, tagNumberArgument, dataType)
 	case dataType == BACnetDataType_UNSIGNED_INTEGER: // BACnetComplexTagUnsignedInteger
-		_parent, typeSwitchError = BACnetComplexTagUnsignedIntegerParse(readBuffer, tagNumberArgument, dataType, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetComplexTagUnsignedIntegerParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_SIGNED_INTEGER: // BACnetComplexTagSignedInteger
-		_parent, typeSwitchError = BACnetComplexTagSignedIntegerParse(readBuffer, tagNumberArgument, dataType, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetComplexTagSignedIntegerParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_REAL: // BACnetComplexTagReal
-		_parent, typeSwitchError = BACnetComplexTagRealParse(readBuffer, tagNumberArgument, dataType, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetComplexTagRealParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_DOUBLE: // BACnetComplexTagDouble
-		_parent, typeSwitchError = BACnetComplexTagDoubleParse(readBuffer, tagNumberArgument, dataType, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetComplexTagDoubleParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_OCTET_STRING: // BACnetComplexTagOctetString
 		_parent, typeSwitchError = BACnetComplexTagOctetStringParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_CHARACTER_STRING: // BACnetComplexTagCharacterString
-		_parent, typeSwitchError = BACnetComplexTagCharacterStringParse(readBuffer, tagNumberArgument, dataType)
+		_parent, typeSwitchError = BACnetComplexTagCharacterStringParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_BIT_STRING: // BACnetComplexTagBitString
-		_parent, typeSwitchError = BACnetComplexTagBitStringParse(readBuffer, tagNumberArgument, dataType, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetComplexTagBitStringParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_ENUMERATED: // BACnetComplexTagEnumerated
-		_parent, typeSwitchError = BACnetComplexTagEnumeratedParse(readBuffer, tagNumberArgument, dataType, lengthValueType, *extLength)
+		_parent, typeSwitchError = BACnetComplexTagEnumeratedParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	case dataType == BACnetDataType_DATE: // BACnetComplexTagDate
 		_parent, typeSwitchError = BACnetComplexTagDateParse(readBuffer, tagNumberArgument, dataType)
 	case dataType == BACnetDataType_TIME: // BACnetComplexTagTime

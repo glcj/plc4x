@@ -25,6 +25,8 @@ import org.apache.plc4x.java.spi.generation.WithReaderArgs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigInteger;
+
 public class FieldReaderVirtual<T> implements FieldCommons {
 
     @SuppressWarnings({"unused", "unchecked"})
@@ -36,7 +38,8 @@ public class FieldReaderVirtual<T> implements FieldCommons {
             } else if (type == byte.class) {
                 Number valueExpressionNumber = (Number) valueExpression;
                 long longValue = valueExpressionNumber.longValue();
-                if ((byte) longValue != longValue) {
+                // 0xFF is a special case and a legit value for (unsigned) byte
+                if ((byte) longValue != longValue && longValue != 0xFF) {
                     throw new ArithmeticException("byte overflow");
                 }
                 return (T) (Byte) valueExpressionNumber.byteValue();
@@ -71,6 +74,10 @@ public class FieldReaderVirtual<T> implements FieldCommons {
         }
         if (type == String.class) {
             return type.cast(String.valueOf(valueExpression));
+        }
+        if (type == BigInteger.class) {
+            long longValue = valueExpression instanceof Long ? (Long) valueExpression : (long) valueExpression;
+            return (T) BigInteger.valueOf(longValue);
         }
         return type.cast(valueExpression);
     }
