@@ -372,10 +372,12 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     private CompletableFuture<PlcReadResponse> toPlcReadResponse(PlcReadRequest readRequest, CompletableFuture<S7Message> response) {
         CompletableFuture<PlcReadResponse>  client_future = new CompletableFuture<>();  
         active_requests.get(response).setRight(client_future);  
+        System.out.println("001 Ejecuta la solicitud");
         try {
             clientExecutorService.execute(()->{
                 try
                 {
+                    System.out.println("003 Ejecutando la tarea.");
                     PlcReadResponse plcitems = (PlcReadResponse) decodeReadResponse(response.get(), readRequest);
                     client_future.complete(plcitems);  
                 } catch (Exception ex) {
@@ -385,6 +387,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         } catch (Exception ex) {
             logger.info(ex.toString());
         }        
+        System.out.println("002 Enviando futuro al cliente.");
         return client_future;
     }
 
@@ -402,11 +405,12 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         if(tpduGenerator.get() == 0xFFFF) {
             tpduGenerator.set(1);
         }
-
+                    System.out.println("004 Ejecutando la tarea.");
         // Create a new Request with correct tpuId (is not known before)
         S7MessageRequest s7MessageRequest = new S7MessageRequest(tpduId, request.getParameter(), request.getPayload());
 
         TPKTPacket tpktPacket = new TPKTPacket(new COTPPacketData(null, s7MessageRequest, true, (short) tpduId));
+              
         // Start a new request-transaction (Is ended in the response-handler)
         RequestTransactionManager.RequestTransaction transaction = tm.startRequest();
         transaction.submit(() -> context.sendRequest(tpktPacket)
@@ -428,7 +432,8 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     ex.printStackTrace();
                 }                
             }));
-        active_requests.put(future, new MutablePair<>(transaction, null));        
+        active_requests.put(future, new MutablePair<>(transaction, null));  
+                            System.out.println("005 Ejecutando la tarea.");
         return future;
     }
     

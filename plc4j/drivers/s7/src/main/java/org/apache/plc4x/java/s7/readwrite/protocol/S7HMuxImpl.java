@@ -129,6 +129,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
     */
     @Override
     protected void encode(ChannelHandlerContext ctx, ByteBuf outbb, List<Object> list) throws Exception { 
+        System.out.println("Llego aqui: " + outbb);
         if ((embed_ctx == null) && (ctx.channel() instanceof EmbeddedChannel)) embed_ctx = ctx;
         if ((tcp_channel != null)  && (embed_ctx == ctx)){  
             tcp_channel.writeAndFlush(outbb.copy());
@@ -175,7 +176,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         super.userEventTriggered(ctx, evt); 
-        logger.debug(LocalTime.now().toString() + " userEventTriggered: " + ctx.name() + " Event: "  + evt);         
+        logger.info(LocalTime.now().toString() + " userEventTriggered: " + ctx.name() + " Event: "  + evt);         
         if (evt instanceof ConnectEvent) {
             try {
                 tcp_channel.pipeline().remove("watchdog");                 

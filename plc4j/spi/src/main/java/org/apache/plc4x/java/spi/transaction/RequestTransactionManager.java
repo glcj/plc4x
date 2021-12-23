@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -54,6 +55,8 @@ public class RequestTransactionManager {
                                                     .daemon(true)
                                                     .priority(Thread.MAX_PRIORITY)
                                                     .build());
+    //static final ExecutorService executor = Executors.newFixedThreadPool(4);    
+    
     private final Set<RequestTransaction> runningRequests;
     /** How many Transactions are allowed to run at the same time? */
     private int numberOfConcurrentRequests;
@@ -112,9 +115,11 @@ public class RequestTransactionManager {
     }
 
     private void processWorklog() {
+        logger.info("processWorklog()");
         while (runningRequests.size() < getNumberOfConcurrentRequests() && !workLog.isEmpty()) {
             RequestTransaction next = workLog.remove();
             this.runningRequests.add(next);
+            logger.info("Lanza la peticion...");            
             Future<?> completionFuture = executor.submit(next.operation);
             next.setCompletionFuture(completionFuture);
         }
@@ -185,7 +190,7 @@ public class RequestTransactionManager {
         }
 
         public void submit(Runnable operation) {
-            logger.trace("Submission of transaction {}", transactionId);
+            logger.info("Submission of transaction {}", transactionId);
             this.setOperation(new TransactionOperation(transactionId, operation));
             this.parent.submit(this);
         }
@@ -214,12 +219,16 @@ public class RequestTransactionManager {
             this.delegate = delegate;
         }
 
+        //TODO: Check MDC used. Created exception in Hup application
         @Override
         public void run() {
-            try (final MDC.MDCCloseable closeable = MDC.putCloseable("plc4x.transactionId", Integer.toString(transactionId))) {
-                logger.trace("Start execution of transaction {}", transactionId);
+            //try (final MDC.MDCCloseable closeable = MDC.putCloseable("plc4x.transactionId", Integer.toString(transactionId))) {
+            try{
+                logger.info("Start execution of transaction {}", transactionId);
                 delegate.run();
-                logger.trace("Completed execution of transaction {}", transactionId);
+                logger.info("Completed execution of transaction {}", transactionId);
+            } catch (Exception ex) {
+                logger.info(ex.getMessage());
             }
         }
     }
