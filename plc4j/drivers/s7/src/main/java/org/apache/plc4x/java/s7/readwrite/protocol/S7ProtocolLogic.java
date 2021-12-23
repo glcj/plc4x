@@ -74,6 +74,16 @@ import org.apache.plc4x.java.spi.messages.DefaultPlcSubscriptionResponse;
 import org.apache.plc4x.java.spi.messages.DefaultPlcUnsubscriptionRequest;
 import org.apache.plc4x.java.spi.model.DefaultPlcSubscriptionField;
 
+import org.apache.plc4x.java.s7.readwrite.EventType;
+import org.apache.plc4x.java.s7.readwrite.DataTransportSize;
+import org.apache.plc4x.java.s7.readwrite.DataTransportErrorCode;
+import org.apache.plc4x.java.s7.readwrite.AlarmStateType;
+import org.apache.plc4x.java.s7.readwrite.SzlModuleTypeClass;
+import org.apache.plc4x.java.s7.readwrite.SzlSublist;
+import org.apache.plc4x.java.s7.readwrite.COTPTpduSize;
+import org.apache.plc4x.java.s7.readwrite.COTPProtocolClass;
+import org.apache.plc4x.java.s7.readwrite.TransportSize;
+
 /**
  * The S7 Protocol states that there can not be more then {min(maxAmqCaller, maxAmqCallee} "ongoing" requests.
  * So we need to limit those.

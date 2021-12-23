@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 /**
  * This is a limited Queue of Requests, a Protocol can use.
@@ -48,7 +49,11 @@ public class RequestTransactionManager {
     private static final Logger logger = LoggerFactory.getLogger(RequestTransactionManager.class);
 
     /** Executor that performs all operations */
-    static final ExecutorService executor = Executors.newFixedThreadPool(4);
+    static final ExecutorService executor = Executors.newFixedThreadPool(4, new BasicThreadFactory.Builder()
+                                                    .namingPattern("plc4x-tm-thread-%d")
+                                                    .daemon(true)
+                                                    .priority(Thread.MAX_PRIORITY)
+                                                    .build());
     private final Set<RequestTransaction> runningRequests;
     /** How many Transactions are allowed to run at the same time? */
     private int numberOfConcurrentRequests;
