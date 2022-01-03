@@ -45,7 +45,11 @@
 
         <!-- Jandex For annotation Detection -->
         <jandex.version>2.2.2.Final</jandex.version>
-
+        
+        <!-- PLC4X Version-->
+        <apache.plc4x.version>0.10.0-SNAPSHOT</apache.plc4x.version>
+        
+        <xml-apis.version>1.4.01</xml-apis.version>
     </properties>    
     
     
@@ -53,6 +57,7 @@
         <module>hop-plc4x-actions</module>
         <module>hop-plc4x-metadata</module>
         <module>hop-plc4x-transformer</module>
+        <module>hop-plc4x-assemblies</module>
     </modules>
     
 
@@ -180,7 +185,73 @@
         </pluginRepository>
     </pluginRepositories>
         
-        
+    <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>0.13</version>
+                <configuration>
+                    <excludeSubProjects>false</excludeSubProjects>
+                    <consoleOutput>true</consoleOutput>
+                    <excludes>
+
+                        <!-- General Exclusions -->
+                        <exclude>DISCLAIMER</exclude>
+                        <exclude>LICENSE</exclude>
+                        <exclude>NOTICE</exclude>
+                        <exclude>**/licenses/*</exclude>
+                        <exclude>**/target/**</exclude>
+                        <exclude>**/*.svg</exclude>
+                        <exclude>**/*.json</exclude>
+                        <exclude>**/PUT_JDBC_HERE</exclude>
+                        <exclude>**/hop.pwd</exclude>
+                        <exclude>**/*.iml</exclude>
+
+                        <!-- Unit Test Exclusions -->
+                        <exclude>**/test/**/*.txt</exclude>
+                        <exclude>**/test/**/*.xml</exclude>
+                        <exclude>**/test/**/*.xsd</exclude>
+                        <exclude>**/test/**/*.csv</exclude>
+                        <exclude>**/test/**/*.csv.bz2</exclude>
+                        <exclude>**/test/**/*.csv.gz</exclude>
+                        <exclude>**/test/**/*.ods</exclude>
+                        <exclude>**/test/**/*.xls</exclude>
+                        <exclude>**/test/**/*.xlsx</exclude>
+                        <exclude>**/test/**/*.edi</exclude>
+                        <exclude>**/test/**/*.avro</exclude>
+                        <exclude>**/test/**/*.snippet</exclude>
+
+                        <!-- Integration Test Exclusion -->
+                        <exclude>**/datasets/*.csv</exclude>
+                        <exclude>**/it/**/*.csv</exclude>
+
+                        <!-- External Integration Test Exclusion -->
+                        <exclude>**/integration-tests/**/*.txt</exclude>
+                        <exclude>**/integration-tests/**/*.json</exclude>
+                        <exclude>**/integration-tests/**/*.json.old</exclude>
+
+                        <!-- Samples Exclusions -->
+                        <!-- plugins/engines/beam -->
+                        <exclude>**/src/main/samples/**/*.txt</exclude>
+                        <exclude>**/src/main/samples/**/*.csv</exclude>
+
+                        <!-- Documentation Exclusions-->
+                        <exclude>docs/content/**</exclude>
+                        <exclude>docs/resources/**</exclude>
+                        <exclude>docs/node_modules/**</exclude>
+                        <exclude>docs/.pnp/**</exclude>
+                        <exclude>docs/.pnp.js</exclude>
+                        <exclude>docs/yarn.lock</exclude>
+
+                    </excludes>
+                </configuration>
+            </plugin>                
+        </plugins>
+
+    </build>    
+            
      
         
         

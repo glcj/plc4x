@@ -78,6 +78,12 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
     super( transformMeta, meta, data, copyNr, pipelineMeta, pipeline );
   }
 
+  /*
+  * 
+  * @param meta Meta data from user dialog
+  * @param remarks Error registers
+  * @param origin transform instance name
+  */
   public static final RowMetaAndData buildRow(
       Plc4xReadMeta meta, List<ICheckResult> remarks, String origin) throws HopPluginException {
     IRowMeta rowMeta = new RowMeta();
@@ -242,23 +248,11 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
 
         if ((connmeta != null) && (connwrapper == null)){
             try{
-                System.out.println("");
                 PlcConnection conn =  new PlcDriverManager().getConnection(connmeta.getUrl());
-                connwrapper = new Plc4xWrapperConnection(conn);            
-                getPipeline().getExtensionDataMap().put(meta.getConnection(), connwrapper);   
-                
-        PlcReadRequest.Builder builder = conn.readRequestBuilder(); 
-        builder.addItem("value", "%MX1.0:BOOL");            
-        PlcReadRequest readRequest = builder.build();        
-        try {
-            PlcReadResponse readResponse = readRequest.execute().orTimeout(15, TimeUnit.SECONDS).get();
-            //PlcReadResponse readResponse = readRequest.execute().get();
-            System.out.println("Read: " + readResponse.getString("value"));             
-        } catch (Exception ex) {
-            throw new HopException ("Unable to read data from PLC");
-        }                
-                
-                
+                if (conn.isConnected()) {
+                    connwrapper = new Plc4xWrapperConnection(conn);            
+                    getPipeline().getExtensionDataMap().put(meta.getConnection(), connwrapper);   
+                }
             } catch (Exception ex){
             logError(
                 BaseMessages.getString(
@@ -274,22 +268,25 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
 
     
     if ((connmeta != null) && (connwrapper != null)){
-        PlcReadRequest.Builder builder = connwrapper.getConnection().readRequestBuilder(); 
-        builder.addItem("value", "%MX1.0:BOOL");            
-        PlcReadRequest readRequest = builder.build();        
-        try {
-            PlcReadResponse readResponse = readRequest.execute().orTimeout(5, TimeUnit.SECONDS).get();
-            //PlcReadResponse readResponse = readRequest.execute().get();
-            System.out.println("Read: " + readResponse.getString("value"));             
-        } catch (Exception ex) {
-            throw new HopException ("Unable to read data from PLC");
+        if (connwrapper.getConnection().isConnected()){
+            PlcReadRequest.Builder builder = connwrapper.getConnection().readRequestBuilder(); 
+            builder.addItem("value", "%MX1.0:BOOL");            
+            PlcReadRequest readRequest = builder.build();        
+            try {
+                PlcReadResponse readResponse = readRequest.execute().orTimeout(5, TimeUnit.SECONDS).get();
+                //PlcReadResponse readResponse = readRequest.execute().get();
+                System.out.println("Read: " + readResponse.getString("value"));             
+            } catch (Exception ex) {
+                throw new HopException ("Unable to read data from PLC");
+            }
+        } else {
+            getPipeline().getExtensionDataMap().put(meta.getConnection(), null);  
         }
         
     } else {
       setOutputDone();
       return false;        
     }
-      System.out.println("paso por aqui!...");
     putRow(getInputRowMeta(), r ); // return your data
     return true;
   }
@@ -322,13 +319,7 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
 
             data.outputRowData = outputRow.getData();
             data.outputRowMeta = outputRow.getRowMeta();            
-            
-            
-            IPipelineEngine<PipelineMeta>  pipeline = this.getDispatcher();
-            Map<String,Object> map = pipeline.getExtensionDataMap();
-            synchronized(map) {
 
-            }
           return true;
         }
     return false;
