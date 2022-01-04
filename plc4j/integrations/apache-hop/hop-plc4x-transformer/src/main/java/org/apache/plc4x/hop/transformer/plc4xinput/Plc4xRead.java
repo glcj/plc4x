@@ -19,6 +19,7 @@ package org.apache.plc4x.hop.transformer.plc4xinput;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -69,6 +70,7 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
   
   private Plc4xConnection connmeta = null;
   private Plc4xWrapperConnection connwrapper = null;
+  private PlcReadRequest readRequest = null;
   private static final ReentrantLock lock = new ReentrantLock();
   
   private static final String dummy = "dummy";
@@ -225,8 +227,9 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
     return new RowMetaAndData(rowMeta, rowData);
   }
   
-  /*
+  /* 
   * 
+  *
   */
   @Override
   public  boolean processRow() throws HopException {
@@ -247,6 +250,7 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
         }
 
         if ((connmeta != null) && (connwrapper == null)){
+            readRequest = null;
             try{
                 PlcConnection conn =  new PlcDriverManager().getConnection(connmeta.getUrl());
                 if (conn.isConnected()) {
@@ -269,13 +273,20 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
     
     if ((connmeta != null) && (connwrapper != null)){
         if (connwrapper.getConnection().isConnected()){
-            PlcReadRequest.Builder builder = connwrapper.getConnection().readRequestBuilder(); 
-            builder.addItem("value", "%MX1.0:BOOL");            
-            PlcReadRequest readRequest = builder.build();        
+            if (readRequest == null){
+                PlcReadRequest.Builder builder = connwrapper.getConnection().readRequestBuilder(); 
+                for (GeneratorField field: meta.getFields()){
+                    builder.addItem(field.getName(), field.getItem());
+                }                
+                readRequest = builder.build();   
+            }
             try {
                 PlcReadResponse readResponse = readRequest.execute().orTimeout(5, TimeUnit.SECONDS).get();
-                //PlcReadResponse readResponse = readRequest.execute().get();
-                System.out.println("Read: " + readResponse.getString("value"));             
+                for (GeneratorField field: meta.getFields()){
+                    field.setValue(readResponse.getString(field.getName()));
+                    System.out.println("Asigna valor: " + readResponse.getString(field.getName()));
+                }  
+                data.rowDate = new Date();
             } catch (Exception ex) {
                 throw new HopException ("Unable to read data from PLC");
             }
@@ -287,7 +298,16 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
       setOutputDone();
       return false;        
     }
-    putRow(getInputRowMeta(), r ); // return your data
+    
+    if ((meta.isNeverEnding() || data.rowsWritten < data.rowLimit) && !isStopped()) {
+      r = data.outputRowMeta.cloneRow(data.outputRowData);
+        System.out.println("Tamano : " + r.length);        
+    } else {
+      setOutputDone(); // signal end to receiver(s)
+      return false;
+    }    
+    putRow(data.outputRowMeta, r ); // return your data
+    data.rowsWritten++;
     return true;
   }
 
@@ -336,11 +356,10 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
   */
     @Override
     public void cleanup() {
-        System.out.println("Va a limpiar la conexion...");
         super.cleanup();
+        logBasic("Release connection.");
         if (connwrapper != null)
-        connwrapper.release();
-        System.out.println("Limpio la conexion...");        
+        connwrapper.release();     
     }
  
   

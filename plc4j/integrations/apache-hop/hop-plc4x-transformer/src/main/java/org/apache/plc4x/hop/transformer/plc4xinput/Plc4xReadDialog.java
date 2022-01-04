@@ -277,6 +277,10 @@ public class Plc4xReadDialog extends BaseTransformDialog implements ITransformDi
               ColumnInfo.COLUMN_TYPE_TEXT,
               false),
           new ColumnInfo(
+              BaseMessages.getString(PKG, "Plc4x.Read.Meta.Dialog.Fields.Item"),
+              ColumnInfo.COLUMN_TYPE_TEXT,
+              false),            
+          new ColumnInfo(
               BaseMessages.getString(PKG, "System.Column.Type"),
               ColumnInfo.COLUMN_TYPE_CCOMBO,
               ValueMetaFactory.getValueMetaNames()),
@@ -376,6 +380,7 @@ public class Plc4xReadDialog extends BaseTransformDialog implements ITransformDi
 
   /**
    * Copy information from the meta-data input to the dialog fields.
+   * 
    */
   public void getData() {
     if (isDebug()) {
@@ -399,6 +404,8 @@ public class Plc4xReadDialog extends BaseTransformDialog implements ITransformDi
       int col = 1;
       item.setText(col++, Const.NVL(field.getName(), ""));
 
+      item.setText(col++, Const.NVL(field.getItem(), ""));      
+      
       String type = field.getType();
       String format = field.getFormat();
       String length = field.getLength() < 0 ? "" : ("" + field.getLength());
@@ -434,10 +441,9 @@ public class Plc4xReadDialog extends BaseTransformDialog implements ITransformDi
   }
 
   /**
+   * Stores the information from the dialog box in meta-data.
    *
-   * save data to metadata
-   *
-   * @param in
+   * @param meta 
    */
   private void getInfo( Plc4xReadMeta meta)  throws HopException  {
     meta.setConnection(wConnection.getText());
@@ -453,16 +459,17 @@ public class Plc4xReadDialog extends BaseTransformDialog implements ITransformDi
     for (TableItem item : wFields.getNonEmptyItems()) {
         GeneratorField field = new GeneratorField();
         field.setName(item.getText(1));
-        field.setFormat(item.getText(3));
-        field.setLength(Const.toInt(item.getText(4), -1));
-        field.setPrecision(Const.toInt(item.getText(5), -1));
-        field.setCurrency(item.getText(6));
-        field.setDecimal(item.getText(7));
-        field.setGroup(item.getText(8));
-        field.setValue(field.isSetEmptyString() ? "" : item.getText(9));
+        field.setItem(item.getText(2));
+        field.setFormat(item.getText(4));
+        field.setLength(Const.toInt(item.getText(5), -1));
+        field.setPrecision(Const.toInt(item.getText(6), -1));
+        field.setCurrency(item.getText(7));
+        field.setDecimal(item.getText(8));
+        field.setGroup(item.getText(9));
+        field.setValue(field.isSetEmptyString() ? "" : item.getText(10));
         field.setSetEmptyString(
-            BaseMessages.getString(PKG, "System.Combo.Yes").equalsIgnoreCase(item.getText(10)));
-            field.setType(field.isSetEmptyString() ? "String" : item.getText(2));   
+            BaseMessages.getString(PKG, "System.Combo.Yes").equalsIgnoreCase(item.getText(11)));
+            field.setType(field.isSetEmptyString() ? "String" : item.getText(3));   
             
         meta.getFields().add(field);            
     }

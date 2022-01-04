@@ -24,7 +24,7 @@ import org.apache.plc4x.java.api.PlcConnection;
 
 /**
  * This is a wrapper around a PlcConnection connection from the Apache Plc4x library.
- * Its goal is for it to be shared between the different transformers that 
+ * Its goal is for it to be shared between the different transform that 
  * may be running simultaneously on the local or remote Hop engine. 
  * Its use with other engines must be certified.
  * The concept is very simple, the last to leave closes the connection.

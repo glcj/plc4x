@@ -274,15 +274,7 @@ public class Plc4xReadMeta extends BaseTransformMeta implements ITransformMeta<P
   public void setRowLimit(String rowLimit) {
     this.rowLimit = rowLimit;
   }
-/*
-  @Override
-  public String getXml() {
-    //save your metadata values to the transform xml
-    StringBuilder retval = new StringBuilder( 200 );
-    retval.append( "      " ).append( XmlHandler.addTagValue( "sampleValue", "this is a value" ) );
-    return retval.toString();
-  }
-*/
+
   /**
    * Gets fields
    *

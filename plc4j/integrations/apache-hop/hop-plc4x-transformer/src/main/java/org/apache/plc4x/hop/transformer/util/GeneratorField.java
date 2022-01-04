@@ -25,6 +25,9 @@ public class GeneratorField {
 
   @HopMetadataProperty(injectionKeyDescription = "Plc4x.Read.Meta.Injection.Field.Name")
   private String name;
+  
+  @HopMetadataProperty(injectionKeyDescription = "Plc4x.Read.Meta.Injection.Field.Item")
+  private String item;  
 
   @HopMetadataProperty(injectionKeyDescription = "Plc4x.Read.Meta.Injection.Field.Type")
   private String type;
@@ -62,6 +65,7 @@ public class GeneratorField {
 
   public GeneratorField(GeneratorField f) {
     this.name = f.name;
+    this.item = f.item;    
     this.type = f.type;
     this.format = f.format;
     this.length = f.length;
@@ -75,6 +79,7 @@ public class GeneratorField {
 
   public GeneratorField(
       String name,
+      String item,
       String type,
       String format,
       int length,
@@ -85,6 +90,7 @@ public class GeneratorField {
       String value,
       boolean setEmptyString) {
     this.name = name;
+    this.item = item;
     this.type = type;
     this.format = format;
     this.length = length;
@@ -125,6 +131,20 @@ public class GeneratorField {
   /** @param name The name to set */
   public void setName(String name) {
     this.name = name;
+  }
+  
+    /**
+   * Gets Item
+   *
+   * @return value of name
+   */
+  public String getItem() {
+    return item;
+  }
+
+  /** @param name The name to set */
+  public void setItem(String item) {
+    this.item = item;
   }
 
   /**
