@@ -62,7 +62,7 @@ public class S7HDefaultNettyPlcConnection extends DefaultNettyPlcConnection impl
     private static final Logger logger = LoggerFactory.getLogger(S7HDefaultNettyPlcConnection.class);  
     
     private static final String MULTIPLEXOR = "MULTIPLEXOR";
-    private static Boolean closed = false;
+    private  Boolean closed = false;
 
     private ScheduledFuture scf = null;
     
