@@ -52,7 +52,7 @@ public class RequestTransactionManager {
     /** Executor that performs all operations */
     static final ExecutorService executor = Executors.newFixedThreadPool(4, new BasicThreadFactory.Builder()
                                                     .namingPattern("plc4x-tm-thread-%d")
-                                                    .daemon(true)
+                                                    .daemon(false)
                                                     .priority(Thread.MAX_PRIORITY)
                                                     .build());
     //static final ExecutorService executor = Executors.newFixedThreadPool(4);    
@@ -119,7 +119,10 @@ public class RequestTransactionManager {
         while (runningRequests.size() < getNumberOfConcurrentRequests() && !workLog.isEmpty()) {
             RequestTransaction next = workLog.remove();
             this.runningRequests.add(next);
-            logger.info("Lanza la peticion...");            
+            logger.info("Lanza la peticion...");       
+            logger.info("executor.isShutdown... " + executor.isShutdown() );
+            logger.info("executor.isTerminated()... " + executor.isTerminated());
+            logger.info("executor.hashCode()... " + executor.hashCode());
             Future<?> completionFuture = executor.submit(next.operation);
             next.setCompletionFuture(completionFuture);
         }
