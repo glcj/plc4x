@@ -375,6 +375,7 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
         connwrapper.release();   
         if (!connwrapper.getConnection().isConnected()){
             logBasic("**** Conexion cerrada");
+            connwrapper = null;
             readRequest = null;
             getPipeline().getExtensionDataMap().put(meta.getConnection(), null);        
         }
