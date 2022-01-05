@@ -235,6 +235,13 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
   public  boolean processRow() throws HopException {
     Object[] r = getRow(); // Get row from input rowset & set row busy!
     setLogLevel(LogLevel.DEBUG);
+    
+    if ((!meta.isNeverEnding() && data.rowsWritten >= data.rowLimit) && !isStopped()) {
+      logBasic("Finalizando la ejecucion...");        
+      setOutputDone(); // signal end to receiver(s)
+      return false;        
+    }    
+    
     lock.lock();
     try {
         IHopMetadataProvider metaprovider = getMetadataProvider();
@@ -254,6 +261,8 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
             try{
                 PlcConnection conn =  new PlcDriverManager().getConnection(connmeta.getUrl());
                 if (conn.isConnected()) {
+                    logBasic("Crea wrapper para la nueva conexion.");  
+                    logBasic("Objeto conneccion: " + conn.hashCode());
                     connwrapper = new Plc4xWrapperConnection(conn);            
                     getPipeline().getExtensionDataMap().put(meta.getConnection(), connwrapper); 
                     Thread.sleep(100);
@@ -300,13 +309,17 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
       return false;        
     }
     
+    /*
     if ((meta.isNeverEnding() || data.rowsWritten < data.rowLimit) && !isStopped()) {
       r = data.outputRowMeta.cloneRow(data.outputRowData);
         System.out.println("Tamano : " + r.length);        
     } else {
+      logBasic("Finalizando la ejecucion...");        
       setOutputDone(); // signal end to receiver(s)
       return false;
     }    
+    */
+    r = data.outputRowMeta.cloneRow(data.outputRowData);    
     putRow(data.outputRowMeta, r ); // return your data
     data.rowsWritten++;
     return true;
@@ -358,7 +371,7 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
     @Override
     public void cleanup() {
         super.cleanup();
-        logBasic("Release connection.");
+        logBasic("Cleanup. Release connection.");
         if (connwrapper != null)
         connwrapper.release();     
     }
@@ -368,16 +381,27 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
      * Here, must perform the cleaning of any resource, main of the connection to 
      * the associated PLC.
     */    
+    @Override
     public void dispose() {
         super.dispose();
-        logBasic("Release connection");
+        logBasic("Dispose. Release connection.");
         if (connwrapper != null)
         connwrapper.release();   
+        logBasic("Ref Count : " + connwrapper.refCnt());
+        if (( connwrapper.refCnt() == 0) && connwrapper.getConnection().isConnected()){
+            try {
+                System.out.println("Solicita nuevamente el cierre");
+            connwrapper.getConnection().close();
+            } catch (Exception ex){
+                logBasic(ex.getMessage());
+            }
+        }
         if (!connwrapper.getConnection().isConnected()){
             logBasic("**** Conexion cerrada");
             connwrapper = null;
             readRequest = null;
-            getPipeline().getExtensionDataMap().put(meta.getConnection(), null);        
+            //getPipeline().getExtensionDataMap().put(meta.getConnection(), null);             
+            getPipeline().getExtensionDataMap().remove(meta.getConnection());
         }
     }
  

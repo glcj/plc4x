@@ -1,4 +1,4 @@
-/*
+    /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -31,7 +31,7 @@ import org.apache.plc4x.java.api.PlcConnection;
  */
 public class Plc4xWrapperConnection extends AbstractReferenceCounted {
 
-    final PlcConnection connection;
+    private final PlcConnection connection;
             
     public Plc4xWrapperConnection(PlcConnection connection){
         super();
@@ -45,9 +45,11 @@ public class Plc4xWrapperConnection extends AbstractReferenceCounted {
     @Override
     protected void deallocate() {
         try{
+            System.out.println("Objeto conneccion: " + connection.hashCode());
             connection.close();
+           System.out.println("Sended close command.");
         } catch (Exception ex){
-            
+            ex.printStackTrace();
         }
     }
     
