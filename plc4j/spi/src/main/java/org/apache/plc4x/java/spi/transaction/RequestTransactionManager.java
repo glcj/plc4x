@@ -50,7 +50,7 @@ public class RequestTransactionManager {
     private static final Logger logger = LoggerFactory.getLogger(RequestTransactionManager.class);
 
     /** Executor that performs all operations */
-    static final ExecutorService executor = Executors.newFixedThreadPool(4, new BasicThreadFactory.Builder()
+    final ExecutorService executor = Executors.newFixedThreadPool(4, new BasicThreadFactory.Builder()
                                                     .namingPattern("plc4x-tm-thread-%d")
                                                     .daemon(false)
                                                     .priority(Thread.MAX_PRIORITY)
