@@ -255,15 +255,11 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
                 PlcConnection conn =  new PlcDriverManager().getConnection(connmeta.getUrl());
                 if (conn.isConnected()) {
                     connwrapper = new Plc4xWrapperConnection(conn);            
-                    getPipeline().getExtensionDataMap().put(meta.getConnection(), connwrapper);   
+                    getPipeline().getExtensionDataMap().put(meta.getConnection(), connwrapper); 
+                    Thread.sleep(100);
                 }
             } catch (Exception ex){
-            logError(
-                BaseMessages.getString(
-                    PKG,
-                    "Plc4x.Read.Meta.Log.UnableToCreateConnection",
-                    meta.getConnection())); 
-            throw new HopException ("Unable to create connection to PLC");
+                throw new HopException ("Unable to create connection to PLC");
             }
         }
     } finally {
@@ -274,13 +270,17 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
     if ((connmeta != null) && (connwrapper != null)){
         if (connwrapper.getConnection().isConnected()){
             if (readRequest == null){
+
                 PlcReadRequest.Builder builder = connwrapper.getConnection().readRequestBuilder(); 
                 for (GeneratorField field: meta.getFields()){
                     builder.addItem(field.getName(), field.getItem());
                 }                
                 readRequest = builder.build();   
+                logBasic("Created read request");                
             }
+            
             try {
+                logBasic("Executing read request.");                
                 PlcReadResponse readResponse = readRequest.execute().orTimeout(5, TimeUnit.SECONDS).get();
                 for (GeneratorField field: meta.getFields()){
                     field.setValue(readResponse.getString(field.getName()));
@@ -288,8 +288,9 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
                 }  
                 data.rowDate = new Date();
             } catch (Exception ex) {
-                throw new HopException ("Unable to read data from PLC");
+                throw new HopException ("Unable read from PLC. " + ex.getMessage());
             }
+            
         } else {
             getPipeline().getExtensionDataMap().put(meta.getConnection(), null);  
         }
@@ -360,6 +361,23 @@ public class Plc4xRead extends BaseTransform<Plc4xReadMeta, Plc4xReadData> imple
         logBasic("Release connection.");
         if (connwrapper != null)
         connwrapper.release();     
+    }
+
+
+    /*
+     * Here, must perform the cleaning of any resource, main of the connection to 
+     * the associated PLC.
+    */    
+    public void dispose() {
+        super.dispose();
+        logBasic("Release connection");
+        if (connwrapper != null)
+        connwrapper.release();   
+        if (!connwrapper.getConnection().isConnected()){
+            logBasic("**** Conexion cerrada");
+            readRequest = null;
+            getPipeline().getExtensionDataMap().put(meta.getConnection(), null);        
+        }
     }
  
   
