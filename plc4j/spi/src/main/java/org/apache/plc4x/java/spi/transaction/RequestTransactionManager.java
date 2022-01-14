@@ -52,7 +52,7 @@ public class RequestTransactionManager {
     /** Executor that performs all operations */
     final ExecutorService executor = Executors.newFixedThreadPool(4, new BasicThreadFactory.Builder()
                                                     .namingPattern("plc4x-tm-thread-%d")
-                                                    .daemon(false)
+                                                    .daemon(true)
                                                     .priority(Thread.MAX_PRIORITY)
                                                     .build());
     //static final ExecutorService executor = Executors.newFixedThreadPool(4);    
@@ -68,7 +68,7 @@ public class RequestTransactionManager {
     public RequestTransactionManager(int numberOfConcurrentRequests) {
         this.numberOfConcurrentRequests = numberOfConcurrentRequests;
         // Immutable Map
-        runningRequests = ConcurrentHashMap.newKeySet();
+        this.runningRequests = ConcurrentHashMap.newKeySet();
     }
 
     public RequestTransactionManager() {
@@ -115,14 +115,10 @@ public class RequestTransactionManager {
     }
 
     private void processWorklog() {
-        logger.info("processWorklog()");
         while (runningRequests.size() < getNumberOfConcurrentRequests() && !workLog.isEmpty()) {
             RequestTransaction next = workLog.remove();
             this.runningRequests.add(next);
-            logger.info("Lanza la peticion...");       
-            logger.info("executor.isShutdown... " + executor.isShutdown() );
-            logger.info("executor.isTerminated()... " + executor.isTerminated());
-            logger.info("executor.hashCode()... " + executor.hashCode());
+
             Future<?> completionFuture = executor.submit(next.operation);
             next.setCompletionFuture(completionFuture);
         }
@@ -193,7 +189,6 @@ public class RequestTransactionManager {
         }
 
         public void submit(Runnable operation) {
-            logger.info("Submission of transaction {}", transactionId);
             this.setOperation(new TransactionOperation(transactionId, operation));
             this.parent.submit(this);
         }
@@ -222,14 +217,12 @@ public class RequestTransactionManager {
             this.delegate = delegate;
         }
 
-        //TODO: Check MDC used. Created exception in Hup application
+        //TODO: Check MDC used. Created exception in Hop application
         @Override
         public void run() {
             //try (final MDC.MDCCloseable closeable = MDC.putCloseable("plc4x.transactionId", Integer.toString(transactionId))) {
             try{
-                logger.info("Start execution of transaction {}", transactionId);
                 delegate.run();
-                logger.info("Completed execution of transaction {}", transactionId);
             } catch (Exception ex) {
                 logger.info(ex.getMessage());
             }
