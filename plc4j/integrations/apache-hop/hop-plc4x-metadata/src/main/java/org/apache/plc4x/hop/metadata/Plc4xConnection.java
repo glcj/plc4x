@@ -31,7 +31,7 @@ import org.apache.hop.metadata.api.IHopMetadata;
     key = "plc4x-connection",
     name = "Plc4x Connection",
     description = "Describes a connection to a PLC",
-    image = "sample.svg",
+    image = "plc4x_toddy.svg",
     documentationUrl = "/metadata-types/plc4x/plc4x-connection.html")
 public class Plc4xConnection extends HopMetadataBase implements IHopMetadata {
 

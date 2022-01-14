@@ -42,7 +42,7 @@ import org.apache.plc4x.hop.metadata.Plc4xConnection;
     id = "CHECK_PLC4X_CONNECTIONS",
     name = "i18n::Plc4xAction.Name",
     description = "i18n::Plc4xAction.Description",
-    image = "sample.svg",
+    image = "plc4x_action.svg",
     categoryDescription = "i18n:org.apache.hop.workflow:ActionCategory.Category.Conditions",
     keywords = "i18n::Plc4xAction.keyword",
     documentationUrl = "/workflow/actions/checkdbconnection.html")

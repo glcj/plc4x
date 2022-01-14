@@ -58,6 +58,7 @@
         <module>hop-plc4x-metadata</module>
         <module>hop-plc4x-transformer</module>
         <module>hop-plc4x-assemblies</module>
+        <module>hop-plc4x-utils</module>
     </modules>
     
 
