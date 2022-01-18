@@ -73,7 +73,7 @@ public class ModbusProtocolLogic extends Plc4xProtocolBase<ModbusTcpADU> impleme
 
     @Override
     public void close(ConversationContext<ModbusTcpADU> context) {
-        // Nothing to do here ...
+        tm.shutdown();
     }
 
     @Override
@@ -480,5 +480,6 @@ public class ModbusProtocolLogic extends Plc4xProtocolBase<ModbusTcpADU> impleme
         }
         return new PlcList(result);
     }
+     
 
 }

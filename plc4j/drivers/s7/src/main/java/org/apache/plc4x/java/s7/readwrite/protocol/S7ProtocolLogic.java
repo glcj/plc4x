@@ -202,6 +202,15 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     });
             });
     }
+    
+    /*
+    * It performs the sequential and safe shutdown of the driver. 
+    * Completion of pending requests, executors and associated tasks.
+    */
+    @Override
+    public void onDisconnect(ConversationContext<TPKTPacket> context) {    
+        tm.shutdown();
+    }    
 
     @Override
     public CompletableFuture<PlcReadResponse> read(PlcReadRequest readRequest) {
