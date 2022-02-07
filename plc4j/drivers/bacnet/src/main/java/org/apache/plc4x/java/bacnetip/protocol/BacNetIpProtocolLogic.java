@@ -162,8 +162,8 @@ public class BacNetIpProtocolLogic extends Plc4xProtocolBase<BVLC> implements Ha
                     enrichedPlcValue.put("address", new PlcSTRING(toString(curField)));
 
                     // From the original BACNet tag
-                    //enrichedPlcValue.put("tagNumber", IEC61131ValueHandler.of(propertyValue.getActualTagNumber()));
-                    //enrichedPlcValue.put("lengthValueType", IEC61131ValueHandler.of(baCnetTag.getActualLength()));
+                    enrichedPlcValue.put("tagNumber", IEC61131ValueHandler.of(propertyValue.getPeekedTagHeader().getActualTagNumber()));
+                    enrichedPlcValue.put("lengthValueType", IEC61131ValueHandler.of(propertyValue.getPeekedTagHeader().getActualLength()));
 
                     // Use the information in the edeModel to enrich the information.
                     if (edeModel != null) {
@@ -203,7 +203,7 @@ public class BacNetIpProtocolLogic extends Plc4xProtocolBase<BVLC> implements Ha
             for (BACnetPropertyValue baCnetPropertyValue : valueChange.getListOfValues().getData()) {
                 // These are value change notifications. Ignore the rest.
                 if (baCnetPropertyValue.getPropertyIdentifier().getPropertyIdentifier() == BACnetPropertyIdentifier.PRESENT_VALUE) {
-                    BACnetApplicationTag baCnetTag = baCnetPropertyValue.getPropertyValue().getConstructedData().getData().get(0).getApplicationTag();
+                    BACnetApplicationTag baCnetTag = ((BACnetConstructedDataUnspecified)baCnetPropertyValue.getPropertyValue().getConstructedData()).getData().get(0).getApplicationTag();
 
                     // Initialize an enriched version of the PlcStruct.
                     final Map<String, PlcValue> enrichedPlcValue = new HashMap<>();

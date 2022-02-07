@@ -64,7 +64,7 @@ public class MessageValidatorAndMigrator {
      */
     @SuppressWarnings({"rawtypes"})
     public static void validateOutboundMessageAndMigrate(String testCaseName, Map<String, String> options, Element referenceXml, List<String> parserArguments, byte[] data, ByteOrder byteOrder, boolean autoMigrate, URI siteURI) throws DriverTestsuiteException {
-        MessageInput<Message> messageInput = MessageResolver.getMessageInput(options, referenceXml.getName());
+        MessageInput<?> messageInput = MessageResolver.getMessageInput(options, referenceXml.getName());
         validateOutboundMessageAndMigrate(testCaseName, messageInput, referenceXml, parserArguments, data, byteOrder, autoMigrate, siteURI);
     }
 
@@ -79,14 +79,15 @@ public class MessageValidatorAndMigrator {
      * @param byteOrder       the byte-order being used
      * @param autoMigrate     indicates if we want to migrate to a new version
      * @param siteURI         the file which we want to auto migrate
+     * @return true if migration happened
      * @throws DriverTestsuiteException if something goes wrong
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static void validateOutboundMessageAndMigrate(String testCaseName, MessageInput<Message> messageInput, Element referenceXml, List<String> parserArguments, byte[] data, ByteOrder byteOrder, boolean autoMigrate, URI siteURI) throws DriverTestsuiteException {
+    public static boolean validateOutboundMessageAndMigrate(String testCaseName, MessageInput<?> messageInput, Element referenceXml, List<String> parserArguments, byte[] data, ByteOrder byteOrder, boolean autoMigrate, URI siteURI) throws DriverTestsuiteException {
         final ReadBufferByteBased readBuffer = new ReadBufferByteBased(data, byteOrder);
 
         try {
-            final Message parsedOutput = messageInput.parse(readBuffer, parserArguments.toArray());
+            final Message parsedOutput = (Message) messageInput.parse(readBuffer, parserArguments.toArray());
             final String referenceXmlString = referenceXml.asXML();
             try {
                 // First try to use the native xml writer
@@ -127,6 +128,7 @@ public class MessageValidatorAndMigrator {
                         centeredTestCaseName));
                     throw new MigrationException(xmlString);
                 }
+                return false;
             } catch (RuntimeException | SerializationException e) {
                 if (!(e instanceof MigrationException)) {
                     LOGGER.error("Error in serializer", e);
@@ -159,14 +161,15 @@ public class MessageValidatorAndMigrator {
                         throw new RuntimeException(ioException);
                     }
                     LOGGER.info("Done migrating {}", path);
+                    return true;
                 } else {
-                    throw new RuntimeException("Output doesn't match", e);
+                    throw new RuntimeException("Output doesn't match. Set to auto migrate to fix", e);
                 }
             }
         } catch (ParseException e) {
             throw new DriverTestsuiteException("Error parsing message", e);
         } catch (RuntimeException e) {
-            LOGGER.error("Something wen't wrong: siteURI='{}'", siteURI, e);
+            LOGGER.error("Something went wrong: siteURI='{}'", siteURI, e);
             throw e;
         }
     }
@@ -183,7 +186,7 @@ public class MessageValidatorAndMigrator {
      */
     @SuppressWarnings("rawtypes")
     public static Message validateInboundMessageAndGet(Map<String, String> options, Element referenceXml, List<String> parserArguments) {
-        MessageInput<Message> messageIO = MessageResolver.getMessageInput(options, referenceXml.getName());
+        MessageInput<?> messageIO = MessageResolver.getMessageInput(options, referenceXml.getName());
         return validateInboundMessageAndGet(messageIO, referenceXml, parserArguments);
     }
 

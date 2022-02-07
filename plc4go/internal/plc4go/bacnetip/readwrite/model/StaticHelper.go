@@ -22,6 +22,7 @@ package model
 import (
 	"github.com/apache/plc4x/plc4go/internal/plc4go/spi/utils"
 	"github.com/pkg/errors"
+	"math/big"
 )
 
 func ReadPropertyIdentifier(readBuffer utils.ReadBuffer, actualLength uint32) (BACnetPropertyIdentifier, error) {
@@ -51,7 +52,9 @@ func ReadPropertyIdentifier(readBuffer utils.ReadBuffer, actualLength uint32) (B
 }
 
 func WritePropertyIdentifier(writeBuffer utils.WriteBuffer, value BACnetPropertyIdentifier) error {
-	// TODO: check if it's in the known range and if not return (==VENDOR_PROPRIETARY_VALUE)
+	if value == BACnetPropertyIdentifier_VENDOR_PROPRIETARY_VALUE {
+		return nil
+	}
 	var bitsToWrite uint8
 	valueValue := uint64(value)
 	if valueValue <= 0xff {
@@ -67,7 +70,7 @@ func WritePropertyIdentifier(writeBuffer utils.WriteBuffer, value BACnetProperty
 }
 
 func WriteProprietaryPropertyIdentifier(writeBuffer utils.WriteBuffer, baCnetPropertyIdentifier BACnetPropertyIdentifier, value uint32) error {
-	if baCnetPropertyIdentifier != 0 && baCnetPropertyIdentifier != BACnetPropertyIdentifier_VENDOR_PROPRIETARY_VALUE {
+	if baCnetPropertyIdentifier != BACnetPropertyIdentifier_VENDOR_PROPRIETARY_VALUE {
 		return nil
 	}
 	var bitsToWrite uint8
@@ -84,7 +87,7 @@ func WriteProprietaryPropertyIdentifier(writeBuffer utils.WriteBuffer, baCnetPro
 }
 
 func ReadProprietaryPropertyIdentifier(readBuffer utils.ReadBuffer, value BACnetPropertyIdentifier, actualLength uint32) (uint32, error) {
-	if value != 0 && value != BACnetPropertyIdentifier_VENDOR_PROPRIETARY_VALUE {
+	if value != BACnetPropertyIdentifier_VENDOR_PROPRIETARY_VALUE {
 		return 0, nil
 	}
 	// We need to reset our reader to the position we read before
@@ -120,7 +123,9 @@ func ReadEventState(readBuffer utils.ReadBuffer, actualLength uint32) (BACnetEve
 }
 
 func WriteEventState(writeBuffer utils.WriteBuffer, value BACnetEventState) error {
-	// TODO: check if it's in the known range and if not return (==VENDOR_PROPRIETARY_VALUE)
+	if value == BACnetEventState_VENDOR_PROPRIETARY_VALUE {
+		return nil
+	}
 	var bitsToWrite uint8
 	valueValue := uint64(value)
 	if valueValue <= 0xff {
@@ -136,7 +141,7 @@ func WriteEventState(writeBuffer utils.WriteBuffer, value BACnetEventState) erro
 }
 
 func WriteProprietaryEventState(writeBuffer utils.WriteBuffer, baCnetEventState BACnetEventState, value uint32) error {
-	if baCnetEventState != 0 && baCnetEventState != BACnetEventState_VENDOR_PROPRIETARY_VALUE {
+	if baCnetEventState != BACnetEventState_VENDOR_PROPRIETARY_VALUE {
 		return nil
 	}
 	var bitsToWrite uint8
@@ -153,7 +158,7 @@ func WriteProprietaryEventState(writeBuffer utils.WriteBuffer, baCnetEventState 
 }
 
 func ReadProprietaryEventState(readBuffer utils.ReadBuffer, value BACnetEventState, actualLength uint32) (uint32, error) {
-	if value != 0 && value != BACnetEventState_VENDOR_PROPRIETARY_VALUE {
+	if value != BACnetEventState_VENDOR_PROPRIETARY_VALUE {
 		return 0, nil
 	}
 	// We need to reset our reader to the position we read before
@@ -189,7 +194,9 @@ func ReadEventType(readBuffer utils.ReadBuffer, actualLength uint32) (BACnetEven
 }
 
 func WriteEventType(writeBuffer utils.WriteBuffer, value BACnetEventType) error {
-	// TODO: check if it's in the known range and if not return (==VENDOR_PROPRIETARY_VALUE)
+	if value == BACnetEventType_VENDOR_PROPRIETARY_VALUE {
+		return nil
+	}
 	var bitsToWrite uint8
 	valueValue := uint64(value)
 	if valueValue <= 0xff {
@@ -205,7 +212,7 @@ func WriteEventType(writeBuffer utils.WriteBuffer, value BACnetEventType) error 
 }
 
 func WriteProprietaryEventType(writeBuffer utils.WriteBuffer, baCnetEventType BACnetEventType, value uint32) error {
-	if baCnetEventType != 0 && baCnetEventType != BACnetEventType_VENDOR_PROPRIETARY_VALUE {
+	if baCnetEventType != BACnetEventType_VENDOR_PROPRIETARY_VALUE {
 		return nil
 	}
 	var bitsToWrite uint8
@@ -222,7 +229,7 @@ func WriteProprietaryEventType(writeBuffer utils.WriteBuffer, baCnetEventType BA
 }
 
 func ReadProprietaryEventType(readBuffer utils.ReadBuffer, value BACnetEventType, actualLength uint32) (uint32, error) {
-	if value != 0 && value != BACnetEventType_VENDOR_PROPRIETARY_VALUE {
+	if value != BACnetEventType_VENDOR_PROPRIETARY_VALUE {
 		return 0, nil
 	}
 	// We need to reset our reader to the position we read before
@@ -231,7 +238,7 @@ func ReadProprietaryEventType(readBuffer utils.ReadBuffer, value BACnetEventType
 	return readBuffer.ReadUint32("proprietaryEventType", bitsToRead)
 }
 func ReadObjectType(readBuffer utils.ReadBuffer) (BACnetObjectType, error) {
-	readValue, err := readBuffer.ReadUint16("ObjectType", 10)
+	readValue, err := readBuffer.ReadUint16("objectType", 10)
 	if err != nil {
 		return 0, err
 	}
@@ -239,18 +246,21 @@ func ReadObjectType(readBuffer utils.ReadBuffer) (BACnetObjectType, error) {
 }
 
 func WriteObjectType(writeBuffer utils.WriteBuffer, value BACnetObjectType) error {
-	return writeBuffer.WriteUint16("ObjectType", 10, uint16(value), utils.WithAdditionalStringRepresentation(value.name()))
+	if value == BACnetObjectType_VENDOR_PROPRIETARY_VALUE {
+		return nil
+	}
+	return writeBuffer.WriteUint16("objectType", 10, uint16(value), utils.WithAdditionalStringRepresentation(value.name()))
 }
 
 func WriteProprietaryObjectType(writeBuffer utils.WriteBuffer, baCnetObjectType BACnetObjectType, value uint16) error {
-	if baCnetObjectType != 0 && baCnetObjectType != BACnetObjectType_VENDOR_PROPRIETARY_VALUE {
+	if baCnetObjectType != BACnetObjectType_VENDOR_PROPRIETARY_VALUE {
 		return nil
 	}
 	return writeBuffer.WriteUint16("proprietaryObjectType", 10, value, utils.WithAdditionalStringRepresentation(BACnetObjectType_VENDOR_PROPRIETARY_VALUE.name()))
 }
 
 func ReadProprietaryObjectType(readBuffer utils.ReadBuffer, value BACnetObjectType) (uint16, error) {
-	if value != 0 && value != BACnetObjectType_VENDOR_PROPRIETARY_VALUE {
+	if value != BACnetObjectType_VENDOR_PROPRIETARY_VALUE {
 		return 0, nil
 	}
 	// We need to reset our reader to the position we read before
@@ -285,4 +295,13 @@ func IsBACnetConstructedDataClosingTag(readBuffer utils.ReadBuffer, instantTermi
 func GuessDataType(objectType BACnetObjectType) BACnetDataType {
 	// TODO: implement me
 	return BACnetDataType_BACNET_PROPERTY_IDENTIFIER
+}
+
+func ParseVarUint(data []byte) uint32 {
+	bigInt := big.NewInt(0)
+	return uint32(bigInt.SetBytes(data).Uint64())
+}
+
+func WriteVarUint(value uint32) []byte {
+	return big.NewInt(int64(value)).Bytes()
 }

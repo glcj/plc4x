@@ -48,7 +48,7 @@ func (m *NLMInitalizeRoutingTableAck) MessageType() uint8 {
 }
 
 func (m *NLMInitalizeRoutingTableAck) InitializeParent(parent *NLM, vendorId *uint16) {
-	m.VendorId = vendorId
+	m.NLM.VendorId = vendorId
 }
 
 func NewNLMInitalizeRoutingTableAck(numberOfPorts uint8, portMappings []*NLMInitalizeRoutingTablePortMapping, vendorId *uint16) *NLM {
@@ -133,7 +133,7 @@ func NLMInitalizeRoutingTableAckParse(readBuffer utils.ReadBuffer, apduLength ui
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing 'portMappings' field")
 			}
-			portMappings[curItem] = _item
+			portMappings[curItem] = CastNLMInitalizeRoutingTablePortMapping(_item)
 		}
 	}
 	if closeErr := readBuffer.CloseContext("portMappings", utils.WithRenderAsList(true)); closeErr != nil {

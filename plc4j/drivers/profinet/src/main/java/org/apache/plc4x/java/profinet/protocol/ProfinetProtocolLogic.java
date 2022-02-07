@@ -26,7 +26,6 @@ import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.messages.*;
 import org.apache.plc4x.java.profinet.context.ProfinetDriverContext;
 import org.apache.plc4x.java.profinet.readwrite.*;
-import org.apache.plc4x.java.profinet.readwrite.io.DceRpc_PacketIO;
 import org.apache.plc4x.java.spi.ConversationContext;
 import org.apache.plc4x.java.spi.Plc4xProtocolBase;
 import org.apache.plc4x.java.spi.generation.*;
@@ -102,7 +101,13 @@ public class ProfinetProtocolLogic extends Plc4xProtocolBase<Ethernet_Frame> {
         profinetDriverContext.setLocalUdpPort(udpSocket.getPort());
 
         // Remote connectivity attributes
-        profinetDriverContext.setRemoteMacAddress(new MacAddress(rawSocketChannel.getRemoteMacAddress().getAddress()));
+        byte[] macAddress = null;
+        try {
+            macAddress = Hex.decodeHex("000000000000");
+        } catch (DecoderException e) {
+            // Ignore this.
+        }
+        profinetDriverContext.setRemoteMacAddress(new MacAddress(macAddress));
         final InetSocketAddress remoteAddress = (InetSocketAddress) rawSocketChannel.getRemoteAddress();
         Inet4Address remoteIpAddress = (Inet4Address) remoteAddress.getAddress();
         profinetDriverContext.setRemoteIpAddress(new IpAddress(remoteIpAddress.getAddress()));
@@ -135,9 +140,25 @@ public class ProfinetProtocolLogic extends Plc4xProtocolBase<Ethernet_Frame> {
             DatagramPacket connectResponsePacket = new DatagramPacket(resultBuffer, resultBuffer.length);
             udpSocket.receive(connectResponsePacket);
             ReadBufferByteBased readBuffer = new ReadBufferByteBased(resultBuffer);
-            final DceRpc_Packet dceRpc_packet = DceRpc_PacketIO.staticParse(readBuffer);
-            if(dceRpc_packet.getPacketType() == DceRpc_PacketType.RESPONSE) {
-                System.out.println(dceRpc_packet);
+            final DceRpc_Packet dceRpc_packet = DceRpc_Packet.staticParse(readBuffer);
+            if((dceRpc_packet.getOperation() == DceRpc_Operation.CONNECT) && (dceRpc_packet.getPacketType() == DceRpc_PacketType.RESPONSE)) {
+                if (dceRpc_packet.getPayload().getPacketType() == DceRpc_PacketType.RESPONSE) {
+                    // Get the remote MAC address and store it in the context.
+                    final PnIoCm_Packet_Res connectResponse = (PnIoCm_Packet_Res) dceRpc_packet.getPayload();
+                    if ((connectResponse.getBlocks().size() > 0) && (connectResponse.getBlocks().get(0) instanceof PnIoCm_Block_ArRes)) {
+                        final PnIoCm_Block_ArRes pnIoCm_block_arRes = (PnIoCm_Block_ArRes) connectResponse.getBlocks().get(0);
+                        profinetDriverContext.setRemoteMacAddress(pnIoCm_block_arRes.getCmResponderMacAddr());
+
+                        // Update the raw-socket transports filter expression.
+                        ((RawSocketChannel) channel).setRemoteMacAddress(org.pcap4j.util.MacAddress.getByAddress(profinetDriverContext.getRemoteMacAddress().getAddress()));
+                    } else {
+                        throw new PlcException("Unexpected type of frist block.");
+                    }
+                } else {
+                    throw new PlcException("Unexpected response");
+                }
+            } else {
+                throw new PlcException("Unexpected response");
             }
         } catch (SerializationException e) {
             e.printStackTrace();
@@ -201,7 +222,7 @@ public class ProfinetProtocolLogic extends Plc4xProtocolBase<Ethernet_Frame> {
             return new DceRpc_Packet(
                 DceRpc_PacketType.REQUEST, true, false, false,
                 IntegerEncoding.BIG_ENDIAN, CharacterEncoding.ASCII, FloatingPointEncoding.IEEE,
-                new DceRpc_ObjectUuid(0x0001, 0x0904, 0x002A),
+                new DceRpc_ObjectUuid((byte) 0x00, 0x0001, 0x0904, 0x002A),
                 new DceRpc_InterfaceUuid_DeviceInterface(),
                 profinetDriverContext.getDceRpcActivityUuid(),
                 0, 0, DceRpc_Operation.CONNECT,

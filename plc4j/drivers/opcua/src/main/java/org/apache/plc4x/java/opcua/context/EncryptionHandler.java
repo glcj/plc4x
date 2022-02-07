@@ -24,7 +24,6 @@ import org.apache.plc4x.java.opcua.readwrite.MessagePDU;
 import org.apache.plc4x.java.opcua.readwrite.OpcuaAPU;
 import org.apache.plc4x.java.opcua.readwrite.OpcuaMessageResponse;
 import org.apache.plc4x.java.opcua.readwrite.OpcuaOpenResponse;
-import org.apache.plc4x.java.opcua.readwrite.io.OpcuaAPUIO;
 import org.apache.plc4x.java.spi.generation.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
@@ -94,13 +93,13 @@ public class EncryptionHandler {
             buf.setPos(4);
             buf.writeInt(32, encryptedLength);
             buf.setPos(tempPos);
-            byte[] signature = sign(buf.getBytes(0, unencryptedLength + paddingSize + 1));
+            byte[] signature = sign(getBytes(buf.getBytes(), 0, unencryptedLength + paddingSize + 1));
             //Write the signature to the end of the buffer
             for (byte b : signature) {
                 buf.writeByte(b);
             }
             buf.setPos(positionFirstBlock);
-            encryptBlock(buf, buf.getBytes(positionFirstBlock, positionFirstBlock + preEncryptedLength));
+            encryptBlock(buf, getBytes(buf.getBytes(), positionFirstBlock, positionFirstBlock + preEncryptedLength));
             return new ReadBufferByteBased(buf.getData(), ByteOrder.LITTLE_ENDIAN);
         } catch (SerializationException e) {
             throw new PlcRuntimeException("Unable to parse apu prior to encrypting");
@@ -128,18 +127,18 @@ public class EncryptionHandler {
                     int numberOfBlocks = encryptedMessageLength / 256;
                     WriteBufferByteBased buf = new WriteBufferByteBased(headerLength + numberOfBlocks * 256, ByteOrder.LITTLE_ENDIAN);
                     pdu.serialize(buf);
-                    byte[] data = buf.getBytes(headerLength, encryptedLength);
+                    byte[] data = getBytes(buf.getBytes(), headerLength, encryptedLength);
                     buf.setPos(headerLength);
                     decryptBlock(buf, data);
                     int tempPos = buf.getPos();
                     buf.setPos(0);
-                    if (!checkSignature(buf.getBytes(0, tempPos))) {
-                        LOGGER.info("Signature verification failed: - {}", buf.getBytes(0, tempPos - 256));
+                    if (!checkSignature(getBytes(buf.getBytes(), 0, tempPos))) {
+                        LOGGER.info("Signature verification failed: - {}", getBytes(buf.getBytes(), 0, tempPos - 256));
                     }
                     buf.setPos(4);
                     buf.writeInt(32, tempPos - 256);
-                    ReadBuffer readBuffer = new ReadBufferByteBased(buf.getBytes(0, tempPos - 256), ByteOrder.LITTLE_ENDIAN);
-                    return OpcuaAPUIO.staticParse(readBuffer, true);
+                    ReadBuffer readBuffer = new ReadBufferByteBased(getBytes(buf.getBytes(), 0, tempPos - 256), ByteOrder.LITTLE_ENDIAN);
+                    return OpcuaAPU.staticParse(readBuffer, true);
                 } catch (SerializationException | ParseException e) {
                     LOGGER.error("Unable to Parse encrypted message");
                 }
@@ -223,7 +222,7 @@ public class EncryptionHandler {
 
     public static X509Certificate getCertificateX509(byte[] senderCertificate) {
         try {
-            CertificateFactory factory =  CertificateFactory.getInstance("X.509");
+            CertificateFactory factory = CertificateFactory.getInstance("X.509");
             LOGGER.info("Public Key Length {}", senderCertificate.length);
             return (X509Certificate) factory.generateCertificate(new ByteArrayInputStream(senderCertificate));
         } catch (Exception e) {
@@ -245,5 +244,12 @@ public class EncryptionHandler {
             LOGGER.error("Unable to sign Data");
             return null;
         }
+    }
+
+    private byte[] getBytes(byte[] bytes, int startPos, int endPos) {
+        int numBytes = endPos - startPos;
+        byte[] data = new byte[numBytes];
+        System.arraycopy(bytes, startPos, data, 0, numBytes);
+        return data;
     }
 }

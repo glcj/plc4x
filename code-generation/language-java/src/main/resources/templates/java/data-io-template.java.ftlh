@@ -25,7 +25,7 @@
 <#-- @ftlvariable name="helper" type="org.apache.plc4x.language.java.JavaLanguageTemplateHelper" -->
 <#-- @ftlvariable name="tracer" type="org.apache.plc4x.plugins.codegenerator.protocol.freemarker.Tracer" -->
 <#-- @ftlvariable name="type" type="org.apache.plc4x.plugins.codegenerator.types.definitions.ComplexTypeDefinition" -->
-${helper.packageName(protocolName, languageName, outputFlavor)?replace(".", "/")}/io/${type.name}IO.java
+${helper.packageName(protocolName, languageName, outputFlavor)?replace(".", "/")}/${type.name}.java
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -44,7 +44,7 @@ ${helper.packageName(protocolName, languageName, outputFlavor)?replace(".", "/")
  * specific language governing permissions and limitations
  * under the License.
  */
-package ${helper.packageName(protocolName, languageName, outputFlavor)}.io;
+package ${helper.packageName(protocolName, languageName, outputFlavor)};
 
 import static org.apache.plc4x.java.spi.generation.StaticHelper.*;
 
@@ -54,7 +54,7 @@ import org.apache.plc4x.java.spi.generation.EvaluationHelper;
 import org.apache.plc4x.java.spi.generation.ParseException;
 import org.apache.plc4x.java.spi.generation.SerializationException;
 import org.apache.plc4x.java.spi.generation.ReadBuffer;
-import org.apache.plc4x.java.spi.generation.WriteBufferByteBased;
+import org.apache.plc4x.java.spi.generation.WriteBuffer;
 import org.apache.plc4x.java.spi.generation.ByteOrder;
 import ${helper.packageName(protocolName, languageName, outputFlavor)}.*;
 import org.apache.plc4x.java.spi.values.*;
@@ -72,9 +72,9 @@ import java.util.function.Supplier;
 
 <#-- TODO: the code below implies that parserArguments will be null if not present... not pretty  -->
 <#if type.parserArguments.isPresent()><#assign parserArguments=type.parserArguments.orElseThrow()></#if>
-public class ${type.name}IO {
+public class ${type.name} {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(${type.name}IO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(${type.name}.class);
     public static PlcValue staticParse(ReadBuffer readBuffer<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type, false)} ${parserArgument.name}<#sep>, </#sep></#list></#if>) throws ParseException {
         <#assign defaultCaseOutput=false>
         <#assign dataIoTypeDefinition=type.asDataIoTypeDefinition().orElseThrow()>
@@ -329,11 +329,11 @@ public class ${type.name}IO {
     }
 
 <#if outputFlavor != "passive">
-    public static WriteBufferByteBased staticSerialize(PlcValue _value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type, false)} ${parserArgument.name}<#sep>, </#sep></#list></#if>) throws SerializationException {
-        return staticSerialize(_value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${parserArgument.name}<#sep>, </#sep></#list></#if>, ByteOrder.BIG_ENDIAN);
+    public static void staticSerialize(WriteBuffer writeBuffer, PlcValue _value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type, false)} ${parserArgument.name}<#sep>, </#sep></#list></#if>) throws SerializationException {
+        staticSerialize(writeBuffer, _value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${parserArgument.name}<#sep>, </#sep></#list></#if>, ByteOrder.BIG_ENDIAN);
     }
 
-    public static WriteBufferByteBased staticSerialize(PlcValue _value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type, false)} ${parserArgument.name}<#sep>, </#sep></#list></#if>, ByteOrder byteOrder) throws SerializationException {
+    public static void staticSerialize(WriteBuffer writeBuffer, PlcValue _value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type, false)} ${parserArgument.name}<#sep>, </#sep></#list></#if>, ByteOrder byteOrder) throws SerializationException {
         <#assign defaultCaseOutput=false>
         <#assign dataIoTypeDefinition=type.asDataIoTypeDefinition().orElseThrow()>
         <#list dataIoTypeDefinition.switchField.cases as case>
@@ -358,8 +358,6 @@ public class ${type.name}IO {
                 <#assign defaultCaseOutput=true>
             </#if>
         </@compress> { // ${case.name}
-        WriteBufferByteBased writeBuffer = new WriteBufferByteBased((int) Math.ceil(((float) ${helper.getSizeInBits(case,parserArguments)}) / 8.0f), byteOrder);
-
             <#list case.fields as field>
                 <#switch field.typeName>
                     <#case "array">
@@ -426,13 +424,84 @@ public class ${type.name}IO {
                     <#break>
                 </#switch>
             </#list>
-            return writeBuffer;
         }<#sep> else </#sep></#list>
-        <#if !defaultCaseOutput>
-        return null;
-        </#if>
     }
 </#if>
+
+    public static int getLengthInBytes(PlcValue _value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type, false)} ${parserArgument.name}<#sep>, </#sep></#list></#if>) {
+        return (int) Math.ceil((float) getLengthInBits(_value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${parserArgument.name}<#sep>, </#sep></#list></#if>) / 8.0);
+    }
+
+    public static int getLengthInBits(PlcValue _value<#if type.parserArguments.isPresent()>, <#list type.parserArguments.orElseThrow() as parserArgument>${helper.getLanguageTypeNameForTypeReference(parserArgument.type, false)} ${parserArgument.name}<#sep>, </#sep></#list></#if>) {
+        int sizeInBits = 0;
+        <#assign defaultCaseOutput=false>
+        <#assign dataIoTypeDefinition=type.asDataIoTypeDefinition().orElseThrow()>
+        <#list dataIoTypeDefinition.switchField.cases as case>
+        <@compress single_line=true>
+        <#if case.discriminatorValueTerms?has_content>
+        if(
+            <#list case.discriminatorValueTerms as discriminatorValueTerm>
+            <#assign discriminatorExpression=dataIoTypeDefinition.switchField.discriminatorExpressions[discriminatorValueTerm?index].asLiteral().orElseThrow().asVariableLiteral().orElseThrow()>
+            <#assign discriminatorType=helper.getDiscriminatorTypes()[discriminatorExpression.name]>
+                EvaluationHelper.equals(
+                    ${helper.toParseExpression(dataIoTypeDefinition.switchField, discriminatorType, discriminatorExpression, parserArguments)},
+                    <#if helper.isEnumTypeReference(discriminatorType)>
+                    ${helper.getLanguageTypeNameForTypeReference(discriminatorType)}.${helper.toParseExpression(dataIoTypeDefinition.switchField, discriminatorType, discriminatorValueTerm, parserArguments)}
+                    <#else>
+                    ${helper.toParseExpression(dataIoTypeDefinition.switchField, discriminatorType, discriminatorValueTerm, parserArguments)}
+                    </#if>
+                )
+            <#sep> && </#sep>
+            </#list>
+        )
+        <#else>
+            <#assign defaultCaseOutput=true>
+        </#if>
+        </@compress> { // ${case.name}
+            <#list case.fields as field>
+            <#switch field.typeName>
+            <#case "array">
+                <#assign arrayField=field.asArrayField().orElseThrow()>
+                PlcList values = (PlcList) _value;
+                <#if case.name == "Struct">
+                // TODO: Finish this!
+                <#elseif arrayField.type.isComplexTypeReference()>
+                // TODO: Finish this!
+                <#else>
+                sizeInBits += values.getList().size() * ${arrayField.type.asSimpleTypeReference().orElseThrow().sizeInBits};
+                </#if>
+                <#break>
+            <#case "const">
+                <#assign constField=field.asConstField().orElseThrow()>
+                // Const Field (${constField.name})
+                <#-- const fields are only simple type -->
+                sizeInBits += ${constField.type.asSimpleTypeReference().orElseThrow().sizeInBits};
+                <#break>
+            <#case "enum">
+                <#assign enumField=field.asEnumField().orElseThrow()>
+                // Enum field (${enumField.name})
+                sizeInBits += ${helper.getEnumFieldSimpleTypeReference(enumField.type, enumField.fieldName).sizeInBits};
+                <#break>
+            <#case "manual">
+                <#assign manualField=field.asManualField().orElseThrow()>
+                // Manual Field (${manualField.name})
+                sizeInBits += ${helper.toSerializationExpression(manualField, helper.intTypeReference, manualField.lengthExpression, type.parserArguments.orElse(null))};
+                <#break>
+            <#case "reserved">
+                <#assign reservedField=field.asReservedField().orElseThrow()>
+                // Reserved Field
+                sizeInBits += ${reservedField.type.asSimpleTypeReference().orElseThrow().sizeInBits};
+                <#break>
+            <#case "simple">
+                <#assign simpleField=field.asSimpleField().orElseThrow()>
+                // Simple Field (${simpleField.name})
+                sizeInBits += ${simpleField.type.asSimpleTypeReference().orElseThrow().sizeInBits};
+                <#break>
+            </#switch>
+            </#list>
+        }<#sep> else </#sep></#list>
+        return sizeInBits;
+    }
 
 }
 </#outputformat>

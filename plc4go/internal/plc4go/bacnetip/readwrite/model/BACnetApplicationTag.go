@@ -28,23 +28,15 @@ import (
 
 // The data-structure of this message
 type BACnetApplicationTag struct {
-	TagClass                 TagClass
-	LengthValueType          uint8
-	ExtTagNumber             *uint8
-	ExtLength                *uint8
-	ExtExtLength             *uint16
-	ExtExtExtLength          *uint32
-	ActualTagNumber          uint8
-	IsBoolean                bool
-	IsConstructed            bool
-	IsPrimitiveAndNotBoolean bool
-	ActualLength             uint32
-	Child                    IBACnetApplicationTagChild
+	Header          *BACnetTagHeader
+	ActualTagNumber uint8
+	ActualLength    uint32
+	Child           IBACnetApplicationTagChild
 }
 
 // The corresponding interface
 type IBACnetApplicationTag interface {
-	TagNumber() uint8
+	ActualTagNumber() uint8
 	LengthInBytes() uint16
 	LengthInBits() uint16
 	Serialize(writeBuffer utils.WriteBuffer) error
@@ -57,13 +49,13 @@ type IBACnetApplicationTagParent interface {
 
 type IBACnetApplicationTagChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
-	InitializeParent(parent *BACnetApplicationTag, tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, isBoolean bool, isConstructed bool, isPrimitiveAndNotBoolean bool, actualLength uint32)
+	InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader, actualTagNumber uint8, actualLength uint32)
 	GetTypeName() string
 	IBACnetApplicationTag
 }
 
-func NewBACnetApplicationTag(tagClass TagClass, lengthValueType uint8, extTagNumber *uint8, extLength *uint8, extExtLength *uint16, extExtExtLength *uint32, actualTagNumber uint8, isBoolean bool, isConstructed bool, isPrimitiveAndNotBoolean bool, actualLength uint32) *BACnetApplicationTag {
-	return &BACnetApplicationTag{TagClass: tagClass, LengthValueType: lengthValueType, ExtTagNumber: extTagNumber, ExtLength: extLength, ExtExtLength: extExtLength, ExtExtExtLength: extExtExtLength, ActualTagNumber: actualTagNumber, IsBoolean: isBoolean, IsConstructed: isConstructed, IsPrimitiveAndNotBoolean: isPrimitiveAndNotBoolean, ActualLength: actualLength}
+func NewBACnetApplicationTag(header *BACnetTagHeader, actualTagNumber uint8, actualLength uint32) *BACnetApplicationTag {
+	return &BACnetApplicationTag{Header: header, ActualTagNumber: actualTagNumber, ActualLength: actualLength}
 }
 
 func CastBACnetApplicationTag(structType interface{}) *BACnetApplicationTag {
@@ -93,39 +85,11 @@ func (m *BACnetApplicationTag) LengthInBitsConditional(lastItem bool) uint16 {
 
 func (m *BACnetApplicationTag) ParentLengthInBits() uint16 {
 	lengthInBits := uint16(0)
-	// Discriminator Field (tagNumber)
-	lengthInBits += 4
 
-	// Simple field (lengthValueType)
-	lengthInBits += 3
-
-	// Optional Field (extTagNumber)
-	if m.ExtTagNumber != nil {
-		lengthInBits += 8
-	}
+	// Simple field (header)
+	lengthInBits += m.Header.LengthInBits()
 
 	// A virtual field doesn't have any in- or output.
-
-	// A virtual field doesn't have any in- or output.
-
-	// A virtual field doesn't have any in- or output.
-
-	// A virtual field doesn't have any in- or output.
-
-	// Optional Field (extLength)
-	if m.ExtLength != nil {
-		lengthInBits += 8
-	}
-
-	// Optional Field (extExtLength)
-	if m.ExtExtLength != nil {
-		lengthInBits += 16
-	}
-
-	// Optional Field (extExtExtLength)
-	if m.ExtExtExtLength != nil {
-		lengthInBits += 32
-	}
 
 	// A virtual field doesn't have any in- or output.
 
@@ -141,121 +105,61 @@ func BACnetApplicationTagParse(readBuffer utils.ReadBuffer) (*BACnetApplicationT
 		return nil, pullErr
 	}
 
-	// Discriminator Field (tagNumber) (Used as input to a switch field)
-	tagNumber, _tagNumberErr := readBuffer.ReadUint8("tagNumber", 4)
-	if _tagNumberErr != nil {
-		return nil, errors.Wrap(_tagNumberErr, "Error parsing 'tagNumber' field")
+	// Simple Field (header)
+	if pullErr := readBuffer.PullContext("header"); pullErr != nil {
+		return nil, pullErr
+	}
+	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
+	if _headerErr != nil {
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+	}
+	header := CastBACnetTagHeader(_header)
+	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
+		return nil, closeErr
 	}
 
-	// Assert Field (tagClass) (Can be skipped, if a given expression evaluates to false)
-	tagClass, _err := TagClassParse(readBuffer)
-	if _err != nil {
-		return nil, errors.Wrap(_err, "Error parsing 'tagClass' field")
-	}
-	if tagClass != TagClass_APPLICATION_TAGS {
-		return nil, utils.ParseAssertError
-	}
-
-	// Simple Field (lengthValueType)
-	_lengthValueType, _lengthValueTypeErr := readBuffer.ReadUint8("lengthValueType", 3)
-	if _lengthValueTypeErr != nil {
-		return nil, errors.Wrap(_lengthValueTypeErr, "Error parsing 'lengthValueType' field")
-	}
-	lengthValueType := _lengthValueType
-
-	// Optional Field (extTagNumber) (Can be skipped, if a given expression evaluates to false)
-	var extTagNumber *uint8 = nil
-	if bool((tagNumber) == (15)) {
-		_val, _err := readBuffer.ReadUint8("extTagNumber", 8)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'extTagNumber' field")
-		}
-		extTagNumber = &_val
+	// Validation
+	if !(bool((header.TagClass) == (TagClass_APPLICATION_TAGS))) {
+		return nil, utils.ParseAssertError{"should be a application tag"}
 	}
 
 	// Virtual field
-	_actualTagNumber := utils.InlineIf(bool((tagNumber) < (15)), func() interface{} { return uint8(tagNumber) }, func() interface{} { return uint8((*extTagNumber)) }).(uint8)
+	_actualTagNumber := header.ActualTagNumber
 	actualTagNumber := uint8(_actualTagNumber)
 
 	// Virtual field
-	_isBoolean := bool(bool((tagNumber) == (1))) && bool(bool((tagClass) == (TagClass_APPLICATION_TAGS)))
-	isBoolean := bool(_isBoolean)
-
-	// Virtual field
-	_isConstructed := bool(bool((tagClass) == (TagClass_CONTEXT_SPECIFIC_TAGS))) && bool(bool((lengthValueType) == (6)))
-	isConstructed := bool(_isConstructed)
-
-	// Virtual field
-	_isPrimitiveAndNotBoolean := bool(!(isConstructed)) && bool(!(isBoolean))
-	isPrimitiveAndNotBoolean := bool(_isPrimitiveAndNotBoolean)
-
-	// Optional Field (extLength) (Can be skipped, if a given expression evaluates to false)
-	var extLength *uint8 = nil
-	if bool(isPrimitiveAndNotBoolean) && bool(bool((lengthValueType) == (5))) {
-		_val, _err := readBuffer.ReadUint8("extLength", 8)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'extLength' field")
-		}
-		extLength = &_val
-	}
-
-	// Optional Field (extExtLength) (Can be skipped, if a given expression evaluates to false)
-	var extExtLength *uint16 = nil
-	if bool(bool(isPrimitiveAndNotBoolean) && bool(bool((lengthValueType) == (5)))) && bool(bool((*extLength) == (254))) {
-		_val, _err := readBuffer.ReadUint16("extExtLength", 16)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'extExtLength' field")
-		}
-		extExtLength = &_val
-	}
-
-	// Optional Field (extExtExtLength) (Can be skipped, if a given expression evaluates to false)
-	var extExtExtLength *uint32 = nil
-	if bool(bool(isPrimitiveAndNotBoolean) && bool(bool((lengthValueType) == (5)))) && bool(bool((*extLength) == (255))) {
-		_val, _err := readBuffer.ReadUint32("extExtExtLength", 32)
-		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'extExtExtLength' field")
-		}
-		extExtExtLength = &_val
-	}
-
-	// Virtual field
-	_actualLength := utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (255))), func() interface{} { return uint32((*extExtExtLength)) }, func() interface{} {
-		return uint32(uint32(utils.InlineIf(bool(bool((lengthValueType) == (5))) && bool(bool((*extLength) == (254))), func() interface{} { return uint32((*extExtLength)) }, func() interface{} {
-			return uint32(uint32(utils.InlineIf(bool((lengthValueType) == (5)), func() interface{} { return uint32((*extLength)) }, func() interface{} { return uint32(lengthValueType) }).(uint32)))
-		}).(uint32)))
-	}).(uint32)
+	_actualLength := header.ActualLength
 	actualLength := uint32(_actualLength)
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
 	var _parent *BACnetApplicationTag
 	var typeSwitchError error
 	switch {
-	case tagNumber == 0x0: // BACnetApplicationTagNull
+	case actualTagNumber == 0x0: // BACnetApplicationTagNull
 		_parent, typeSwitchError = BACnetApplicationTagNullParse(readBuffer)
-	case tagNumber == 0x1: // BACnetApplicationTagBoolean
+	case actualTagNumber == 0x1: // BACnetApplicationTagBoolean
 		_parent, typeSwitchError = BACnetApplicationTagBooleanParse(readBuffer, actualLength)
-	case tagNumber == 0x2: // BACnetApplicationTagUnsignedInteger
+	case actualTagNumber == 0x2: // BACnetApplicationTagUnsignedInteger
 		_parent, typeSwitchError = BACnetApplicationTagUnsignedIntegerParse(readBuffer, actualLength)
-	case tagNumber == 0x3: // BACnetApplicationTagSignedInteger
+	case actualTagNumber == 0x3: // BACnetApplicationTagSignedInteger
 		_parent, typeSwitchError = BACnetApplicationTagSignedIntegerParse(readBuffer, actualLength)
-	case tagNumber == 0x4: // BACnetApplicationTagReal
+	case actualTagNumber == 0x4: // BACnetApplicationTagReal
 		_parent, typeSwitchError = BACnetApplicationTagRealParse(readBuffer)
-	case tagNumber == 0x5: // BACnetApplicationTagDouble
+	case actualTagNumber == 0x5: // BACnetApplicationTagDouble
 		_parent, typeSwitchError = BACnetApplicationTagDoubleParse(readBuffer)
-	case tagNumber == 0x6: // BACnetApplicationTagOctetString
+	case actualTagNumber == 0x6: // BACnetApplicationTagOctetString
 		_parent, typeSwitchError = BACnetApplicationTagOctetStringParse(readBuffer, actualLength)
-	case tagNumber == 0x7: // BACnetApplicationTagCharacterString
+	case actualTagNumber == 0x7: // BACnetApplicationTagCharacterString
 		_parent, typeSwitchError = BACnetApplicationTagCharacterStringParse(readBuffer, actualLength)
-	case tagNumber == 0x8: // BACnetApplicationTagBitString
+	case actualTagNumber == 0x8: // BACnetApplicationTagBitString
 		_parent, typeSwitchError = BACnetApplicationTagBitStringParse(readBuffer, actualLength)
-	case tagNumber == 0x9: // BACnetApplicationTagEnumerated
+	case actualTagNumber == 0x9: // BACnetApplicationTagEnumerated
 		_parent, typeSwitchError = BACnetApplicationTagEnumeratedParse(readBuffer, actualLength)
-	case tagNumber == 0xA: // BACnetApplicationTagDate
+	case actualTagNumber == 0xA: // BACnetApplicationTagDate
 		_parent, typeSwitchError = BACnetApplicationTagDateParse(readBuffer)
-	case tagNumber == 0xB: // BACnetApplicationTagTime
+	case actualTagNumber == 0xB: // BACnetApplicationTagTime
 		_parent, typeSwitchError = BACnetApplicationTagTimeParse(readBuffer)
-	case tagNumber == 0xC: // BACnetApplicationTagObjectIdentifier
+	case actualTagNumber == 0xC: // BACnetApplicationTagObjectIdentifier
 		_parent, typeSwitchError = BACnetApplicationTagObjectIdentifierParse(readBuffer)
 	default:
 		// TODO: return actual type
@@ -270,7 +174,7 @@ func BACnetApplicationTagParse(readBuffer utils.ReadBuffer) (*BACnetApplicationT
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, tagClass, lengthValueType, extTagNumber, extLength, extExtLength, extExtExtLength, actualTagNumber, isBoolean, isConstructed, isPrimitiveAndNotBoolean, actualLength)
+	_parent.Child.InitializeParent(_parent, header, actualTagNumber, actualLength)
 	return _parent, nil
 }
 
@@ -283,75 +187,20 @@ func (m *BACnetApplicationTag) SerializeParent(writeBuffer utils.WriteBuffer, ch
 		return pushErr
 	}
 
-	// Discriminator Field (tagNumber) (Used as input to a switch field)
-	tagNumber := uint8(child.TagNumber())
-	_tagNumberErr := writeBuffer.WriteUint8("tagNumber", 4, (tagNumber))
-
-	if _tagNumberErr != nil {
-		return errors.Wrap(_tagNumberErr, "Error serializing 'tagNumber' field")
+	// Simple Field (header)
+	if pushErr := writeBuffer.PushContext("header"); pushErr != nil {
+		return pushErr
 	}
-
-	// Simple Field (lengthValueType)
-	lengthValueType := uint8(m.LengthValueType)
-	_lengthValueTypeErr := writeBuffer.WriteUint8("lengthValueType", 3, (lengthValueType))
-	if _lengthValueTypeErr != nil {
-		return errors.Wrap(_lengthValueTypeErr, "Error serializing 'lengthValueType' field")
+	_headerErr := m.Header.Serialize(writeBuffer)
+	if popErr := writeBuffer.PopContext("header"); popErr != nil {
+		return popErr
 	}
-
-	// Optional Field (extTagNumber) (Can be skipped, if the value is null)
-	var extTagNumber *uint8 = nil
-	if m.ExtTagNumber != nil {
-		extTagNumber = m.ExtTagNumber
-		_extTagNumberErr := writeBuffer.WriteUint8("extTagNumber", 8, *(extTagNumber))
-		if _extTagNumberErr != nil {
-			return errors.Wrap(_extTagNumberErr, "Error serializing 'extTagNumber' field")
-		}
+	if _headerErr != nil {
+		return errors.Wrap(_headerErr, "Error serializing 'header' field")
 	}
 	// Virtual field
 	if _actualTagNumberErr := writeBuffer.WriteVirtual("actualTagNumber", m.ActualTagNumber); _actualTagNumberErr != nil {
 		return errors.Wrap(_actualTagNumberErr, "Error serializing 'actualTagNumber' field")
-	}
-	// Virtual field
-	if _isBooleanErr := writeBuffer.WriteVirtual("isBoolean", m.IsBoolean); _isBooleanErr != nil {
-		return errors.Wrap(_isBooleanErr, "Error serializing 'isBoolean' field")
-	}
-	// Virtual field
-	if _isConstructedErr := writeBuffer.WriteVirtual("isConstructed", m.IsConstructed); _isConstructedErr != nil {
-		return errors.Wrap(_isConstructedErr, "Error serializing 'isConstructed' field")
-	}
-	// Virtual field
-	if _isPrimitiveAndNotBooleanErr := writeBuffer.WriteVirtual("isPrimitiveAndNotBoolean", m.IsPrimitiveAndNotBoolean); _isPrimitiveAndNotBooleanErr != nil {
-		return errors.Wrap(_isPrimitiveAndNotBooleanErr, "Error serializing 'isPrimitiveAndNotBoolean' field")
-	}
-
-	// Optional Field (extLength) (Can be skipped, if the value is null)
-	var extLength *uint8 = nil
-	if m.ExtLength != nil {
-		extLength = m.ExtLength
-		_extLengthErr := writeBuffer.WriteUint8("extLength", 8, *(extLength))
-		if _extLengthErr != nil {
-			return errors.Wrap(_extLengthErr, "Error serializing 'extLength' field")
-		}
-	}
-
-	// Optional Field (extExtLength) (Can be skipped, if the value is null)
-	var extExtLength *uint16 = nil
-	if m.ExtExtLength != nil {
-		extExtLength = m.ExtExtLength
-		_extExtLengthErr := writeBuffer.WriteUint16("extExtLength", 16, *(extExtLength))
-		if _extExtLengthErr != nil {
-			return errors.Wrap(_extExtLengthErr, "Error serializing 'extExtLength' field")
-		}
-	}
-
-	// Optional Field (extExtExtLength) (Can be skipped, if the value is null)
-	var extExtExtLength *uint32 = nil
-	if m.ExtExtExtLength != nil {
-		extExtExtLength = m.ExtExtExtLength
-		_extExtExtLengthErr := writeBuffer.WriteUint32("extExtExtLength", 32, *(extExtExtLength))
-		if _extExtExtLengthErr != nil {
-			return errors.Wrap(_extExtExtLengthErr, "Error serializing 'extExtExtLength' field")
-		}
 	}
 	// Virtual field
 	if _actualLengthErr := writeBuffer.WriteVirtual("actualLength", m.ActualLength); _actualLengthErr != nil {

@@ -25,6 +25,7 @@ import (
 	"fmt"
 	abethModel "github.com/apache/plc4x/plc4go/internal/plc4go/abeth/readwrite"
 	adsModel "github.com/apache/plc4x/plc4go/internal/plc4go/ads/readwrite"
+	bacnetModel "github.com/apache/plc4x/plc4go/internal/plc4go/bacnetip/readwrite"
 	df1Model "github.com/apache/plc4x/plc4go/internal/plc4go/df1/readwrite"
 	eipModel "github.com/apache/plc4x/plc4go/internal/plc4go/eip/readwrite"
 	firmataModel "github.com/apache/plc4x/plc4go/internal/plc4go/firmata/readwrite"
@@ -33,6 +34,7 @@ import (
 	s7Model "github.com/apache/plc4x/plc4go/internal/plc4go/s7/readwrite"
 	"github.com/apache/plc4x/plc4go/internal/plc4go/spi/utils"
 	"github.com/rs/zerolog/log"
+	"github.com/stretchr/testify/assert"
 	"github.com/subchen/go-xmldom"
 	"os"
 	"strconv"
@@ -114,7 +116,7 @@ func RunParserSerializerTestsuite(t *testing.T, testPath string, skippedTestCase
 				}
 				referenceXml := child.FindOneByName("xml")
 				normalizeXml(referenceXml)
-				referenceSerialized := referenceXml.FirstChild().XML()
+				referenceSerialized := referenceXml.FirstChild().XMLPretty()
 
 				// Get the raw input by decoding the hex-encoded binary input
 				rawInput, err := hex.DecodeString(rawInputText)
@@ -138,6 +140,8 @@ func RunParserSerializerTestsuite(t *testing.T, testPath string, skippedTestCase
 					helper = new(abethModel.AbethParserHelper)
 				case "ads":
 					helper = new(adsModel.AdsParserHelper)
+				case "bacnetip":
+					helper = new(bacnetModel.BacnetipParserHelper)
 				case "df1":
 					helper = new(df1Model.Df1ParserHelper)
 				case "eip":
@@ -151,25 +155,23 @@ func RunParserSerializerTestsuite(t *testing.T, testPath string, skippedTestCase
 				case "knxnetip":
 					helper = new(knxModel.KnxnetipParserHelper)
 				default:
-					t.Errorf("Testsuite %s has not mapped parser", testsuiteName)
+					t.Errorf("Testsuite %s has not mapped parser for %s", testsuiteName, protocolName)
 					return
 				}
 				_ = outputFlavor
 				msg, err := helper.Parse(rootType, parserArguments, readBuffer)
 				if err != nil {
-					t.Error("Error parsing input data: " + err.Error())
+					t.Error("Error parsing input data: ", err)
 					return
 				}
 
 				{
 					// First try to use the native xml writer
-					var err error
 					serializable := msg.(utils.Serializable)
 					buffer := utils.NewXmlWriteBuffer()
-					if err = serializable.Serialize(buffer); err == nil {
+					if err := serializable.Serialize(buffer); err == nil {
 						actualXml := buffer.GetXmlString()
-						err = CompareResults([]byte(actualXml), []byte(referenceSerialized))
-						if err != nil {
+						if err := CompareResults([]byte(actualXml), []byte(referenceSerialized)); err != nil {
 							border := strings.Repeat("=", 100)
 							fmt.Printf(
 								"\n"+
@@ -195,6 +197,7 @@ func RunParserSerializerTestsuite(t *testing.T, testPath string, skippedTestCase
 								actualXml,
 								err,
 								testCaseName)
+							assert.Equal(t, referenceSerialized, actualXml)
 							t.Error("Error comparing the results: " + err.Error())
 							return
 						}
