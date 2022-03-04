@@ -35,6 +35,10 @@ type BACnetNotificationParametersFloatingLimit struct {
 	SetPointValue   *BACnetContextTagReal
 	ErrorLimit      *BACnetContextTagReal
 	InnerClosingTag *BACnetClosingTag
+
+	// Arguments.
+	TagNumber  uint8
+	ObjectType BACnetObjectType
 }
 
 // The corresponding interface
@@ -51,10 +55,10 @@ type IBACnetNotificationParametersFloatingLimit interface {
 	GetErrorLimit() *BACnetContextTagReal
 	// GetInnerClosingTag returns InnerClosingTag
 	GetInnerClosingTag() *BACnetClosingTag
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -70,11 +74,10 @@ func (m *BACnetNotificationParametersFloatingLimit) GetPeekedTagNumber() uint8 {
 	return uint8(4)
 }
 
-func (m *BACnetNotificationParametersFloatingLimit) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, peekedTagNumber uint8) {
+func (m *BACnetNotificationParametersFloatingLimit) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetNotificationParameters.OpeningTag = openingTag
 	m.BACnetNotificationParameters.PeekedTagHeader = peekedTagHeader
 	m.BACnetNotificationParameters.ClosingTag = closingTag
-	m.BACnetNotificationParameters.PeekedTagNumber = peekedTagNumber
 }
 
 ///////////////////////////////////////////////////////////
@@ -108,7 +111,8 @@ func (m *BACnetNotificationParametersFloatingLimit) GetInnerClosingTag() *BACnet
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
-func NewBACnetNotificationParametersFloatingLimit(innerOpeningTag *BACnetOpeningTag, referenceValue *BACnetContextTagReal, statusFlags *BACnetStatusFlags, setPointValue *BACnetContextTagReal, errorLimit *BACnetContextTagReal, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, peekedTagNumber uint8) *BACnetNotificationParameters {
+// NewBACnetNotificationParametersFloatingLimit factory function for BACnetNotificationParametersFloatingLimit
+func NewBACnetNotificationParametersFloatingLimit(innerOpeningTag *BACnetOpeningTag, referenceValue *BACnetContextTagReal, statusFlags *BACnetStatusFlags, setPointValue *BACnetContextTagReal, errorLimit *BACnetContextTagReal, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8, objectType BACnetObjectType) *BACnetNotificationParameters {
 	child := &BACnetNotificationParametersFloatingLimit{
 		InnerOpeningTag:              innerOpeningTag,
 		ReferenceValue:               referenceValue,
@@ -116,7 +120,7 @@ func NewBACnetNotificationParametersFloatingLimit(innerOpeningTag *BACnetOpening
 		SetPointValue:                setPointValue,
 		ErrorLimit:                   errorLimit,
 		InnerClosingTag:              innerClosingTag,
-		BACnetNotificationParameters: NewBACnetNotificationParameters(openingTag, peekedTagHeader, closingTag, peekedTagNumber),
+		BACnetNotificationParameters: NewBACnetNotificationParameters(openingTag, peekedTagHeader, closingTag, tagNumber, objectType),
 	}
 	child.Child = child
 	return child.BACnetNotificationParameters
@@ -145,48 +149,50 @@ func (m *BACnetNotificationParametersFloatingLimit) GetTypeName() string {
 	return "BACnetNotificationParametersFloatingLimit"
 }
 
-func (m *BACnetNotificationParametersFloatingLimit) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *BACnetNotificationParametersFloatingLimit) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *BACnetNotificationParametersFloatingLimit) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *BACnetNotificationParametersFloatingLimit) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (innerOpeningTag)
-	lengthInBits += m.InnerOpeningTag.LengthInBits()
+	lengthInBits += m.InnerOpeningTag.GetLengthInBits()
 
 	// Simple field (referenceValue)
-	lengthInBits += m.ReferenceValue.LengthInBits()
+	lengthInBits += m.ReferenceValue.GetLengthInBits()
 
 	// Simple field (statusFlags)
-	lengthInBits += m.StatusFlags.LengthInBits()
+	lengthInBits += m.StatusFlags.GetLengthInBits()
 
 	// Simple field (setPointValue)
-	lengthInBits += m.SetPointValue.LengthInBits()
+	lengthInBits += m.SetPointValue.GetLengthInBits()
 
 	// Simple field (errorLimit)
-	lengthInBits += m.ErrorLimit.LengthInBits()
+	lengthInBits += m.ErrorLimit.GetLengthInBits()
 
 	// Simple field (innerClosingTag)
-	lengthInBits += m.InnerClosingTag.LengthInBits()
+	lengthInBits += m.InnerClosingTag.GetLengthInBits()
 
 	return lengthInBits
 }
 
-func (m *BACnetNotificationParametersFloatingLimit) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *BACnetNotificationParametersFloatingLimit) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func BACnetNotificationParametersFloatingLimitParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, peekedTagNumber uint8) (*BACnetNotificationParameters, error) {
 	if pullErr := readBuffer.PullContext("BACnetNotificationParametersFloatingLimit"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Simple Field (innerOpeningTag)
 	if pullErr := readBuffer.PullContext("innerOpeningTag"); pullErr != nil {
 		return nil, pullErr
 	}
-	_innerOpeningTag, _innerOpeningTagErr := BACnetContextTagParse(readBuffer, uint8(peekedTagNumber), BACnetDataType_OPENING_TAG)
+	_innerOpeningTag, _innerOpeningTagErr := BACnetContextTagParse(readBuffer, uint8(peekedTagNumber), BACnetDataType(BACnetDataType_OPENING_TAG))
 	if _innerOpeningTagErr != nil {
 		return nil, errors.Wrap(_innerOpeningTagErr, "Error parsing 'innerOpeningTag' field")
 	}
@@ -199,7 +205,7 @@ func BACnetNotificationParametersFloatingLimitParse(readBuffer utils.ReadBuffer,
 	if pullErr := readBuffer.PullContext("referenceValue"); pullErr != nil {
 		return nil, pullErr
 	}
-	_referenceValue, _referenceValueErr := BACnetContextTagParse(readBuffer, uint8(uint8(0)), BACnetDataType_REAL)
+	_referenceValue, _referenceValueErr := BACnetContextTagParse(readBuffer, uint8(uint8(0)), BACnetDataType(BACnetDataType_REAL))
 	if _referenceValueErr != nil {
 		return nil, errors.Wrap(_referenceValueErr, "Error parsing 'referenceValue' field")
 	}
@@ -225,7 +231,7 @@ func BACnetNotificationParametersFloatingLimitParse(readBuffer utils.ReadBuffer,
 	if pullErr := readBuffer.PullContext("setPointValue"); pullErr != nil {
 		return nil, pullErr
 	}
-	_setPointValue, _setPointValueErr := BACnetContextTagParse(readBuffer, uint8(uint8(2)), BACnetDataType_REAL)
+	_setPointValue, _setPointValueErr := BACnetContextTagParse(readBuffer, uint8(uint8(2)), BACnetDataType(BACnetDataType_REAL))
 	if _setPointValueErr != nil {
 		return nil, errors.Wrap(_setPointValueErr, "Error parsing 'setPointValue' field")
 	}
@@ -238,7 +244,7 @@ func BACnetNotificationParametersFloatingLimitParse(readBuffer utils.ReadBuffer,
 	if pullErr := readBuffer.PullContext("errorLimit"); pullErr != nil {
 		return nil, pullErr
 	}
-	_errorLimit, _errorLimitErr := BACnetContextTagParse(readBuffer, uint8(uint8(3)), BACnetDataType_REAL)
+	_errorLimit, _errorLimitErr := BACnetContextTagParse(readBuffer, uint8(uint8(3)), BACnetDataType(BACnetDataType_REAL))
 	if _errorLimitErr != nil {
 		return nil, errors.Wrap(_errorLimitErr, "Error parsing 'errorLimit' field")
 	}
@@ -251,7 +257,7 @@ func BACnetNotificationParametersFloatingLimitParse(readBuffer utils.ReadBuffer,
 	if pullErr := readBuffer.PullContext("innerClosingTag"); pullErr != nil {
 		return nil, pullErr
 	}
-	_innerClosingTag, _innerClosingTagErr := BACnetContextTagParse(readBuffer, uint8(peekedTagNumber), BACnetDataType_CLOSING_TAG)
+	_innerClosingTag, _innerClosingTagErr := BACnetContextTagParse(readBuffer, uint8(peekedTagNumber), BACnetDataType(BACnetDataType_CLOSING_TAG))
 	if _innerClosingTagErr != nil {
 		return nil, errors.Wrap(_innerClosingTagErr, "Error parsing 'innerClosingTag' field")
 	}

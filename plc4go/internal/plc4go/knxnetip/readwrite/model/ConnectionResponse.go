@@ -46,10 +46,10 @@ type IConnectionResponse interface {
 	GetHpaiDataEndpoint() *HPAIDataEndpoint
 	// GetConnectionResponseDataBlock returns ConnectionResponseDataBlock
 	GetConnectionResponseDataBlock() *ConnectionResponseDataBlock
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -90,6 +90,7 @@ func (m *ConnectionResponse) GetConnectionResponseDataBlock() *ConnectionRespons
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
+// NewConnectionResponse factory function for ConnectionResponse
 func NewConnectionResponse(communicationChannelId uint8, status Status, hpaiDataEndpoint *HPAIDataEndpoint, connectionResponseDataBlock *ConnectionResponseDataBlock) *KnxNetIpMessage {
 	child := &ConnectionResponse{
 		CommunicationChannelId:      communicationChannelId,
@@ -125,12 +126,12 @@ func (m *ConnectionResponse) GetTypeName() string {
 	return "ConnectionResponse"
 }
 
-func (m *ConnectionResponse) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *ConnectionResponse) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *ConnectionResponse) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *ConnectionResponse) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (communicationChannelId)
 	lengthInBits += 8
@@ -140,25 +141,27 @@ func (m *ConnectionResponse) LengthInBitsConditional(lastItem bool) uint16 {
 
 	// Optional Field (hpaiDataEndpoint)
 	if m.HpaiDataEndpoint != nil {
-		lengthInBits += (*m.HpaiDataEndpoint).LengthInBits()
+		lengthInBits += (*m.HpaiDataEndpoint).GetLengthInBits()
 	}
 
 	// Optional Field (connectionResponseDataBlock)
 	if m.ConnectionResponseDataBlock != nil {
-		lengthInBits += (*m.ConnectionResponseDataBlock).LengthInBits()
+		lengthInBits += (*m.ConnectionResponseDataBlock).GetLengthInBits()
 	}
 
 	return lengthInBits
 }
 
-func (m *ConnectionResponse) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *ConnectionResponse) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func ConnectionResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
 	if pullErr := readBuffer.PullContext("ConnectionResponse"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Simple Field (communicationChannelId)
 	_communicationChannelId, _communicationChannelIdErr := readBuffer.ReadUint8("communicationChannelId", 8)
@@ -183,7 +186,7 @@ func ConnectionResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, err
 	// Optional Field (hpaiDataEndpoint) (Can be skipped, if a given expression evaluates to false)
 	var hpaiDataEndpoint *HPAIDataEndpoint = nil
 	if bool((status) == (Status_NO_ERROR)) {
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("hpaiDataEndpoint"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -204,7 +207,7 @@ func ConnectionResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, err
 	// Optional Field (connectionResponseDataBlock) (Can be skipped, if a given expression evaluates to false)
 	var connectionResponseDataBlock *ConnectionResponseDataBlock = nil
 	if bool((status) == (Status_NO_ERROR)) {
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("connectionResponseDataBlock"); pullErr != nil {
 			return nil, pullErr
 		}

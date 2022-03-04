@@ -36,10 +36,10 @@ type BACnetServiceAckAtomicWriteFile struct {
 type IBACnetServiceAckAtomicWriteFile interface {
 	// GetFileStartPosition returns FileStartPosition
 	GetFileStartPosition() *BACnetContextTagSignedInteger
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -68,6 +68,7 @@ func (m *BACnetServiceAckAtomicWriteFile) GetFileStartPosition() *BACnetContextT
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
+// NewBACnetServiceAckAtomicWriteFile factory function for BACnetServiceAckAtomicWriteFile
 func NewBACnetServiceAckAtomicWriteFile(fileStartPosition *BACnetContextTagSignedInteger) *BACnetServiceAck {
 	child := &BACnetServiceAckAtomicWriteFile{
 		FileStartPosition: fileStartPosition,
@@ -100,33 +101,35 @@ func (m *BACnetServiceAckAtomicWriteFile) GetTypeName() string {
 	return "BACnetServiceAckAtomicWriteFile"
 }
 
-func (m *BACnetServiceAckAtomicWriteFile) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *BACnetServiceAckAtomicWriteFile) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *BACnetServiceAckAtomicWriteFile) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *BACnetServiceAckAtomicWriteFile) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (fileStartPosition)
-	lengthInBits += m.FileStartPosition.LengthInBits()
+	lengthInBits += m.FileStartPosition.GetLengthInBits()
 
 	return lengthInBits
 }
 
-func (m *BACnetServiceAckAtomicWriteFile) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *BACnetServiceAckAtomicWriteFile) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func BACnetServiceAckAtomicWriteFileParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckAtomicWriteFile"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Simple Field (fileStartPosition)
 	if pullErr := readBuffer.PullContext("fileStartPosition"); pullErr != nil {
 		return nil, pullErr
 	}
-	_fileStartPosition, _fileStartPositionErr := BACnetContextTagParse(readBuffer, uint8(uint8(0)), BACnetDataType_SIGNED_INTEGER)
+	_fileStartPosition, _fileStartPositionErr := BACnetContextTagParse(readBuffer, uint8(uint8(0)), BACnetDataType(BACnetDataType_SIGNED_INTEGER))
 	if _fileStartPositionErr != nil {
 		return nil, errors.Wrap(_fileStartPositionErr, "Error parsing 'fileStartPosition' field")
 	}

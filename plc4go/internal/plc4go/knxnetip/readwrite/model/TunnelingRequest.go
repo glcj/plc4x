@@ -31,6 +31,9 @@ type TunnelingRequest struct {
 	*KnxNetIpMessage
 	TunnelingRequestDataBlock *TunnelingRequestDataBlock
 	Cemi                      *CEMI
+
+	// Arguments.
+	TotalLength uint16
 }
 
 // The corresponding interface
@@ -39,10 +42,10 @@ type ITunnelingRequest interface {
 	GetTunnelingRequestDataBlock() *TunnelingRequestDataBlock
 	// GetCemi returns Cemi
 	GetCemi() *CEMI
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -75,7 +78,8 @@ func (m *TunnelingRequest) GetCemi() *CEMI {
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
-func NewTunnelingRequest(tunnelingRequestDataBlock *TunnelingRequestDataBlock, cemi *CEMI) *KnxNetIpMessage {
+// NewTunnelingRequest factory function for TunnelingRequest
+func NewTunnelingRequest(tunnelingRequestDataBlock *TunnelingRequestDataBlock, cemi *CEMI, totalLength uint16) *KnxNetIpMessage {
 	child := &TunnelingRequest{
 		TunnelingRequestDataBlock: tunnelingRequestDataBlock,
 		Cemi:                      cemi,
@@ -108,30 +112,32 @@ func (m *TunnelingRequest) GetTypeName() string {
 	return "TunnelingRequest"
 }
 
-func (m *TunnelingRequest) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *TunnelingRequest) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *TunnelingRequest) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *TunnelingRequest) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (tunnelingRequestDataBlock)
-	lengthInBits += m.TunnelingRequestDataBlock.LengthInBits()
+	lengthInBits += m.TunnelingRequestDataBlock.GetLengthInBits()
 
 	// Simple field (cemi)
-	lengthInBits += m.Cemi.LengthInBits()
+	lengthInBits += m.Cemi.GetLengthInBits()
 
 	return lengthInBits
 }
 
-func (m *TunnelingRequest) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *TunnelingRequest) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func TunnelingRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*KnxNetIpMessage, error) {
 	if pullErr := readBuffer.PullContext("TunnelingRequest"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Simple Field (tunnelingRequestDataBlock)
 	if pullErr := readBuffer.PullContext("tunnelingRequestDataBlock"); pullErr != nil {
@@ -150,7 +156,7 @@ func TunnelingRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*Kn
 	if pullErr := readBuffer.PullContext("cemi"); pullErr != nil {
 		return nil, pullErr
 	}
-	_cemi, _cemiErr := CEMIParse(readBuffer, uint16(uint16(totalLength)-uint16(uint16(uint16(uint16(6))+uint16(tunnelingRequestDataBlock.LengthInBytes())))))
+	_cemi, _cemiErr := CEMIParse(readBuffer, uint16(uint16(totalLength)-uint16(uint16(uint16(uint16(6))+uint16(tunnelingRequestDataBlock.GetLengthInBytes())))))
 	if _cemiErr != nil {
 		return nil, errors.Wrap(_cemiErr, "Error parsing 'cemi' field")
 	}

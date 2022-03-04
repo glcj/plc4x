@@ -33,6 +33,9 @@ type BACnetConfirmedServiceRequestReadProperty struct {
 	ObjectIdentifier   *BACnetContextTagObjectIdentifier
 	PropertyIdentifier *BACnetContextTagPropertyIdentifier
 	ArrayIndex         *BACnetContextTagUnsignedInteger
+
+	// Arguments.
+	Len uint16
 }
 
 // The corresponding interface
@@ -43,10 +46,10 @@ type IBACnetConfirmedServiceRequestReadProperty interface {
 	GetPropertyIdentifier() *BACnetContextTagPropertyIdentifier
 	// GetArrayIndex returns ArrayIndex
 	GetArrayIndex() *BACnetContextTagUnsignedInteger
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -84,12 +87,13 @@ func (m *BACnetConfirmedServiceRequestReadProperty) GetArrayIndex() *BACnetConte
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
-func NewBACnetConfirmedServiceRequestReadProperty(objectIdentifier *BACnetContextTagObjectIdentifier, propertyIdentifier *BACnetContextTagPropertyIdentifier, arrayIndex *BACnetContextTagUnsignedInteger) *BACnetConfirmedServiceRequest {
+// NewBACnetConfirmedServiceRequestReadProperty factory function for BACnetConfirmedServiceRequestReadProperty
+func NewBACnetConfirmedServiceRequestReadProperty(objectIdentifier *BACnetContextTagObjectIdentifier, propertyIdentifier *BACnetContextTagPropertyIdentifier, arrayIndex *BACnetContextTagUnsignedInteger, len uint16) *BACnetConfirmedServiceRequest {
 	child := &BACnetConfirmedServiceRequestReadProperty{
 		ObjectIdentifier:              objectIdentifier,
 		PropertyIdentifier:            propertyIdentifier,
 		ArrayIndex:                    arrayIndex,
-		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(),
+		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
 	child.Child = child
 	return child.BACnetConfirmedServiceRequest
@@ -118,41 +122,43 @@ func (m *BACnetConfirmedServiceRequestReadProperty) GetTypeName() string {
 	return "BACnetConfirmedServiceRequestReadProperty"
 }
 
-func (m *BACnetConfirmedServiceRequestReadProperty) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *BACnetConfirmedServiceRequestReadProperty) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *BACnetConfirmedServiceRequestReadProperty) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *BACnetConfirmedServiceRequestReadProperty) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (objectIdentifier)
-	lengthInBits += m.ObjectIdentifier.LengthInBits()
+	lengthInBits += m.ObjectIdentifier.GetLengthInBits()
 
 	// Simple field (propertyIdentifier)
-	lengthInBits += m.PropertyIdentifier.LengthInBits()
+	lengthInBits += m.PropertyIdentifier.GetLengthInBits()
 
 	// Optional Field (arrayIndex)
 	if m.ArrayIndex != nil {
-		lengthInBits += (*m.ArrayIndex).LengthInBits()
+		lengthInBits += (*m.ArrayIndex).GetLengthInBits()
 	}
 
 	return lengthInBits
 }
 
-func (m *BACnetConfirmedServiceRequestReadProperty) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *BACnetConfirmedServiceRequestReadProperty) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func BACnetConfirmedServiceRequestReadPropertyParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestReadProperty"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Simple Field (objectIdentifier)
 	if pullErr := readBuffer.PullContext("objectIdentifier"); pullErr != nil {
 		return nil, pullErr
 	}
-	_objectIdentifier, _objectIdentifierErr := BACnetContextTagParse(readBuffer, uint8(uint8(0)), BACnetDataType_BACNET_OBJECT_IDENTIFIER)
+	_objectIdentifier, _objectIdentifierErr := BACnetContextTagParse(readBuffer, uint8(uint8(0)), BACnetDataType(BACnetDataType_BACNET_OBJECT_IDENTIFIER))
 	if _objectIdentifierErr != nil {
 		return nil, errors.Wrap(_objectIdentifierErr, "Error parsing 'objectIdentifier' field")
 	}
@@ -165,7 +171,7 @@ func BACnetConfirmedServiceRequestReadPropertyParse(readBuffer utils.ReadBuffer,
 	if pullErr := readBuffer.PullContext("propertyIdentifier"); pullErr != nil {
 		return nil, pullErr
 	}
-	_propertyIdentifier, _propertyIdentifierErr := BACnetContextTagParse(readBuffer, uint8(uint8(1)), BACnetDataType_BACNET_PROPERTY_IDENTIFIER)
+	_propertyIdentifier, _propertyIdentifierErr := BACnetContextTagParse(readBuffer, uint8(uint8(1)), BACnetDataType(BACnetDataType_BACNET_PROPERTY_IDENTIFIER))
 	if _propertyIdentifierErr != nil {
 		return nil, errors.Wrap(_propertyIdentifierErr, "Error parsing 'propertyIdentifier' field")
 	}
@@ -177,7 +183,7 @@ func BACnetConfirmedServiceRequestReadPropertyParse(readBuffer utils.ReadBuffer,
 	// Optional Field (arrayIndex) (Can be skipped, if a given expression evaluates to false)
 	var arrayIndex *BACnetContextTagUnsignedInteger = nil
 	{
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("arrayIndex"); pullErr != nil {
 			return nil, pullErr
 		}

@@ -35,10 +35,10 @@ type DF1UnprotectedReadResponse struct {
 type IDF1UnprotectedReadResponse interface {
 	// GetData returns Data
 	GetData() []byte
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -70,6 +70,7 @@ func (m *DF1UnprotectedReadResponse) GetData() []byte {
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
+// NewDF1UnprotectedReadResponse factory function for DF1UnprotectedReadResponse
 func NewDF1UnprotectedReadResponse(data []byte, status uint8, transactionCounter uint16) *DF1Command {
 	child := &DF1UnprotectedReadResponse{
 		Data:       data,
@@ -102,28 +103,30 @@ func (m *DF1UnprotectedReadResponse) GetTypeName() string {
 	return "DF1UnprotectedReadResponse"
 }
 
-func (m *DF1UnprotectedReadResponse) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *DF1UnprotectedReadResponse) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *DF1UnprotectedReadResponse) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *DF1UnprotectedReadResponse) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Manual Array Field (data)
 	data := m.Data
-	lengthInBits += DataLength(data) * 8
+	lengthInBits += uint16(DataLength(data))
 
 	return lengthInBits
 }
 
-func (m *DF1UnprotectedReadResponse) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *DF1UnprotectedReadResponse) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func DF1UnprotectedReadResponseParse(readBuffer utils.ReadBuffer) (*DF1Command, error) {
 	if pullErr := readBuffer.PullContext("DF1UnprotectedReadResponse"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 	if pullErr := readBuffer.PullContext("data", utils.WithRenderAsList(true)); pullErr != nil {
 		return nil, pullErr
 	}
@@ -138,10 +141,7 @@ func DF1UnprotectedReadResponseParse(readBuffer utils.ReadBuffer) (*DF1Command, 
 
 		}
 	}
-	data := make([]byte, len(_dataList))
-	for i := 0; i < len(_dataList); i++ {
-		data[i] = byte(_dataList[i])
-	}
+	data := _dataList
 	if closeErr := readBuffer.CloseContext("data", utils.WithRenderAsList(true)); closeErr != nil {
 		return nil, closeErr
 	}

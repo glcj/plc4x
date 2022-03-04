@@ -36,10 +36,12 @@ type BACnetApplicationTagSignedInteger struct {
 type IBACnetApplicationTagSignedInteger interface {
 	// GetPayload returns Payload
 	GetPayload() *BACnetTagPayloadSignedInteger
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetActualValue returns ActualValue
+	GetActualValue() uint64
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -55,10 +57,8 @@ func (m *BACnetApplicationTagSignedInteger) GetActualTagNumber() uint8 {
 	return 0x3
 }
 
-func (m *BACnetApplicationTagSignedInteger) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader, actualTagNumber uint8, actualLength uint32) {
+func (m *BACnetApplicationTagSignedInteger) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
-	m.BACnetApplicationTag.ActualTagNumber = actualTagNumber
-	m.BACnetApplicationTag.ActualLength = actualLength
 }
 
 ///////////////////////////////////////////////////////////
@@ -71,11 +71,15 @@ func (m *BACnetApplicationTagSignedInteger) GetPayload() *BACnetTagPayloadSigned
 ///////////////////////////////////////////////////////////
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+func (m *BACnetApplicationTagSignedInteger) GetActualValue() uint64 {
+	return m.GetPayload().GetActualValue()
+}
 
-func NewBACnetApplicationTagSignedInteger(payload *BACnetTagPayloadSignedInteger, header *BACnetTagHeader, actualTagNumber uint8, actualLength uint32) *BACnetApplicationTag {
+// NewBACnetApplicationTagSignedInteger factory function for BACnetApplicationTagSignedInteger
+func NewBACnetApplicationTagSignedInteger(payload *BACnetTagPayloadSignedInteger, header *BACnetTagHeader) *BACnetApplicationTag {
 	child := &BACnetApplicationTagSignedInteger{
 		Payload:              payload,
-		BACnetApplicationTag: NewBACnetApplicationTag(header, actualTagNumber, actualLength),
+		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
 	child.Child = child
 	return child.BACnetApplicationTag
@@ -104,33 +108,37 @@ func (m *BACnetApplicationTagSignedInteger) GetTypeName() string {
 	return "BACnetApplicationTagSignedInteger"
 }
 
-func (m *BACnetApplicationTagSignedInteger) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *BACnetApplicationTagSignedInteger) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *BACnetApplicationTagSignedInteger) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *BACnetApplicationTagSignedInteger) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (payload)
-	lengthInBits += m.Payload.LengthInBits()
+	lengthInBits += m.Payload.GetLengthInBits()
+
+	// A virtual field doesn't have any in- or output.
 
 	return lengthInBits
 }
 
-func (m *BACnetApplicationTagSignedInteger) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *BACnetApplicationTagSignedInteger) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func BACnetApplicationTagSignedIntegerParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTag, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagSignedInteger"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Simple Field (payload)
 	if pullErr := readBuffer.PullContext("payload"); pullErr != nil {
 		return nil, pullErr
 	}
-	_payload, _payloadErr := BACnetTagPayloadSignedIntegerParse(readBuffer, uint32(header.ActualLength))
+	_payload, _payloadErr := BACnetTagPayloadSignedIntegerParse(readBuffer, uint32(header.GetActualLength()))
 	if _payloadErr != nil {
 		return nil, errors.Wrap(_payloadErr, "Error parsing 'payload' field")
 	}
@@ -138,6 +146,11 @@ func BACnetApplicationTagSignedIntegerParse(readBuffer utils.ReadBuffer, header 
 	if closeErr := readBuffer.CloseContext("payload"); closeErr != nil {
 		return nil, closeErr
 	}
+
+	// Virtual field
+	_actualValue := payload.GetActualValue()
+	actualValue := uint64(_actualValue)
+	_ = actualValue
 
 	if closeErr := readBuffer.CloseContext("BACnetApplicationTagSignedInteger"); closeErr != nil {
 		return nil, closeErr
@@ -168,6 +181,10 @@ func (m *BACnetApplicationTagSignedInteger) Serialize(writeBuffer utils.WriteBuf
 		}
 		if _payloadErr != nil {
 			return errors.Wrap(_payloadErr, "Error serializing 'payload' field")
+		}
+		// Virtual field
+		if _actualValueErr := writeBuffer.WriteVirtual("actualValue", m.GetActualValue()); _actualValueErr != nil {
+			return errors.Wrap(_actualValueErr, "Error serializing 'actualValue' field")
 		}
 
 		if popErr := writeBuffer.PopContext("BACnetApplicationTagSignedInteger"); popErr != nil {

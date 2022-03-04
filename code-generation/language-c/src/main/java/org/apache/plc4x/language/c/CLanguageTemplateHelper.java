@@ -19,6 +19,8 @@
 package org.apache.plc4x.language.c;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.plc4x.plugins.codegenerator.language.mspec.model.terms.DefaultStringLiteral;
 import org.apache.plc4x.plugins.codegenerator.protocol.freemarker.BaseFreemarkerLanguageTemplateHelper;
 import org.apache.plc4x.plugins.codegenerator.protocol.freemarker.FreemarkerException;
 import org.apache.plc4x.plugins.codegenerator.protocol.freemarker.Tracer;
@@ -118,25 +120,25 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
         }
         TypedField typedField = field.asTypedField().orElseThrow(IllegalStateException::new);
         TypeReference typeReference = typedField.getType();
-        if (typeReference.isComplexTypeReference()) {
-            final TypeDefinition typeDefinition = getTypeDefinitionForTypeReference(typeReference);
-            if (typeDefinition instanceof DataIoTypeDefinition) {
+        if (typeReference.isNonSimpleTypeReference()) {
+            if (typeReference.asNonSimpleTypeReference().orElseThrow().getTypeDefinition() instanceof DataIoTypeDefinition) {
                 return "plc4c_data*";
             }
         }
         return getLanguageTypeNameForTypeReference(typeReference);
     }
 
-    public Map<ConstField, ComplexTypeDefinition> getAllConstFields() {
-        Map<ConstField, ComplexTypeDefinition> constFields = new LinkedHashMap<>();
+    public List<Pair<ConstField, ComplexTypeDefinition>> getAllConstFields() {
+        // Note: a map is not an option here as ConstFields are duplicated
+        List<Pair<ConstField, ComplexTypeDefinition>> constFields = new LinkedList<>();
         ComplexTypeDefinition complexTypeDefinition = (ComplexTypeDefinition) this.thisType;
         complexTypeDefinition.getConstFields()
-            .forEach(constField -> constFields.put(constField, complexTypeDefinition));
+            .forEach(constField -> constFields.add(Pair.of(constField, complexTypeDefinition)));
         complexTypeDefinition.getSwitchField()
             .map(SwitchField::getCases)
             .ifPresent(discriminatedComplexTypeDefinitions ->
                 discriminatedComplexTypeDefinitions.forEach(switchCase ->
-                    switchCase.getConstFields().forEach(constField -> constFields.put(constField, switchCase))
+                    switchCase.getConstFields().forEach(constField -> constFields.add(Pair.of(constField, switchCase)))
                 )
             );
         return constFields;
@@ -188,6 +190,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
      */
     @Override
     public String getLanguageTypeNameForTypeReference(TypeReference typeReference) {
+        Objects.requireNonNull(typeReference);
         if (typeReference instanceof SimpleTypeReference) {
             SimpleTypeReference simpleTypeReference = (SimpleTypeReference) typeReference;
             switch (simpleTypeReference.getBaseType()) {
@@ -251,7 +254,7 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
             }
             throw new FreemarkerException("Unsupported simple type. " + simpleTypeReference.getBaseType());
         } else {
-            return getCTypeName(((ComplexTypeReference) typeReference).getName());
+            return getCTypeName(((NonSimpleTypeReference) typeReference).getName());
         }
     }
 
@@ -319,8 +322,8 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
         }
         if ("null".equals(valueString)) {
             // C doesn't like NULL values for enums, so we have to return something else (we'll treat -1 as NULL)
-            if (typeReference instanceof ComplexTypeReference) {
-                if (getTypeDefinitionForTypeReference(typeReference) instanceof EnumTypeDefinition) {
+            if (typeReference.isNonSimpleTypeReference()) {
+                if (typeReference.asNonSimpleTypeReference().orElseThrow().getTypeDefinition().isEnumTypeDefinition()) {
                     return "-1";
                 }
             }
@@ -509,8 +512,8 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
                     throw new FreemarkerException("Unsupported type.");
             }
         } else {
-            ComplexTypeReference complexTypeReference = (ComplexTypeReference) typeReference;
-            return getCTypeName(complexTypeReference.getName()) + "_null()";
+            NonSimpleTypeReference nonSimpleTypeReference = (NonSimpleTypeReference) typeReference;
+            return getCTypeName(nonSimpleTypeReference.getName()) + "_null()";
         }
     }
 
@@ -636,14 +639,18 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
             String lengthExpression;
             if (variableLiteral.getName().equals("lengthInBytes")) {
                 tracer = tracer.dive("lengthInBytes contained in variable name");
-                lengthType = (baseType.getParentType() == null) ? baseType : (ComplexTypeDefinition) baseType.getParentType();
+                lengthType = baseType;
+                Optional<ComplexTypeDefinition> parentType = baseType.asComplexTypeDefinition()
+                    .flatMap(ComplexTypeDefinition::getParentType);
+                if (parentType.isPresent()) {
+                    lengthType = parentType.get();
+                }
                 lengthExpression = "_message";
             } else {
-                final Optional<TypeReference> typeReferenceForProperty = getTypeReferenceForProperty((ComplexTypeDefinition) baseType, variableLiteral.getName());
-                if (!typeReferenceForProperty.isPresent()) {
-                    throw new FreemarkerException("Unknown type for property " + variableLiteral.getName());
-                }
-                lengthType = getTypeDefinitionForTypeReference(typeReferenceForProperty.get());
+                final TypeReference typeReferenceForProperty = ((ComplexTypeDefinition) baseType)
+                    .getTypeReferenceForProperty(variableLiteral.getName())
+                    .orElseThrow(()->new FreemarkerException("Unknown type for property " + variableLiteral.getName()));
+                lengthType = typeReferenceForProperty.asNonSimpleTypeReference().orElseThrow().getTypeDefinition();
                 lengthExpression = variableExpressionGenerator.apply(variableLiteral);
             }
             return tracer + getCTypeName(lengthType.getName()) + "_length_in_bytes(" + lengthExpression + ")";
@@ -692,17 +699,17 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
 
         // Try to find the type of the addressed property.
         Optional<TypeReference> propertyTypeOptional =
-            getTypeReferenceForProperty((ComplexTypeDefinition) baseType, name);
+            ((ComplexTypeDefinition) baseType).getTypeReferenceForProperty(name);
 
         // If we couldn't find the type, we didn't find the property.
-        if (!propertyTypeOptional.isPresent()) {
+        if (propertyTypeOptional.isEmpty()) {
             final List<Argument> arguments = baseType.getAllParserArguments().orElse(Collections.emptyList());
             for (Argument argument : arguments) {
-                if(argument.getName().equals(name)) {
+                if (argument.getName().equals(name)) {
                     propertyTypeOptional = Optional.of(argument.getType());
                 }
             }
-            if(!propertyTypeOptional.isPresent()) {
+            if (propertyTypeOptional.isEmpty()) {
                 throw new FreemarkerException("Could not find property with name '" + name + "' in type " + baseType.getName());
             }
         }
@@ -717,10 +724,17 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
             return name;
         }
 
+        if (propertyType instanceof ArrayTypeReference) {
+            if (variableLiteral.getChild().isPresent()) {
+                throw new FreemarkerException("array property '" + name + "' doesn't have child properties.");
+            }
+            return name;
+        }
+
         // If it references a complex, type we need to get that type's definition first.
-        final TypeDefinition propertyTypeDefinition = getTypeDefinitions().get(((ComplexTypeReference) propertyType).getName());
+        final TypeDefinition propertyTypeDefinition = getTypeDefinitions().get(((NonSimpleTypeReference) propertyType).getName());
         // If we're not accessing any child property, no need to handle anything special.
-        if (!variableLiteral.getChild().isPresent()) {
+        if (variableLiteral.getChild().isEmpty()) {
             return name;
         }
         // If there is a child we need to check if this is a discriminator property.
@@ -829,15 +843,16 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
         // access next.
         StringBuilder sb = new StringBuilder();
         sb.append("((");
-        if (castType.getParentType() != null) {
-            sb.append(getCTypeName(castType.getParentType().getName()));
+        Optional<ComplexTypeDefinition> potentialParentType = castType.asComplexTypeDefinition().flatMap(ComplexTypeDefinition::getParentType);
+        if (potentialParentType.isPresent()) {
+            sb.append(getCTypeName(potentialParentType.get().getName()));
         } else {
             sb.append(getCTypeName(castType.getName()));
         }
         sb.append("*) (");
         sb.append(toVariableParseExpression(baseType, field, firstArgument, parserArguments)).append("))");
         if (variableLiteral.getChild().isPresent()) {
-            if (castType.getParentType() != null) {
+            if (potentialParentType.isPresent()) {
                 // Change the name of the property to contain the sub-type-prefix.
                 sb.append("->").append(camelCaseToSnakeCase(castType.getName())).append("_");
                 appendVariableExpressionRest(sb, baseType, variableLiteral.getChild().get());
@@ -856,9 +871,9 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
         tracer = tracer.dive("STATIC_CALL");
         List<Term> terms = variableLiteral.getArgs().orElseThrow(() -> new FreemarkerException("'STATIC_CALL' needs at least one args"));
         String functionName = terms.get(0).asLiteral()
-            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a Literal"))
+            .orElseThrow(() -> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a Literal"))
             .asStringLiteral()
-            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral"))
+            .orElseThrow(() -> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral"))
             .getValue();
         // But to make the function name unique, well add the driver prefix to it.
         StringBuilder sb = new StringBuilder(getCTypeName(functionName));
@@ -969,12 +984,11 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
 
         // If this expression references enum constants we need to do things differently
         final Optional<TypeReference> typeReferenceForProperty =
-            getTypeReferenceForProperty((ComplexTypeDefinition) baseType, variableLiteral.getName());
+            ((ComplexTypeDefinition) baseType).getTypeReferenceForProperty(variableLiteral.getName());
         if (typeReferenceForProperty.isPresent()) {
             final TypeReference typeReference = typeReferenceForProperty.get();
-            if (typeReference instanceof ComplexTypeReference) {
-                final TypeDefinition typeDefinitionForTypeReference =
-                    getTypeDefinitionForTypeReference(typeReference);
+            if (typeReference instanceof NonSimpleTypeReference) {
+                final TypeDefinition typeDefinitionForTypeReference = typeReference.asNonSimpleTypeReference().orElseThrow().getTypeDefinition();
                 if ((typeDefinitionForTypeReference instanceof EnumTypeDefinition) && (variableLiteral.getChild().isPresent())) {
                     tracer = tracer.dive("is enum type definition");
                     sb.append(camelCaseToSnakeCase(variableLiteral.getName()));
@@ -1059,9 +1073,9 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
         tracer = tracer.dive("toStaticCallSerializationExpression");
         List<Term> args = vl.getArgs().orElseThrow(() -> new FreemarkerException("'STATIC_CALL' needs at least one attribute"));
         String functionName = args.get(0).asLiteral()
-            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a Literal"))
+            .orElseThrow(() -> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a Literal"))
             .asStringLiteral()
-            .orElseThrow(()-> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral"))
+            .orElseThrow(() -> new FreemarkerException("Expecting the first argument of a 'STATIC_CALL' to be a StringLiteral"))
             .getValue();
         // But to make the function name unique, well add the driver prefix to it.
         StringBuilder sb = new StringBuilder(getCTypeName(functionName));
@@ -1171,12 +1185,16 @@ public class CLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelpe
     }
 
     public String getLengthInBitsFunctionNameForComplexTypedField(Field field) {
-        return field.asTypedField()
+        TypeReference typeReference = field.asTypedField()
             .map(TypedField::getType)
-            .orElseThrow(() -> new FreemarkerException("lengthInBits functions only exist for TypedFields"))
-            .asComplexTypeReference()
-            .map(complexTypeReference -> getCTypeName(complexTypeReference.getName()) + "_length_in_bits")
-            .orElseThrow(() -> new FreemarkerException("lengthInBits functions only exist for complex types"));
+            .orElseThrow(() -> new FreemarkerException("lengthInBits functions only exist for TypedFields"));
+        if (typeReference.isArrayTypeReference()){
+            typeReference = typeReference.asArrayTypeReference().orElseThrow().getElementTypeReference();
+        }
+        return typeReference
+            .asNonSimpleTypeReference()
+            .map(nonSimpleTypeReference -> getCTypeName(nonSimpleTypeReference.getName()) + "_length_in_bits")
+            .orElseThrow(() -> new FreemarkerException("lengthInBits functions only exist for non simple type references"));
     }
 
     public String getEnumExpression(String expression) {

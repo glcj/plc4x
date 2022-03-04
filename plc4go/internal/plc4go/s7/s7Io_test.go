@@ -52,7 +52,7 @@ func TestS7MessageBytes(t *testing.T) {
 					model.NewCOTPPacketData(
 						false,
 						13,
-						[]*model.COTPParameter{model.NewCOTPParameterTpduSize(model.COTPTpduSize_SIZE_4096)},
+						[]*model.COTPParameter{model.NewCOTPParameterTpduSize(model.COTPTpduSize_SIZE_4096, 0)},
 						model.NewS7MessageResponseData(
 							0,
 							0,
@@ -66,8 +66,10 @@ func TestS7MessageBytes(t *testing.T) {
 										[]byte{1},
 									),
 								},
+								*model.NewS7Parameter(),
 							),
 						),
+						0,
 					),
 				),
 			},
@@ -185,7 +187,7 @@ func TestS7MessageBytes(t *testing.T) {
           <parameterLength dataType="uint" bitLength="8">1</parameterLength>
           <COTPParameterTpduSize>
             <tpduSize>
-              <COTPTpduSize dataType="int" bitLength="8" stringRepresentation="SIZE_4096">12</COTPTpduSize>
+              <COTPTpduSize dataType="uint" bitLength="8" stringRepresentation="SIZE_4096">12</COTPTpduSize>
             </tpduSize>
           </COTPParameterTpduSize>
         </COTPParameter>
@@ -263,7 +265,7 @@ func TestS7MessageBytes(t *testing.T) {
                 "tpduSize": {
                   "COTPTpduSize": 12,
                   "COTPTpduSize__plc4x_bitLength": 8,
-                  "COTPTpduSize__plc4x_dataType": "int",
+                  "COTPTpduSize__plc4x_dataType": "uint",
                   "COTPTpduSize__plc4x_stringRepresentation": "SIZE_4096"
                 }
               },
@@ -382,7 +384,7 @@ func TestS7MessageBytes(t *testing.T) {
 					model.NewCOTPPacketData(
 						false,
 						13,
-						[]*model.COTPParameter{model.NewCOTPParameterTpduSize(model.COTPTpduSize_SIZE_4096)},
+						[]*model.COTPParameter{model.NewCOTPParameterTpduSize(model.COTPTpduSize_SIZE_4096, 0)},
 						model.NewS7MessageRequest(
 							13,
 							model.NewS7ParameterWriteVarRequest([]*model.S7VarRequestParameterItem{
@@ -395,23 +397,26 @@ func TestS7MessageBytes(t *testing.T) {
 									0,
 								)),
 							}),
-							model.NewS7PayloadWriteVarRequest([]*model.S7VarPayloadDataItem{
-								model.NewS7VarPayloadDataItem(
-									model.DataTransportErrorCode_OK,
-									model.DataTransportSize_BYTE_WORD_DWORD,
-									[]byte{
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-										0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
-									},
-								),
-							}),
+							model.NewS7PayloadWriteVarRequest(
+								[]*model.S7VarPayloadDataItem{
+									model.NewS7VarPayloadDataItem(
+										model.DataTransportErrorCode_OK,
+										model.DataTransportSize_BYTE_WORD_DWORD,
+										[]byte{
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+											0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE, 0xAF, 0xFE,
+										},
+									),
+								},
+								*model.NewS7Parameter()),
 						),
+						0,
 					),
 				),
 			},
@@ -599,7 +604,7 @@ func TestS7MessageBytes(t *testing.T) {
           <parameterLength dataType="uint" bitLength="8">1</parameterLength>
           <COTPParameterTpduSize>
             <tpduSize>
-              <COTPTpduSize dataType="int" bitLength="8" stringRepresentation="SIZE_4096">12</COTPTpduSize>
+              <COTPTpduSize dataType="uint" bitLength="8" stringRepresentation="SIZE_4096">12</COTPTpduSize>
             </tpduSize>
           </COTPParameterTpduSize>
         </COTPParameter>
@@ -698,7 +703,7 @@ func TestS7MessageBytes(t *testing.T) {
                 "tpduSize": {
                   "COTPTpduSize": 12,
                   "COTPTpduSize__plc4x_bitLength": 8,
-                  "COTPTpduSize__plc4x_dataType": "int",
+                  "COTPTpduSize__plc4x_dataType": "uint",
                   "COTPTpduSize__plc4x_stringRepresentation": "SIZE_4096"
                 }
               },

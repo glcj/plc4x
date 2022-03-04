@@ -28,17 +28,20 @@ import (
 
 // The data-structure of this message
 type ApduDataExt struct {
-	Child IApduDataExtChild
+
+	// Arguments.
+	Length uint8
+	Child  IApduDataExtChild
 }
 
 // The corresponding interface
 type IApduDataExt interface {
 	// ExtApciType returns ExtApciType
 	ExtApciType() uint8
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -63,8 +66,9 @@ type IApduDataExtChild interface {
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
-func NewApduDataExt() *ApduDataExt {
-	return &ApduDataExt{}
+// NewApduDataExt factory function for ApduDataExt
+func NewApduDataExt(length uint8) *ApduDataExt {
+	return &ApduDataExt{Length: length}
 }
 
 func CastApduDataExt(structType interface{}) *ApduDataExt {
@@ -84,15 +88,15 @@ func (m *ApduDataExt) GetTypeName() string {
 	return "ApduDataExt"
 }
 
-func (m *ApduDataExt) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *ApduDataExt) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *ApduDataExt) LengthInBitsConditional(lastItem bool) uint16 {
-	return m.Child.LengthInBits()
+func (m *ApduDataExt) GetLengthInBitsConditional(lastItem bool) uint16 {
+	return m.Child.GetLengthInBits()
 }
 
-func (m *ApduDataExt) ParentLengthInBits() uint16 {
+func (m *ApduDataExt) GetParentLengthInBits() uint16 {
 	lengthInBits := uint16(0)
 	// Discriminator Field (extApciType)
 	lengthInBits += 6
@@ -100,14 +104,16 @@ func (m *ApduDataExt) ParentLengthInBits() uint16 {
 	return lengthInBits
 }
 
-func (m *ApduDataExt) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *ApduDataExt) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func ApduDataExtParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExt"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Discriminator Field (extApciType) (Used as input to a switch field)
 	extApciType, _extApciTypeErr := readBuffer.ReadUint8("extApciType", 6)

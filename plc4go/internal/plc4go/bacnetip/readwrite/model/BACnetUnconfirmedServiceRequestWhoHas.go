@@ -34,6 +34,9 @@ type BACnetUnconfirmedServiceRequestWhoHas struct {
 	DeviceInstanceRangeHighLimit *BACnetContextTagUnsignedInteger
 	ObjectIdentifier             *BACnetContextTagObjectIdentifier
 	ObjectName                   *BACnetContextTagOctetString
+
+	// Arguments.
+	Len uint16
 }
 
 // The corresponding interface
@@ -46,10 +49,10 @@ type IBACnetUnconfirmedServiceRequestWhoHas interface {
 	GetObjectIdentifier() *BACnetContextTagObjectIdentifier
 	// GetObjectName returns ObjectName
 	GetObjectName() *BACnetContextTagOctetString
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -91,13 +94,14 @@ func (m *BACnetUnconfirmedServiceRequestWhoHas) GetObjectName() *BACnetContextTa
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
-func NewBACnetUnconfirmedServiceRequestWhoHas(deviceInstanceRangeLowLimit *BACnetContextTagUnsignedInteger, deviceInstanceRangeHighLimit *BACnetContextTagUnsignedInteger, objectIdentifier *BACnetContextTagObjectIdentifier, objectName *BACnetContextTagOctetString) *BACnetUnconfirmedServiceRequest {
+// NewBACnetUnconfirmedServiceRequestWhoHas factory function for BACnetUnconfirmedServiceRequestWhoHas
+func NewBACnetUnconfirmedServiceRequestWhoHas(deviceInstanceRangeLowLimit *BACnetContextTagUnsignedInteger, deviceInstanceRangeHighLimit *BACnetContextTagUnsignedInteger, objectIdentifier *BACnetContextTagObjectIdentifier, objectName *BACnetContextTagOctetString, len uint16) *BACnetUnconfirmedServiceRequest {
 	child := &BACnetUnconfirmedServiceRequestWhoHas{
 		DeviceInstanceRangeLowLimit:     deviceInstanceRangeLowLimit,
 		DeviceInstanceRangeHighLimit:    deviceInstanceRangeHighLimit,
 		ObjectIdentifier:                objectIdentifier,
 		ObjectName:                      objectName,
-		BACnetUnconfirmedServiceRequest: NewBACnetUnconfirmedServiceRequest(),
+		BACnetUnconfirmedServiceRequest: NewBACnetUnconfirmedServiceRequest(len),
 	}
 	child.Child = child
 	return child.BACnetUnconfirmedServiceRequest
@@ -126,49 +130,51 @@ func (m *BACnetUnconfirmedServiceRequestWhoHas) GetTypeName() string {
 	return "BACnetUnconfirmedServiceRequestWhoHas"
 }
 
-func (m *BACnetUnconfirmedServiceRequestWhoHas) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *BACnetUnconfirmedServiceRequestWhoHas) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *BACnetUnconfirmedServiceRequestWhoHas) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *BACnetUnconfirmedServiceRequestWhoHas) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Optional Field (deviceInstanceRangeLowLimit)
 	if m.DeviceInstanceRangeLowLimit != nil {
-		lengthInBits += (*m.DeviceInstanceRangeLowLimit).LengthInBits()
+		lengthInBits += (*m.DeviceInstanceRangeLowLimit).GetLengthInBits()
 	}
 
 	// Optional Field (deviceInstanceRangeHighLimit)
 	if m.DeviceInstanceRangeHighLimit != nil {
-		lengthInBits += (*m.DeviceInstanceRangeHighLimit).LengthInBits()
+		lengthInBits += (*m.DeviceInstanceRangeHighLimit).GetLengthInBits()
 	}
 
 	// Optional Field (objectIdentifier)
 	if m.ObjectIdentifier != nil {
-		lengthInBits += (*m.ObjectIdentifier).LengthInBits()
+		lengthInBits += (*m.ObjectIdentifier).GetLengthInBits()
 	}
 
 	// Optional Field (objectName)
 	if m.ObjectName != nil {
-		lengthInBits += (*m.ObjectName).LengthInBits()
+		lengthInBits += (*m.ObjectName).GetLengthInBits()
 	}
 
 	return lengthInBits
 }
 
-func (m *BACnetUnconfirmedServiceRequestWhoHas) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *BACnetUnconfirmedServiceRequestWhoHas) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func BACnetUnconfirmedServiceRequestWhoHasParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetUnconfirmedServiceRequest, error) {
 	if pullErr := readBuffer.PullContext("BACnetUnconfirmedServiceRequestWhoHas"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Optional Field (deviceInstanceRangeLowLimit) (Can be skipped, if a given expression evaluates to false)
 	var deviceInstanceRangeLowLimit *BACnetContextTagUnsignedInteger = nil
 	{
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("deviceInstanceRangeLowLimit"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -189,7 +195,7 @@ func BACnetUnconfirmedServiceRequestWhoHasParse(readBuffer utils.ReadBuffer, len
 	// Optional Field (deviceInstanceRangeHighLimit) (Can be skipped, if a given expression evaluates to false)
 	var deviceInstanceRangeHighLimit *BACnetContextTagUnsignedInteger = nil
 	if bool((deviceInstanceRangeLowLimit) != (nil)) {
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("deviceInstanceRangeHighLimit"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -210,7 +216,7 @@ func BACnetUnconfirmedServiceRequestWhoHasParse(readBuffer utils.ReadBuffer, len
 	// Optional Field (objectIdentifier) (Can be skipped, if a given expression evaluates to false)
 	var objectIdentifier *BACnetContextTagObjectIdentifier = nil
 	{
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("objectIdentifier"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -231,7 +237,7 @@ func BACnetUnconfirmedServiceRequestWhoHasParse(readBuffer utils.ReadBuffer, len
 	// Optional Field (objectName) (Can be skipped, if a given expression evaluates to false)
 	var objectName *BACnetContextTagOctetString = nil
 	if bool((objectIdentifier) == (nil)) {
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("objectName"); pullErr != nil {
 			return nil, pullErr
 		}

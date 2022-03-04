@@ -36,10 +36,10 @@ type ModbusPDUWriteFileRecordRequest struct {
 type IModbusPDUWriteFileRecordRequest interface {
 	// GetItems returns Items
 	GetItems() []*ModbusPDUWriteFileRecordRequestItem
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -84,6 +84,7 @@ func (m *ModbusPDUWriteFileRecordRequest) GetItems() []*ModbusPDUWriteFileRecord
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
+// NewModbusPDUWriteFileRecordRequest factory function for ModbusPDUWriteFileRecordRequest
 func NewModbusPDUWriteFileRecordRequest(items []*ModbusPDUWriteFileRecordRequestItem) *ModbusPDU {
 	child := &ModbusPDUWriteFileRecordRequest{
 		Items:     items,
@@ -116,12 +117,12 @@ func (m *ModbusPDUWriteFileRecordRequest) GetTypeName() string {
 	return "ModbusPDUWriteFileRecordRequest"
 }
 
-func (m *ModbusPDUWriteFileRecordRequest) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *ModbusPDUWriteFileRecordRequest) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *ModbusPDUWriteFileRecordRequest) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *ModbusPDUWriteFileRecordRequest) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Implicit Field (byteCount)
 	lengthInBits += 8
@@ -129,23 +130,25 @@ func (m *ModbusPDUWriteFileRecordRequest) LengthInBitsConditional(lastItem bool)
 	// Array field
 	if len(m.Items) > 0 {
 		for _, element := range m.Items {
-			lengthInBits += element.LengthInBits()
+			lengthInBits += element.GetLengthInBits()
 		}
 	}
 
 	return lengthInBits
 }
 
-func (m *ModbusPDUWriteFileRecordRequest) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *ModbusPDUWriteFileRecordRequest) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func ModbusPDUWriteFileRecordRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUWriteFileRecordRequest"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
-	// Implicit Field (byteCount) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
+	// Implicit Field (byteCount) (Used for parsing, but its value is not stored as it's implicitly given by the objects content)
 	byteCount, _byteCountErr := readBuffer.ReadUint8("byteCount", 8)
 	_ = byteCount
 	if _byteCountErr != nil {
@@ -190,7 +193,7 @@ func (m *ModbusPDUWriteFileRecordRequest) Serialize(writeBuffer utils.WriteBuffe
 	itemsArraySizeInBytes := func(items []*ModbusPDUWriteFileRecordRequestItem) uint32 {
 		var sizeInBytes uint32 = 0
 		for _, v := range items {
-			sizeInBytes += uint32(v.LengthInBytes())
+			sizeInBytes += uint32(v.GetLengthInBytes())
 		}
 		return sizeInBytes
 	}
@@ -200,7 +203,7 @@ func (m *ModbusPDUWriteFileRecordRequest) Serialize(writeBuffer utils.WriteBuffe
 		}
 
 		// Implicit Field (byteCount) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
-		byteCount := uint8(uint8(itemsArraySizeInBytes(m.Items)))
+		byteCount := uint8(uint8(itemsArraySizeInBytes(m.GetItems())))
 		_byteCountErr := writeBuffer.WriteUint8("byteCount", 8, (byteCount))
 		if _byteCountErr != nil {
 			return errors.Wrap(_byteCountErr, "Error serializing 'byteCount' field")

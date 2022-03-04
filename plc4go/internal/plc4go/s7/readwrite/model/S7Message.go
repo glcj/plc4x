@@ -50,10 +50,10 @@ type IS7Message interface {
 	GetParameter() *S7Parameter
 	// GetPayload returns Payload
 	GetPayload() *S7Payload
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -89,6 +89,7 @@ func (m *S7Message) GetPayload() *S7Payload {
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
+// NewS7Message factory function for S7Message
 func NewS7Message(tpduReference uint16, parameter *S7Parameter, payload *S7Payload) *S7Message {
 	return &S7Message{TpduReference: tpduReference, Parameter: parameter, Payload: payload}
 }
@@ -110,15 +111,15 @@ func (m *S7Message) GetTypeName() string {
 	return "S7Message"
 }
 
-func (m *S7Message) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *S7Message) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *S7Message) LengthInBitsConditional(lastItem bool) uint16 {
-	return m.Child.LengthInBits()
+func (m *S7Message) GetLengthInBitsConditional(lastItem bool) uint16 {
+	return m.Child.GetLengthInBits()
 }
 
-func (m *S7Message) ParentLengthInBits() uint16 {
+func (m *S7Message) GetParentLengthInBits() uint16 {
 	lengthInBits := uint16(0)
 
 	// Const Field (protocolId)
@@ -140,25 +141,27 @@ func (m *S7Message) ParentLengthInBits() uint16 {
 
 	// Optional Field (parameter)
 	if m.Parameter != nil {
-		lengthInBits += (*m.Parameter).LengthInBits()
+		lengthInBits += (*m.Parameter).GetLengthInBits()
 	}
 
 	// Optional Field (payload)
 	if m.Payload != nil {
-		lengthInBits += (*m.Payload).LengthInBits()
+		lengthInBits += (*m.Payload).GetLengthInBits()
 	}
 
 	return lengthInBits
 }
 
-func (m *S7Message) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *S7Message) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func S7MessageParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
 	if pullErr := readBuffer.PullContext("S7Message"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Const Field (protocolId)
 	protocolId, _protocolIdErr := readBuffer.ReadUint8("protocolId", 8)
@@ -196,14 +199,14 @@ func S7MessageParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
 	}
 	tpduReference := _tpduReference
 
-	// Implicit Field (parameterLength) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
+	// Implicit Field (parameterLength) (Used for parsing, but its value is not stored as it's implicitly given by the objects content)
 	parameterLength, _parameterLengthErr := readBuffer.ReadUint16("parameterLength", 16)
 	_ = parameterLength
 	if _parameterLengthErr != nil {
 		return nil, errors.Wrap(_parameterLengthErr, "Error parsing 'parameterLength' field")
 	}
 
-	// Implicit Field (payloadLength) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
+	// Implicit Field (payloadLength) (Used for parsing, but its value is not stored as it's implicitly given by the objects content)
 	payloadLength, _payloadLengthErr := readBuffer.ReadUint16("payloadLength", 16)
 	_ = payloadLength
 	if _payloadLengthErr != nil {
@@ -233,7 +236,7 @@ func S7MessageParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
 	// Optional Field (parameter) (Can be skipped, if a given expression evaluates to false)
 	var parameter *S7Parameter = nil
 	if bool((parameterLength) > (0)) {
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("parameter"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -254,7 +257,7 @@ func S7MessageParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
 	// Optional Field (payload) (Can be skipped, if a given expression evaluates to false)
 	var payload *S7Payload = nil
 	if bool((payloadLength) > (0)) {
-		currentPos := readBuffer.GetPos()
+		currentPos = readBuffer.GetPos()
 		if pullErr := readBuffer.PullContext("payload"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -320,14 +323,14 @@ func (m *S7Message) SerializeParent(writeBuffer utils.WriteBuffer, child IS7Mess
 	}
 
 	// Implicit Field (parameterLength) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
-	parameterLength := uint16(utils.InlineIf(bool((m.Parameter) != (nil)), func() interface{} { return uint16(m.Parameter.LengthInBytes()) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
+	parameterLength := uint16(utils.InlineIf(bool((m.GetParameter()) != (nil)), func() interface{} { return uint16((*m.GetParameter()).GetLengthInBytes()) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
 	_parameterLengthErr := writeBuffer.WriteUint16("parameterLength", 16, (parameterLength))
 	if _parameterLengthErr != nil {
 		return errors.Wrap(_parameterLengthErr, "Error serializing 'parameterLength' field")
 	}
 
 	// Implicit Field (payloadLength) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
-	payloadLength := uint16(utils.InlineIf(bool((m.Payload) != (nil)), func() interface{} { return uint16(m.Payload.LengthInBytes()) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
+	payloadLength := uint16(utils.InlineIf(bool((m.GetPayload()) != (nil)), func() interface{} { return uint16((*m.GetPayload()).GetLengthInBytes()) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
 	_payloadLengthErr := writeBuffer.WriteUint16("payloadLength", 16, (payloadLength))
 	if _payloadLengthErr != nil {
 		return errors.Wrap(_payloadLengthErr, "Error serializing 'payloadLength' field")

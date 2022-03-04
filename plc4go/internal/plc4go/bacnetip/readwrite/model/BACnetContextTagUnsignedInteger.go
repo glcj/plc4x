@@ -30,16 +30,22 @@ import (
 type BACnetContextTagUnsignedInteger struct {
 	*BACnetContextTag
 	Payload *BACnetTagPayloadUnsignedInteger
+
+	// Arguments.
+	TagNumberArgument        uint8
+	IsNotOpeningOrClosingTag bool
 }
 
 // The corresponding interface
 type IBACnetContextTagUnsignedInteger interface {
 	// GetPayload returns Payload
 	GetPayload() *BACnetTagPayloadUnsignedInteger
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetActualValue returns ActualValue
+	GetActualValue() uint64
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -55,11 +61,8 @@ func (m *BACnetContextTagUnsignedInteger) GetDataType() BACnetDataType {
 	return BACnetDataType_UNSIGNED_INTEGER
 }
 
-func (m *BACnetContextTagUnsignedInteger) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader, tagNumber uint8, actualLength uint32, isNotOpeningOrClosingTag bool) {
+func (m *BACnetContextTagUnsignedInteger) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
-	m.BACnetContextTag.TagNumber = tagNumber
-	m.BACnetContextTag.ActualLength = actualLength
-	m.BACnetContextTag.IsNotOpeningOrClosingTag = isNotOpeningOrClosingTag
 }
 
 ///////////////////////////////////////////////////////////
@@ -72,11 +75,15 @@ func (m *BACnetContextTagUnsignedInteger) GetPayload() *BACnetTagPayloadUnsigned
 ///////////////////////////////////////////////////////////
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+func (m *BACnetContextTagUnsignedInteger) GetActualValue() uint64 {
+	return m.GetPayload().GetActualValue()
+}
 
-func NewBACnetContextTagUnsignedInteger(payload *BACnetTagPayloadUnsignedInteger, header *BACnetTagHeader, tagNumber uint8, actualLength uint32, isNotOpeningOrClosingTag bool) *BACnetContextTag {
+// NewBACnetContextTagUnsignedInteger factory function for BACnetContextTagUnsignedInteger
+func NewBACnetContextTagUnsignedInteger(payload *BACnetTagPayloadUnsignedInteger, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTag {
 	child := &BACnetContextTagUnsignedInteger{
 		Payload:          payload,
-		BACnetContextTag: NewBACnetContextTag(header, tagNumber, actualLength, isNotOpeningOrClosingTag),
+		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
 	child.Child = child
 	return child.BACnetContextTag
@@ -105,27 +112,31 @@ func (m *BACnetContextTagUnsignedInteger) GetTypeName() string {
 	return "BACnetContextTagUnsignedInteger"
 }
 
-func (m *BACnetContextTagUnsignedInteger) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *BACnetContextTagUnsignedInteger) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *BACnetContextTagUnsignedInteger) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *BACnetContextTagUnsignedInteger) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (payload)
-	lengthInBits += m.Payload.LengthInBits()
+	lengthInBits += m.Payload.GetLengthInBits()
+
+	// A virtual field doesn't have any in- or output.
 
 	return lengthInBits
 }
 
-func (m *BACnetContextTagUnsignedInteger) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *BACnetContextTagUnsignedInteger) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func BACnetContextTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, header *BACnetTagHeader) (*BACnetContextTag, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagUnsignedInteger"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Validation
 	if !(isNotOpeningOrClosingTag) {
@@ -136,7 +147,7 @@ func BACnetContextTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, tagNumber
 	if pullErr := readBuffer.PullContext("payload"); pullErr != nil {
 		return nil, pullErr
 	}
-	_payload, _payloadErr := BACnetTagPayloadUnsignedIntegerParse(readBuffer, uint32(header.ActualLength))
+	_payload, _payloadErr := BACnetTagPayloadUnsignedIntegerParse(readBuffer, uint32(header.GetActualLength()))
 	if _payloadErr != nil {
 		return nil, errors.Wrap(_payloadErr, "Error parsing 'payload' field")
 	}
@@ -144,6 +155,11 @@ func BACnetContextTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, tagNumber
 	if closeErr := readBuffer.CloseContext("payload"); closeErr != nil {
 		return nil, closeErr
 	}
+
+	// Virtual field
+	_actualValue := payload.GetActualValue()
+	actualValue := uint64(_actualValue)
+	_ = actualValue
 
 	if closeErr := readBuffer.CloseContext("BACnetContextTagUnsignedInteger"); closeErr != nil {
 		return nil, closeErr
@@ -174,6 +190,10 @@ func (m *BACnetContextTagUnsignedInteger) Serialize(writeBuffer utils.WriteBuffe
 		}
 		if _payloadErr != nil {
 			return errors.Wrap(_payloadErr, "Error serializing 'payload' field")
+		}
+		// Virtual field
+		if _actualValueErr := writeBuffer.WriteVirtual("actualValue", m.GetActualValue()); _actualValueErr != nil {
+			return errors.Wrap(_actualValueErr, "Error serializing 'actualValue' field")
 		}
 
 		if popErr := writeBuffer.PopContext("BACnetContextTagUnsignedInteger"); popErr != nil {

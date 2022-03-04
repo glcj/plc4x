@@ -32,10 +32,10 @@ type BACnetConfirmedServiceACKGetEventInformation struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceACKGetEventInformation interface {
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -62,6 +62,7 @@ func (m *BACnetConfirmedServiceACKGetEventInformation) InitializeParent(parent *
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
+// NewBACnetConfirmedServiceACKGetEventInformation factory function for BACnetConfirmedServiceACKGetEventInformation
 func NewBACnetConfirmedServiceACKGetEventInformation() *BACnetConfirmedServiceACK {
 	child := &BACnetConfirmedServiceACKGetEventInformation{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
@@ -93,24 +94,26 @@ func (m *BACnetConfirmedServiceACKGetEventInformation) GetTypeName() string {
 	return "BACnetConfirmedServiceACKGetEventInformation"
 }
 
-func (m *BACnetConfirmedServiceACKGetEventInformation) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *BACnetConfirmedServiceACKGetEventInformation) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *BACnetConfirmedServiceACKGetEventInformation) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *BACnetConfirmedServiceACKGetEventInformation) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	return lengthInBits
 }
 
-func (m *BACnetConfirmedServiceACKGetEventInformation) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *BACnetConfirmedServiceACKGetEventInformation) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func BACnetConfirmedServiceACKGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKGetEventInformation"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	if closeErr := readBuffer.CloseContext("BACnetConfirmedServiceACKGetEventInformation"); closeErr != nil {
 		return nil, closeErr

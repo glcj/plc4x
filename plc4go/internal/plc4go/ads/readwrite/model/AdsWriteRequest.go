@@ -42,10 +42,10 @@ type IAdsWriteRequest interface {
 	GetIndexOffset() uint32
 	// GetData returns Data
 	GetData() []byte
-	// LengthInBytes returns the length in bytes
-	LengthInBytes() uint16
-	// LengthInBits returns the length in bits
-	LengthInBits() uint16
+	// GetLengthInBytes returns the length in bytes
+	GetLengthInBytes() uint16
+	// GetLengthInBits returns the length in bits
+	GetLengthInBits() uint16
 	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
@@ -90,6 +90,7 @@ func (m *AdsWriteRequest) GetData() []byte {
 // Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
+// NewAdsWriteRequest factory function for AdsWriteRequest
 func NewAdsWriteRequest(indexGroup uint32, indexOffset uint32, data []byte) *AdsData {
 	child := &AdsWriteRequest{
 		IndexGroup:  indexGroup,
@@ -124,12 +125,12 @@ func (m *AdsWriteRequest) GetTypeName() string {
 	return "AdsWriteRequest"
 }
 
-func (m *AdsWriteRequest) LengthInBits() uint16 {
-	return m.LengthInBitsConditional(false)
+func (m *AdsWriteRequest) GetLengthInBits() uint16 {
+	return m.GetLengthInBitsConditional(false)
 }
 
-func (m *AdsWriteRequest) LengthInBitsConditional(lastItem bool) uint16 {
-	lengthInBits := uint16(m.ParentLengthInBits())
+func (m *AdsWriteRequest) GetLengthInBitsConditional(lastItem bool) uint16 {
+	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (indexGroup)
 	lengthInBits += 32
@@ -148,14 +149,16 @@ func (m *AdsWriteRequest) LengthInBitsConditional(lastItem bool) uint16 {
 	return lengthInBits
 }
 
-func (m *AdsWriteRequest) LengthInBytes() uint16 {
-	return m.LengthInBits() / 8
+func (m *AdsWriteRequest) GetLengthInBytes() uint16 {
+	return m.GetLengthInBits() / 8
 }
 
 func AdsWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
 	if pullErr := readBuffer.PullContext("AdsWriteRequest"); pullErr != nil {
 		return nil, pullErr
 	}
+	currentPos := readBuffer.GetPos()
+	_ = currentPos
 
 	// Simple Field (indexGroup)
 	_indexGroup, _indexGroupErr := readBuffer.ReadUint32("indexGroup", 32)
@@ -171,7 +174,7 @@ func AdsWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, resp
 	}
 	indexOffset := _indexOffset
 
-	// Implicit Field (length) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
+	// Implicit Field (length) (Used for parsing, but its value is not stored as it's implicitly given by the objects content)
 	length, _lengthErr := readBuffer.ReadUint32("length", 32)
 	_ = length
 	if _lengthErr != nil {
@@ -220,7 +223,7 @@ func (m *AdsWriteRequest) Serialize(writeBuffer utils.WriteBuffer) error {
 		}
 
 		// Implicit Field (length) (Used for parsing, but it's value is not stored as it's implicitly given by the objects content)
-		length := uint32(uint32(len(m.Data)))
+		length := uint32(uint32(len(m.GetData())))
 		_lengthErr := writeBuffer.WriteUint32("length", 32, (length))
 		if _lengthErr != nil {
 			return errors.Wrap(_lengthErr, "Error serializing 'length' field")

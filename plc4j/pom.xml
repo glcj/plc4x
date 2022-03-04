@@ -153,6 +153,36 @@
       </plugin>
 
       <!--
+        As our libraries should be consumable on Java 1.8, downgrade the compiler settings.
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <release>8</release>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <release>11</release>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!--
         Make the surefire execute all unit-tests
       -->
       <plugin>
@@ -249,29 +279,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-
-      <!-- Ensure the generated output classes are compatible with Java 1.8 -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.20</version>
-        <executions>
-          <execution>
-            <id>animal-sniffer</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <signature>
-            <groupId>org.codehaus.mojo.signature</groupId>
-            <artifactId>java18</artifactId>
-            <version>1.0</version>
-          </signature>
-        </configuration>
       </plugin>
     </plugins>
   </build>
