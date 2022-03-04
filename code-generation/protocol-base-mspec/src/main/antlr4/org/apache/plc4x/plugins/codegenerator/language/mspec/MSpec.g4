@@ -64,6 +64,8 @@ field
  | typeSwitchField
  | unknownField
  | virtualField
+ | validationField
+ | peekField
  ;
 
 abstractField
@@ -134,6 +136,14 @@ virtualField
  : 'virtual' type=typeReference name=idExpression valueExpression=expression
  ;
 
+validationField
+ : 'validation' validationExpression=expression (description=STRING_LITERAL)?
+ ;
+
+peekField
+ : 'peek' type=typeReference name=idExpression (offset=expression)?
+ ;
+
 enumValueDefinition
  : LBRACKET (valueExpression=expression)? name=IDENTIFIER_LITERAL (LBRACKET constantValueExpressions=multipleExpressions RBRACKET)? RBRACKET
  ;
@@ -179,6 +189,8 @@ argumentList
 
 expression
  : TICK expr=innerExpression TICK
+ // TODO: check if this is really universal or should be specific to case statement
+ | ASTERISK
  ;
 
 multipleExpressions
@@ -202,7 +214,7 @@ innerExpression
  | IDENTIFIER_LITERAL ('(' (innerExpression (',' innerExpression)* )? ')')? ('[' innerExpression ']')?
  | innerExpression '.' innerExpression // Field Reference or method call
  | innerExpression '[' + INTEGER_LITERAL + ']' // Array index
- | innerExpression BinaryOperator innerExpression  // Addition
+ | innerExpression binaryOperator innerExpression  // Addition
  | innerExpression '?' innerExpression ':' innerExpression
  | '(' innerExpression ')'
  | '"' innerExpression '"'
@@ -223,19 +235,11 @@ idExpression
  | id=ARRAY_LOOP_TYPE
  ;
 
-TICK : '\'';
-LBRACKET : '[';
-RBRACKET : ']';
-LRBRACKET : '(';
-RRBRACKET : ')';
-LCBRACKET : '{';
-RCBRACKET : '}';
-
-BinaryOperator
+binaryOperator
  : '+'
  | '-'
  | '/'
- | '*'
+ | ASTERISK
  | '^'
  | '=='
  | '!='
@@ -251,6 +255,16 @@ BinaryOperator
  | '|'
  | '%'
  ;
+
+TICK : '\'';
+LBRACKET : '[';
+RBRACKET : ']';
+LRBRACKET : '(';
+RRBRACKET : ')';
+LCBRACKET : '{';
+RCBRACKET : '}';
+
+ASTERISK : '*';
 
 ARRAY_LOOP_TYPE
  : 'count'

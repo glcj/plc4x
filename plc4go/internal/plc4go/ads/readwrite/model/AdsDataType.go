@@ -315,7 +315,7 @@ func (e AdsDataType) DataFormatName() string {
 		}
 	case 0x03:
 		{ /* '0x03' */
-			return "IEC61131_BOOL"
+			return "IEC61131_BYTE"
 		}
 	case 0x04:
 		{ /* '0x04' */
@@ -650,6 +650,15 @@ func AdsDataTypeByName(value string) AdsDataType {
 		return AdsDataType_DT
 	}
 	return 0
+}
+
+func AdsDataTypeKnows(value int8) bool {
+	for _, typeValue := range AdsDataTypeValues {
+		if int8(typeValue) == value {
+			return true
+		}
+	}
+	return false
 }
 
 func CastAdsDataType(structType interface{}) AdsDataType {

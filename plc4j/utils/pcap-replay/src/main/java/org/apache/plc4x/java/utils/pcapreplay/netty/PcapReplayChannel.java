@@ -42,10 +42,6 @@ import java.net.SocketTimeoutException;
 import java.sql.Timestamp;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author julian
- * Created by julian on 2019-08-16
- */
 public class PcapReplayChannel extends OioByteStreamChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(PcapReplayChannel.class);
@@ -97,7 +93,7 @@ public class PcapReplayChannel extends OioByteStreamChannel {
             PcapHandle.TimestampPrecision.NANO);
 
         // If the address allows fine tuning which packets to process, set a filter to reduce the load.
-        String filter = "";//config.getFilterString(localAddress, remoteAddress);
+        String filter = config.getFilter();
         if (filter.length() > 0) {
             handle.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE);
         }

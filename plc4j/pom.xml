@@ -209,28 +209,6 @@
       </plugin>
 
       <!--
-        Make the failsafe execute all integration-tests
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <!--
-                Notice the @ instead of the $ as prefix? That's late evaluation.
-          -->
-          <!--argLine>@{failsafeArgLine}</argLine-->
-        </configuration>
-      </plugin>
-
-      <!--
         Even if Maven transitively pulls in dependencies, relying on these can
         quite often cause hard to find problems. So it's a good practice to make
         sure everything directly required is also directly added as a dependency.
@@ -271,6 +249,29 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Ensure the generated output classes are compatible with Java 1.8 -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>animal-sniffer-maven-plugin</artifactId>
+        <version>1.20</version>
+        <executions>
+          <execution>
+            <id>animal-sniffer</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <signature>
+            <groupId>org.codehaus.mojo.signature</groupId>
+            <artifactId>java18</artifactId>
+            <version>1.0</version>
+          </signature>
+        </configuration>
       </plugin>
     </plugins>
   </build>

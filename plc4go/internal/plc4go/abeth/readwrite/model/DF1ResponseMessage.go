@@ -38,9 +38,21 @@ type DF1ResponseMessage struct {
 
 // The corresponding interface
 type IDF1ResponseMessage interface {
+	// CommandCode returns CommandCode
 	CommandCode() uint8
+	// GetDestinationAddress returns DestinationAddress
+	GetDestinationAddress() uint8
+	// GetSourceAddress returns SourceAddress
+	GetSourceAddress() uint8
+	// GetStatus returns Status
+	GetStatus() uint8
+	// GetTransactionCounter returns TransactionCounter
+	GetTransactionCounter() uint16
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -55,6 +67,29 @@ type IDF1ResponseMessageChild interface {
 	GetTypeName() string
 	IDF1ResponseMessage
 }
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *DF1ResponseMessage) GetDestinationAddress() uint8 {
+	return m.DestinationAddress
+}
+
+func (m *DF1ResponseMessage) GetSourceAddress() uint8 {
+	return m.SourceAddress
+}
+
+func (m *DF1ResponseMessage) GetStatus() uint8 {
+	return m.Status
+}
+
+func (m *DF1ResponseMessage) GetTransactionCounter() uint16 {
+	return m.TransactionCounter
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewDF1ResponseMessage(destinationAddress uint8, sourceAddress uint8, status uint8, transactionCounter uint16) *DF1ResponseMessage {
 	return &DF1ResponseMessage{DestinationAddress: destinationAddress, SourceAddress: sourceAddress, Status: status, TransactionCounter: transactionCounter}
@@ -187,7 +222,7 @@ func DF1ResponseMessageParse(readBuffer utils.ReadBuffer, payloadLength uint16) 
 	var typeSwitchError error
 	switch {
 	case commandCode == 0x4F: // DF1CommandResponseMessageProtectedTypedLogicalRead
-		_parent, typeSwitchError = DF1CommandResponseMessageProtectedTypedLogicalReadParse(readBuffer, payloadLength, status)
+		_parent, typeSwitchError = DF1CommandResponseMessageProtectedTypedLogicalReadParse(readBuffer, payloadLength)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")

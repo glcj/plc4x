@@ -32,8 +32,11 @@ type LDataFrameACK struct {
 
 // The corresponding interface
 type ILDataFrameACK interface {
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -44,17 +47,33 @@ func (m *LDataFrameACK) NotAckFrame() bool {
 	return bool(false)
 }
 
+func (m *LDataFrameACK) GetNotAckFrame() bool {
+	return bool(false)
+}
+
 func (m *LDataFrameACK) Polling() bool {
 	return false
 }
 
-func (m *LDataFrameACK) InitializeParent(parent *LDataFrame, frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) {
-	m.FrameType = frameType
-	m.NotRepeated = notRepeated
-	m.Priority = priority
-	m.AcknowledgeRequested = acknowledgeRequested
-	m.ErrorFlag = errorFlag
+func (m *LDataFrameACK) GetPolling() bool {
+	return false
 }
+
+func (m *LDataFrameACK) InitializeParent(parent *LDataFrame, frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) {
+	m.LDataFrame.FrameType = frameType
+	m.LDataFrame.NotRepeated = notRepeated
+	m.LDataFrame.Priority = priority
+	m.LDataFrame.AcknowledgeRequested = acknowledgeRequested
+	m.LDataFrame.ErrorFlag = errorFlag
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewLDataFrameACK(frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) *LDataFrame {
 	child := &LDataFrameACK{

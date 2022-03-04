@@ -32,8 +32,11 @@ type BACnetErrorGetAlarmSummary struct {
 
 // The corresponding interface
 type IBACnetErrorGetAlarmSummary interface {
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -44,12 +47,26 @@ func (m *BACnetErrorGetAlarmSummary) ServiceChoice() uint8 {
 	return 0x03
 }
 
-func (m *BACnetErrorGetAlarmSummary) InitializeParent(parent *BACnetError) {
+func (m *BACnetErrorGetAlarmSummary) GetServiceChoice() uint8 {
+	return 0x03
 }
 
-func NewBACnetErrorGetAlarmSummary() *BACnetError {
+func (m *BACnetErrorGetAlarmSummary) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
+	m.BACnetError.ErrorClass = errorClass
+	m.BACnetError.ErrorCode = errorCode
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+
+func NewBACnetErrorGetAlarmSummary(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
 	child := &BACnetErrorGetAlarmSummary{
-		BACnetError: NewBACnetError(),
+		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
 	child.Child = child
 	return child.BACnetError

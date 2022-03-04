@@ -34,9 +34,15 @@ type NLM struct {
 
 // The corresponding interface
 type INLM interface {
+	// MessageType returns MessageType
 	MessageType() uint8
+	// GetVendorId returns VendorId
+	GetVendorId() *uint16
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -51,6 +57,17 @@ type INLMChild interface {
 	GetTypeName() string
 	INLM
 }
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *NLM) GetVendorId() *uint16 {
+	return m.VendorId
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewNLM(vendorId *uint16) *NLM {
 	return &NLM{VendorId: vendorId}
@@ -123,10 +140,26 @@ func NLMParse(readBuffer utils.ReadBuffer, apduLength uint16) (*NLM, error) {
 	var _parent *NLM
 	var typeSwitchError error
 	switch {
-	case messageType == 0x0: // NLMWhoIsRouterToNetwork
+	case messageType == 0x00: // NLMWhoIsRouterToNetwork
 		_parent, typeSwitchError = NLMWhoIsRouterToNetworkParse(readBuffer, apduLength, messageType)
-	case messageType == 0x1: // NLMIAmRouterToNetwork
+	case messageType == 0x01: // NLMIAmRouterToNetwork
 		_parent, typeSwitchError = NLMIAmRouterToNetworkParse(readBuffer, apduLength, messageType)
+	case messageType == 0x02: // NLMICouldBeRouterToNetwork
+		_parent, typeSwitchError = NLMICouldBeRouterToNetworkParse(readBuffer, apduLength, messageType)
+	case messageType == 0x03: // NLMRejectRouterToNetwork
+		_parent, typeSwitchError = NLMRejectRouterToNetworkParse(readBuffer, apduLength, messageType)
+	case messageType == 0x04: // NLMRouterBusyToNetwork
+		_parent, typeSwitchError = NLMRouterBusyToNetworkParse(readBuffer, apduLength, messageType)
+	case messageType == 0x05: // NLMRouterAvailableToNetwork
+		_parent, typeSwitchError = NLMRouterAvailableToNetworkParse(readBuffer, apduLength, messageType)
+	case messageType == 0x06: // NLMInitalizeRoutingTable
+		_parent, typeSwitchError = NLMInitalizeRoutingTableParse(readBuffer, apduLength, messageType)
+	case messageType == 0x07: // NLMInitalizeRoutingTableAck
+		_parent, typeSwitchError = NLMInitalizeRoutingTableAckParse(readBuffer, apduLength, messageType)
+	case messageType == 0x08: // NLMEstablishConnectionToNetwork
+		_parent, typeSwitchError = NLMEstablishConnectionToNetworkParse(readBuffer, apduLength, messageType)
+	case messageType == 0x09: // NLMDisconnectConnectionToNetwork
+		_parent, typeSwitchError = NLMDisconnectConnectionToNetworkParse(readBuffer, apduLength, messageType)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")

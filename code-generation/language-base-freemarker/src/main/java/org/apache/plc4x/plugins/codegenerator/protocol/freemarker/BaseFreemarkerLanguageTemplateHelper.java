@@ -21,6 +21,7 @@ package org.apache.plc4x.plugins.codegenerator.protocol.freemarker;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.apache.plc4x.plugins.codegenerator.language.mspec.model.definitions.DefaultDataIoTypeDefinition;
+import org.apache.plc4x.plugins.codegenerator.language.mspec.model.terms.WildcardTerm;
 import org.apache.plc4x.plugins.codegenerator.types.definitions.*;
 import org.apache.plc4x.plugins.codegenerator.types.enums.EnumValue;
 import org.apache.plc4x.plugins.codegenerator.types.fields.*;
@@ -170,6 +171,22 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
             return false;
         }
         return typeReference.isByteBased();
+    }
+
+    /**
+     * @param typeReference type reference
+     * @return true if the given type reference is a dataIo type reference.
+     */
+    public boolean isDataIoTypeReference(TypeReference typeReference) {
+        if (typeReference == null) {
+            return false;
+        }
+        if (typeReference.isSimpleTypeReference()) {
+            return false;
+        }
+        final ComplexTypeReference complexTypeReference = typeReference.asComplexTypeReference().orElseThrow();
+        final TypeDefinition typeDefinition = types.get(complexTypeReference.getName());
+        return typeDefinition instanceof DataIoTypeDefinition;
     }
 
     /**
@@ -378,10 +395,11 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
      **********************************************************************************/
 
     public boolean hasFieldOfType(String fieldTypeName) {
+        Objects.requireNonNull(fieldTypeName);
         if (thisType instanceof ComplexTypeDefinition) {
             ComplexTypeDefinition complexTypeDefinition = (ComplexTypeDefinition) this.thisType;
             return complexTypeDefinition.getFields().stream()
-                .anyMatch(field -> field.getTypeName().equals(fieldTypeName));
+                .anyMatch(field -> fieldTypeName.equals(field.getTypeName()));
         }
         return false;
     }
@@ -1133,6 +1151,10 @@ public abstract class BaseFreemarkerLanguageTemplateHelper implements Freemarker
             }
         }
         return null;
+    }
+
+    public boolean isWildcard(Term term) {
+        return term instanceof WildcardTerm;
     }
 
     /**

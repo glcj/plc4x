@@ -34,8 +34,13 @@ type S7ParameterUserData struct {
 
 // The corresponding interface
 type IS7ParameterUserData interface {
+	// GetItems returns Items
+	GetItems() []*S7ParameterUserDataItem
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -46,12 +51,30 @@ func (m *S7ParameterUserData) ParameterType() uint8 {
 	return 0x00
 }
 
+func (m *S7ParameterUserData) GetParameterType() uint8 {
+	return 0x00
+}
+
 func (m *S7ParameterUserData) MessageType() uint8 {
 	return 0x07
 }
 
-func (m *S7ParameterUserData) InitializeParent(parent *S7Parameter) {
+func (m *S7ParameterUserData) GetMessageType() uint8 {
+	return 0x07
 }
+
+func (m *S7ParameterUserData) InitializeParent(parent *S7Parameter) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *S7ParameterUserData) GetItems() []*S7ParameterUserDataItem {
+	return m.Items
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewS7ParameterUserData(items []*S7ParameterUserDataItem) *S7Parameter {
 	child := &S7ParameterUserData{
@@ -134,7 +157,7 @@ func S7ParameterUserDataParse(readBuffer utils.ReadBuffer, messageType uint8) (*
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing 'items' field")
 			}
-			items[curItem] = _item
+			items[curItem] = CastS7ParameterUserDataItem(_item)
 		}
 	}
 	if closeErr := readBuffer.CloseContext("items", utils.WithRenderAsList(true)); closeErr != nil {

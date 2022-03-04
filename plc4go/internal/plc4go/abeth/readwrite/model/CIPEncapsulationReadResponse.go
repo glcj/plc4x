@@ -34,8 +34,13 @@ type CIPEncapsulationReadResponse struct {
 
 // The corresponding interface
 type ICIPEncapsulationReadResponse interface {
+	// GetResponse returns Response
+	GetResponse() *DF1ResponseMessage
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -46,12 +51,27 @@ func (m *CIPEncapsulationReadResponse) CommandType() uint16 {
 	return 0x0207
 }
 
-func (m *CIPEncapsulationReadResponse) InitializeParent(parent *CIPEncapsulationPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
-	m.SessionHandle = sessionHandle
-	m.Status = status
-	m.SenderContext = senderContext
-	m.Options = options
+func (m *CIPEncapsulationReadResponse) GetCommandType() uint16 {
+	return 0x0207
 }
+
+func (m *CIPEncapsulationReadResponse) InitializeParent(parent *CIPEncapsulationPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
+	m.CIPEncapsulationPacket.SessionHandle = sessionHandle
+	m.CIPEncapsulationPacket.Status = status
+	m.CIPEncapsulationPacket.SenderContext = senderContext
+	m.CIPEncapsulationPacket.Options = options
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *CIPEncapsulationReadResponse) GetResponse() *DF1ResponseMessage {
+	return m.Response
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewCIPEncapsulationReadResponse(response *DF1ResponseMessage, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *CIPEncapsulationPacket {
 	child := &CIPEncapsulationReadResponse{
@@ -111,7 +131,7 @@ func CIPEncapsulationReadResponseParse(readBuffer utils.ReadBuffer, len uint16) 
 	if pullErr := readBuffer.PullContext("response"); pullErr != nil {
 		return nil, pullErr
 	}
-	_response, _responseErr := DF1ResponseMessageParse(readBuffer, len)
+	_response, _responseErr := DF1ResponseMessageParse(readBuffer, uint16(len))
 	if _responseErr != nil {
 		return nil, errors.Wrap(_responseErr, "Error parsing 'response' field")
 	}

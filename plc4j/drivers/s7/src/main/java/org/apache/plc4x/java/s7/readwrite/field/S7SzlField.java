@@ -23,11 +23,15 @@ import java.util.regex.Pattern;
 import org.apache.plc4x.java.api.exceptions.PlcInvalidFieldException;
 import org.apache.plc4x.java.api.model.PlcField;
 
+<<<<<<< HEAD:plc4j/drivers/s7/src/main/java/org/apache/plc4x/java/s7/readwrite/field/S7SzlField.java
 /**
  *
  * @author cgarcia
  */
 public class S7SzlField  implements PlcField {
+=======
+public class S7SslField  implements PlcField {
+>>>>>>> develop:plc4j/drivers/s7/src/main/java/org/apache/plc4x/java/s7/readwrite/field/S7SslField.java
     
    //SZL_ID=0xYYYY;INDEX=0xZZZZ
     private static final Pattern SZL_ADDRESS_PATTERN =

@@ -25,7 +25,6 @@ import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.opcua.context.SecureChannel;
 import org.apache.plc4x.java.opcua.field.OpcuaField;
 import org.apache.plc4x.java.opcua.readwrite.*;
-import org.apache.plc4x.java.opcua.readwrite.io.ExtensionObjectIO;
 import org.apache.plc4x.java.spi.ConversationContext;
 import org.apache.plc4x.java.spi.generation.*;
 import org.apache.plc4x.java.spi.messages.DefaultPlcSubscriptionEvent;
@@ -35,6 +34,7 @@ import org.apache.plc4x.java.spi.model.DefaultPlcSubscriptionField;
 import org.apache.plc4x.java.spi.model.DefaultPlcSubscriptionHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -67,7 +67,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
         super(plcSubscriber);
         this.consumers = new HashSet<>();
         this.subscriptionRequest = subscriptionRequest;
-        this.fieldNames = new ArrayList<>( subscriptionRequest.getFieldNames() );
+        this.fieldNames = new ArrayList<>(subscriptionRequest.getFieldNames());
         this.channel = channel;
         this.subscriptionId = subscriptionId;
         this.plcSubscriber = plcSubscriber;
@@ -84,9 +84,9 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
         startSubscriber();
     }
 
-    private CompletableFuture<CreateMonitoredItemsResponse> onSubscribeCreateMonitoredItemsRequest()  {
+    private CompletableFuture<CreateMonitoredItemsResponse> onSubscribeCreateMonitoredItemsRequest() {
         List<ExtensionObjectDefinition> requestList = new ArrayList<>(this.fieldNames.size());
-        for (int i = 0; i <  this.fieldNames.size(); i++) {
+        for (int i = 0; i < this.fieldNames.size(); i++) {
             final DefaultPlcSubscriptionField fieldDefaultPlcSubscription = (DefaultPlcSubscriptionField) subscriptionRequest.getField(fieldNames.get(i));
 
             NodeId idNode = generateNodeId((OpcuaField) fieldDefaultPlcSubscription.getPlcField());
@@ -155,7 +155,8 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
         ExtensionObject extObject = new ExtensionObject(
             expandedNodeId,
             null,
-            createMonitoredItemsRequest);
+            createMonitoredItemsRequest,
+            false);
 
         try {
             WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), ByteOrder.LITTLE_ENDIAN);
@@ -164,7 +165,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
             Consumer<byte[]> consumer = opcuaResponse -> {
                 CreateMonitoredItemsResponse responseMessage = null;
                 try {
-                    ExtensionObjectDefinition unknownExtensionObject = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, ByteOrder.LITTLE_ENDIAN), false).getBody();
+                    ExtensionObjectDefinition unknownExtensionObject = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, ByteOrder.LITTLE_ENDIAN), false).getBody();
                     if (unknownExtensionObject instanceof CreateMonitoredItemsResponse) {
                         responseMessage = (CreateMonitoredItemsResponse) unknownExtensionObject;
                     } else {
@@ -222,6 +223,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
      * Main subscriber loop. For subscription we still need to send a request the server on every cycle.
      * Which includes a request for an update of the previsouly agreed upon list of tags.
      * The server will respond at most once every cycle.
+     *
      * @return
      */
     public void startSubscriber() {
@@ -263,7 +265,8 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
                         ExtensionObject extObject = new ExtensionObject(
                             extExpandedNodeId,
                             null,
-                            publishRequest);
+                            publishRequest,
+                            false);
 
                         try {
                             WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), ByteOrder.LITTLE_ENDIAN);
@@ -274,7 +277,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
                                 PublishResponse responseMessage = null;
                                 ServiceFault serviceFault = null;
                                 try {
-                                    ExtensionObjectDefinition unknownExtensionObject = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, ByteOrder.LITTLE_ENDIAN), false).getBody();
+                                    ExtensionObjectDefinition unknownExtensionObject = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, ByteOrder.LITTLE_ENDIAN), false).getBody();
                                     if (unknownExtensionObject instanceof PublishResponse) {
                                         responseMessage = (PublishResponse) unknownExtensionObject;
                                     } else {
@@ -345,6 +348,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
 
     /**
      * Stop the subscriber either on disconnect or on error
+     *
      * @return
      */
     public void stopSubscriber() {
@@ -365,7 +369,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
         DeleteSubscriptionsRequest deleteSubscriptionrequest = new DeleteSubscriptionsRequest(requestHeader,
             1,
             subscriptions
-            );
+        );
 
         ExpandedNodeId extExpandedNodeId = new ExpandedNodeId(false,           //Namespace Uri Specified
             false,            //Server Index Specified
@@ -376,7 +380,8 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
         ExtensionObject extObject = new ExtensionObject(
             extExpandedNodeId,
             null,
-            deleteSubscriptionrequest);
+            deleteSubscriptionrequest,
+            false);
 
         try {
             WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), ByteOrder.LITTLE_ENDIAN);
@@ -386,7 +391,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
             Consumer<byte[]> consumer = opcuaResponse -> {
                 DeleteSubscriptionsResponse responseMessage = null;
                 try {
-                    ExtensionObjectDefinition unknownExtensionObject = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, ByteOrder.LITTLE_ENDIAN), false).getBody();
+                    ExtensionObjectDefinition unknownExtensionObject = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, ByteOrder.LITTLE_ENDIAN), false).getBody();
                     if (unknownExtensionObject instanceof DeleteSubscriptionsResponse) {
                         responseMessage = (DeleteSubscriptionsResponse) unknownExtensionObject;
                     } else {
@@ -424,6 +429,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
 
     /**
      * Receive the returned values from the OPCUA server and format it so that it can be received by the PLC4X client.
+     *
      * @param values - array of data values to be sent to the client.
      */
     private void onSubscriptionValue(MonitoredItemNotification[] values) {
@@ -441,6 +447,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
 
     /**
      * Registers a new Consumer, this allows multiple PLC4X consumers to use the same subscription.
+     *
      * @param consumer - Consumer to be used to send any returned values.
      * @return PlcConsumerRegistration - return the important information back to the client.
      */
@@ -453,6 +460,7 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
 
     /**
      * Given an PLC4X OpcuaField generate the OPC UA Node Id
+     *
      * @param field - The PLC4X OpcuaField, this is the field generated from the OpcuaField class from the parsed field string.
      * @return NodeId - Returns an OPC UA Node Id which can be sent over the wire.
      */
@@ -473,7 +481,6 @@ public class OpcuaSubscriptionHandle extends DefaultPlcSubscriptionHandle {
         }
         return nodeId;
     }
-
 
 
 }

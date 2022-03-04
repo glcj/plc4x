@@ -32,14 +32,21 @@ const BVLC_BACNETTYPE uint8 = 0x81
 
 // The data-structure of this message
 type BVLC struct {
-	Child IBVLCChild
+	BvlcPayloadLength uint16
+	Child             IBVLCChild
 }
 
 // The corresponding interface
 type IBVLC interface {
+	// BvlcFunction returns BvlcFunction
 	BvlcFunction() uint8
+	// GetBvlcPayloadLength returns BvlcPayloadLength
+	GetBvlcPayloadLength() uint16
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -50,13 +57,25 @@ type IBVLCParent interface {
 
 type IBVLCChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
-	InitializeParent(parent *BVLC)
+	InitializeParent(parent *BVLC, bvlcPayloadLength uint16)
 	GetTypeName() string
 	IBVLC
 }
 
-func NewBVLC() *BVLC {
-	return &BVLC{}
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+func (m *BVLC) GetBvlcPayloadLength() uint16 {
+	// TODO: calculation should happen here instead accessing the stored field
+	return m.BvlcPayloadLength
+}
+
+func NewBVLC(bvlcPayloadLength uint16) *BVLC {
+	return &BVLC{BvlcPayloadLength: bvlcPayloadLength}
 }
 
 func CastBVLC(structType interface{}) *BVLC {
@@ -95,6 +114,8 @@ func (m *BVLC) ParentLengthInBits() uint16 {
 	// Implicit Field (bvlcLength)
 	lengthInBits += 16
 
+	// A virtual field doesn't have any in- or output.
+
 	return lengthInBits
 }
 
@@ -129,20 +150,24 @@ func BVLCParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
 		return nil, errors.Wrap(_bvlcLengthErr, "Error parsing 'bvlcLength' field")
 	}
 
+	// Virtual field
+	_bvlcPayloadLength := uint16(bvlcLength) - uint16(uint16(4))
+	bvlcPayloadLength := uint16(_bvlcPayloadLength)
+
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
 	var _parent *BVLC
 	var typeSwitchError error
 	switch {
 	case bvlcFunction == 0x00: // BVLCResult
 		_parent, typeSwitchError = BVLCResultParse(readBuffer)
-	case bvlcFunction == 0x01: // BVLCWideBroadcastDistributionTable
-		_parent, typeSwitchError = BVLCWideBroadcastDistributionTableParse(readBuffer)
+	case bvlcFunction == 0x01: // BVLCWriteBroadcastDistributionTable
+		_parent, typeSwitchError = BVLCWriteBroadcastDistributionTableParse(readBuffer, bvlcPayloadLength)
 	case bvlcFunction == 0x02: // BVLCReadBroadcastDistributionTable
 		_parent, typeSwitchError = BVLCReadBroadcastDistributionTableParse(readBuffer)
 	case bvlcFunction == 0x03: // BVLCReadBroadcastDistributionTableAck
 		_parent, typeSwitchError = BVLCReadBroadcastDistributionTableAckParse(readBuffer)
 	case bvlcFunction == 0x04: // BVLCForwardedNPDU
-		_parent, typeSwitchError = BVLCForwardedNPDUParse(readBuffer, bvlcLength)
+		_parent, typeSwitchError = BVLCForwardedNPDUParse(readBuffer, bvlcPayloadLength)
 	case bvlcFunction == 0x05: // BVLCRegisterForeignDevice
 		_parent, typeSwitchError = BVLCRegisterForeignDeviceParse(readBuffer)
 	case bvlcFunction == 0x06: // BVLCReadForeignDeviceTable
@@ -152,11 +177,11 @@ func BVLCParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
 	case bvlcFunction == 0x08: // BVLCDeleteForeignDeviceTableEntry
 		_parent, typeSwitchError = BVLCDeleteForeignDeviceTableEntryParse(readBuffer)
 	case bvlcFunction == 0x09: // BVLCDistributeBroadcastToNetwork
-		_parent, typeSwitchError = BVLCDistributeBroadcastToNetworkParse(readBuffer)
+		_parent, typeSwitchError = BVLCDistributeBroadcastToNetworkParse(readBuffer, bvlcPayloadLength)
 	case bvlcFunction == 0x0A: // BVLCOriginalUnicastNPDU
-		_parent, typeSwitchError = BVLCOriginalUnicastNPDUParse(readBuffer, bvlcLength)
+		_parent, typeSwitchError = BVLCOriginalUnicastNPDUParse(readBuffer, bvlcPayloadLength)
 	case bvlcFunction == 0x0B: // BVLCOriginalBroadcastNPDU
-		_parent, typeSwitchError = BVLCOriginalBroadcastNPDUParse(readBuffer, bvlcLength)
+		_parent, typeSwitchError = BVLCOriginalBroadcastNPDUParse(readBuffer, bvlcPayloadLength)
 	case bvlcFunction == 0x0C: // BVLCSecureBVLL
 		_parent, typeSwitchError = BVLCSecureBVLLParse(readBuffer)
 	default:
@@ -172,7 +197,7 @@ func BVLCParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
+	_parent.Child.InitializeParent(_parent, bvlcPayloadLength)
 	return _parent, nil
 }
 
@@ -204,6 +229,10 @@ func (m *BVLC) SerializeParent(writeBuffer utils.WriteBuffer, child IBVLC, seria
 	_bvlcLengthErr := writeBuffer.WriteUint16("bvlcLength", 16, (bvlcLength))
 	if _bvlcLengthErr != nil {
 		return errors.Wrap(_bvlcLengthErr, "Error serializing 'bvlcLength' field")
+	}
+	// Virtual field
+	if _bvlcPayloadLengthErr := writeBuffer.WriteVirtual("bvlcPayloadLength", m.BvlcPayloadLength); _bvlcPayloadLengthErr != nil {
+		return errors.Wrap(_bvlcPayloadLengthErr, "Error serializing 'bvlcPayloadLength' field")
 	}
 
 	// Switch field (Depending on the discriminator values, passes the serialization to a sub-type)

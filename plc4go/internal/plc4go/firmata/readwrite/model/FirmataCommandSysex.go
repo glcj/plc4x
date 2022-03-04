@@ -35,8 +35,13 @@ type FirmataCommandSysex struct {
 
 // The corresponding interface
 type IFirmataCommandSysex interface {
+	// GetCommand returns Command
+	GetCommand() *SysexCommand
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -47,8 +52,22 @@ func (m *FirmataCommandSysex) CommandCode() uint8 {
 	return 0x0
 }
 
-func (m *FirmataCommandSysex) InitializeParent(parent *FirmataCommand) {
+func (m *FirmataCommandSysex) GetCommandCode() uint8 {
+	return 0x0
 }
+
+func (m *FirmataCommandSysex) InitializeParent(parent *FirmataCommand) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *FirmataCommandSysex) GetCommand() *SysexCommand {
+	return m.Command
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewFirmataCommandSysex(command *SysexCommand) *FirmataCommand {
 	child := &FirmataCommandSysex{
@@ -111,7 +130,7 @@ func FirmataCommandSysexParse(readBuffer utils.ReadBuffer, response bool) (*Firm
 	if pullErr := readBuffer.PullContext("command"); pullErr != nil {
 		return nil, pullErr
 	}
-	_command, _commandErr := SysexCommandParse(readBuffer, response)
+	_command, _commandErr := SysexCommandParse(readBuffer, bool(response))
 	if _commandErr != nil {
 		return nil, errors.Wrap(_commandErr, "Error parsing 'command' field")
 	}

@@ -33,9 +33,13 @@ type BACnetUnconfirmedServiceRequest struct {
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequest interface {
+	// ServiceChoice returns ServiceChoice
 	ServiceChoice() uint8
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -50,6 +54,14 @@ type IBACnetUnconfirmedServiceRequestChild interface {
 	GetTypeName() string
 	IBACnetUnconfirmedServiceRequest
 }
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewBACnetUnconfirmedServiceRequest() *BACnetUnconfirmedServiceRequest {
 	return &BACnetUnconfirmedServiceRequest{}
@@ -131,6 +143,8 @@ func BACnetUnconfirmedServiceRequestParse(readBuffer utils.ReadBuffer, len uint1
 		_parent, typeSwitchError = BACnetUnconfirmedServiceRequestWriteGroupParse(readBuffer, len)
 	case serviceChoice == 0x0B: // BACnetUnconfirmedServiceRequestUnconfirmedCOVNotificationMultiple
 		_parent, typeSwitchError = BACnetUnconfirmedServiceRequestUnconfirmedCOVNotificationMultipleParse(readBuffer, len)
+	case true: // BACnetUnconfirmedServiceRequestUnconfirmedUnknown
+		_parent, typeSwitchError = BACnetUnconfirmedServiceRequestUnconfirmedUnknownParse(readBuffer, len)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")

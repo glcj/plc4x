@@ -39,8 +39,23 @@ type LDataExtended struct {
 
 // The corresponding interface
 type ILDataExtended interface {
+	// GetGroupAddress returns GroupAddress
+	GetGroupAddress() bool
+	// GetHopCount returns HopCount
+	GetHopCount() uint8
+	// GetExtendedFrameFormat returns ExtendedFrameFormat
+	GetExtendedFrameFormat() uint8
+	// GetSourceAddress returns SourceAddress
+	GetSourceAddress() *KnxAddress
+	// GetDestinationAddress returns DestinationAddress
+	GetDestinationAddress() []byte
+	// GetApdu returns Apdu
+	GetApdu() *Apdu
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -51,17 +66,56 @@ func (m *LDataExtended) NotAckFrame() bool {
 	return bool(true)
 }
 
+func (m *LDataExtended) GetNotAckFrame() bool {
+	return bool(true)
+}
+
 func (m *LDataExtended) Polling() bool {
 	return bool(false)
 }
 
-func (m *LDataExtended) InitializeParent(parent *LDataFrame, frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) {
-	m.FrameType = frameType
-	m.NotRepeated = notRepeated
-	m.Priority = priority
-	m.AcknowledgeRequested = acknowledgeRequested
-	m.ErrorFlag = errorFlag
+func (m *LDataExtended) GetPolling() bool {
+	return bool(false)
 }
+
+func (m *LDataExtended) InitializeParent(parent *LDataFrame, frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) {
+	m.LDataFrame.FrameType = frameType
+	m.LDataFrame.NotRepeated = notRepeated
+	m.LDataFrame.Priority = priority
+	m.LDataFrame.AcknowledgeRequested = acknowledgeRequested
+	m.LDataFrame.ErrorFlag = errorFlag
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *LDataExtended) GetGroupAddress() bool {
+	return m.GroupAddress
+}
+
+func (m *LDataExtended) GetHopCount() uint8 {
+	return m.HopCount
+}
+
+func (m *LDataExtended) GetExtendedFrameFormat() uint8 {
+	return m.ExtendedFrameFormat
+}
+
+func (m *LDataExtended) GetSourceAddress() *KnxAddress {
+	return m.SourceAddress
+}
+
+func (m *LDataExtended) GetDestinationAddress() []byte {
+	return m.DestinationAddress
+}
+
+func (m *LDataExtended) GetApdu() *Apdu {
+	return m.Apdu
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewLDataExtended(groupAddress bool, hopCount uint8, extendedFrameFormat uint8, sourceAddress *KnxAddress, destinationAddress []byte, apdu *Apdu, frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) *LDataFrame {
 	child := &LDataExtended{
@@ -193,7 +247,7 @@ func LDataExtendedParse(readBuffer utils.ReadBuffer) (*LDataFrame, error) {
 	if pullErr := readBuffer.PullContext("apdu"); pullErr != nil {
 		return nil, pullErr
 	}
-	_apdu, _apduErr := ApduParse(readBuffer, dataLength)
+	_apdu, _apduErr := ApduParse(readBuffer, uint8(dataLength))
 	if _apduErr != nil {
 		return nil, errors.Wrap(_apduErr, "Error parsing 'apdu' field")
 	}

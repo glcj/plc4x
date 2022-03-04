@@ -19,8 +19,6 @@
 
 package utils
 
-import "github.com/pkg/errors"
-
 // InlineIf is basically a inline if like construct for golang
 func InlineIf(test bool, a func() interface{}, b func() interface{}) interface{} {
 	if test {
@@ -30,4 +28,14 @@ func InlineIf(test bool, a func() interface{}, b func() interface{}) interface{}
 	}
 }
 
-var ParseAssertError = errors.New("Wrong assertion")
+type ParseAssertError struct {
+	Message string
+}
+
+func (e ParseAssertError) Error() string {
+	return e.Message
+}
+
+func (m ParseAssertError) Is(target error) bool {
+	return true
+}

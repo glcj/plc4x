@@ -18,10 +18,14 @@
  */
 package org.apache.plc4x.java.s7.readwrite.protocol;
 
+<<<<<<< HEAD:plc4j/drivers/s7/src/main/java/org/apache/plc4x/java/s7/readwrite/protocol/S7HAbortRequestException.java
 /**
  *
  * @author cgarcia
  */
 public class S7HAbortRequestException {
+=======
+public class S7CyclicValueEvent {
+>>>>>>> develop:plc4j/drivers/s7/src/main/java/org/apache/plc4x/java/s7/events/S7CyclicValueEvent.java
     
 }

@@ -43,8 +43,6 @@ import org.apache.plc4x.java.api.messages.PlcSubscriptionRequest;
  *  |String  |    X     X     X         X   X     X     X      X
  *  |byte[]  |                                                        X
  *  |--------+-------------------------------------------------------------
- * 
- * @author cgarcia
  */
 public interface S7Event extends PlcSubscriptionEvent{
     

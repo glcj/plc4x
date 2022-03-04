@@ -35,8 +35,13 @@ type APDUUnconfirmedRequest struct {
 
 // The corresponding interface
 type IAPDUUnconfirmedRequest interface {
+	// GetServiceRequest returns ServiceRequest
+	GetServiceRequest() *BACnetUnconfirmedServiceRequest
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -47,8 +52,22 @@ func (m *APDUUnconfirmedRequest) ApduType() uint8 {
 	return 0x1
 }
 
-func (m *APDUUnconfirmedRequest) InitializeParent(parent *APDU) {
+func (m *APDUUnconfirmedRequest) GetApduType() uint8 {
+	return 0x1
 }
+
+func (m *APDUUnconfirmedRequest) InitializeParent(parent *APDU) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *APDUUnconfirmedRequest) GetServiceRequest() *BACnetUnconfirmedServiceRequest {
+	return m.ServiceRequest
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewAPDUUnconfirmedRequest(serviceRequest *BACnetUnconfirmedServiceRequest) *APDU {
 	child := &APDUUnconfirmedRequest{
@@ -125,7 +144,7 @@ func APDUUnconfirmedRequestParse(readBuffer utils.ReadBuffer, apduLength uint16)
 	if pullErr := readBuffer.PullContext("serviceRequest"); pullErr != nil {
 		return nil, pullErr
 	}
-	_serviceRequest, _serviceRequestErr := BACnetUnconfirmedServiceRequestParse(readBuffer, uint16(apduLength)-uint16(uint16(1)))
+	_serviceRequest, _serviceRequestErr := BACnetUnconfirmedServiceRequestParse(readBuffer, uint16(uint16(apduLength)-uint16(uint16(1))))
 	if _serviceRequestErr != nil {
 		return nil, errors.Wrap(_serviceRequestErr, "Error parsing 'serviceRequest' field")
 	}

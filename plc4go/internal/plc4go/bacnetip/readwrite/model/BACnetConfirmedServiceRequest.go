@@ -33,9 +33,13 @@ type BACnetConfirmedServiceRequest struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequest interface {
+	// ServiceChoice returns ServiceChoice
 	ServiceChoice() uint8
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -50,6 +54,14 @@ type IBACnetConfirmedServiceRequestChild interface {
 	GetTypeName() string
 	IBACnetConfirmedServiceRequest
 }
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewBACnetConfirmedServiceRequest() *BACnetConfirmedServiceRequest {
 	return &BACnetConfirmedServiceRequest{}
@@ -169,6 +181,8 @@ func BACnetConfirmedServiceRequestParse(readBuffer utils.ReadBuffer, len uint16)
 		_parent, typeSwitchError = BACnetConfirmedServiceRequestSubscribeCOVPropertyMultipleParse(readBuffer, len)
 	case serviceChoice == 0x1F: // BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple
 		_parent, typeSwitchError = BACnetConfirmedServiceRequestConfirmedCOVNotificationMultipleParse(readBuffer, len)
+	case true: // BACnetConfirmedServiceRequestConfirmedUnknown
+		_parent, typeSwitchError = BACnetConfirmedServiceRequestConfirmedUnknownParse(readBuffer, len)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")

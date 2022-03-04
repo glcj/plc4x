@@ -21,6 +21,8 @@ package org.apache.plc4x.test.parserserializer;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.plc4x.java.spi.generation.*;
+import org.apache.plc4x.java.spi.utils.ascii.AsciiBox;
+import org.apache.plc4x.java.spi.utils.ascii.AsciiBoxWriter;
 import org.apache.plc4x.test.XmlTestsuiteLoader;
 import org.apache.plc4x.test.dom4j.LocationAwareDocumentFactory;
 import org.apache.plc4x.test.dom4j.LocationAwareElement;
@@ -137,43 +139,94 @@ public class ParserSerializerTestsuiteRunner extends XmlTestsuiteLoader {
     }
 
     private void run(ParserSerializerTestsuite testSuite, Testcase testcase) throws ParserSerializerTestsuiteException {
-        ReadBufferByteBased readBuffer = new ReadBufferByteBased(testcase.getRaw(), testSuite.getByteOrder());
+        LOGGER.info("Running testcase {}", testcase);
+        byte[] testcaseRaw = testcase.getRaw();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("\n{}", AsciiBoxWriter.DEFAULT.boxString("Testcase raw input", org.apache.plc4x.java.spi.utils.hex.Hex.dump(testcaseRaw), 0));
+        ReadBufferByteBased readBuffer = new ReadBufferByteBased(testcaseRaw, testSuite.getByteOrder());
 
         try {
-            MessageInput<Message> messageInput = MessageResolver.getMessageIOStaticLinked(
+            MessageInput<?> messageInput = MessageResolver.getMessageIOStaticLinked(
                 testSuite.getOptions(),
-                testcase.getXml().elements().get(0).getName()
+                testcase.getRootType()
             );
-            Message parsedOutput = messageInput.parse(readBuffer, testcase.getParserArguments().toArray());
-            MessageValidatorAndMigrator.validateOutboundMessageAndMigrate(
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Parse the raw bytes into a message
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            LOGGER.trace("Parsing message");
+            Message parsedOutput = (Message) messageInput.parse(readBuffer, testcase.getParserArguments().toArray());
+            LOGGER.trace("Validating and migrating");
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Compare the parsed message with the reference XML
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            // In this case no reference xml has been provided
+            // (This is usually during development)
+            if(testcase.getXml().elements().size() == 0) {
+                WriteBufferXmlBased writeBufferXmlBased = new WriteBufferXmlBased();
+                parsedOutput.serialize(writeBufferXmlBased);
+                String xmlString = writeBufferXmlBased.getXmlString();
+                throw new ParserSerializerTestsuiteException("Missing reference xml element. Parsed: \n" + xmlString);
+            }
+            // If more than one root element is provided, the testcase is corrupt.
+            else if (testcase.getXml().elements().size() > 1) {
+                throw new ParserSerializerTestsuiteException("Too many element roots in testcase");
+            }
+            boolean migrated = MessageValidatorAndMigrator.validateOutboundMessageAndMigrate(
                 testcase.getName(),
                 messageInput,
                 testcase.getXml().elements().get(0),
                 testcase.getParserArguments(),
-                testcase.getRaw(),
+                testcaseRaw,
                 testSuite.getByteOrder(),
                 autoMigrate,
                 suiteUri
             );
+            if (migrated) {
+                LOGGER.warn("Migrated testcase {}", testcase);
+            }
+            LOGGER.debug("Parsed message {}", parsedOutput);
+            LOGGER.info("Parsing passed for testcase {}", testcase);
 
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Serialize the parsed message to a byte array
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            LOGGER.trace("Writing message back again");
             WriteBufferByteBased writeBuffer = new WriteBufferByteBased(parsedOutput.getLengthInBytes(), testSuite.getByteOrder());
             parsedOutput.serialize(writeBuffer);
+            LOGGER.info("Serializing passed for testcase {}", testcase);
             byte[] data = writeBuffer.getData();
-            if (testcase.getRaw().length != data.length) {
-                LOGGER.info("Expected a byte array with a length of " + testcase.getRaw().length +
-                    " but got one with " + data.length);
+            if (testcaseRaw.length != data.length) {
+                LOGGER.info("Expected a byte array with a length of {} but got one with {}", testcaseRaw.length, data.length);
             }
-            // TODO: improve output
-            if (!Arrays.equals(testcase.getRaw(), data)) {
-                int i;
-                for (i = 0; i < data.length; i++) {
-                    if (data[i] != testcase.getRaw()[i]) {
-                        break;
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Compare the serialized bytes to the initial raw array
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            if (!Arrays.equals(testcaseRaw, data)) {
+                int numBytes = Math.min(data.length, testcaseRaw.length);
+                int brokenAt = -1;
+                List<Integer> diffIndexes = new LinkedList<>();
+                for (int i = 0; i < numBytes; i++) {
+                    if (data[i] != testcaseRaw[i]) {
+                        if (brokenAt < 0) {
+                            brokenAt = i;
+                        }
+                        diffIndexes.add(i);
                     }
                 }
+                String rawHex = org.apache.plc4x.java.spi.utils.hex.Hex.dump(testcaseRaw, 46, diffIndexes.stream().mapToInt(integer -> integer).toArray());
+                String dataHex = org.apache.plc4x.java.spi.utils.hex.Hex.dump(data, 46, diffIndexes.stream().mapToInt(integer -> integer).toArray());
+                AsciiBox compareBox = AsciiBoxWriter.DEFAULT.boxSideBySide(AsciiBoxWriter.DEFAULT.boxString("expected", rawHex, 0), AsciiBoxWriter.DEFAULT.boxString("actual", dataHex, 0));
+                LOGGER.error("Diff\n{}", compareBox);
                 throw new ParserSerializerTestsuiteException("Differences were found after serializing.\nExpected: " +
-                    Hex.encodeHexString(testcase.getRaw()) + "\nBut Got:  " + Hex.encodeHexString(data) +
-                    "\n          " + String.join("", Collections.nCopies(i, "--")) + "^");
+                    Hex.encodeHexString(testcaseRaw) + "\nBut Got:  " + Hex.encodeHexString(data) +
+                    "\n          " + String.join("", Collections.nCopies(brokenAt, "--")) + "^");
             }
         } catch (SerializationException | ParseException e) {
             throw new ParserSerializerTestsuiteException("Unable to parse message", e);

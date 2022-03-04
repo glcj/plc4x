@@ -31,16 +31,23 @@ public class FieldReaderOptional<T> implements FieldCommons {
     private static final Logger LOGGER = LoggerFactory.getLogger(FieldReaderOptional.class);
 
     public T readOptionalField(String logicalName, DataReader<T> dataReader, boolean condition, WithReaderArgs... readerArgs) throws ParseException {
+        LOGGER.debug("reading field {}", logicalName);
         if (!condition) {
-            LOGGER.debug("Condition doesnt match for field {}", logicalName);
+            LOGGER.debug("Condition doesn't match for field {}", logicalName);
             return null;
         }
 
         int curPos = dataReader.getPos();
         try {
-            return switchParseByteOrderIfNecessary(() -> dataReader.read(logicalName, readerArgs), dataReader, extractByteOder(readerArgs).orElse(null));
+            T field = switchParseByteOrderIfNecessary(() -> dataReader.read(logicalName, readerArgs), dataReader, extractByteOrder(readerArgs).orElse(null));
+            LOGGER.debug("done reading field {}. Value: {}", logicalName, field);
+            return field;
         } catch (ParseAssertException e) {
-            LOGGER.debug("Assertion doesnt match for field {}", logicalName, e);
+            LOGGER.debug("Assertion doesn't match for field {}. Resetting read position to {}", logicalName, curPos, e);
+            dataReader.setPos(curPos);
+            return null;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            LOGGER.debug("Not enough bytes for {}. Resetting read position to {}", logicalName, curPos, e);
             dataReader.setPos(curPos);
             return null;
         }

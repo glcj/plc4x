@@ -18,7 +18,6 @@
  */
 package org.apache.plc4x.java.profinet;
 
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.plc4x.java.profinet.readwrite.*;
 import org.apache.plc4x.java.spi.generation.*;
@@ -38,20 +37,21 @@ public class ProfinetPoc {
         DceRpc_Packet connectionRequest = new DceRpc_Packet(
             DceRpc_PacketType.REQUEST, true, false, false,
             IntegerEncoding.BIG_ENDIAN, CharacterEncoding.ASCII, FloatingPointEncoding.IEEE,
-            new DceRpc_ObjectUuid(0x0001, 0x0904, 0x002A),
+            new DceRpc_ObjectUuid((byte) 0x00, 0x0001, 0x0904, 0x002A),
             new DceRpc_InterfaceUuid_DeviceInterface(), generateActivityUuid(),
             0, 0, DceRpc_Operation.CONNECT,
-            new PnIoCm_Packet_Req(404, 404, 0, 404,
+            new PnIoCm_Packet_Req(404, 404, 404, 0, 404,
                 Arrays.asList(
                     new PnIoCm_Block_ArReq((short) 1, (short) 0, PnIoCm_ArType.IO_CONTROLLER,
                         new Uuid(Hex.decodeHex("654519352df3b6428f874371217c2b51")), 2,
+                        // Local MAC Address
                         new MacAddress(Hex.decodeHex("806d970ff777")),
                         new Uuid(Hex.decodeHex("dea000006c9711d1827100640008002a")),
                         false, false, false,
                         false, PnIoCm_CompanionArType.SINGLE_AR, false,
                         true, false, PnIoCm_State.ACTIVE,
                         600, 0x8892,
-                        /*"plc4x-pn-master"*/"profinetxadriver4933"),
+                        "plc4x-pn-master"),
                     new PnIoCm_Block_IoCrReq((short) 1, (short) 0, PnIoCm_IoCrType.INPUT_CR,
                         0x0001, 0x8892, false, false,
                         false, false, PnIoCm_RtClass.RT_CLASS_2, 40,
@@ -127,7 +127,7 @@ public class ProfinetPoc {
                     new PnIoCm_Block_AlarmCrReq((short) 1, (short) 0,
                         PnIoCm_AlarmCrType.ALARM_CR, 0x8892, false, false, 1, 3,
                         0x0000, 200, 0xC000, 0xA000)
-                ), 404)
+                ))
         );
 
         // Serialize the message

@@ -38,10 +38,26 @@ type TPKTPacket struct {
 
 // The corresponding interface
 type ITPKTPacket interface {
+	// GetPayload returns Payload
+	GetPayload() *COTPPacket
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *TPKTPacket) GetPayload() *COTPPacket {
+	return m.Payload
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewTPKTPacket(payload *COTPPacket) *TPKTPacket {
 	return &TPKTPacket{Payload: payload}
@@ -129,7 +145,7 @@ func TPKTPacketParse(readBuffer utils.ReadBuffer) (*TPKTPacket, error) {
 	if pullErr := readBuffer.PullContext("payload"); pullErr != nil {
 		return nil, pullErr
 	}
-	_payload, _payloadErr := COTPPacketParse(readBuffer, uint16(len)-uint16(uint16(4)))
+	_payload, _payloadErr := COTPPacketParse(readBuffer, uint16(uint16(len)-uint16(uint16(4))))
 	if _payloadErr != nil {
 		return nil, errors.Wrap(_payloadErr, "Error parsing 'payload' field")
 	}

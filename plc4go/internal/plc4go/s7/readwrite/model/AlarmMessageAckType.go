@@ -35,10 +35,38 @@ type AlarmMessageAckType struct {
 
 // The corresponding interface
 type IAlarmMessageAckType interface {
+	// GetFunctionId returns FunctionId
+	GetFunctionId() uint8
+	// GetNumberOfObjects returns NumberOfObjects
+	GetNumberOfObjects() uint8
+	// GetMessageObjects returns MessageObjects
+	GetMessageObjects() []*AlarmMessageObjectAckType
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *AlarmMessageAckType) GetFunctionId() uint8 {
+	return m.FunctionId
+}
+
+func (m *AlarmMessageAckType) GetNumberOfObjects() uint8 {
+	return m.NumberOfObjects
+}
+
+func (m *AlarmMessageAckType) GetMessageObjects() []*AlarmMessageObjectAckType {
+	return m.MessageObjects
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewAlarmMessageAckType(functionId uint8, numberOfObjects uint8, messageObjects []*AlarmMessageObjectAckType) *AlarmMessageAckType {
 	return &AlarmMessageAckType{FunctionId: functionId, NumberOfObjects: numberOfObjects, MessageObjects: messageObjects}
@@ -120,7 +148,7 @@ func AlarmMessageAckTypeParse(readBuffer utils.ReadBuffer) (*AlarmMessageAckType
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing 'messageObjects' field")
 			}
-			messageObjects[curItem] = _item
+			messageObjects[curItem] = CastAlarmMessageObjectAckType(_item)
 		}
 	}
 	if closeErr := readBuffer.CloseContext("messageObjects", utils.WithRenderAsList(true)); closeErr != nil {

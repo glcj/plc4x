@@ -36,8 +36,17 @@ type BVLCForwardedNPDU struct {
 
 // The corresponding interface
 type IBVLCForwardedNPDU interface {
+	// GetIp returns Ip
+	GetIp() []uint8
+	// GetPort returns Port
+	GetPort() uint16
+	// GetNpdu returns Npdu
+	GetNpdu() *NPDU
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -48,15 +57,39 @@ func (m *BVLCForwardedNPDU) BvlcFunction() uint8 {
 	return 0x04
 }
 
-func (m *BVLCForwardedNPDU) InitializeParent(parent *BVLC) {
+func (m *BVLCForwardedNPDU) GetBvlcFunction() uint8 {
+	return 0x04
 }
 
-func NewBVLCForwardedNPDU(ip []uint8, port uint16, npdu *NPDU) *BVLC {
+func (m *BVLCForwardedNPDU) InitializeParent(parent *BVLC, bvlcPayloadLength uint16) {
+	m.BVLC.BvlcPayloadLength = bvlcPayloadLength
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *BVLCForwardedNPDU) GetIp() []uint8 {
+	return m.Ip
+}
+
+func (m *BVLCForwardedNPDU) GetPort() uint16 {
+	return m.Port
+}
+
+func (m *BVLCForwardedNPDU) GetNpdu() *NPDU {
+	return m.Npdu
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+
+func NewBVLCForwardedNPDU(ip []uint8, port uint16, npdu *NPDU, bvlcPayloadLength uint16) *BVLC {
 	child := &BVLCForwardedNPDU{
 		Ip:   ip,
 		Port: port,
 		Npdu: npdu,
-		BVLC: NewBVLC(),
+		BVLC: NewBVLC(bvlcPayloadLength),
 	}
 	child.Child = child
 	return child.BVLC
@@ -110,7 +143,7 @@ func (m *BVLCForwardedNPDU) LengthInBytes() uint16 {
 	return m.LengthInBits() / 8
 }
 
-func BVLCForwardedNPDUParse(readBuffer utils.ReadBuffer, bvlcLength uint16) (*BVLC, error) {
+func BVLCForwardedNPDUParse(readBuffer utils.ReadBuffer, bvlcPayloadLength uint16) (*BVLC, error) {
 	if pullErr := readBuffer.PullContext("BVLCForwardedNPDU"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -145,7 +178,7 @@ func BVLCForwardedNPDUParse(readBuffer utils.ReadBuffer, bvlcLength uint16) (*BV
 	if pullErr := readBuffer.PullContext("npdu"); pullErr != nil {
 		return nil, pullErr
 	}
-	_npdu, _npduErr := NPDUParse(readBuffer, uint16(bvlcLength)-uint16(uint16(10)))
+	_npdu, _npduErr := NPDUParse(readBuffer, uint16(uint16(bvlcPayloadLength)-uint16(uint16(6))))
 	if _npduErr != nil {
 		return nil, errors.Wrap(_npduErr, "Error parsing 'npdu' field")
 	}

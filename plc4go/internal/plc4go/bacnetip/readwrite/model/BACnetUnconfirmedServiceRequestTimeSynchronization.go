@@ -29,14 +29,21 @@ import (
 // The data-structure of this message
 type BACnetUnconfirmedServiceRequestTimeSynchronization struct {
 	*BACnetUnconfirmedServiceRequest
-	SynchronizedDate *BACnetTagApplicationDate
-	SynchronizedTime *BACnetTagApplicationTime
+	SynchronizedDate *BACnetApplicationTagDate
+	SynchronizedTime *BACnetApplicationTagTime
 }
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequestTimeSynchronization interface {
+	// GetSynchronizedDate returns SynchronizedDate
+	GetSynchronizedDate() *BACnetApplicationTagDate
+	// GetSynchronizedTime returns SynchronizedTime
+	GetSynchronizedTime() *BACnetApplicationTagTime
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -47,10 +54,29 @@ func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) ServiceChoice() uin
 	return 0x06
 }
 
+func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) GetServiceChoice() uint8 {
+	return 0x06
+}
+
 func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) InitializeParent(parent *BACnetUnconfirmedServiceRequest) {
 }
 
-func NewBACnetUnconfirmedServiceRequestTimeSynchronization(synchronizedDate *BACnetTagApplicationDate, synchronizedTime *BACnetTagApplicationTime) *BACnetUnconfirmedServiceRequest {
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) GetSynchronizedDate() *BACnetApplicationTagDate {
+	return m.SynchronizedDate
+}
+
+func (m *BACnetUnconfirmedServiceRequestTimeSynchronization) GetSynchronizedTime() *BACnetApplicationTagTime {
+	return m.SynchronizedTime
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+
+func NewBACnetUnconfirmedServiceRequestTimeSynchronization(synchronizedDate *BACnetApplicationTagDate, synchronizedTime *BACnetApplicationTagTime) *BACnetUnconfirmedServiceRequest {
 	child := &BACnetUnconfirmedServiceRequestTimeSynchronization{
 		SynchronizedDate:                synchronizedDate,
 		SynchronizedTime:                synchronizedTime,
@@ -112,11 +138,11 @@ func BACnetUnconfirmedServiceRequestTimeSynchronizationParse(readBuffer utils.Re
 	if pullErr := readBuffer.PullContext("synchronizedDate"); pullErr != nil {
 		return nil, pullErr
 	}
-	_synchronizedDate, _synchronizedDateErr := BACnetTagParse(readBuffer)
+	_synchronizedDate, _synchronizedDateErr := BACnetApplicationTagParse(readBuffer)
 	if _synchronizedDateErr != nil {
 		return nil, errors.Wrap(_synchronizedDateErr, "Error parsing 'synchronizedDate' field")
 	}
-	synchronizedDate := CastBACnetTagApplicationDate(_synchronizedDate)
+	synchronizedDate := CastBACnetApplicationTagDate(_synchronizedDate)
 	if closeErr := readBuffer.CloseContext("synchronizedDate"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -125,11 +151,11 @@ func BACnetUnconfirmedServiceRequestTimeSynchronizationParse(readBuffer utils.Re
 	if pullErr := readBuffer.PullContext("synchronizedTime"); pullErr != nil {
 		return nil, pullErr
 	}
-	_synchronizedTime, _synchronizedTimeErr := BACnetTagParse(readBuffer)
+	_synchronizedTime, _synchronizedTimeErr := BACnetApplicationTagParse(readBuffer)
 	if _synchronizedTimeErr != nil {
 		return nil, errors.Wrap(_synchronizedTimeErr, "Error parsing 'synchronizedTime' field")
 	}
-	synchronizedTime := CastBACnetTagApplicationTime(_synchronizedTime)
+	synchronizedTime := CastBACnetApplicationTagTime(_synchronizedTime)
 	if closeErr := readBuffer.CloseContext("synchronizedTime"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -140,8 +166,8 @@ func BACnetUnconfirmedServiceRequestTimeSynchronizationParse(readBuffer utils.Re
 
 	// Create a partially initialized instance
 	_child := &BACnetUnconfirmedServiceRequestTimeSynchronization{
-		SynchronizedDate:                CastBACnetTagApplicationDate(synchronizedDate),
-		SynchronizedTime:                CastBACnetTagApplicationTime(synchronizedTime),
+		SynchronizedDate:                CastBACnetApplicationTagDate(synchronizedDate),
+		SynchronizedTime:                CastBACnetApplicationTagTime(synchronizedTime),
 		BACnetUnconfirmedServiceRequest: &BACnetUnconfirmedServiceRequest{},
 	}
 	_child.BACnetUnconfirmedServiceRequest.Child = _child

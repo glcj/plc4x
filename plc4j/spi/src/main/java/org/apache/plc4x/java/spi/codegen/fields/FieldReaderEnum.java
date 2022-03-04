@@ -18,7 +18,6 @@
  */
 package org.apache.plc4x.java.spi.codegen.fields;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.plc4x.java.spi.codegen.FieldCommons;
 import org.apache.plc4x.java.spi.codegen.io.DataReader;
 import org.apache.plc4x.java.spi.generation.ParseException;
@@ -29,9 +28,12 @@ import org.slf4j.LoggerFactory;
 
 public class FieldReaderEnum<T> implements FieldCommons {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FieldReaderEnum.class);
+
     public T readEnumField(String logicalName, String innerName, DataReader<T> dataReader, WithReaderArgs... readerArgs) throws ParseException {
+        LOGGER.debug("reading field {}", logicalName);
         dataReader.pullContext(logicalName, WithReaderWriterArgs.WithRenderAsList(true));
-        T result = switchParseByteOrderIfNecessary(() -> dataReader.read(innerName, readerArgs), dataReader, extractByteOder(readerArgs).orElse(null));
+        T result = switchParseByteOrderIfNecessary(() -> dataReader.read(innerName, readerArgs), dataReader, extractByteOrder(readerArgs).orElse(null));
         dataReader.closeContext(logicalName, WithReaderWriterArgs.WithRenderAsList(true));
         return result;
     }

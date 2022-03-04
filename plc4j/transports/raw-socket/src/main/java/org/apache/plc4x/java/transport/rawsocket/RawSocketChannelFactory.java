@@ -26,10 +26,11 @@ import io.netty.channel.oio.OioEventLoopGroup;
 import org.apache.plc4x.java.spi.configuration.HasConfiguration;
 import org.apache.plc4x.java.spi.connection.NettyChannelFactory;
 import org.apache.plc4x.java.utils.pcap.netty.config.PcapChannelOption;
-import org.apache.plc4x.java.utils.rawsockets.netty.address.RawSocketAddress;
 import org.apache.plc4x.java.utils.rawsockets.netty.RawSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.SocketAddress;
 
 public class RawSocketChannelFactory extends NettyChannelFactory implements HasConfiguration<RawSocketTransportConfiguration> {
 
@@ -37,7 +38,7 @@ public class RawSocketChannelFactory extends NettyChannelFactory implements HasC
 
     private RawSocketTransportConfiguration configuration;
 
-    public RawSocketChannelFactory(RawSocketAddress address) {
+    public RawSocketChannelFactory(SocketAddress address) {
         super(address);
     }
 
@@ -53,7 +54,7 @@ public class RawSocketChannelFactory extends NettyChannelFactory implements HasC
 
     @Override
     public boolean isPassive() {
-        return true;
+        return false;
     }
 
     @Override
@@ -65,9 +66,7 @@ public class RawSocketChannelFactory extends NettyChannelFactory implements HasC
     public void configureBootstrap(Bootstrap bootstrap) {
         if(configuration != null) {
             logger.info("Configuring Bootstrap with {}", configuration);
-            /*bootstrap.option(RawSocketChannelOption.PORT, configuration.getDefaultPort());
-            bootstrap.option(RawSocketChannelOption.PROTOCOL_ID, configuration.getProtocolId());
-            bootstrap.option(RawSocketChannelOption.SPEED_FACTOR, configuration.getReplaySpeedFactor());*/
+            bootstrap.option(PcapChannelOption.RESOLVE_MAC_ADDRESS, configuration.isResolveMacAccess());
             if(configuration.getPcapPacketHandler() != null) {
                 bootstrap.option(PcapChannelOption.PACKET_HANDLER, configuration.getPcapPacketHandler());
             }

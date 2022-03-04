@@ -38,8 +38,21 @@ type AdsReadWriteRequest struct {
 
 // The corresponding interface
 type IAdsReadWriteRequest interface {
+	// GetIndexGroup returns IndexGroup
+	GetIndexGroup() uint32
+	// GetIndexOffset returns IndexOffset
+	GetIndexOffset() uint32
+	// GetReadLength returns ReadLength
+	GetReadLength() uint32
+	// GetItems returns Items
+	GetItems() []*AdsMultiRequestItem
+	// GetData returns Data
+	GetData() []byte
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -50,12 +63,46 @@ func (m *AdsReadWriteRequest) CommandId() CommandId {
 	return CommandId_ADS_READ_WRITE
 }
 
+func (m *AdsReadWriteRequest) GetCommandId() CommandId {
+	return CommandId_ADS_READ_WRITE
+}
+
 func (m *AdsReadWriteRequest) Response() bool {
 	return bool(false)
 }
 
-func (m *AdsReadWriteRequest) InitializeParent(parent *AdsData) {
+func (m *AdsReadWriteRequest) GetResponse() bool {
+	return bool(false)
 }
+
+func (m *AdsReadWriteRequest) InitializeParent(parent *AdsData) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *AdsReadWriteRequest) GetIndexGroup() uint32 {
+	return m.IndexGroup
+}
+
+func (m *AdsReadWriteRequest) GetIndexOffset() uint32 {
+	return m.IndexOffset
+}
+
+func (m *AdsReadWriteRequest) GetReadLength() uint32 {
+	return m.ReadLength
+}
+
+func (m *AdsReadWriteRequest) GetItems() []*AdsMultiRequestItem {
+	return m.Items
+}
+
+func (m *AdsReadWriteRequest) GetData() []byte {
+	return m.Data
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewAdsReadWriteRequest(indexGroup uint32, indexOffset uint32, readLength uint32, items []*AdsMultiRequestItem, data []byte) *AdsData {
 	child := &AdsReadWriteRequest{
@@ -177,7 +224,7 @@ func AdsReadWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, 
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing 'items' field")
 			}
-			items[curItem] = _item
+			items[curItem] = CastAdsMultiRequestItem(_item)
 		}
 	}
 	if closeErr := readBuffer.CloseContext("items", utils.WithRenderAsList(true)); closeErr != nil {

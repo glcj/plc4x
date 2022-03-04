@@ -35,8 +35,13 @@ type CipRRData struct {
 
 // The corresponding interface
 type ICipRRData interface {
+	// GetExchange returns Exchange
+	GetExchange() *CipExchange
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -47,12 +52,27 @@ func (m *CipRRData) Command() uint16 {
 	return 0x006F
 }
 
-func (m *CipRRData) InitializeParent(parent *EipPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
-	m.SessionHandle = sessionHandle
-	m.Status = status
-	m.SenderContext = senderContext
-	m.Options = options
+func (m *CipRRData) GetCommand() uint16 {
+	return 0x006F
 }
+
+func (m *CipRRData) InitializeParent(parent *EipPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
+	m.EipPacket.SessionHandle = sessionHandle
+	m.EipPacket.Status = status
+	m.EipPacket.SenderContext = senderContext
+	m.EipPacket.Options = options
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *CipRRData) GetExchange() *CipExchange {
+	return m.Exchange
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewCipRRData(exchange *CipExchange, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *EipPacket {
 	child := &CipRRData{
@@ -146,7 +166,7 @@ func CipRRDataParse(readBuffer utils.ReadBuffer, len uint16) (*EipPacket, error)
 	if pullErr := readBuffer.PullContext("exchange"); pullErr != nil {
 		return nil, pullErr
 	}
-	_exchange, _exchangeErr := CipExchangeParse(readBuffer, uint16(len)-uint16(uint16(6)))
+	_exchange, _exchangeErr := CipExchangeParse(readBuffer, uint16(uint16(len)-uint16(uint16(6))))
 	if _exchangeErr != nil {
 		return nil, errors.Wrap(_exchangeErr, "Error parsing 'exchange' field")
 	}

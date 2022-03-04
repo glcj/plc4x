@@ -24,8 +24,6 @@ import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.opcua.config.OpcuaConfiguration;
 import org.apache.plc4x.java.opcua.readwrite.*;
-import org.apache.plc4x.java.opcua.readwrite.io.ExtensionObjectIO;
-import org.apache.plc4x.java.opcua.readwrite.io.OpcuaAPUIO;
 import org.apache.plc4x.java.spi.ConversationContext;
 import org.apache.plc4x.java.spi.context.DriverContext;
 import org.apache.plc4x.java.spi.generation.*;
@@ -43,10 +41,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
@@ -56,7 +50,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SecureChannel {
@@ -86,7 +79,7 @@ public class SecureChannel {
     protected static final ExtensionObject NULL_EXTENSION_OBJECT = new ExtensionObject(
         NULL_EXPANDED_NODEID,
         new ExtensionObjectEncodingMask(false, false, false),
-        new NullExtension());               // Body
+        new NullExtension(), false);               // Body
 
     public static final Pattern INET_ADDRESS_PATTERN = Pattern.compile("(.(?<transportCode>tcp))?://" +
         "(?<transportHost>[\\w.-]+)(:" +
@@ -193,9 +186,9 @@ public class SecureChannel {
         final OpcuaAPU apu;
         try {
             if (this.isEncrypted) {
-                apu = OpcuaAPUIO.staticParse(encryptionHandler.encodeMessage(messageRequest, buffer.getData()), false);
+                apu = OpcuaAPU.staticParse(encryptionHandler.encodeMessage(messageRequest, buffer.getData()), false);
             } else {
-                apu = new OpcuaAPU(messageRequest);
+                apu = new OpcuaAPU(messageRequest, false);
             }
         } catch (ParseException e) {
             throw new PlcRuntimeException("Unable to encrypt message before sending");
@@ -208,8 +201,10 @@ public class SecureChannel {
                     .expectResponse(OpcuaAPU.class, REQUEST_TIMEOUT)
                     .onTimeout(onTimeout)
                     .onError(error)
-                    .unwrap(apuMessage -> encryptionHandler.decodeMessage(apuMessage))
-                    .unwrap(p -> (OpcuaMessageResponse) p.getMessage())
+                    .unwrap(encryptionHandler::decodeMessage)
+                    .unwrap(OpcuaAPU::getMessage)
+                    .check(OpcuaMessageResponse.class::isInstance)
+                    .unwrap(OpcuaMessageResponse.class::cast)
                     .check(p -> {
                         if (p.getRequestId() == transactionId) {
                             try {
@@ -256,7 +251,7 @@ public class SecureChannel {
             DEFAULT_MAX_CHUNK_COUNT,
             this.endpoint);
 
-        Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(hello))
+        Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(hello, false))
             .expectResponse(OpcuaAPU.class, REQUEST_TIMEOUT)
             .check(p -> p.getMessage() instanceof OpcuaAcknowledgeResponse)
             .unwrap(p -> (OpcuaAcknowledgeResponse) p.getMessage())
@@ -304,7 +299,8 @@ public class SecureChannel {
         ExtensionObject extObject = new ExtensionObject(
             expandedNodeId,
             null,
-            openSecureChannelRequest);
+            openSecureChannelRequest,
+            false);
 
         try {
             WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN);
@@ -322,9 +318,9 @@ public class SecureChannel {
             final OpcuaAPU apu;
 
             if (this.isEncrypted) {
-                apu = OpcuaAPUIO.staticParse(encryptionHandler.encodeMessage(openRequest, buffer.getData()), false);
+                apu = OpcuaAPU.staticParse(encryptionHandler.encodeMessage(openRequest, buffer.getData()), false);
             } else {
-                apu = new OpcuaAPU(openRequest);
+                apu = new OpcuaAPU(openRequest, false);
             }
 
             Consumer<Integer> requestConsumer = t -> context.sendRequest(apu)
@@ -336,7 +332,7 @@ public class SecureChannel {
                 .handle(opcuaOpenResponse -> {
                     try {
                         ReadBuffer readBuffer = new ReadBufferByteBased(opcuaOpenResponse.getMessage(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN);
-                        ExtensionObject message = ExtensionObjectIO.staticParse(readBuffer, false);
+                        ExtensionObject message = ExtensionObject.staticParse(readBuffer, false);
                         //Store the initial sequence number from the server. there's no requirement for the server and client to use the same starting number.
                         senderSequenceNumber.set(opcuaOpenResponse.getSequenceNumber());
 
@@ -414,7 +410,8 @@ public class SecureChannel {
         ExtensionObject extObject = new ExtensionObject(
             expandedNodeId,
             null,
-            createSessionRequest);
+            createSessionRequest,
+            false);
 
         try {
             WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN);
@@ -422,7 +419,7 @@ public class SecureChannel {
 
             Consumer<byte[]> consumer = opcuaResponse -> {
                 try {
-                    ExtensionObject message = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
+                    ExtensionObject message = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
                     if (message.getBody() instanceof ServiceFault) {
                         ServiceFault fault = (ServiceFault) message.getBody();
                         LOGGER.error("Failed to connect to opc ua server for the following reason:- {}, {}", ((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode(), OpcuaStatusCode.enumForValue(((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode()));
@@ -431,7 +428,7 @@ public class SecureChannel {
                         try {
                             CreateSessionResponse responseMessage;
 
-                            ExtensionObjectDefinition unknownExtensionObject = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false).getBody();
+                            ExtensionObjectDefinition unknownExtensionObject = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false).getBody();
                             if (unknownExtensionObject instanceof CreateSessionResponse) {
                                 responseMessage = (CreateSessionResponse) unknownExtensionObject;
 
@@ -528,7 +525,8 @@ public class SecureChannel {
         ExtensionObject extObject = new ExtensionObject(
             expandedNodeId,
             null,
-            activateSessionRequest);
+            activateSessionRequest,
+            false);
 
         try {
             WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN);
@@ -536,7 +534,7 @@ public class SecureChannel {
 
             Consumer<byte[]> consumer = opcuaResponse -> {
                 try {
-                    ExtensionObject message = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
+                    ExtensionObject message = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
                     if (message.getBody() instanceof ServiceFault) {
                         ServiceFault fault = (ServiceFault) message.getBody();
                         LOGGER.error("Failed to connect to opc ua server for the following reason:- {}, {}", ((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode(), OpcuaStatusCode.enumForValue(((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode()));
@@ -545,7 +543,7 @@ public class SecureChannel {
                         try {
                             ActivateSessionResponse responseMessage;
 
-                            ExtensionObjectDefinition unknownExtensionObject = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false).getBody();
+                            ExtensionObjectDefinition unknownExtensionObject = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false).getBody();
                             if (unknownExtensionObject instanceof ActivateSessionResponse) {
                                 responseMessage = (ActivateSessionResponse) unknownExtensionObject;
 
@@ -619,7 +617,8 @@ public class SecureChannel {
         ExtensionObject extObject = new ExtensionObject(
             expandedNodeId,
             null,
-            closeSessionRequest);
+            closeSessionRequest,
+            false);
 
         try {
             WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN);
@@ -627,7 +626,7 @@ public class SecureChannel {
 
             Consumer<byte[]> consumer = opcuaResponse -> {
                 try {
-                    ExtensionObject message = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
+                    ExtensionObject message = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
                     if (message.getBody() instanceof ServiceFault) {
                         ServiceFault fault = (ServiceFault) message.getBody();
                         LOGGER.error("Failed to connect to opc ua server for the following reason:- {}, {}", ((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode(), OpcuaStatusCode.enumForValue(((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode()));
@@ -636,7 +635,7 @@ public class SecureChannel {
                         try {
                             CloseSessionResponse responseMessage;
 
-                            ExtensionObjectDefinition unknownExtensionObject = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false).getBody();
+                            ExtensionObjectDefinition unknownExtensionObject = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaResponse, org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false).getBody();
                             if (unknownExtensionObject instanceof CloseSessionResponse) {
                                 responseMessage = (CloseSessionResponse) unknownExtensionObject;
 
@@ -702,10 +701,11 @@ public class SecureChannel {
             new ExtensionObject(
                 expandedNodeId,
                 null,
-                closeSecureChannelRequest));
+                closeSecureChannelRequest,
+                false));
 
         Consumer<Integer> requestConsumer = t -> {
-            context.sendRequest(new OpcuaAPU(closeRequest))
+            context.sendRequest(new OpcuaAPU(closeRequest, false))
                 .expectResponse(OpcuaAPU.class, REQUEST_TIMEOUT)
                 .check(p -> p.getMessage() instanceof OpcuaMessageResponse)
                 .unwrap(p -> (OpcuaMessageResponse) p.getMessage())
@@ -731,7 +731,7 @@ public class SecureChannel {
             DEFAULT_MAX_CHUNK_COUNT,
             this.endpoint);
 
-        Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(hello))
+        Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(hello, false))
             .expectResponse(OpcuaAPU.class, REQUEST_TIMEOUT)
             .check(p -> p.getMessage() instanceof OpcuaAcknowledgeResponse)
             .unwrap(p -> (OpcuaAcknowledgeResponse) p.getMessage())
@@ -774,7 +774,8 @@ public class SecureChannel {
             new ExtensionObject(
                 expandedNodeId,
                 null,
-                openSecureChannelRequest).serialize(buffer);
+                openSecureChannelRequest,
+                false).serialize(buffer);
 
             OpcuaOpenRequest openRequest = new OpcuaOpenRequest(FINAL_CHUNK,
                 0,
@@ -785,14 +786,14 @@ public class SecureChannel {
                 transactionId,
                 buffer.getData());
 
-            Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(openRequest))
+            Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(openRequest, false))
                 .expectResponse(OpcuaAPU.class, REQUEST_TIMEOUT)
                 .check(p -> p.getMessage() instanceof OpcuaOpenResponse)
                 .unwrap(p -> (OpcuaOpenResponse) p.getMessage())
                 .check(p -> p.getRequestId() == transactionId)
                 .handle(opcuaOpenResponse -> {
                     try {
-                        ExtensionObject message = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaOpenResponse.getMessage(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
+                        ExtensionObject message = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaOpenResponse.getMessage(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
                         if (message.getBody() instanceof ServiceFault) {
                             ServiceFault fault = (ServiceFault) message.getBody();
                             LOGGER.error("Failed to connect to opc ua server for the following reason:- {}, {}", ((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode(), OpcuaStatusCode.enumForValue(((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode()));
@@ -856,7 +857,8 @@ public class SecureChannel {
             new ExtensionObject(
                 expandedNodeId,
                 null,
-                endpointsRequest).serialize(buffer);
+                endpointsRequest,
+                false).serialize(buffer);
 
             OpcuaMessageRequest messageRequest = new OpcuaMessageRequest(FINAL_CHUNK,
                 channelId.get(),
@@ -865,14 +867,14 @@ public class SecureChannel {
                 nextRequestId,
                 buffer.getData());
 
-            Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(messageRequest))
+            Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(messageRequest, false))
                 .expectResponse(OpcuaAPU.class, REQUEST_TIMEOUT)
                 .check(p -> p.getMessage() instanceof OpcuaMessageResponse)
                 .unwrap(p -> (OpcuaMessageResponse) p.getMessage())
                 .check(p -> p.getRequestId() == transactionId)
                 .handle(opcuaMessageResponse -> {
                     try {
-                        ExtensionObject message = ExtensionObjectIO.staticParse(new ReadBufferByteBased(opcuaMessageResponse.getMessage(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
+                        ExtensionObject message = ExtensionObject.staticParse(new ReadBufferByteBased(opcuaMessageResponse.getMessage(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN), false);
                         if (message.getBody() instanceof ServiceFault) {
                             ServiceFault fault = (ServiceFault) message.getBody();
                             LOGGER.error("Failed to connect to opc ua server for the following reason:- {}, {}", ((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode(), OpcuaStatusCode.enumForValue(((ResponseHeader) fault.getResponseHeader()).getServiceResult().getStatusCode()));
@@ -937,9 +939,10 @@ public class SecureChannel {
             new ExtensionObject(
                 expandedNodeId,
                 null,
-                closeSecureChannelRequest));
+                closeSecureChannelRequest,
+                false));
 
-        Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(closeRequest))
+        Consumer<Integer> requestConsumer = t -> context.sendRequest(new OpcuaAPU(closeRequest, false))
             .expectResponse(OpcuaAPU.class, REQUEST_TIMEOUT)
             .check(p -> p.getMessage() instanceof OpcuaMessageResponse)
             .unwrap(p -> (OpcuaMessageResponse) p.getMessage())
@@ -1001,7 +1004,7 @@ public class SecureChannel {
                     ExtensionObject extObject = new ExtensionObject(
                         expandedNodeId,
                         null,
-                        openSecureChannelRequest);
+                        openSecureChannelRequest, false);
 
                     try {
                         WriteBufferByteBased buffer = new WriteBufferByteBased(extObject.getLengthInBytes(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN);
@@ -1019,9 +1022,9 @@ public class SecureChannel {
                         final OpcuaAPU apu;
 
                         if (this.isEncrypted) {
-                            apu = OpcuaAPUIO.staticParse(encryptionHandler.encodeMessage(openRequest, buffer.getData()), false);
+                            apu = OpcuaAPU.staticParse(encryptionHandler.encodeMessage(openRequest, buffer.getData()), false);
                         } else {
-                            apu = new OpcuaAPU(openRequest);
+                            apu = new OpcuaAPU(openRequest, false);
                         }
 
                         Consumer<Integer> requestConsumer = t -> context.sendRequest(apu)
@@ -1033,7 +1036,7 @@ public class SecureChannel {
                             .handle(opcuaOpenResponse -> {
                                 try {
                                     ReadBufferByteBased readBuffer = new ReadBufferByteBased(opcuaOpenResponse.getMessage(), org.apache.plc4x.java.spi.generation.ByteOrder.LITTLE_ENDIAN);
-                                    ExtensionObject message = ExtensionObjectIO.staticParse(readBuffer, false);
+                                    ExtensionObject message = ExtensionObject.staticParse(readBuffer, false);
 
                                     if (message.getBody() instanceof ServiceFault) {
                                         ServiceFault fault = (ServiceFault) message.getBody();
@@ -1102,6 +1105,7 @@ public class SecureChannel {
     /**
      * Selects the endpoint to use based on the connection string provided.
      * If Discovery is disabled it will use the host address return from the server
+     *
      * @param sessionResponse - The CreateSessionResponse message returned by the server
      * @throws PlcRuntimeException - If no endpoint with a compatible policy is found raise and error.
      */
@@ -1116,8 +1120,8 @@ public class SecureChannel {
         //Determine if the requested security policy is included in the endpoint
         filteredEndpoints.forEach(endpoint -> hasIdentity(
             endpoint.getUserIdentityTokens().stream()
-            .map(p -> (UserTokenPolicy) p)
-            .toArray(UserTokenPolicy[]::new)
+                .map(p -> (UserTokenPolicy) p)
+                .toArray(UserTokenPolicy[]::new)
         ));
 
         if (this.policyId == null) {
@@ -1131,6 +1135,7 @@ public class SecureChannel {
     /**
      * Checks each component of the return endpoint description against the connection string.
      * If all are correct then return true.
+     *
      * @param endpoint - EndpointDescription returned from server
      * @return true if this endpoint matches our configuration
      * @throws PlcRuntimeException - If the returned endpoint string doesn't match the format expected
@@ -1165,6 +1170,7 @@ public class SecureChannel {
     /**
      * Confirms that a policy that matches the connection string is available from
      * the returned endpoints. It sets the policyId and tokenType for the policy to use.
+     *
      * @param policies - A list of policies returned with the endpoint description.
      */
     private void hasIdentity(UserTokenPolicy[] policies) {
@@ -1202,10 +1208,10 @@ public class SecureChannel {
                 return new ExtensionObject(
                     extExpandedNodeId,
                     new ExtensionObjectEncodingMask(false, false, true),
-                    new UserIdentityToken(new PascalString(securityPolicy), anonymousIdentityToken));
+                    new UserIdentityToken(new PascalString(securityPolicy), anonymousIdentityToken), false);
             case userTokenTypeUserName:
                 //Encrypt the password using the server nonce and server public key
-                byte[] passwordBytes = this.password.getBytes();
+                byte[] passwordBytes = this.password == null ? new byte[0] : this.password.getBytes();
                 ByteBuffer encodeableBuffer = ByteBuffer.allocate(4 + passwordBytes.length + this.senderNonce.length);
                 encodeableBuffer.order(ByteOrder.LITTLE_ENDIAN);
                 encodeableBuffer.putInt(passwordBytes.length + this.senderNonce.length);
@@ -1231,7 +1237,7 @@ public class SecureChannel {
                 return new ExtensionObject(
                     extExpandedNodeId,
                     new ExtensionObjectEncodingMask(false, false, true),
-                    new UserIdentityToken(new PascalString(securityPolicy), userNameIdentityToken));
+                    new UserIdentityToken(new PascalString(securityPolicy), userNameIdentityToken), false);
         }
         return null;
     }

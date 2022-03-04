@@ -27,8 +27,11 @@ import org.slf4j.LoggerFactory;
 
 public class FieldReaderDiscriminator<T> implements FieldCommons {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FieldReaderDiscriminator.class);
+
     public T readDiscriminatorField(String logicalName, DataReader<T> dataReader, WithReaderArgs... readerArgs) throws ParseException {
-        return switchParseByteOrderIfNecessary(() -> dataReader.read(logicalName, readerArgs), dataReader, extractByteOder(readerArgs).orElse(null));
+        LOGGER.debug("reading field {}", logicalName);
+        return switchParseByteOrderIfNecessary(() -> dataReader.read(logicalName, readerArgs), dataReader, extractByteOrder(readerArgs).orElse(null));
     }
 
 }

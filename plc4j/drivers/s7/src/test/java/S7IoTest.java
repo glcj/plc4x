@@ -18,7 +18,6 @@
  */
 
 import org.apache.plc4x.java.s7.readwrite.*;
-import org.apache.plc4x.java.s7.readwrite.io.TPKTPacketIO;
 import org.apache.plc4x.java.spi.generation.*;
 import org.apache.plc4x.java.spi.utils.ascii.AsciiBox;
 import org.junit.jupiter.api.Test;
@@ -332,7 +331,7 @@ public class S7IoTest {
 
         TPKTPacket tpktPacket = new TPKTPacket(
             new COTPPacketData(
-                Collections.singletonList(new COTPParameterTpduSize(COTPTpduSize.SIZE_4096)),
+                Collections.singletonList(new COTPParameterTpduSize(COTPTpduSize.SIZE_4096,(short)3)),
                 new S7MessageResponseData(
                     11,
                     new S7ParameterReadVarResponse((short) 1),
@@ -343,13 +342,14 @@ public class S7IoTest {
                                 DataTransportSize.BIT,
                                 new byte[]{0x1}
                             )
-                        )
+                        ),new S7ParameterReadVarResponse((short) 1)
                     ),
                     (short) 0,
                     (short) 0
                 ),
                 false,
-                (short) 13
+                (short) 13,
+                26
             )
         );
         // To string
@@ -381,7 +381,7 @@ public class S7IoTest {
             String gotXml = writeBufferXmlBased.getXmlString();
             assertEquals(wantXml, gotXml);
             ReadBufferXmlBased readBufferXmlBased = new ReadBufferXmlBased(new ByteArrayInputStream(gotXml.getBytes()));
-            TPKTPacket reReadTpktPacket = TPKTPacketIO.staticParse(readBufferXmlBased);
+            TPKTPacket reReadTpktPacket = TPKTPacket.staticParse(readBufferXmlBased);
             assertThat(reReadTpktPacket).usingRecursiveComparison().isEqualTo(tpktPacket);
         }
         // json
@@ -391,7 +391,7 @@ public class S7IoTest {
             String gotJson = writeBufferJsonBased.getJsonString();
             JSONAssert.assertEquals(wantJson, gotJson, JSONCompareMode.LENIENT);
             ReadBufferJsonBased readBufferXmlBased = new ReadBufferJsonBased(new ByteArrayInputStream(gotJson.getBytes()));
-            TPKTPacket reReadTpktPacket = TPKTPacketIO.staticParse(readBufferXmlBased);
+            TPKTPacket reReadTpktPacket = TPKTPacket.staticParse(readBufferXmlBased);
             assertThat(reReadTpktPacket).usingRecursiveComparison().isEqualTo(tpktPacket);
         }
     }

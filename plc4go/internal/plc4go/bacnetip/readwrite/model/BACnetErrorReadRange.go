@@ -32,8 +32,11 @@ type BACnetErrorReadRange struct {
 
 // The corresponding interface
 type IBACnetErrorReadRange interface {
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -44,12 +47,26 @@ func (m *BACnetErrorReadRange) ServiceChoice() uint8 {
 	return 0x1A
 }
 
-func (m *BACnetErrorReadRange) InitializeParent(parent *BACnetError) {
+func (m *BACnetErrorReadRange) GetServiceChoice() uint8 {
+	return 0x1A
 }
 
-func NewBACnetErrorReadRange() *BACnetError {
+func (m *BACnetErrorReadRange) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
+	m.BACnetError.ErrorClass = errorClass
+	m.BACnetError.ErrorCode = errorCode
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+
+func NewBACnetErrorReadRange(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
 	child := &BACnetErrorReadRange{
-		BACnetError: NewBACnetError(),
+		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
 	child.Child = child
 	return child.BACnetError

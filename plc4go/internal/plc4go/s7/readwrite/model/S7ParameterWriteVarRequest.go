@@ -34,8 +34,13 @@ type S7ParameterWriteVarRequest struct {
 
 // The corresponding interface
 type IS7ParameterWriteVarRequest interface {
+	// GetItems returns Items
+	GetItems() []*S7VarRequestParameterItem
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -46,12 +51,30 @@ func (m *S7ParameterWriteVarRequest) ParameterType() uint8 {
 	return 0x05
 }
 
+func (m *S7ParameterWriteVarRequest) GetParameterType() uint8 {
+	return 0x05
+}
+
 func (m *S7ParameterWriteVarRequest) MessageType() uint8 {
 	return 0x01
 }
 
-func (m *S7ParameterWriteVarRequest) InitializeParent(parent *S7Parameter) {
+func (m *S7ParameterWriteVarRequest) GetMessageType() uint8 {
+	return 0x01
 }
+
+func (m *S7ParameterWriteVarRequest) InitializeParent(parent *S7Parameter) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *S7ParameterWriteVarRequest) GetItems() []*S7VarRequestParameterItem {
+	return m.Items
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewS7ParameterWriteVarRequest(items []*S7VarRequestParameterItem) *S7Parameter {
 	child := &S7ParameterWriteVarRequest{
@@ -134,7 +157,7 @@ func S7ParameterWriteVarRequestParse(readBuffer utils.ReadBuffer, messageType ui
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing 'items' field")
 			}
-			items[curItem] = _item
+			items[curItem] = CastS7VarRequestParameterItem(_item)
 		}
 	}
 	if closeErr := readBuffer.CloseContext("items", utils.WithRenderAsList(true)); closeErr != nil {

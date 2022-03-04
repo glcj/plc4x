@@ -36,8 +36,17 @@ type ComObjectTableRealisationType2 struct {
 
 // The corresponding interface
 type IComObjectTableRealisationType2 interface {
+	// GetNumEntries returns NumEntries
+	GetNumEntries() uint8
+	// GetRamFlagsTablePointer returns RamFlagsTablePointer
+	GetRamFlagsTablePointer() uint8
+	// GetComObjectDescriptors returns ComObjectDescriptors
+	GetComObjectDescriptors() []*GroupObjectDescriptorRealisationType2
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -48,8 +57,30 @@ func (m *ComObjectTableRealisationType2) FirmwareType() FirmwareType {
 	return FirmwareType_SYSTEM_2
 }
 
-func (m *ComObjectTableRealisationType2) InitializeParent(parent *ComObjectTable) {
+func (m *ComObjectTableRealisationType2) GetFirmwareType() FirmwareType {
+	return FirmwareType_SYSTEM_2
 }
+
+func (m *ComObjectTableRealisationType2) InitializeParent(parent *ComObjectTable) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *ComObjectTableRealisationType2) GetNumEntries() uint8 {
+	return m.NumEntries
+}
+
+func (m *ComObjectTableRealisationType2) GetRamFlagsTablePointer() uint8 {
+	return m.RamFlagsTablePointer
+}
+
+func (m *ComObjectTableRealisationType2) GetComObjectDescriptors() []*GroupObjectDescriptorRealisationType2 {
+	return m.ComObjectDescriptors
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewComObjectTableRealisationType2(numEntries uint8, ramFlagsTablePointer uint8, comObjectDescriptors []*GroupObjectDescriptorRealisationType2) *ComObjectTable {
 	child := &ComObjectTableRealisationType2{
@@ -144,7 +175,7 @@ func ComObjectTableRealisationType2Parse(readBuffer utils.ReadBuffer, firmwareTy
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing 'comObjectDescriptors' field")
 			}
-			comObjectDescriptors[curItem] = _item
+			comObjectDescriptors[curItem] = CastGroupObjectDescriptorRealisationType2(_item)
 		}
 	}
 	if closeErr := readBuffer.CloseContext("comObjectDescriptors", utils.WithRenderAsList(true)); closeErr != nil {

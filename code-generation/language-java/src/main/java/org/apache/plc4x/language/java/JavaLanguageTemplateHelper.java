@@ -366,6 +366,7 @@ public class JavaLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHe
             StringBuilder paramsString = new StringBuilder();
             ComplexTypeReference complexTypeReference = typeReference.asComplexTypeReference().orElseThrow(IllegalStateException::new);
             TypeDefinition typeDefinition = getTypeDefinitionForTypeReference(typeReference);
+            Objects.requireNonNull(typeDefinition, "No type found for " + typeReference);
             String parserCallString = getLanguageTypeNameForTypeReference(typeReference);
             if (typeDefinition.isDiscriminatedChildTypeDefinition()) {
                 parserCallString = "(" + getLanguageTypeNameForTypeReference(typeReference) + ") " + typeDefinition.getParentType().getName();
@@ -381,7 +382,7 @@ public class JavaLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHe
                     .append(toParseExpression(null, argumentType, paramTerm, null))
                     .append(")");
             }
-            return "new DataReaderComplexDefault<>(() -> " + parserCallString + "IO.staticParse(readBuffer" + paramsString + "), readBuffer)";
+            return "new DataReaderComplexDefault<>(() -> " + parserCallString + ".staticParse(readBuffer" + paramsString + "), readBuffer)";
         } else {
             throw new IllegalStateException("What is this type? " + typeReference);
         }
@@ -741,27 +742,26 @@ public class JavaLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHe
             case ">":
             case "<":
             case "==":
-            case "!=": {
+            case "!=":
                 if ((resultType != getAnyTypeReference()) && !resultType.isBooleanTypeReference()) {
                     throw new IllegalArgumentException("'A" + operation + "B' expression requires boolean result type");
                 }
                 // TODO: Try to infer the types of the arguments in this case
                 return tracer + "(" + toExpression(field, ANY_TYPE_REFERENCE, a, variableExpressionGenerator) + ") " + operation + " (" + toExpression(field, ANY_TYPE_REFERENCE, b, variableExpressionGenerator) + ")";
-            }
             case "&&":
-            case "||": {
+            case "||":
                 if ((resultType != getAnyTypeReference()) && !resultType.isBooleanTypeReference()) {
                     throw new IllegalArgumentException("'A" + operation + "B' expression requires boolean result type");
                 }
                 return tracer + "(" + toExpression(field, resultType, a, variableExpressionGenerator) + ") " + operation + " (" + toExpression(field, resultType, b, variableExpressionGenerator) + ")";
-            }
             case "&":
-            case "|": {
-                throw new IllegalArgumentException("Implement this some day ...");
-            }
-            default: {
+            case "|":
+                if ((resultType != getAnyTypeReference()) && !resultType.isIntegerTypeReference() && !resultType.isByteTypeReference()) {
+                    throw new IllegalArgumentException("'A" + operation + "B' expression requires boolean result type");
+                }
+                return tracer + "(" + toExpression(field, resultType, a, variableExpressionGenerator) + ") " + operation + " (" + toExpression(field, resultType, b, variableExpressionGenerator) + ")";
+            default:
                 throw new IllegalArgumentException("Unsupported ternary operation type " + operation);
-            }
         }
     }
 

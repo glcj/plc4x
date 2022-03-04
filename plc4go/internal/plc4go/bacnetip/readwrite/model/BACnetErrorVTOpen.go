@@ -32,8 +32,11 @@ type BACnetErrorVTOpen struct {
 
 // The corresponding interface
 type IBACnetErrorVTOpen interface {
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -44,12 +47,26 @@ func (m *BACnetErrorVTOpen) ServiceChoice() uint8 {
 	return 0x15
 }
 
-func (m *BACnetErrorVTOpen) InitializeParent(parent *BACnetError) {
+func (m *BACnetErrorVTOpen) GetServiceChoice() uint8 {
+	return 0x15
 }
 
-func NewBACnetErrorVTOpen() *BACnetError {
+func (m *BACnetErrorVTOpen) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
+	m.BACnetError.ErrorClass = errorClass
+	m.BACnetError.ErrorCode = errorCode
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+
+func NewBACnetErrorVTOpen(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
 	child := &BACnetErrorVTOpen{
-		BACnetError: NewBACnetError(),
+		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
 	child.Child = child
 	return child.BACnetError

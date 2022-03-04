@@ -39,8 +39,13 @@ type MultipleServiceRequest struct {
 
 // The corresponding interface
 type IMultipleServiceRequest interface {
+	// GetData returns Data
+	GetData() *Services
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -51,8 +56,22 @@ func (m *MultipleServiceRequest) Service() uint8 {
 	return 0x0A
 }
 
-func (m *MultipleServiceRequest) InitializeParent(parent *CipService) {
+func (m *MultipleServiceRequest) GetService() uint8 {
+	return 0x0A
 }
+
+func (m *MultipleServiceRequest) InitializeParent(parent *CipService) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *MultipleServiceRequest) GetData() *Services {
+	return m.Data
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewMultipleServiceRequest(data *Services) *CipService {
 	child := &MultipleServiceRequest{
@@ -136,7 +155,7 @@ func MultipleServiceRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16)
 	if pullErr := readBuffer.PullContext("data"); pullErr != nil {
 		return nil, pullErr
 	}
-	_data, _dataErr := ServicesParse(readBuffer, uint16(serviceLen)-uint16(uint16(6)))
+	_data, _dataErr := ServicesParse(readBuffer, uint16(uint16(serviceLen)-uint16(uint16(6))))
 	if _dataErr != nil {
 		return nil, errors.Wrap(_dataErr, "Error parsing 'data' field")
 	}

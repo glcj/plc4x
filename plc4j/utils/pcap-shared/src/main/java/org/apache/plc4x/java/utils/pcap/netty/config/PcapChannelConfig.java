@@ -23,7 +23,9 @@ import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.DefaultChannelConfig;
 import org.apache.plc4x.java.utils.pcap.netty.handlers.PacketHandler;
+import org.pcap4j.core.Pcaps;
 import org.pcap4j.packet.Packet;
+import org.pcap4j.util.MacAddress;
 
 import java.net.SocketAddress;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class PcapChannelConfig extends DefaultChannelConfig implements ChannelCo
     private int protocolId = ALL_PROTOCOLS;
     private int port = ALL_PORTS;
     private PacketHandler packetHandler = Packet::getRawData;
+    private boolean resolveMacAddress = false;
 
     public PcapChannelConfig(Channel channel) {
         super(channel);
@@ -48,6 +51,7 @@ public class PcapChannelConfig extends DefaultChannelConfig implements ChannelCo
         clone.protocolId = this.protocolId;
         clone.port = this.port;
         clone.packetHandler = this.packetHandler;
+        clone.resolveMacAddress = this.resolveMacAddress;
         return clone;
     }
 
@@ -55,7 +59,7 @@ public class PcapChannelConfig extends DefaultChannelConfig implements ChannelCo
     public Map<ChannelOption<?>, Object> getOptions() {
         return getOptions(super.getOptions(),
             PcapChannelOption.SUPPORT_VLANS, PcapChannelOption.PORT, PcapChannelOption.PROTOCOL_ID,
-            PcapChannelOption.PACKET_HANDLER);
+            PcapChannelOption.PACKET_HANDLER, PcapChannelOption.RESOLVE_MAC_ADDRESS);
     }
 
     @Override
@@ -81,6 +85,12 @@ public class PcapChannelConfig extends DefaultChannelConfig implements ChannelCo
         } else if (option == PcapChannelOption.PACKET_HANDLER) {
             if (value instanceof PacketHandler) {
                 packetHandler = (PacketHandler) value;
+                return true;
+            }
+            return false;
+        } else if (option == PcapChannelOption.RESOLVE_MAC_ADDRESS) {
+            if (value instanceof Boolean) {
+                resolveMacAddress = (Boolean) value;
                 return true;
             }
             return false;
@@ -117,12 +127,36 @@ public class PcapChannelConfig extends DefaultChannelConfig implements ChannelCo
         return packetHandler;
     }
 
-    public String getFilterString(SocketAddress localAddress, SocketAddress remoteAddress) {
+    public boolean isResolveMacAddress() {
+        return resolveMacAddress;
+    }
+
+    public String getMacBasedFilterString(MacAddress localMacAddress, MacAddress remoteMacAddress) {
+        StringBuilder sb = new StringBuilder();
+        if (getProtocolId() != ALL_PROTOCOLS) {
+            sb.append(" and (ether proto ").append(getProtocolId()).append(")");
+        }
+        // Add a filter for TCP or UDP port.
+        if (getPort() != ALL_PORTS) {
+            sb.append(" and (port ").append(getPort()).append(")");
+        }
+        // Add a filter for source or target address.
+        if(localMacAddress != null) {
+            sb.append(" and (ether dst ").append(Pcaps.toBpfString(localMacAddress)).append(")");
+        }
+        // Add a filter for source or target address.
+        if(remoteMacAddress != null) {
+            sb.append(" and (ether src ").append(Pcaps.toBpfString(remoteMacAddress)).append(")");
+        }
+        return (sb.length() > 0) ? sb.substring(" and ".length()) : "";
+    }
+
+    public String getMacBasedFilterString(SocketAddress localAddress, SocketAddress remoteAddress) {
         StringBuilder sb = new StringBuilder();
         if (isSupportVlans()) {
             final PcapChannelConfig clone = this.clone();
             clone.supportVlans = false;
-            String subFilterString = clone.getFilterString(localAddress, remoteAddress);
+            String subFilterString = clone.getMacBasedFilterString(localAddress, remoteAddress);
             if (subFilterString.isEmpty()) {
                 sb.append(" and (vlan)");
             } else {

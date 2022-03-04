@@ -90,6 +90,8 @@ type ${type.name} struct {
 	<#list type.propertyFields as field>
 	${field.name?cap_first} <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForField(field)}
 	</#list>
+</#if>
+<#if type.virtualFields?has_content>
     <#list type.virtualFields as field>
         ${field.name?cap_first} <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForField(field)}
     </#list>
@@ -105,12 +107,27 @@ type I${type.name} interface {
 	<#list helper.getDiscriminatorTypes() as discriminatorName, discriminatorType>
 	<#-- If the discriminator name matches that of another field, suppress the methods generation -->
 		<#if !type.isNonDiscriminatorField(discriminatorName)>
-	${discriminatorName?cap_first}() ${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[discriminatorName])}
+			<#assign typeRef=helper.getDiscriminatorTypes()[discriminatorName]>
+	// ${discriminatorName?cap_first} returns ${discriminatorName?cap_first}
+	${discriminatorName?cap_first}() <#if typeRef.isComplexTypeReference() && !helper.isEnumTypeReference(typeRef)>I</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)}
 		</#if>
 	</#list>
 </#if>
+<#list type.propertyFields as field>
+    <#assign typeRef=field.asTypedField().orElseThrow().type>
+	// Get${field.name?cap_first} returns ${field.name?cap_first}
+	Get${field.name?cap_first}() <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)}
+</#list>
+<#list type.virtualFields as field>
+    <#assign typeRef=field.asTypedField().orElseThrow().type>
+	// Get${field.name?cap_first} returns ${field.name?cap_first}
+	Get${field.name?cap_first}() <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)}
+</#list>
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 <#if type.isDiscriminatedChildTypeDefinition()>
@@ -122,8 +139,55 @@ type I${type.name} interface {
 	<#list discriminatedChildType.getDiscriminatorMap() as discriminatorName, discriminatorTerm>
 		<#-- If the discriminator name matches that of another field, suppress the methods generation -->
 		<#if !type.isNonDiscriminatorField(discriminatorName)>
-func (m *${type.name}) ${discriminatorName?cap_first}() ${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[discriminatorName])} {
-	return <#if discriminatorTerm??><#if helper.isComplexTypeReference(helper.getDiscriminatorTypes()[discriminatorName])><#if helper.isEnumTypeReference(helper.getDiscriminatorTypes()[discriminatorName])>${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[discriminatorName])}_${helper.toParseExpression(null, helper.getDiscriminatorTypes()[discriminatorName], discriminatorTerm, parserArguments)}<#else>${helper.toParseExpression(null, helper.getDiscriminatorTypes()[discriminatorName], discriminatorTerm, parserArguments)}</#if><#else>${helper.toParseExpression(null, helper.getDiscriminatorTypes()[discriminatorName], discriminatorTerm, parserArguments)}</#if><#else>${helper.getNullValueForTypeReference(helper.getDiscriminatorTypes()[discriminatorName])}</#if>
+            <#assign typeRef=helper.getDiscriminatorTypes()[discriminatorName]>
+func (m *${type.name}) ${discriminatorName?cap_first}() <#if typeRef.isComplexTypeReference() && !helper.isEnumTypeReference(typeRef)>I</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)} {
+			<@compress single_line=true>
+	return
+				<#if discriminatorTerm?? && !helper.isWildcard(discriminatorTerm)>
+					<#if helper.isComplexTypeReference(typeRef)>
+						<#if helper.isEnumTypeReference(typeRef)>
+                            <#assign enumType=helper.getLanguageTypeNameForTypeReference(typeRef)>
+                            <#assign enumTypeWithoutTraces=tracer.removeTraces(enumType)>
+                            <#assign enumTypeTraces=tracer.extractTraces(enumType)>
+                            <#assign enumValue=helper.toParseExpression(null, typeRef, discriminatorTerm, parserArguments)>
+                            <#assign enumValueWithoutTraces=tracer.removeTraces(enumValue)>
+                            <#assign enumValueTraces=tracer.extractTraces(enumValue)>
+                            ${enumTypeTraces}${enumValueTraces}${enumTypeWithoutTraces}_${enumValueWithoutTraces}
+						<#else>
+							${helper.toParseExpression(null, typeRef, discriminatorTerm, parserArguments)}
+						</#if>
+					<#else>
+						${helper.toParseExpression(null, typeRef, discriminatorTerm, parserArguments)}
+					</#if>
+				<#else>
+					${helper.getNullValueForTypeReference(typeRef)}
+				</#if>
+			</@compress>
+}
+
+func (m *${type.name}) Get${discriminatorName?cap_first}() <#if typeRef.isComplexTypeReference() && !helper.isEnumTypeReference(typeRef)>I</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)} {
+			<@compress single_line=true>
+				return
+				<#if discriminatorTerm?? && !helper.isWildcard(discriminatorTerm)>
+					<#if helper.isComplexTypeReference(typeRef)>
+						<#if helper.isEnumTypeReference(typeRef)>
+							<#assign enumType=helper.getLanguageTypeNameForTypeReference(typeRef)>
+							<#assign enumTypeWithoutTraces=tracer.removeTraces(enumType)>
+							<#assign enumTypeTraces=tracer.extractTraces(enumType)>
+							<#assign enumValue=helper.toParseExpression(null, typeRef, discriminatorTerm, parserArguments)>
+							<#assign enumValueWithoutTraces=tracer.removeTraces(enumValue)>
+							<#assign enumValueTraces=tracer.extractTraces(enumValue)>
+							${enumTypeTraces}${enumValueTraces}${enumTypeWithoutTraces}_${enumValueWithoutTraces}
+						<#else>
+							${helper.toParseExpression(null, typeRef, discriminatorTerm, parserArguments)}
+						</#if>
+					<#else>
+						${helper.toParseExpression(null, typeRef, discriminatorTerm, parserArguments)}
+					</#if>
+				<#else>
+					${helper.getNullValueForTypeReference(typeRef)}
+				</#if>
+			</@compress>
 }
 
 		</#if>
@@ -138,7 +202,27 @@ type I${type.name}Parent interface {
 
 type I${type.name}Child interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
-	InitializeParent(parent *${type.name}<#if type.getPropertyFields()?has_content>, <#list type.getPropertyFields() as field>${field.name} <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForField(field)}<#sep>, </#sep></#list></#if><#if type.getPropertyFields()?has_content && type.virtualFields?has_content>, </#if><#list type.virtualFields as field>${field.name} <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForField(field)}<#sep>, </#sep></#list>)
+<@compress single_line=true>
+	InitializeParent(parent *${type.name}
+	<#if type.getPropertyFields()?has_content>, </#if>
+	<#list type.getPropertyFields() as field>
+		${field.name}
+		<#if field.loopType??>[]</#if>
+		<#if helper.needsPointerAccess(field)>*</#if>
+		${helper.getLanguageTypeNameForField(field)}
+		<#sep>, </#sep>
+	</#list>
+	<#if type.virtualFields?has_content>, </#if>
+	<#list type.virtualFields as field>
+		${field.name}
+		<#if field.loopType??>[]</#if>
+		<#if helper.needsPointerAccess(field)>*</#if>
+		${helper.getLanguageTypeNameForField(field)}
+		<#sep>, </#sep>
+		</#list>
+	)
+</@compress>
+
 	GetTypeName() string
 	I${type.name}
 }
@@ -152,25 +236,98 @@ func ${type.name}${discriminatorName?cap_first}(m I${type.name}) ${helper.getLan
 	</#list-->
 <#elseif type.parentType??>
 
-func (m *${type.name}) InitializeParent(parent *${type.parentType.name}<#if type.parentType.asComplexTypeDefinition().orElseThrow().allPropertyFields?has_content>, <#list type.parentPropertyFields as parentField>${parentField.name} <#if parentField.loopType??>[]</#if><#if helper.needsPointerAccess(parentField)>*</#if>${helper.getLanguageTypeNameForField(parentField)}<#sep>, </#sep></#list></#if><#if type.parentType.asComplexTypeDefinition().orElseThrow().allPropertyFields?has_content && type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields?has_content>, </#if><#list type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields as parentField>${parentField.name} <#if parentField.loopType??>[]</#if><#if helper.needsPointerAccess(parentField)>*</#if>${helper.getLanguageTypeNameForField(parentField)}<#sep>, </#sep></#list>) {
+<@compress single_line=true>
+func (m *${type.name}) InitializeParent(parent *${type.parentType.name}
+	<#assign parentTypeHasPropertyFields=type.parentType.asComplexTypeDefinition().orElseThrow().allPropertyFields?has_content>
+	<#if parentTypeHasPropertyFields>, </#if>
+    <#list type.parentPropertyFields as parentField>
+        ${parentField.name}
+        <#if parentField.loopType??>[]</#if>
+        <#if helper.needsPointerAccess(parentField)>*</#if>
+        ${helper.getLanguageTypeNameForField(parentField)}
+        <#sep>, </#sep>
+    </#list>
+    <#assign parentTypeHasVritualFields=type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields?has_content>
+	<#if parentTypeHasVritualFields>, </#if>
+	<#list type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields as parentField>
+		${parentField.name}
+		<#if parentField.loopType??>[]</#if>
+		<#if helper.needsPointerAccess(parentField)>*</#if>
+		${helper.getLanguageTypeNameForField(parentField)}
+		<#sep>, </#sep>
+	</#list>
+	)
+	{
+</@compress>
 	<#list type.parentType.asComplexTypeDefinition().orElseThrow().allPropertyFields as field>
-	m.${field.name?cap_first} = ${field.name}
+	m.${type.parentType.name}.${field.name?cap_first} = ${field.name}
+	</#list>
+	<#list type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields as field>
+	m.${type.parentType.name}.${field.name?cap_first} = ${field.name}
 	</#list>
 }
 </#if>
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+<#list type.propertyFields as field>
+    <#assign typeRef=field.asTypedField().orElseThrow().type>
+func (m *${type.name}) Get${field.name?cap_first}() <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)} {
+	return m.${field.name?cap_first}
+}
 
-func New${type.name}(<#list type.getPropertyFields() as field>${field.name} <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForField(field)}<#sep>, </#sep></#list><#if type.parentType?has_content><#if type.getPropertyFields()?has_content && type.parentPropertyFields?has_content>, </#if><#list type.parentPropertyFields as parentField>${parentField.name} <#if parentField.loopType??>[]</#if><#if helper.needsPointerAccess(parentField)>*</#if>${helper.getLanguageTypeNameForField(parentField)}<#sep>, </#sep></#list></#if>) *<#if type.parentType?has_content>${type.parentType.name}<#else>${type.name}</#if> {
+</#list>
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+<#list type.virtualFields as field>
+    <#assign typeRef=field.asTypedField().orElseThrow().type>
+func (m *${type.name}) Get${field.name?cap_first}() <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)} {
+	// TODO: calculation should happen here instead accessing the stored field
+	return m.${field.name?cap_first}
+}
+
+</#list>
+
+<@compress single_line=true>
+func New${type.name}(
+	<#list type.propertyFields as field>
+		${field.name} <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForField(field)}
+		<#sep>, </#sep>
+	</#list>
+	<#if type.propertyFields?has_content && type.virtualFields?has_content>, </#if>
+	<#list type.virtualFields as field>
+		${field.name} <#if field.loopType??>[]</#if><#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForField(field)}<#sep>, </#sep>
+	</#list>
+	<#if type.parentType?has_content>
+		<#if (type.propertyFields?has_content || type.virtualFields?has_content ) && type.parentPropertyFields?has_content>, </#if>
+		<#list type.parentPropertyFields as parentField>
+			${parentField.name} <#if parentField.loopType??>[]</#if><#if helper.needsPointerAccess(parentField)>*</#if>${helper.getLanguageTypeNameForField(parentField)}
+			<#sep>, </#sep>
+		</#list>
+        <#if (type.propertyFields?has_content || type.virtualFields?has_content || type.parentPropertyFields?has_content) && type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields?has_content>, </#if>
+        <#list type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields as parentField>
+            ${parentField.name} <#if parentField.loopType??>[]</#if><#if helper.needsPointerAccess(parentField)>*</#if>${helper.getLanguageTypeNameForField(parentField)}
+            <#sep>, </#sep>
+        </#list>
+	</#if>
+	) *<#if type.parentType?has_content>${type.parentType.name}<#else>${type.name}</#if> {
+</@compress>
 <#if type.parentType?has_content>
 	child := &${type.name}{
-	<#list type.getPropertyFields() as field>
+	<#list type.propertyFields as field>
 		${field.name?cap_first}: ${field.name},
 	</#list>
-    	${type.parentType.name}: New${type.parentType.name}(<#list type.parentPropertyFields as parentField>${parentField.name}<#sep>, </#list>),
+	<#list type.virtualFields as field>
+		${field.name?cap_first}: ${field.name},
+	</#list>
+    	${type.parentType.name}: New${type.parentType.name}(<#list type.parentPropertyFields as parentField>${parentField.name}<#sep>, </#list><#if type.parentPropertyFields?has_content && type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields?has_content>, </#if><#list type.parentType.asComplexTypeDefinition().orElseThrow().virtualFields as parentField>${parentField.name}<#sep>, </#list>),
 	}
 	child.Child = child
 	return child.${type.parentType.name}
 <#else>
-	return &${type.name}{<#list type.getPropertyFields() as field>${field.name?cap_first}: ${field.name}<#sep>, </#sep></#list>}
+	return &${type.name}{<#list type.propertyFields as field>${field.name?cap_first}: ${field.name}<#sep>, </#sep></#list><#if type.propertyFields?has_content && type.virtualFields?has_content>, </#if><#list type.virtualFields as field>${field.name?cap_first}: ${field.name}<#sep>, </#sep></#list>}
 </#if>
 }
 
@@ -299,7 +456,7 @@ func (m *${type.name}) LengthInBitsConditional(lastItem bool) uint16 {
 					<#assign manualField = field.asManualField().orElseThrow()>
 
 	// Manual Field (${manualField.name})
-	lengthInBits += uint16(${helper.toParseExpression(manualField, helper.intTypeReference, manualField.lengthExpression, parserArguments)} * 8)
+	lengthInBits += uint16(${helper.toParseExpression(manualField, helper.intTypeReference, manualField.lengthExpression, parserArguments)})
 					<#break>
 				<#case "optional">
 					<#assign optionalField = field.asOptionalField().orElseThrow()>
@@ -598,11 +755,42 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 						<#if (!helper.isSimpleTypeReference(arrayField.type)) && helper.requiresVariable(arrayField, "lastItem")>
 			lastItem := curItem == uint16(${helper.toParseExpression(arrayField, helper.intTypeReference, arrayField.loopExpression, parserArguments)} - 1)
 						</#if>
-			_item, _err := <#if helper.isSimpleTypeReference(arrayField.type)>${helper.getReadBufferReadMethodCall("", arrayField.type.asSimpleTypeReference().orElseThrow(), arrayField)}<#else>${arrayField.type.asComplexTypeReference().orElseThrow().name}Parse(readBuffer<#if arrayField.type.asComplexTypeReference().orElseThrow().params.isPresent()>, <#list arrayField.type.asComplexTypeReference().orElseThrow().params.orElseThrow() as parserArgument><#if <#--TODO: here DF1ResponseMessage throws a payloadLength not present: meaning that some feature is not rightfully implemented as the result should be a error not a missing pointer-->type.getPropertyFieldFromThisOrParentByName(parserArgument.name).isPresent() && type.getPropertyFieldFromThisOrParentByName(parserArgument.name).orElseThrow().isOptionalField()>*</#if>${helper.toTypedParseExpression(arrayField, helper.getArgumentType(arrayField.type, parserArgument?index), parserArgument, parserArguments)}<#sep>, </#sep></#list></#if>)</#if>
+                        <@compress single_line=true>
+			_item, _err :=
+                            <#if helper.isSimpleTypeReference(arrayField.type)>
+                                ${helper.getReadBufferReadMethodCall("", arrayField.type.asSimpleTypeReference().orElseThrow(), arrayField)}
+                            <#else>
+                                <#assign complexTypeReference=arrayField.type.asComplexTypeReference().orElseThrow()>
+                                <#assign typeName=complexTypeReference.name>
+                                <#assign typeDefinition=helper.getTypeDefinitionForTypeReference(complexTypeReference)>
+                                <#if typeDefinition.isDiscriminatedChildTypeDefinition()>
+                                <#-- Usually you don't use child directly unless they are parameterized #-->
+                                    <#assign typeName=typeDefinition.parentType.name>
+                                    <#assign typeDefinition=typeDefinition.parentType>
+                                </#if>
+                                <#assign hasRefParams=complexTypeReference.params.isPresent()>
+                                <#assign refParams>
+                                    <#if hasRefParams>
+										,
+                                        <#list complexTypeReference.params.orElseThrow() as parserArgument>
+                                            <#if <#--TODO: here DF1ResponseMessage throws a payloadLength not present: meaning that some feature is not rightfully implemented as the result should be a error not a missing pointer-->type.getPropertyFieldFromThisOrParentByName(parserArgument.name).isPresent() && helper.needsPointerAccess(type.getPropertyFieldFromThisOrParentByName(parserArgument.name).orElseThrow())>*</#if>
+                                            ${helper.toTypedParseExpression(arrayField, helper.getArgumentType(arrayField.type, parserArgument?index), parserArgument, parserArguments)}
+                                            <#sep>, </#sep>
+                                        </#list>
+                                    </#if>
+                                </#assign>
+                                ${typeName}Parse(readBuffer${refParams})
+                            </#if>
+                        </@compress>
+
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing '${arrayField.name}' field")<@emitImport import="github.com/pkg/errors" />
 			}
+                        <#if helper.isSimpleTypeReference(arrayField.type)>
 			${arrayField.name}[curItem] = _item
+                        <#else>
+			${arrayField.name}[curItem] = Cast${arrayField.type.asComplexTypeReference().orElseThrow().name}(_item)
+                        </#if>
 		}
 	}
 				<#-- In all other cases do we have to work with a list, that is later converted to an array -->
@@ -628,14 +816,45 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 					<#-- A terminated array keeps on reading data as long as the termination expression evaluates to false -->
 					<#elseif field.isTerminatedArrayField()>
 	// Terminated array
-	${arrayField.name} := make([]<#if helper.isComplexTypeReference(arrayField.type)>*</#if>${helper.getLanguageTypeNameForField(field)}, 0)
+	${arrayField.name} := make([]<#if helper.needsPointerAccess(arrayField)>*</#if>${helper.getLanguageTypeNameForField(field)}, 0)
 	{
 		for ;!bool(${helper.toParseExpression(arrayField, helper.boolTypeReference, arrayField.loopExpression, parserArguments)}); {
-			_item, _err := <#if helper.isSimpleTypeReference(arrayField.type)>${helper.getReadBufferReadMethodCall("", arrayField.type.asSimpleTypeReference().orElseThrow(), arrayField)}<#else>${arrayField.type.asComplexTypeReference().orElseThrow().name}Parse(readBuffer<#if arrayField.type.asComplexTypeReference().orElseThrow().params.isPresent()>, <#list arrayField.type.asComplexTypeReference().orElseThrow().params.orElseThrow() as parserArgument><#if <#--TODO: here DF1ResponseMessage throws a payloadLength not present: meaning that some feature is not rightfully implemented as the result should be a error not a missing pointer-->type.getPropertyFieldFromThisOrParentByName(parserArgument.name).isPresent() && type.getPropertyFieldFromThisOrParentByName(parserArgument.name).orElseThrow().isOptionalField()>*</#if>${helper.toTypedParseExpression(arrayField, helper.getArgumentType(arrayField.type, parserArgument?index), parserArgument, parserArguments)}<#sep>, </#sep></#list></#if>)</#if>
+						<@compress single_line=true>
+			_item, _err :=
+							<#if helper.isSimpleTypeReference(arrayField.type)>
+								${helper.getReadBufferReadMethodCall("", arrayField.type.asSimpleTypeReference().orElseThrow(), arrayField)}
+							<#else>
+                                <#assign complexTypeReference=arrayField.type.asComplexTypeReference().orElseThrow()>
+                                <#assign typeName=complexTypeReference.name>
+                                <#assign typeDefinition=helper.getTypeDefinitionForTypeReference(complexTypeReference)>
+                                <#if typeDefinition.isDiscriminatedChildTypeDefinition()>
+                                <#-- Usually you don't use child directly unless they are parameterized #-->
+                                    <#assign typeName=typeDefinition.parentType.name>
+                                    <#assign typeDefinition=typeDefinition.parentType>
+                                </#if>
+                                <#assign hasRefParams=complexTypeReference.params.isPresent()>
+                                <#assign refParams>
+                                    <#if hasRefParams>
+										,
+                                        <#list complexTypeReference.params.orElseThrow() as parserArgument>
+                                            <#if <#--TODO: here DF1ResponseMessage throws a payloadLength not present: meaning that some feature is not rightfully implemented as the result should be a error not a missing pointer-->type.getPropertyFieldFromThisOrParentByName(parserArgument.name).isPresent() && helper.needsPointerAccess(type.getPropertyFieldFromThisOrParentByName(parserArgument.name).orElseThrow())>*</#if>
+                                            ${helper.toTypedParseExpression(arrayField, helper.getArgumentType(arrayField.type, parserArgument?index), parserArgument, parserArguments)}
+                                            <#sep>, </#sep>
+                                        </#list>
+                                    </#if>
+                                </#assign>
+                                ${typeName}Parse(readBuffer${refParams})
+							</#if>
+						</@compress>
+
 			if _err != nil {
 				return nil, errors.Wrap(_err, "Error parsing '${arrayField.name}' field")<@emitImport import="github.com/pkg/errors" />
 			}
+						<#if helper.isSimpleTypeReference(arrayField.type)>
 			${arrayField.name} = append(${arrayField.name}, _item)
+						<#else>
+			${arrayField.name} = append(${arrayField.name}, Cast${arrayField.type.asComplexTypeReference().orElseThrow().name}(_item))
+						</#if>
 
 						<#-- After parsing, update the current position, but only if it's needed -->
 							<#if arrayField.loopExpression.contains("curPos")>
@@ -781,14 +1000,18 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 					<#-- A terminated array keeps on reading data as long as the termination expression evaluates to false -->
 					<#elseif field.isTerminatedArrayField()>
 	// Terminated array
-	_${manualArrayField.name}List := make([]${helper.getLanguageTypeNameForField(manualArrayField)}, 0)
-	for ;!((bool) (${helper.toParseExpression(manualArrayField, helper.boolTypeReference, manualArrayField.loopExpression, parserArguments)})); {
-		_${manualArrayField.name}List = append(_${manualArrayField.name}List, ((${helper.getLanguageTypeNameForField(field)}) (${helper.toParseExpression(manualArrayField, manualArrayField.type, manualArrayField.parseExpression, parserArguments)})))
+	_${manualArrayField.name}List := make([]<#if helper.needsPointerAccess(manualArrayField)>*</#if>${helper.getLanguageTypeNameForField(manualArrayField)}, 0)
+	{
+		_values := &_${manualArrayField.name}List
+		_ = _values
+		for ;!((bool) (${helper.toParseExpression(manualArrayField, helper.boolTypeReference, manualArrayField.loopExpression, parserArguments, true)})); {
+		_${manualArrayField.name}List = append(_${manualArrayField.name}List, ((<#if helper.needsPointerAccess(manualArrayField)>*</#if>${helper.getLanguageTypeNameForField(field)}) (${helper.toParseExpression(manualArrayField, manualArrayField.type, manualArrayField.parseExpression, parserArguments)})))
 
 					<#-- After parsing, update the current position, but only if it's needed -->
 						<#if manualArrayField.loopExpression.contains("curPos")>
-		curPos = readBuffer.GetPos() - startPos
+			curPos = readBuffer.GetPos() - startPos
 						</#if>
+		}
 	}
 					</#if>
 				<#--
@@ -802,7 +1025,7 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 		${manualArrayField.name}[i] = ${helper.getLanguageTypeNameForField(field)}(_${manualArrayField.name}List[i])
 	}
 					<#else>
-	${helper.getLanguageTypeNameForField(field)}[] ${manualArrayField.name} = _${manualArrayField.name}List.toArray(new ${helper.getLanguageTypeNameForField(manualArrayField)}[0])
+	${manualArrayField.name} := _${manualArrayField.name}List
 					</#if>
 				</#if>
 	if closeErr := readBuffer.CloseContext("${manualArrayField.name}", utils.WithRenderAsList(true)); closeErr != nil {
@@ -874,10 +1097,10 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
                 </@compress>
 
 		switch {
-		case _err != nil && _err != utils.ParseAssertError:
+		case errors.Is(_err, utils.ParseAssertError{}) || errors.Is(_err, io.EOF):<@emitImport import="io" />
+			readBuffer.Reset(currentPos)
+		case _err != nil:
 			return nil, errors.Wrap(_err, "Error parsing '${optionalField.name}' field")<@emitImport import="github.com/pkg/errors" />
-		case _err == utils.ParseAssertError:
-			readBuffer.SetPos(currentPos)
 		default:
 			${optionalField.name} = Cast${helper.getLanguageTypeNameForField(field)}(_val)
 			if closeErr := readBuffer.CloseContext("${optionalField.name}"); closeErr != nil {
@@ -924,7 +1147,7 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 	${assertField.name} = Cast${helper.getLanguageTypeNameForField(field)}(_val)
 			</#if>
 	if ${assertField.name} != ${helper.toParseExpression(assertField, assertField.type, assertField.conditionExpression, parserArguments)} {
-		return nil, utils.ParseAssertError
+		return nil, utils.ParseAssertError{"${assertField.conditionExpression} doesn't match"}
 	}
 				<#break>
 			<#case "padding">
@@ -995,7 +1218,10 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
             <#if hasRefParams>
 				,
                 <#list complexTypeReference.params.orElseThrow() as parserArgument>
-                    ${helper.toTypedParseExpression(simpleField, helper.getArgumentType(simpleField.type, parserArgument?index), parserArgument, parserArguments)}
+					<#assign parserTypeRef=helper.getArgumentType(simpleField.type, parserArgument?index)>
+					<#if !parserTypeRef.isComplexTypeReference()>${helper.getLanguageTypeNameForTypeReference(parserTypeRef)}(</#if>
+                    ${helper.toTypedParseExpression(simpleField, parserTypeRef, parserArgument, parserArguments)}
+                    <#if !parserTypeRef.isComplexTypeReference()>)</#if>
                     <#sep>, </#sep>
                 </#list>
             </#if>
@@ -1031,29 +1257,40 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 						<#if case.discriminatorValueTerms?has_content>
 							case
 							<#list case.discriminatorValueTerms as discriminatorValueTerm>
-								<#assign discriminatorExpression=switchField.discriminatorExpressions[discriminatorValueTerm?index]>
-								<#assign parsedDiscriminatorExpression=helper.toParseExpression(null, null, discriminatorExpression, parserArguments)>
-								<#-- We remove debug informations as we need them for lookup-->
-								<#assign parsedDiscriminatorExpression=tracer.removeTraces(parsedDiscriminatorExpression)>
-								<#if helper.getDiscriminatorTypes()[parsedDiscriminatorExpression]??><#assign discriminatorType=helper.getDiscriminatorTypes()[parsedDiscriminatorExpression]></#if>
-								<#if helper.isComplexTypeReference(discriminatorType)>
-									<#--TODO: What is meant to be here????-->
-								</#if>
-								${helper.toParseExpression(null, null, discriminatorExpression, parserArguments)} ==
-								<#if helper.discriminatorValueNeedsStringEqualityCheck(discriminatorExpression)>"${helper.toParseExpression(null, discriminatorType,discriminatorValueTerm, parserArguments)}"
-								<#elseif helper.isComplexTypeReference(discriminatorType)>
-									<#if helper.isEnumTypeReference(discriminatorType)>
-										${helper.getLanguageTypeNameForTypeReference(discriminatorType)}_${helper.toParseExpression(null, discriminatorType,discriminatorValueTerm, parserArguments)}
+								<#if helper.isWildcard(discriminatorValueTerm)>
+									true
+								<#else>
+									<#assign discriminatorExpression=switchField.discriminatorExpressions[discriminatorValueTerm?index]>
+									<#assign parsedDiscriminatorExpression=helper.toParseExpression(null, null, discriminatorExpression, parserArguments)>
+									<#-- We remove debug informations as we need them for lookup-->
+									<#assign parsedDiscriminatorExpression=tracer.removeTraces(parsedDiscriminatorExpression)>
+									<#if helper.getDiscriminatorTypes()[parsedDiscriminatorExpression]??><#assign discriminatorType=helper.getDiscriminatorTypes()[parsedDiscriminatorExpression]></#if>
+									<#if helper.isComplexTypeReference(discriminatorType)>
+										<#--TODO: What is meant to be here????-->
+									</#if>
+									${helper.toParseExpression(null, null, discriminatorExpression, parserArguments)} ==
+									<#if helper.discriminatorValueNeedsStringEqualityCheck(discriminatorExpression)>"${helper.toParseExpression(null, discriminatorType,discriminatorValueTerm, parserArguments)}"
+									<#elseif helper.isComplexTypeReference(discriminatorType)>
+										<#if helper.isEnumTypeReference(discriminatorType)>
+											<#assign enumType=helper.getLanguageTypeNameForTypeReference(discriminatorType)>
+											<#assign enumTypeWithoutTraces=tracer.removeTraces(enumType)>
+											<#assign enumTypeTraces=tracer.extractTraces(enumType)>
+											<#assign enumValue=helper.toParseExpression(null, discriminatorType,discriminatorValueTerm, parserArguments)>
+											<#assign enumValueWithoutTraces=tracer.removeTraces(enumValue)>
+											<#assign enumValueTraces=tracer.extractTraces(enumValue)>
+											${enumTypeTraces}${enumValueTraces}${enumTypeWithoutTraces}_${enumValueWithoutTraces}
+										<#else>
+											${helper.toParseExpression(null, discriminatorType,discriminatorValueTerm, parserArguments)}
+										</#if>
 									<#else>
 										${helper.toParseExpression(null, discriminatorType,discriminatorValueTerm, parserArguments)}
 									</#if>
-								<#else>
-									${helper.toParseExpression(null, discriminatorType,discriminatorValueTerm, parserArguments)}
 								</#if>
 								<#sep> && </#sep>
 							</#list>
 						<#else>
 							<#assign defaultCaseOutput=true>
+							case true
 						</#if>: // ${case.name}
                     </@compress>
 
@@ -1085,6 +1322,66 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 	_${virtualField.name} := ${helper.toParseExpression(virtualField, virtualField.type, virtualField.valueExpression, parserArguments)}
 	${virtualField.name} := ${helper.getLanguageTypeNameForTypeReference(virtualField.type)}(_${virtualField.name})
 				<#break>
+            <#case "validation">
+                <#assign validationField = field.asValidationField().orElseThrow()>
+
+	// Validation
+	if (!(${helper.toParseExpression(validationField, helper.boolTypeReference, validationField.getValidationExpression(), null)})) {
+		return nil, utils.ParseAssertError{${validationField.getDescription().orElse("Validation failed")}}
+	}
+                <#break>
+            <#case "peek">
+                <#assign peekField = field.asPeekField().orElseThrow()>
+
+				// Peek Field (${peekField.name})
+                <#if helper.isSimpleTypeReference(peekField.type)>
+				currentPos := readBuffer.GetPos()
+				${peekField.name}, _err := ${helper.getReadBufferReadMethodCall(peekField.name, peekField.type.asSimpleTypeReference().orElseThrow(), peekField)}
+				if _err != nil {
+					return nil, errors.Wrap(_err, "Error parsing '${peekField.name}' field")<@emitImport import="github.com/pkg/errors" />
+				}
+                <#elseif helper.isEnumField(field)>
+				currentPos := readBuffer.GetPos()
+				if pullErr := readBuffer.PullContext("${peekField.name}"); pullErr != nil {
+					return nil, pullErr
+				}
+				${peekField.name}, _err := ${helper.getLanguageTypeNameForField(field)}Parse(readBuffer)
+				if _err != nil {
+					return nil, errors.Wrap(_err, "Error parsing '${peekField.name}' field")<@emitImport import="github.com/pkg/errors" />
+				}
+				if closeErr := readBuffer.CloseContext("${peekField.name}"); closeErr != nil {
+					return nil, closeErr
+				}
+                <#else>
+				currentPos := readBuffer.GetPos()
+				if pullErr := readBuffer.PullContext("${peekField.name}"); pullErr != nil {
+					return nil, pullErr
+				}
+                    <@compress single_line=true>
+                        <#assign complexTypeReference=peekField.type.asComplexTypeReference().orElseThrow()>
+                        <#assign typeName=complexTypeReference.name>
+                        <#assign typeDefinition=helper.getTypeDefinitionForTypeReference(complexTypeReference)>
+                        <#if typeDefinition.isDiscriminatedChildTypeDefinition()>
+                        <#-- Usually you don't use child directly unless they are parameterized #-->
+                            <#assign typeName=typeDefinition.parentType.name>
+                            <#assign typeDefinition=typeDefinition.parentType>
+                        </#if>
+                        <#assign hasRefParams=complexTypeReference.params.isPresent()>
+                        <#assign refParams>
+                            <#if hasRefParams>
+								,
+                                <#list complexTypeReference.params.orElseThrow() as parserArgument>
+                                    ${helper.toTypedParseExpression(peekField, helper.getArgumentType(peekField.type, parserArgument?index), parserArgument, parserArguments)}
+                                    <#sep>, </#sep>
+                                </#list>
+                            </#if>
+                        </#assign>
+				${peekField.name}, _ := ${typeName}Parse(readBuffer${refParams})
+                    </@compress>
+                </#if>
+
+				readBuffer.Reset(currentPos)
+                <#break>
 		</#switch>
 	</#list>
 
@@ -1094,16 +1391,30 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 
 	<#if type.isDiscriminatedParentTypeDefinition()>
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent<#if type.propertyFields?has_content>, <#list type.propertyFields as field>${field.name}<#sep>, </#sep></#list></#if><#if type.propertyFields?has_content && type.virtualFields?has_content>, </#if><#list type.virtualFields as field>${field.name}<#sep>, </#sep></#list>)
+		<@compress single_line=true>
+	_parent.Child.InitializeParent(_parent
+			<#if type.propertyFields?has_content>, </#if>
+			<#list type.propertyFields as field>
+				${field.name}
+				<#sep>, </#sep>
+			</#list>
+			<#if type.virtualFields?has_content>, </#if>
+			<#list type.virtualFields as field>
+				${field.name}
+				<#sep>, </#sep>
+			</#list>
+			)
+		</@compress>
+
 	return _parent, nil
 	<#elseif type.parentType?has_content>
 	// Create a partially initialized instance
 	_child := &${type.name}{
 		<#list type.propertyFields as field>
-		${field.name?cap_first}: <#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>Cast${helper.getLanguageTypeNameForField(field)}(</#if>${field.name}<#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>)</#if>,
+		${field.name?cap_first}: <#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField() && !field.isManualArrayField()>Cast${helper.getLanguageTypeNameForField(field)}(</#if>${field.name}<#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField() && !field.isManualArrayField()>)</#if>,
 		</#list>
         <#list type.virtualFields as field>
-            ${field.name?cap_first}: <#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>Cast${helper.getLanguageTypeNameForField(field)}(</#if>${field.name}<#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField()>)</#if>,
+            ${field.name?cap_first}: <#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField() && !field.isManualArrayField()>Cast${helper.getLanguageTypeNameForField(field)}(</#if>${field.name}<#if helper.isComplex(field) && !helper.isEnumField(field) && !field.isArrayField() && !field.isManualArrayField()>)</#if>,
         </#list>
         ${type.parentType.name}: &${type.parentType.name}{},
 	}
@@ -1409,7 +1720,7 @@ func (m *${type.name}) Serialize(writeBuffer utils.WriteBuffer) error {
                 	<#assign virtualField = field.asVirtualField().orElseThrow()>
                 	<#assign typedField = field.asTypedField().orElseThrow()>
                 	<#assign namedField = field.asNamedField().orElseThrow()>
-	// Virtual field (doesn't actually serialize anything, just makes the value available)
+	// Virtual field
 	if _${namedField.name}Err := writeBuffer.WriteVirtual("${namedField.name}", m.${namedField.name?cap_first}); _${namedField.name}Err != nil {
 		return errors.Wrap(_${namedField.name}Err, "Error serializing '${namedField.name}' field")<@emitImport import="github.com/pkg/errors" />
 	}

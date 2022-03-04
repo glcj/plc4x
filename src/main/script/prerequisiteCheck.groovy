@@ -109,7 +109,28 @@ def checkDotnet() {
     Matcher matcher = extractVersion(output)
     if (matcher.size() > 0) {
         def curVersion = matcher[0][1]
-        def result = checkVersionAtLeast(curVersion, "2.0.0")
+        def result = checkVersionAtLeast(curVersion, "4.5.2")
+        if (!result) {
+            allConditionsMet = false
+        }
+    } else {
+        println "missing"
+        allConditionsMet = false
+    }
+}
+
+def checkGo() {
+    print "Detecting Go version:      "
+    def output
+    try {
+        output = "go version".execute().text
+    } catch (IOException e) {
+        output = ""
+    }
+    Matcher matcher = extractVersion(output)
+    if (matcher.size() > 0) {
+        def curVersion = matcher[0][1]
+        def result = checkVersionAtLeast(curVersion, "1.0.0")
         if (!result) {
             allConditionsMet = false
         }
@@ -333,10 +354,6 @@ def checkSetupTools() {
     }
 }
 
-def checkGo() {
-    //TODO: (On windows) ensure the "go" executable is in the path, or there are failures when running the tests.
-}
-
 /*
  * This check does an extremely simple check, if the boost library exists in the maven local repo.
  * We're not checking if it could be resolved.
@@ -518,6 +535,10 @@ if (dotnetEnabled) {
     checkDotnet()
 }
 
+if (goEnabled) {
+    checkGo()
+}
+
 if (cppEnabled) {
     checkClang()
     // The cmake-maven-plugin requires at least java 11
@@ -561,10 +582,6 @@ if (sandboxEnabled && dockerEnabled) {
 if (cppEnabled || cEnabled) {
     // CMake requires at least maven 3.6.0
     checkMavenVersion("3.6.0", null)
-}
-
-if (goEnabled) {
-    checkGo()
 }
 
 if (apacheReleaseEnabled) {

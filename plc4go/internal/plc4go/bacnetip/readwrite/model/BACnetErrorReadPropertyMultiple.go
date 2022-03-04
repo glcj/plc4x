@@ -32,8 +32,11 @@ type BACnetErrorReadPropertyMultiple struct {
 
 // The corresponding interface
 type IBACnetErrorReadPropertyMultiple interface {
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -44,12 +47,26 @@ func (m *BACnetErrorReadPropertyMultiple) ServiceChoice() uint8 {
 	return 0x0E
 }
 
-func (m *BACnetErrorReadPropertyMultiple) InitializeParent(parent *BACnetError) {
+func (m *BACnetErrorReadPropertyMultiple) GetServiceChoice() uint8 {
+	return 0x0E
 }
 
-func NewBACnetErrorReadPropertyMultiple() *BACnetError {
+func (m *BACnetErrorReadPropertyMultiple) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
+	m.BACnetError.ErrorClass = errorClass
+	m.BACnetError.ErrorCode = errorCode
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+
+func NewBACnetErrorReadPropertyMultiple(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
 	child := &BACnetErrorReadPropertyMultiple{
-		BACnetError: NewBACnetError(),
+		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
 	child.Child = child
 	return child.BACnetError

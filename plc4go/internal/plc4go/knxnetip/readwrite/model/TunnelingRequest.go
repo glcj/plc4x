@@ -35,8 +35,15 @@ type TunnelingRequest struct {
 
 // The corresponding interface
 type ITunnelingRequest interface {
+	// GetTunnelingRequestDataBlock returns TunnelingRequestDataBlock
+	GetTunnelingRequestDataBlock() *TunnelingRequestDataBlock
+	// GetCemi returns Cemi
+	GetCemi() *CEMI
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
 
@@ -47,8 +54,26 @@ func (m *TunnelingRequest) MsgType() uint16 {
 	return 0x0420
 }
 
-func (m *TunnelingRequest) InitializeParent(parent *KnxNetIpMessage) {
+func (m *TunnelingRequest) GetMsgType() uint16 {
+	return 0x0420
 }
+
+func (m *TunnelingRequest) InitializeParent(parent *KnxNetIpMessage) {}
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *TunnelingRequest) GetTunnelingRequestDataBlock() *TunnelingRequestDataBlock {
+	return m.TunnelingRequestDataBlock
+}
+
+func (m *TunnelingRequest) GetCemi() *CEMI {
+	return m.Cemi
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewTunnelingRequest(tunnelingRequestDataBlock *TunnelingRequestDataBlock, cemi *CEMI) *KnxNetIpMessage {
 	child := &TunnelingRequest{
@@ -125,7 +150,7 @@ func TunnelingRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*Kn
 	if pullErr := readBuffer.PullContext("cemi"); pullErr != nil {
 		return nil, pullErr
 	}
-	_cemi, _cemiErr := CEMIParse(readBuffer, uint16(totalLength)-uint16(uint16(uint16(uint16(6))+uint16(tunnelingRequestDataBlock.LengthInBytes()))))
+	_cemi, _cemiErr := CEMIParse(readBuffer, uint16(uint16(totalLength)-uint16(uint16(uint16(uint16(6))+uint16(tunnelingRequestDataBlock.LengthInBytes())))))
 	if _cemiErr != nil {
 		return nil, errors.Wrap(_cemiErr, "Error parsing 'cemi' field")
 	}

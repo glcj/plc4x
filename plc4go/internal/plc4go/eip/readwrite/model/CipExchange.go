@@ -39,10 +39,26 @@ type CipExchange struct {
 
 // The corresponding interface
 type ICipExchange interface {
+	// GetService returns Service
+	GetService() *CipService
+	// LengthInBytes returns the length in bytes
 	LengthInBytes() uint16
+	// LengthInBits returns the length in bits
 	LengthInBits() uint16
+	// Serialize serializes this type
 	Serialize(writeBuffer utils.WriteBuffer) error
 }
+
+///////////////////////////////////////////////////////////
+// Accessors for property fields.
+///////////////////////////////////////////////////////////
+func (m *CipExchange) GetService() *CipService {
+	return m.Service
+}
+
+///////////////////////////////////////////////////////////
+// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
 
 func NewCipExchange(service *CipService) *CipExchange {
 	return &CipExchange{Service: service}
@@ -137,7 +153,7 @@ func CipExchangeParse(readBuffer utils.ReadBuffer, exchangeLen uint16) (*CipExch
 	if pullErr := readBuffer.PullContext("service"); pullErr != nil {
 		return nil, pullErr
 	}
-	_service, _serviceErr := CipServiceParse(readBuffer, uint16(exchangeLen)-uint16(uint16(10)))
+	_service, _serviceErr := CipServiceParse(readBuffer, uint16(uint16(exchangeLen)-uint16(uint16(10))))
 	if _serviceErr != nil {
 		return nil, errors.Wrap(_serviceErr, "Error parsing 'service' field")
 	}
