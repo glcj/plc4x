@@ -28,6 +28,7 @@ import org.apache.plc4x.java.api.exceptions.PlcInvalidFieldException;
 import org.apache.plc4x.java.api.model.PlcField;
 import org.apache.plc4x.java.s7.readwrite.S7Address;
 import org.apache.plc4x.java.s7.readwrite.S7AddressAny;
+import org.apache.plc4x.java.s7.readwrite.S7Address;
 import org.apache.plc4x.java.s7.readwrite.MemoryArea;
 import org.apache.plc4x.java.s7.readwrite.TransportSize;
 import org.apache.plc4x.java.spi.generation.*;

@@ -290,11 +290,7 @@
 [type AssociatedValueType
     [simple DataTransportErrorCode returnCode]
     [simple DataTransportSize      transportSize]
-<<<<<<< HEAD
     [manual uint 16                valueLength  'STATIC_CALL("RightShift3", readBuffer, transportSize)' 'STATIC_CALL("LeftShift3", writeBuffer, valueLength)' '2']
-=======
-    [manual uint 16                valueLength   'STATIC_CALL("RightShift3", readBuffer)' 'STATIC_CALL("LeftShift3", writeBuffer, valueLength)' '16']
->>>>>>> develop
     [array  uint 8                 data          count    'STATIC_CALL("EventItemLength", readBuffer, valueLength)']
 ]
 
@@ -307,7 +303,6 @@
 
 //TODO: Convert BCD to uint
 [type DateAndTime
-<<<<<<< HEAD
     [manual uint 8  year    'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, year)'    '1']
     [manual uint 8  month   'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, month)'   '1']
     [manual uint 8  day     'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, day)'     '1']
@@ -316,16 +311,6 @@
     [manual uint 8  seconds 'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, seconds)' '1']
     [manual uint 12 msec    'STATIC_CALL("S7msecToInt", readBuffer)' 'STATIC_CALL("IntToS7msec", writeBuffer,msec)'  '2']
     [simple uint 4  dow]
-=======
-    [manual uint 8  year    'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, year)'    '8']
-    [manual uint 8  month   'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, month)'   '8']
-    [manual uint 8  day     'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, day)'     '8']
-    [manual uint 8  hour    'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, hour)'    '8']
-    [manual uint 8  minutes 'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, minutes)' '8']
-    [manual uint 8  seconds 'STATIC_CALL("BcdToInt", readBuffer)'    'STATIC_CALL("ByteToBcd", writeBuffer, seconds)' '8']
-    [manual uint 12 msec    'STATIC_CALL("S7msecToInt", readBuffer)' 'STATIC_CALL("IntToS7msec", writeBuffer, msec)'  '12']
-    [simple uint 4  dow                                                                                                         ]
->>>>>>> develop
 ]
 
 [type State
@@ -725,10 +710,10 @@
         // Characters & Strings
         // -----------------------------------------
         ['"IEC61131_CHAR"' CHAR
-            [manual string 8 value  'STATIC_CALL("parseS7Char", readBuffer, _type.encoding)' 'STATIC_CALL("serializeS7Char", writeBuffer, _value, _type.encoding)' '8']
+            [manual string 8 value  'STATIC_CALL("parseS7Char", readBuffer, _type.encoding)' 'STATIC_CALL("serializeS7Char", writeBuffer, _value, _type.encoding)' '1']
         ]
         ['"IEC61131_WCHAR"' CHAR
-            [manual string 16 value 'STATIC_CALL("parseS7Char", readBuffer, _type.encoding)' 'STATIC_CALL("serializeS7Char", writeBuffer, _value, _type.encoding)' '16' encoding='"UTF-16"']
+            [manual string 16 value 'STATIC_CALL("parseS7Char", readBuffer, _type.encoding)' 'STATIC_CALL("serializeS7Char", writeBuffer, _value, _type.encoding)' '2' encoding='"UTF-16"']
         ]
         ['"IEC61131_STRING"' STRING
             // TODO: Fix this length
@@ -775,7 +760,7 @@
     ]
 ]
 
-[enum uint 8 COTPTpduSize(uint 16 sizeInBytes)
+[enum int 8 COTPTpduSize(uint 16 sizeInBytes)
     ['0x07' SIZE_128 ['128']]
     ['0x08' SIZE_256 ['256']]
     ['0x09' SIZE_512 ['512']]
@@ -785,7 +770,7 @@
     ['0x0d' SIZE_8192 ['8192']]
 ]
 
-[enum uint 8 COTPProtocolClass
+[enum int 8 COTPProtocolClass
     ['0x00' CLASS_0]
     ['0x10' CLASS_1]
     ['0x20' CLASS_2]
@@ -793,61 +778,61 @@
     ['0x40' CLASS_4]
 ]
 
-[enum uint 8 DataTransportSize(bit sizeInBits)
+[enum int 8 DataTransportSize(bit sizeInBits)
     ['0x00' NULL            ['false']]
-    ['0x03' BIT             ['true' ]]
-    ['0x04' BYTE_WORD_DWORD ['true' ]]
-    ['0x05' INTEGER         ['true' ]]
+    ['0x03' BIT             ['true']]
+    ['0x04' BYTE_WORD_DWORD ['true']]
+    ['0x05' INTEGER         ['true']]
     ['0x06' DINTEGER        ['false']]
     ['0x07' REAL            ['false']]
     ['0x09' OCTET_STRING    ['false']]
 ]
 
-[enum uint 8 DeviceGroup
+[enum int 8 DeviceGroup
     ['0x01' PG_OR_PC]
     ['0x02' OS      ]
     ['0x03' OTHERS  ]
 ]
 
-[enum uint 8 TransportSize(uint 8 code, uint 8 shortName, uint 8 sizeInBytes, TransportSize baseType, DataTransportSize dataTransportSize, vstring dataProtocolId  , bit supported_S7_300, bit supported_S7_400, bit supported_S7_1200, bit supported_S7_1500, bit supported_LOGO)
+[enum int 8 TransportSize(uint 8 code, uint 8 shortName, uint 8 sizeInBytes, TransportSize baseType, DataTransportSize dataTransportSize, vstring dataProtocolId, bit supported_S7_300, bit supported_S7_400, bit supported_S7_1200, bit supported_S7_1500, bit supported_LOGO)
     // Bit Strings
-    ['0x01' BOOL          ['0x01'     , 'X'             , '1'               , 'null'                , 'BIT'                              , 'IEC61131_BOOL'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x02' BYTE          ['0x02'     , 'B'             , '1'               , 'null'                , 'BYTE_WORD_DWORD'                  , 'IEC61131_BYTE'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x03' WORD          ['0x04'     , 'W'             , '2'               , 'null'                , 'BYTE_WORD_DWORD'                  , 'IEC61131_WORD'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x04' DWORD         ['0x06'     , 'D'             , '4'               , 'WORD'                , 'BYTE_WORD_DWORD'                  , 'IEC61131_DWORD'        , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x05' LWORD         ['0x00'     , 'X'             , '8'               , 'null'                , 'null'                             , 'IEC61131_LWORD'        , 'false'             , 'false'             , 'false'              , 'true'               , 'false'             ]]
+    ['0x01' BOOL           ['0x01'       , 'X'               , '1'                 , 'null'                  , 'BIT'              , 'IEC61131_BOOL'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x02' BYTE           ['0x02'       , 'B'               , '1'                 , 'null'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_BYTE'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x03' WORD           ['0x04'       , 'W'               , '2'                 , 'null'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_WORD'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x04' DWORD          ['0x06'       , 'D'               , '4'                 , 'WORD'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_DWORD'        , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x05' LWORD          ['0x00'       , 'X'               , '8'                 , 'null'                  , 'null'             , 'IEC61131_LWORD'        , 'false'               , 'false'               , 'false'                , 'true'                 , 'false'             ]]
 
     // Integer values
     // INT and UINT moved out of order as the enum constant INT needs to be generated before it's used in java
-    ['0x06' INT           ['0x05'     , 'W'             , '2'               , 'null'                , 'INTEGER'                          , 'IEC61131_INT'          , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x07' UINT          ['0x05'     , 'W'             , '2'               , 'INT'                 , 'INTEGER'                          , 'IEC61131_UINT'         , 'false'             , 'false'             , 'true'               , 'true'               , 'true'              ]]
+    ['0x06' INT              ['0x05'       , 'W'               , '2'                 , 'null'                  , 'INTEGER'          , 'IEC61131_INT'          , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x07' UINT             ['0x05'       , 'W'               , '2'                 , 'INT'                   , 'INTEGER'          , 'IEC61131_UINT'         , 'false'               , 'false'               , 'true'                 , 'true'                 , 'true'              ]]
     // ...
-    ['0x08' SINT          ['0x02'     , 'B'             , '1'               , 'INT'                 , 'BYTE_WORD_DWORD'                  , 'IEC61131_SINT'         , 'false'             , 'false'             , 'true'               , 'true'               , 'true'              ]]
-    ['0x09' USINT         ['0x02'     , 'B'             , '1'               , 'INT'                 , 'BYTE_WORD_DWORD'                  , 'IEC61131_USINT'        , 'false'             , 'false'             , 'true'               , 'true'               , 'true'              ]]
-    ['0x0A' DINT          ['0x07'     , 'D'             , '4'               , 'INT'                 , 'INTEGER'                          , 'IEC61131_DINT'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x0B' UDINT         ['0x07'     , 'D'             , '4'               , 'INT'                 , 'INTEGER'                          , 'IEC61131_UDINT'        , 'false'             , 'false'             , 'true'               , 'true'               , 'true'              ]]
-    ['0x0C' LINT          ['0x00'     , 'X'             , '8'               , 'INT'                 , 'null'                             , 'IEC61131_LINT'         , 'false'             , 'false'             , 'false'              , 'true'               , 'false'             ]]
-    ['0x0D' ULINT         ['0x00'     , 'X'             , '16'              , 'INT'                 , 'null'                             , 'IEC61131_ULINT'        , 'false'             , 'false'             , 'false'              , 'true'               , 'false'             ]]
+    ['0x08' SINT             ['0x02'       , 'B'               , '1'                 , 'INT'                   , 'BYTE_WORD_DWORD'  , 'IEC61131_SINT'         , 'false'               , 'false'               , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x09' USINT            ['0x02'       , 'B'               , '1'                 , 'INT'                   , 'BYTE_WORD_DWORD'  , 'IEC61131_USINT'        , 'false'               , 'false'               , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x0A' DINT             ['0x07'       , 'D'               , '4'                 , 'INT'                   , 'INTEGER'          , 'IEC61131_DINT'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x0B' UDINT            ['0x07'       , 'D'               , '4'                 , 'INT'                   , 'INTEGER'          , 'IEC61131_UDINT'        , 'false'               , 'false'               , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x0C' LINT             ['0x00'       , 'X'               , '8'                 , 'INT'                   , 'null'             , 'IEC61131_LINT'         , 'false'               , 'false'               , 'false'                , 'true'                 , 'false'             ]]
+    ['0x0D' ULINT            ['0x00'       , 'X'               , '16'                , 'INT'                   , 'null'             , 'IEC61131_ULINT'        , 'false'               , 'false'               , 'false'                , 'true'                 , 'false'             ]]
 
     // Floating point values
-    ['0x0E' REAL          ['0x08'     , 'D'             , '4'               , 'null'                , 'REAL'                             , 'IEC61131_REAL'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x0F' LREAL         ['0x30'     , 'X'             , '8'               , 'REAL'                , 'null'                             , 'IEC61131_LREAL'        , 'false'             , 'false'             , 'true'               , 'true'               , 'false'             ]]
+    ['0x0E' REAL             ['0x08'       , 'D'               , '4'                 , 'null'                  , 'REAL'             , 'IEC61131_REAL'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x0F' LREAL            ['0x30'       , 'X'               , '8'                 , 'REAL'                  , 'null'             , 'IEC61131_LREAL'        , 'false'               , 'false'               , 'true'                 , 'true'                 , 'false'             ]]
 
     // Characters and Strings
-    ['0x10' CHAR          ['0x03'     , 'B'             , '1'               , 'null'                , 'BYTE_WORD_DWORD'                  , 'IEC61131_CHAR'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x11' WCHAR         ['0x13'     , 'X'             , '2'               , 'null'                , 'null'                             , 'IEC61131_WCHAR'        , 'false'             , 'false'             , 'true'               , 'true'               , 'true'              ]]
-    ['0x12' STRING        ['0x03'     , 'X'             , '1'               , 'null'                , 'BYTE_WORD_DWORD'                  , 'IEC61131_STRING'       , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x13' WSTRING       ['0x00'     , 'X'             , '2'               , 'null'                , 'null'                             , 'IEC61131_WSTRING'      , 'false'             , 'false'             , 'true'               , 'true'               , 'true'              ]]
+    ['0x10' CHAR             ['0x03'       , 'B'               , '1'                 , 'null'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_CHAR'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x11' WCHAR            ['0x13'       , 'X'               , '2'                 , 'null'                  , 'null'             , 'IEC61131_WCHAR'        , 'false'               , 'false'               , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x12' STRING           ['0x03'       , 'X'               , '1'                 , 'null'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_STRING'       , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x13' WSTRING          ['0x00'       , 'X'               , '2'                 , 'null'                  , 'null'             , 'IEC61131_WSTRING'      , 'false'               , 'false'               , 'true'                 , 'true'                 , 'true'              ]]
 
     // Dates and time values (Please note that we seem to have to rewrite queries for these types to reading bytes or we'll get "Data type not supported" errors)
-    ['0x14' TIME          ['0x0B'     , 'X'             , '4'                 , 'null'                  , 'null'                         , 'IEC61131_TIME'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    //['0x15' S5TIME        ['0x0C'    , 'X'             , '4'                 , 'null'                  , 'null'                          , 'S7_S5TIME'             , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x16' LTIME         ['0x00'     , 'X'             , '8'                 , 'TIME'                  , 'null'                         , 'IEC61131_LTIME'        , 'false'             , 'false'             , 'false'              , 'true'               , 'false'             ]]
-    ['0x17' DATE          ['0x09'     , 'X'             , '2'                 , 'null'                  , 'BYTE_WORD_DWORD'              , 'IEC61131_DATE'         , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x18' TIME_OF_DAY   ['0x06'     , 'X'             , '4'                 , 'null'                  , 'BYTE_WORD_DWORD'              , 'IEC61131_TIME_OF_DAY'  , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x19' TOD           ['0x06'     , 'X'             , '4'                 , 'null'                  , 'BYTE_WORD_DWORD'              , 'IEC61131_TIME_OF_DAY'  , 'true'              , 'true'              , 'true'               , 'true'               , 'true'              ]]
-    ['0x1A' DATE_AND_TIME ['0x0F'     , 'X'             , '12'                , 'null'                  , 'null'                         , 'IEC61131_DATE_AND_TIME', 'true'              , 'true'              , 'false'              , 'true'               , 'false'             ]]
-    ['0x1B' DT            ['0x0F'     , 'X'             , '12'                , 'null'                  , 'null'                         , 'IEC61131_DATE_AND_TIME', 'true'              , 'true'              , 'false'              , 'true'               , 'false'             ]]
+    ['0x14' TIME             ['0x0B'       , 'X'               , '4'                 , 'null'                  , 'null'             , 'IEC61131_TIME'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    //['0x15' S5TIME           ['0x0C'      , 'X'               , '4'                 , 'null'                  , 'null'                               , 'S7_S5TIME'             , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x16' LTIME            ['0x00'       , 'X'               , '8'                 , 'TIME'                  , 'null'             , 'IEC61131_LTIME'        , 'false'               , 'false'               , 'false'                , 'true'                 , 'false'             ]]
+    ['0x17' DATE             ['0x09'       , 'X'               , '2'                 , 'null'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_DATE'         , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x18' TIME_OF_DAY      ['0x06'       , 'X'               , '4'                 , 'null'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_TIME_OF_DAY'  , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x19' TOD              ['0x06'       , 'X'               , '4'                 , 'null'                  , 'BYTE_WORD_DWORD'  , 'IEC61131_TIME_OF_DAY'  , 'true'                , 'true'                , 'true'                 , 'true'                 , 'true'              ]]
+    ['0x1A' DATE_AND_TIME    ['0x0F'       , 'X'               , '12'                , 'null'                  , 'null'             , 'IEC61131_DATE_AND_TIME', 'true'                , 'true'                , 'false'                , 'true'                 , 'false'             ]]
+    ['0x1B' DT               ['0x0F'       , 'X'               , '12'                , 'null'                  , 'null'             , 'IEC61131_DATE_AND_TIME', 'true'                , 'true'                , 'false'                , 'true'                 , 'false'             ]]
 ]
 
 [enum uint 8 MemoryArea(string 24 shortName)

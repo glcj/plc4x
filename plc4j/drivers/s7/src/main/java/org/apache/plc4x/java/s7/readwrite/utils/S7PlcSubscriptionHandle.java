@@ -22,6 +22,10 @@ import org.apache.plc4x.java.s7.readwrite.EventType;
 import org.apache.plc4x.java.spi.messages.PlcSubscriber;
 import org.apache.plc4x.java.spi.model.DefaultPlcSubscriptionHandle;
 
+/**
+ *
+ * @author cgarcia
+ */
 public class S7PlcSubscriptionHandle extends DefaultPlcSubscriptionHandle {
     
     private EventType eventtype;

@@ -35,6 +35,10 @@ import org.apache.plc4x.java.api.value.PlcValue;
 import org.apache.plc4x.java.s7.readwrite.DateAndTime;
 import org.apache.plc4x.java.s7.readwrite.S7PayloadDiagnosticMessage;
 
+/**
+ *
+ * @author cgarcia
+ */
 public class S7SysEvent  implements S7Event{
 
     public enum Fields{
