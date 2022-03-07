@@ -778,7 +778,7 @@
     ['0x40' CLASS_4]
 ]
 
-[enum int 8 DataTransportSize(bit sizeInBits)
+[enum uint 8 DataTransportSize(bit sizeInBits)
     ['0x00' NULL            ['false']]
     ['0x03' BIT             ['true']]
     ['0x04' BYTE_WORD_DWORD ['true']]
