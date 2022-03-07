@@ -32,6 +32,7 @@ type NotTransmittedCorruption struct {
 
 // The corresponding interface
 type INotTransmittedCorruption interface {
+	IConfirmation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -73,22 +74,19 @@ func NewNotTransmittedCorruption(alpha *Alpha) *Confirmation {
 }
 
 func CastNotTransmittedCorruption(structType interface{}) *NotTransmittedCorruption {
-	castFunc := func(typ interface{}) *NotTransmittedCorruption {
-		if casted, ok := typ.(NotTransmittedCorruption); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NotTransmittedCorruption); ok {
-			return casted
-		}
-		if casted, ok := typ.(Confirmation); ok {
-			return CastNotTransmittedCorruption(casted.Child)
-		}
-		if casted, ok := typ.(*Confirmation); ok {
-			return CastNotTransmittedCorruption(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NotTransmittedCorruption); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NotTransmittedCorruption); ok {
+		return casted
+	}
+	if casted, ok := structType.(Confirmation); ok {
+		return CastNotTransmittedCorruption(casted.Child)
+	}
+	if casted, ok := structType.(*Confirmation); ok {
+		return CastNotTransmittedCorruption(casted.Child)
+	}
+	return nil
 }
 
 func (m *NotTransmittedCorruption) GetTypeName() string {
@@ -147,6 +145,8 @@ func (m *NotTransmittedCorruption) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -46,21 +46,22 @@ type APDUComplexAck struct {
 
 // The corresponding interface
 type IAPDUComplexAck interface {
-	// GetSegmentedMessage returns SegmentedMessage
+	IAPDU
+	// GetSegmentedMessage returns SegmentedMessage (property field)
 	GetSegmentedMessage() bool
-	// GetMoreFollows returns MoreFollows
+	// GetMoreFollows returns MoreFollows (property field)
 	GetMoreFollows() bool
-	// GetOriginalInvokeId returns OriginalInvokeId
+	// GetOriginalInvokeId returns OriginalInvokeId (property field)
 	GetOriginalInvokeId() uint8
-	// GetSequenceNumber returns SequenceNumber
+	// GetSequenceNumber returns SequenceNumber (property field)
 	GetSequenceNumber() *uint8
-	// GetProposedWindowSize returns ProposedWindowSize
+	// GetProposedWindowSize returns ProposedWindowSize (property field)
 	GetProposedWindowSize() *uint8
-	// GetServiceAck returns ServiceAck
+	// GetServiceAck returns ServiceAck (property field)
 	GetServiceAck() *BACnetServiceAck
-	// GetSegmentServiceChoice returns SegmentServiceChoice
+	// GetSegmentServiceChoice returns SegmentServiceChoice (property field)
 	GetSegmentServiceChoice() *uint8
-	// GetSegment returns Segment
+	// GetSegment returns Segment (property field)
 	GetSegment() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -140,22 +141,19 @@ func NewAPDUComplexAck(segmentedMessage bool, moreFollows bool, originalInvokeId
 }
 
 func CastAPDUComplexAck(structType interface{}) *APDUComplexAck {
-	castFunc := func(typ interface{}) *APDUComplexAck {
-		if casted, ok := typ.(APDUComplexAck); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*APDUComplexAck); ok {
-			return casted
-		}
-		if casted, ok := typ.(APDU); ok {
-			return CastAPDUComplexAck(casted.Child)
-		}
-		if casted, ok := typ.(*APDU); ok {
-			return CastAPDUComplexAck(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(APDUComplexAck); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*APDUComplexAck); ok {
+		return casted
+	}
+	if casted, ok := structType.(APDU); ok {
+		return CastAPDUComplexAck(casted.Child)
+	}
+	if casted, ok := structType.(*APDU); ok {
+		return CastAPDUComplexAck(casted.Child)
+	}
+	return nil
 }
 
 func (m *APDUComplexAck) GetTypeName() string {
@@ -439,6 +437,8 @@ func (m *APDUComplexAck) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

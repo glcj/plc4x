@@ -35,6 +35,7 @@ type ApduDataUserMessage struct {
 
 // The corresponding interface
 type IApduDataUserMessage interface {
+	IApduData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataUserMessage(dataLength uint8) *ApduData {
 }
 
 func CastApduDataUserMessage(structType interface{}) *ApduDataUserMessage {
-	castFunc := func(typ interface{}) *ApduDataUserMessage {
-		if casted, ok := typ.(ApduDataUserMessage); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataUserMessage); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduData); ok {
-			return CastApduDataUserMessage(casted.Child)
-		}
-		if casted, ok := typ.(*ApduData); ok {
-			return CastApduDataUserMessage(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataUserMessage); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataUserMessage); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduData); ok {
+		return CastApduDataUserMessage(casted.Child)
+	}
+	if casted, ok := structType.(*ApduData); ok {
+		return CastApduDataUserMessage(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataUserMessage) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataUserMessage) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

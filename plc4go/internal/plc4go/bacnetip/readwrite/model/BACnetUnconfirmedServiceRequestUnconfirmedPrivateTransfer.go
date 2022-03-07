@@ -40,11 +40,12 @@ type BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer struct {
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer interface {
-	// GetVendorId returns VendorId
+	IBACnetUnconfirmedServiceRequest
+	// GetVendorId returns VendorId (property field)
 	GetVendorId() *BACnetContextTagUnsignedInteger
-	// GetServiceNumber returns ServiceNumber
+	// GetServiceNumber returns ServiceNumber (property field)
 	GetServiceNumber() *BACnetContextTagUnsignedInteger
-	// GetServiceParameters returns ServiceParameters
+	// GetServiceParameters returns ServiceParameters (property field)
 	GetServiceParameters() *BACnetPropertyValues
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -100,22 +101,19 @@ func NewBACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer(vendorId *BACn
 }
 
 func CastBACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer(structType interface{}) *BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer {
-	castFunc := func(typ interface{}) *BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer {
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer) GetTypeName() string {
@@ -275,6 +273,8 @@ func (m *BACnetUnconfirmedServiceRequestUnconfirmedPrivateTransfer) String() str
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

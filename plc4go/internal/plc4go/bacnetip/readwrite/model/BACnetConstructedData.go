@@ -39,15 +39,13 @@ type BACnetConstructedData struct {
 
 // The corresponding interface
 type IBACnetConstructedData interface {
-	// ObjectType returns ObjectType
-	ObjectType() BACnetObjectType
-	// PropertyIdentifierEnum returns PropertyIdentifierEnum
-	PropertyIdentifierEnum() BACnetPropertyIdentifier
-	// GetOpeningTag returns OpeningTag
+	// GetObjectType returns ObjectType (discriminator field)
+	GetObjectType() BACnetObjectType
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
-	// GetPropertyIdentifierEnum returns PropertyIdentifierEnum
+	// GetPropertyIdentifierEnum returns PropertyIdentifierEnum (virtual field)
 	GetPropertyIdentifierEnum() BACnetPropertyIdentifier
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -93,16 +91,13 @@ func NewBACnetConstructedData(openingTag *BACnetOpeningTag, closingTag *BACnetCl
 }
 
 func CastBACnetConstructedData(structType interface{}) *BACnetConstructedData {
-	castFunc := func(typ interface{}) *BACnetConstructedData {
-		if casted, ok := typ.(BACnetConstructedData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConstructedData); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetConstructedData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConstructedData); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetConstructedData) GetTypeName() string {
@@ -255,6 +250,8 @@ func (m *BACnetConstructedData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

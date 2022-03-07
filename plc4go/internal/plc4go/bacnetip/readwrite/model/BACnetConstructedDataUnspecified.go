@@ -41,13 +41,14 @@ type BACnetConstructedDataUnspecified struct {
 
 // The corresponding interface
 type IBACnetConstructedDataUnspecified interface {
-	// GetData returns Data
+	IBACnetConstructedData
+	// GetData returns Data (property field)
 	GetData() []*BACnetConstructedDataElement
-	// GetPropertyIdentifier returns PropertyIdentifier
+	// GetPropertyIdentifier returns PropertyIdentifier (property field)
 	GetPropertyIdentifier() *BACnetContextTagPropertyIdentifier
-	// GetContent returns Content
+	// GetContent returns Content (property field)
 	GetContent() *BACnetApplicationTag
-	// GetHasData returns HasData
+	// GetHasData returns HasData (virtual field)
 	GetHasData() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -65,14 +66,6 @@ func (m *BACnetConstructedDataUnspecified) ObjectType() BACnetObjectType {
 }
 
 func (m *BACnetConstructedDataUnspecified) GetObjectType() BACnetObjectType {
-	return 0
-}
-
-func (m *BACnetConstructedDataUnspecified) PropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return 0
-}
-
-func (m *BACnetConstructedDataUnspecified) GetPropertyIdentifierEnum() BACnetPropertyIdentifier {
 	return 0
 }
 
@@ -120,22 +113,19 @@ func NewBACnetConstructedDataUnspecified(data []*BACnetConstructedDataElement, p
 }
 
 func CastBACnetConstructedDataUnspecified(structType interface{}) *BACnetConstructedDataUnspecified {
-	castFunc := func(typ interface{}) *BACnetConstructedDataUnspecified {
-		if casted, ok := typ.(BACnetConstructedDataUnspecified); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConstructedDataUnspecified); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConstructedData); ok {
-			return CastBACnetConstructedDataUnspecified(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConstructedData); ok {
-			return CastBACnetConstructedDataUnspecified(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConstructedDataUnspecified); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConstructedDataUnspecified); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConstructedData); ok {
+		return CastBACnetConstructedDataUnspecified(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConstructedData); ok {
+		return CastBACnetConstructedDataUnspecified(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConstructedDataUnspecified) GetTypeName() string {
@@ -335,6 +325,8 @@ func (m *BACnetConstructedDataUnspecified) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

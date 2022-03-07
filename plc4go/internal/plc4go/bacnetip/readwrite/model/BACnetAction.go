@@ -37,11 +37,11 @@ type BACnetAction struct {
 
 // The corresponding interface
 type IBACnetAction interface {
-	// GetRawData returns RawData
+	// GetRawData returns RawData (property field)
 	GetRawData() *BACnetContextTagEnumerated
-	// GetIsDirect returns IsDirect
+	// GetIsDirect returns IsDirect (virtual field)
 	GetIsDirect() bool
-	// GetIsReverse returns IsReverse
+	// GetIsReverse returns IsReverse (virtual field)
 	GetIsReverse() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,16 +79,13 @@ func NewBACnetAction(rawData *BACnetContextTagEnumerated, tagNumber uint8) *BACn
 }
 
 func CastBACnetAction(structType interface{}) *BACnetAction {
-	castFunc := func(typ interface{}) *BACnetAction {
-		if casted, ok := typ.(BACnetAction); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetAction); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetAction); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetAction); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetAction) GetTypeName() string {
@@ -204,6 +201,8 @@ func (m *BACnetAction) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,8 @@ type KnxNetObjectServer struct {
 
 // The corresponding interface
 type IKnxNetObjectServer interface {
-	// GetVersion returns Version
+	IServiceId
+	// GetVersion returns Version (property field)
 	GetVersion() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewKnxNetObjectServer(version uint8) *ServiceId {
 }
 
 func CastKnxNetObjectServer(structType interface{}) *KnxNetObjectServer {
-	castFunc := func(typ interface{}) *KnxNetObjectServer {
-		if casted, ok := typ.(KnxNetObjectServer); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*KnxNetObjectServer); ok {
-			return casted
-		}
-		if casted, ok := typ.(ServiceId); ok {
-			return CastKnxNetObjectServer(casted.Child)
-		}
-		if casted, ok := typ.(*ServiceId); ok {
-			return CastKnxNetObjectServer(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(KnxNetObjectServer); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*KnxNetObjectServer); ok {
+		return casted
+	}
+	if casted, ok := structType.(ServiceId); ok {
+		return CastKnxNetObjectServer(casted.Child)
+	}
+	if casted, ok := structType.(*ServiceId); ok {
+		return CastKnxNetObjectServer(casted.Child)
+	}
+	return nil
 }
 
 func (m *KnxNetObjectServer) GetTypeName() string {
@@ -171,6 +169,8 @@ func (m *KnxNetObjectServer) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

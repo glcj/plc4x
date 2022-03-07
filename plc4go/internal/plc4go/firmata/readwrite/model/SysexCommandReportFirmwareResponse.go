@@ -36,11 +36,12 @@ type SysexCommandReportFirmwareResponse struct {
 
 // The corresponding interface
 type ISysexCommandReportFirmwareResponse interface {
-	// GetMajorVersion returns MajorVersion
+	ISysexCommand
+	// GetMajorVersion returns MajorVersion (property field)
 	GetMajorVersion() uint8
-	// GetMinorVersion returns MinorVersion
+	// GetMinorVersion returns MinorVersion (property field)
 	GetMinorVersion() uint8
-	// GetFileName returns FileName
+	// GetFileName returns FileName (property field)
 	GetFileName() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewSysexCommandReportFirmwareResponse(majorVersion uint8, minorVersion uint
 }
 
 func CastSysexCommandReportFirmwareResponse(structType interface{}) *SysexCommandReportFirmwareResponse {
-	castFunc := func(typ interface{}) *SysexCommandReportFirmwareResponse {
-		if casted, ok := typ.(SysexCommandReportFirmwareResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandReportFirmwareResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandReportFirmwareResponse(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandReportFirmwareResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandReportFirmwareResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandReportFirmwareResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandReportFirmwareResponse(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandReportFirmwareResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandReportFirmwareResponse) GetTypeName() string {
@@ -249,6 +247,8 @@ func (m *SysexCommandReportFirmwareResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

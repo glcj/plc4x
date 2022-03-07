@@ -32,6 +32,7 @@ type BACnetErrorReadRange struct {
 
 // The corresponding interface
 type IBACnetErrorReadRange interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorReadRange(errorClass *BACnetApplicationTagEnumerated, errorCo
 }
 
 func CastBACnetErrorReadRange(structType interface{}) *BACnetErrorReadRange {
-	castFunc := func(typ interface{}) *BACnetErrorReadRange {
-		if casted, ok := typ.(BACnetErrorReadRange); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorReadRange); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorReadRange(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorReadRange(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorReadRange); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorReadRange); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorReadRange(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorReadRange(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorReadRange) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorReadRange) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

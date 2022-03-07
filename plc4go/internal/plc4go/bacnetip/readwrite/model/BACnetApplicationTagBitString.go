@@ -34,7 +34,8 @@ type BACnetApplicationTagBitString struct {
 
 // The corresponding interface
 type IBACnetApplicationTagBitString interface {
-	// GetPayload returns Payload
+	IBACnetApplicationTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadBitString
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -47,13 +48,6 @@ type IBACnetApplicationTagBitString interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetApplicationTagBitString) ActualTagNumber() uint8 {
-	return 0x8
-}
-
-func (m *BACnetApplicationTagBitString) GetActualTagNumber() uint8 {
-	return 0x8
-}
 
 func (m *BACnetApplicationTagBitString) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
@@ -81,22 +75,19 @@ func NewBACnetApplicationTagBitString(payload *BACnetTagPayloadBitString, header
 }
 
 func CastBACnetApplicationTagBitString(structType interface{}) *BACnetApplicationTagBitString {
-	castFunc := func(typ interface{}) *BACnetApplicationTagBitString {
-		if casted, ok := typ.(BACnetApplicationTagBitString); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetApplicationTagBitString); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagBitString(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagBitString(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetApplicationTagBitString); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetApplicationTagBitString); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagBitString(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagBitString(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetApplicationTagBitString) GetTypeName() string {
@@ -184,6 +175,8 @@ func (m *BACnetApplicationTagBitString) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

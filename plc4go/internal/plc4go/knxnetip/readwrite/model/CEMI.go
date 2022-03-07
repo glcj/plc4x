@@ -36,8 +36,8 @@ type CEMI struct {
 
 // The corresponding interface
 type ICEMI interface {
-	// MessageCode returns MessageCode
-	MessageCode() uint8
+	// GetMessageCode returns MessageCode (discriminator field)
+	GetMessageCode() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,16 +72,13 @@ func NewCEMI(size uint16) *CEMI {
 }
 
 func CastCEMI(structType interface{}) *CEMI {
-	castFunc := func(typ interface{}) *CEMI {
-		if casted, ok := typ.(CEMI); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CEMI); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CEMI); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CEMI) GetTypeName() string {
@@ -198,7 +195,7 @@ func (m *CEMI) SerializeParent(writeBuffer utils.WriteBuffer, child ICEMI, seria
 	}
 
 	// Discriminator Field (messageCode) (Used as input to a switch field)
-	messageCode := uint8(child.MessageCode())
+	messageCode := uint8(child.GetMessageCode())
 	_messageCodeErr := writeBuffer.WriteUint8("messageCode", 8, (messageCode))
 
 	if _messageCodeErr != nil {
@@ -221,6 +218,8 @@ func (m *CEMI) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

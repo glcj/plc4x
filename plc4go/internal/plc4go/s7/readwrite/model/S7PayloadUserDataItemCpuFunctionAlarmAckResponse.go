@@ -35,9 +35,10 @@ type S7PayloadUserDataItemCpuFunctionAlarmAckResponse struct {
 
 // The corresponding interface
 type IS7PayloadUserDataItemCpuFunctionAlarmAckResponse interface {
-	// GetFunctionId returns FunctionId
+	IS7PayloadUserDataItem
+	// GetFunctionId returns FunctionId (property field)
 	GetFunctionId() uint8
-	// GetMessageObjects returns MessageObjects
+	// GetMessageObjects returns MessageObjects (property field)
 	GetMessageObjects() []uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -106,22 +107,19 @@ func NewS7PayloadUserDataItemCpuFunctionAlarmAckResponse(functionId uint8, messa
 }
 
 func CastS7PayloadUserDataItemCpuFunctionAlarmAckResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionAlarmAckResponse {
-	castFunc := func(typ interface{}) *S7PayloadUserDataItemCpuFunctionAlarmAckResponse {
-		if casted, ok := typ.(S7PayloadUserDataItemCpuFunctionAlarmAckResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItemCpuFunctionAlarmAckResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionAlarmAckResponse(casted.Child)
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionAlarmAckResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadUserDataItemCpuFunctionAlarmAckResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadUserDataItemCpuFunctionAlarmAckResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionAlarmAckResponse(casted.Child)
+	}
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionAlarmAckResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmAckResponse) GetTypeName() string {
@@ -256,6 +254,8 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmAckResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

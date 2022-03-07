@@ -34,9 +34,10 @@ type BACnetApplicationTagSignedInteger struct {
 
 // The corresponding interface
 type IBACnetApplicationTagSignedInteger interface {
-	// GetPayload returns Payload
+	IBACnetApplicationTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadSignedInteger
-	// GetActualValue returns ActualValue
+	// GetActualValue returns ActualValue (virtual field)
 	GetActualValue() uint64
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -49,13 +50,6 @@ type IBACnetApplicationTagSignedInteger interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetApplicationTagSignedInteger) ActualTagNumber() uint8 {
-	return 0x3
-}
-
-func (m *BACnetApplicationTagSignedInteger) GetActualTagNumber() uint8 {
-	return 0x3
-}
 
 func (m *BACnetApplicationTagSignedInteger) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
@@ -86,22 +80,19 @@ func NewBACnetApplicationTagSignedInteger(payload *BACnetTagPayloadSignedInteger
 }
 
 func CastBACnetApplicationTagSignedInteger(structType interface{}) *BACnetApplicationTagSignedInteger {
-	castFunc := func(typ interface{}) *BACnetApplicationTagSignedInteger {
-		if casted, ok := typ.(BACnetApplicationTagSignedInteger); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetApplicationTagSignedInteger); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagSignedInteger(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagSignedInteger(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetApplicationTagSignedInteger); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetApplicationTagSignedInteger); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagSignedInteger(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagSignedInteger(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetApplicationTagSignedInteger) GetTypeName() string {
@@ -200,6 +191,8 @@ func (m *BACnetApplicationTagSignedInteger) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

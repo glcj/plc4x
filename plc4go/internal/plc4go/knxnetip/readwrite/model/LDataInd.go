@@ -39,11 +39,12 @@ type LDataInd struct {
 
 // The corresponding interface
 type ILDataInd interface {
-	// GetAdditionalInformationLength returns AdditionalInformationLength
+	ICEMI
+	// GetAdditionalInformationLength returns AdditionalInformationLength (property field)
 	GetAdditionalInformationLength() uint8
-	// GetAdditionalInformation returns AdditionalInformation
+	// GetAdditionalInformation returns AdditionalInformation (property field)
 	GetAdditionalInformation() []*CEMIAdditionalInformation
-	// GetDataFrame returns DataFrame
+	// GetDataFrame returns DataFrame (property field)
 	GetDataFrame() *LDataFrame
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -98,22 +99,19 @@ func NewLDataInd(additionalInformationLength uint8, additionalInformation []*CEM
 }
 
 func CastLDataInd(structType interface{}) *LDataInd {
-	castFunc := func(typ interface{}) *LDataInd {
-		if casted, ok := typ.(LDataInd); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LDataInd); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastLDataInd(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastLDataInd(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LDataInd); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LDataInd); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastLDataInd(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastLDataInd(casted.Child)
+	}
+	return nil
 }
 
 func (m *LDataInd) GetTypeName() string {
@@ -264,6 +262,8 @@ func (m *LDataInd) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

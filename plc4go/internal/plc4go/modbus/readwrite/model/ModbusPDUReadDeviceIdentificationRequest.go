@@ -39,9 +39,10 @@ type ModbusPDUReadDeviceIdentificationRequest struct {
 
 // The corresponding interface
 type IModbusPDUReadDeviceIdentificationRequest interface {
-	// GetLevel returns Level
+	IModbusPDU
+	// GetLevel returns Level (property field)
 	GetLevel() ModbusDeviceInformationLevel
-	// GetObjectId returns ObjectId
+	// GetObjectId returns ObjectId (property field)
 	GetObjectId() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -107,22 +108,19 @@ func NewModbusPDUReadDeviceIdentificationRequest(level ModbusDeviceInformationLe
 }
 
 func CastModbusPDUReadDeviceIdentificationRequest(structType interface{}) *ModbusPDUReadDeviceIdentificationRequest {
-	castFunc := func(typ interface{}) *ModbusPDUReadDeviceIdentificationRequest {
-		if casted, ok := typ.(ModbusPDUReadDeviceIdentificationRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadDeviceIdentificationRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadDeviceIdentificationRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadDeviceIdentificationRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadDeviceIdentificationRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadDeviceIdentificationRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadDeviceIdentificationRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadDeviceIdentificationRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadDeviceIdentificationRequest) GetTypeName() string {
@@ -246,6 +244,8 @@ func (m *ModbusPDUReadDeviceIdentificationRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,6 +35,7 @@ type ApduDataExtLinkResponse struct {
 
 // The corresponding interface
 type IApduDataExtLinkResponse interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtLinkResponse(length uint8) *ApduDataExt {
 }
 
 func CastApduDataExtLinkResponse(structType interface{}) *ApduDataExtLinkResponse {
-	castFunc := func(typ interface{}) *ApduDataExtLinkResponse {
-		if casted, ok := typ.(ApduDataExtLinkResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtLinkResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtLinkResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtLinkResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtLinkResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtLinkResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtLinkResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtLinkResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtLinkResponse) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtLinkResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

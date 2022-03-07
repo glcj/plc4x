@@ -36,13 +36,13 @@ type AlarmMessageAckPushType struct {
 
 // The corresponding interface
 type IAlarmMessageAckPushType interface {
-	// GetTimeStamp returns TimeStamp
+	// GetTimeStamp returns TimeStamp (property field)
 	GetTimeStamp() *DateAndTime
-	// GetFunctionId returns FunctionId
+	// GetFunctionId returns FunctionId (property field)
 	GetFunctionId() uint8
-	// GetNumberOfObjects returns NumberOfObjects
+	// GetNumberOfObjects returns NumberOfObjects (property field)
 	GetNumberOfObjects() uint8
-	// GetMessageObjects returns MessageObjects
+	// GetMessageObjects returns MessageObjects (property field)
 	GetMessageObjects() []*AlarmMessageAckObjectPushType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -81,16 +81,13 @@ func NewAlarmMessageAckPushType(TimeStamp *DateAndTime, functionId uint8, number
 }
 
 func CastAlarmMessageAckPushType(structType interface{}) *AlarmMessageAckPushType {
-	castFunc := func(typ interface{}) *AlarmMessageAckPushType {
-		if casted, ok := typ.(AlarmMessageAckPushType); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AlarmMessageAckPushType); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AlarmMessageAckPushType); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AlarmMessageAckPushType); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AlarmMessageAckPushType) GetTypeName() string {
@@ -247,6 +244,8 @@ func (m *AlarmMessageAckPushType) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

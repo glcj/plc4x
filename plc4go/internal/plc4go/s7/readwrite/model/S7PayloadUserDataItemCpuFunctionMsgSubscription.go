@@ -38,13 +38,14 @@ type S7PayloadUserDataItemCpuFunctionMsgSubscription struct {
 
 // The corresponding interface
 type IS7PayloadUserDataItemCpuFunctionMsgSubscription interface {
-	// GetSubscription returns Subscription
+	IS7PayloadUserDataItem
+	// GetSubscription returns Subscription (property field)
 	GetSubscription() uint8
-	// GetMagicKey returns MagicKey
+	// GetMagicKey returns MagicKey (property field)
 	GetMagicKey() string
-	// GetAlarmtype returns Alarmtype
+	// GetAlarmtype returns Alarmtype (property field)
 	GetAlarmtype() *AlarmStateType
-	// GetReserve returns Reserve
+	// GetReserve returns Reserve (property field)
 	GetReserve() *uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -123,22 +124,19 @@ func NewS7PayloadUserDataItemCpuFunctionMsgSubscription(Subscription uint8, magi
 }
 
 func CastS7PayloadUserDataItemCpuFunctionMsgSubscription(structType interface{}) *S7PayloadUserDataItemCpuFunctionMsgSubscription {
-	castFunc := func(typ interface{}) *S7PayloadUserDataItemCpuFunctionMsgSubscription {
-		if casted, ok := typ.(S7PayloadUserDataItemCpuFunctionMsgSubscription); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItemCpuFunctionMsgSubscription); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionMsgSubscription(casted.Child)
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionMsgSubscription(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadUserDataItemCpuFunctionMsgSubscription); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadUserDataItemCpuFunctionMsgSubscription); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionMsgSubscription(casted.Child)
+	}
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionMsgSubscription(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetTypeName() string {
@@ -322,6 +320,8 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

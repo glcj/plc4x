@@ -40,13 +40,14 @@ type LBusmonInd struct {
 
 // The corresponding interface
 type ILBusmonInd interface {
-	// GetAdditionalInformationLength returns AdditionalInformationLength
+	ICEMI
+	// GetAdditionalInformationLength returns AdditionalInformationLength (property field)
 	GetAdditionalInformationLength() uint8
-	// GetAdditionalInformation returns AdditionalInformation
+	// GetAdditionalInformation returns AdditionalInformation (property field)
 	GetAdditionalInformation() []*CEMIAdditionalInformation
-	// GetDataFrame returns DataFrame
+	// GetDataFrame returns DataFrame (property field)
 	GetDataFrame() *LDataFrame
-	// GetCrc returns Crc
+	// GetCrc returns Crc (property field)
 	GetCrc() *uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -106,22 +107,19 @@ func NewLBusmonInd(additionalInformationLength uint8, additionalInformation []*C
 }
 
 func CastLBusmonInd(structType interface{}) *LBusmonInd {
-	castFunc := func(typ interface{}) *LBusmonInd {
-		if casted, ok := typ.(LBusmonInd); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LBusmonInd); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastLBusmonInd(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastLBusmonInd(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LBusmonInd); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LBusmonInd); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastLBusmonInd(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastLBusmonInd(casted.Child)
+	}
+	return nil
 }
 
 func (m *LBusmonInd) GetTypeName() string {
@@ -210,7 +208,7 @@ func LBusmonIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
 
 	// Optional Field (crc) (Can be skipped, if a given expression evaluates to false)
 	var crc *uint8 = nil
-	if CastLDataFrame(dataFrame).Child.NotAckFrame() {
+	if CastLDataFrame(dataFrame).Child.GetNotAckFrame() {
 		_val, _err := readBuffer.ReadUint8("crc", 8)
 		if _err != nil {
 			return nil, errors.Wrap(_err, "Error parsing 'crc' field")
@@ -298,6 +296,8 @@ func (m *LBusmonInd) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

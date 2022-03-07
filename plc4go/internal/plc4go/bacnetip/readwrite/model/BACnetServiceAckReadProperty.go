@@ -38,13 +38,14 @@ type BACnetServiceAckReadProperty struct {
 
 // The corresponding interface
 type IBACnetServiceAckReadProperty interface {
-	// GetObjectIdentifier returns ObjectIdentifier
+	IBACnetServiceAck
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetPropertyIdentifier returns PropertyIdentifier
+	// GetPropertyIdentifier returns PropertyIdentifier (property field)
 	GetPropertyIdentifier() *BACnetContextTagPropertyIdentifier
-	// GetArrayIndex returns ArrayIndex
+	// GetArrayIndex returns ArrayIndex (property field)
 	GetArrayIndex() *BACnetContextTagUnsignedInteger
-	// GetValues returns Values
+	// GetValues returns Values (property field)
 	GetValues() *BACnetConstructedData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -104,22 +105,19 @@ func NewBACnetServiceAckReadProperty(objectIdentifier *BACnetContextTagObjectIde
 }
 
 func CastBACnetServiceAckReadProperty(structType interface{}) *BACnetServiceAckReadProperty {
-	castFunc := func(typ interface{}) *BACnetServiceAckReadProperty {
-		if casted, ok := typ.(BACnetServiceAckReadProperty); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAckReadProperty); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetServiceAck); ok {
-			return CastBACnetServiceAckReadProperty(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetServiceAck); ok {
-			return CastBACnetServiceAckReadProperty(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAckReadProperty); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAckReadProperty); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetServiceAck); ok {
+		return CastBACnetServiceAckReadProperty(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetServiceAck); ok {
+		return CastBACnetServiceAckReadProperty(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetServiceAckReadProperty) GetTypeName() string {
@@ -322,6 +320,8 @@ func (m *BACnetServiceAckReadProperty) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

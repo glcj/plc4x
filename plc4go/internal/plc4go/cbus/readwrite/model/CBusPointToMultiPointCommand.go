@@ -37,7 +37,7 @@ type CBusPointToMultiPointCommand struct {
 
 // The corresponding interface
 type ICBusPointToMultiPointCommand interface {
-	// GetPeekedApplication returns PeekedApplication
+	// GetPeekedApplication returns PeekedApplication (property field)
 	GetPeekedApplication() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -76,16 +76,13 @@ func NewCBusPointToMultiPointCommand(peekedApplication byte, srchk bool) *CBusPo
 }
 
 func CastCBusPointToMultiPointCommand(structType interface{}) *CBusPointToMultiPointCommand {
-	castFunc := func(typ interface{}) *CBusPointToMultiPointCommand {
-		if casted, ok := typ.(CBusPointToMultiPointCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusPointToMultiPointCommand); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CBusPointToMultiPointCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusPointToMultiPointCommand); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CBusPointToMultiPointCommand) GetTypeName() string {
@@ -176,6 +173,8 @@ func (m *CBusPointToMultiPointCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

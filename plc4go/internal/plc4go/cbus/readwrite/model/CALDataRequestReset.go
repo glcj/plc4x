@@ -32,6 +32,7 @@ type CALDataRequestReset struct {
 
 // The corresponding interface
 type ICALDataRequestReset interface {
+	ICALData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -43,13 +44,6 @@ type ICALDataRequestReset interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CALDataRequestReset) CommandType() CALCommandType {
-	return CALCommandType_RESET
-}
-
-func (m *CALDataRequestReset) GetCommandType() CALCommandType {
-	return CALCommandType_RESET
-}
 
 func (m *CALDataRequestReset) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
@@ -73,22 +67,19 @@ func NewCALDataRequestReset(commandTypeContainer CALCommandTypeContainer) *CALDa
 }
 
 func CastCALDataRequestReset(structType interface{}) *CALDataRequestReset {
-	castFunc := func(typ interface{}) *CALDataRequestReset {
-		if casted, ok := typ.(CALDataRequestReset); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CALDataRequestReset); ok {
-			return casted
-		}
-		if casted, ok := typ.(CALData); ok {
-			return CastCALDataRequestReset(casted.Child)
-		}
-		if casted, ok := typ.(*CALData); ok {
-			return CastCALDataRequestReset(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CALDataRequestReset); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CALDataRequestReset); ok {
+		return casted
+	}
+	if casted, ok := structType.(CALData); ok {
+		return CastCALDataRequestReset(casted.Child)
+	}
+	if casted, ok := structType.(*CALData); ok {
+		return CastCALDataRequestReset(casted.Child)
+	}
+	return nil
 }
 
 func (m *CALDataRequestReset) GetTypeName() string {
@@ -147,6 +138,8 @@ func (m *CALDataRequestReset) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

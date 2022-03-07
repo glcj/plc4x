@@ -38,9 +38,10 @@ type NLMEstablishConnectionToNetwork struct {
 
 // The corresponding interface
 type INLMEstablishConnectionToNetwork interface {
-	// GetDestinationNetworkAddress returns DestinationNetworkAddress
+	INLM
+	// GetDestinationNetworkAddress returns DestinationNetworkAddress (property field)
 	GetDestinationNetworkAddress() uint16
-	// GetTerminationTime returns TerminationTime
+	// GetTerminationTime returns TerminationTime (property field)
 	GetTerminationTime() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -92,22 +93,19 @@ func NewNLMEstablishConnectionToNetwork(destinationNetworkAddress uint16, termin
 }
 
 func CastNLMEstablishConnectionToNetwork(structType interface{}) *NLMEstablishConnectionToNetwork {
-	castFunc := func(typ interface{}) *NLMEstablishConnectionToNetwork {
-		if casted, ok := typ.(NLMEstablishConnectionToNetwork); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NLMEstablishConnectionToNetwork); ok {
-			return casted
-		}
-		if casted, ok := typ.(NLM); ok {
-			return CastNLMEstablishConnectionToNetwork(casted.Child)
-		}
-		if casted, ok := typ.(*NLM); ok {
-			return CastNLMEstablishConnectionToNetwork(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NLMEstablishConnectionToNetwork); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NLMEstablishConnectionToNetwork); ok {
+		return casted
+	}
+	if casted, ok := structType.(NLM); ok {
+		return CastNLMEstablishConnectionToNetwork(casted.Child)
+	}
+	if casted, ok := structType.(*NLM); ok {
+		return CastNLMEstablishConnectionToNetwork(casted.Child)
+	}
+	return nil
 }
 
 func (m *NLMEstablishConnectionToNetwork) GetTypeName() string {
@@ -202,6 +200,8 @@ func (m *NLMEstablishConnectionToNetwork) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -37,7 +37,8 @@ type APDUUnknown struct {
 
 // The corresponding interface
 type IAPDUUnknown interface {
-	// GetUnknownBytes returns UnknownBytes
+	IAPDU
+	// GetUnknownBytes returns UnknownBytes (property field)
 	GetUnknownBytes() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewAPDUUnknown(unknownBytes []byte, apduLength uint16) *APDU {
 }
 
 func CastAPDUUnknown(structType interface{}) *APDUUnknown {
-	castFunc := func(typ interface{}) *APDUUnknown {
-		if casted, ok := typ.(APDUUnknown); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*APDUUnknown); ok {
-			return casted
-		}
-		if casted, ok := typ.(APDU); ok {
-			return CastAPDUUnknown(casted.Child)
-		}
-		if casted, ok := typ.(*APDU); ok {
-			return CastAPDUUnknown(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(APDUUnknown); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*APDUUnknown); ok {
+		return casted
+	}
+	if casted, ok := structType.(APDU); ok {
+		return CastAPDUUnknown(casted.Child)
+	}
+	if casted, ok := structType.(*APDU); ok {
+		return CastAPDUUnknown(casted.Child)
+	}
+	return nil
 }
 
 func (m *APDUUnknown) GetTypeName() string {
@@ -177,6 +175,8 @@ func (m *APDUUnknown) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

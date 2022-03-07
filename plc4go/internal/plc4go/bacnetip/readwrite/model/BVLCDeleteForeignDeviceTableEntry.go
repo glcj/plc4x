@@ -32,6 +32,7 @@ type BVLCDeleteForeignDeviceTableEntry struct {
 
 // The corresponding interface
 type IBVLCDeleteForeignDeviceTableEntry interface {
+	IBVLC
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewBVLCDeleteForeignDeviceTableEntry() *BVLC {
 }
 
 func CastBVLCDeleteForeignDeviceTableEntry(structType interface{}) *BVLCDeleteForeignDeviceTableEntry {
-	castFunc := func(typ interface{}) *BVLCDeleteForeignDeviceTableEntry {
-		if casted, ok := typ.(BVLCDeleteForeignDeviceTableEntry); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLCDeleteForeignDeviceTableEntry); ok {
-			return casted
-		}
-		if casted, ok := typ.(BVLC); ok {
-			return CastBVLCDeleteForeignDeviceTableEntry(casted.Child)
-		}
-		if casted, ok := typ.(*BVLC); ok {
-			return CastBVLCDeleteForeignDeviceTableEntry(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BVLCDeleteForeignDeviceTableEntry); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLCDeleteForeignDeviceTableEntry); ok {
+		return casted
+	}
+	if casted, ok := structType.(BVLC); ok {
+		return CastBVLCDeleteForeignDeviceTableEntry(casted.Child)
+	}
+	if casted, ok := structType.(*BVLC); ok {
+		return CastBVLCDeleteForeignDeviceTableEntry(casted.Child)
+	}
+	return nil
 }
 
 func (m *BVLCDeleteForeignDeviceTableEntry) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *BVLCDeleteForeignDeviceTableEntry) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

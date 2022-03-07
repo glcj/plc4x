@@ -37,7 +37,8 @@ type BVLCOriginalBroadcastNPDU struct {
 
 // The corresponding interface
 type IBVLCOriginalBroadcastNPDU interface {
-	// GetNpdu returns Npdu
+	IBVLC
+	// GetNpdu returns Npdu (property field)
 	GetNpdu() *NPDU
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewBVLCOriginalBroadcastNPDU(npdu *NPDU, bvlcPayloadLength uint16) *BVLC {
 }
 
 func CastBVLCOriginalBroadcastNPDU(structType interface{}) *BVLCOriginalBroadcastNPDU {
-	castFunc := func(typ interface{}) *BVLCOriginalBroadcastNPDU {
-		if casted, ok := typ.(BVLCOriginalBroadcastNPDU); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLCOriginalBroadcastNPDU); ok {
-			return casted
-		}
-		if casted, ok := typ.(BVLC); ok {
-			return CastBVLCOriginalBroadcastNPDU(casted.Child)
-		}
-		if casted, ok := typ.(*BVLC); ok {
-			return CastBVLCOriginalBroadcastNPDU(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BVLCOriginalBroadcastNPDU); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLCOriginalBroadcastNPDU); ok {
+		return casted
+	}
+	if casted, ok := structType.(BVLC); ok {
+		return CastBVLCOriginalBroadcastNPDU(casted.Child)
+	}
+	if casted, ok := structType.(*BVLC); ok {
+		return CastBVLCOriginalBroadcastNPDU(casted.Child)
+	}
+	return nil
 }
 
 func (m *BVLCOriginalBroadcastNPDU) GetTypeName() string {
@@ -185,6 +183,8 @@ func (m *BVLCOriginalBroadcastNPDU) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

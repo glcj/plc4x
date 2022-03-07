@@ -34,7 +34,8 @@ type TunnelingResponse struct {
 
 // The corresponding interface
 type ITunnelingResponse interface {
-	// GetTunnelingResponseDataBlock returns TunnelingResponseDataBlock
+	IKnxNetIpMessage
+	// GetTunnelingResponseDataBlock returns TunnelingResponseDataBlock (property field)
 	GetTunnelingResponseDataBlock() *TunnelingResponseDataBlock
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewTunnelingResponse(tunnelingResponseDataBlock *TunnelingResponseDataBlock
 }
 
 func CastTunnelingResponse(structType interface{}) *TunnelingResponse {
-	castFunc := func(typ interface{}) *TunnelingResponse {
-		if casted, ok := typ.(TunnelingResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*TunnelingResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastTunnelingResponse(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastTunnelingResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(TunnelingResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*TunnelingResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastTunnelingResponse(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastTunnelingResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *TunnelingResponse) GetTypeName() string {
@@ -182,6 +180,8 @@ func (m *TunnelingResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

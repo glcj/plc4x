@@ -35,9 +35,9 @@ type DeviceConfigurationRequestDataBlock struct {
 
 // The corresponding interface
 type IDeviceConfigurationRequestDataBlock interface {
-	// GetCommunicationChannelId returns CommunicationChannelId
+	// GetCommunicationChannelId returns CommunicationChannelId (property field)
 	GetCommunicationChannelId() uint8
-	// GetSequenceCounter returns SequenceCounter
+	// GetSequenceCounter returns SequenceCounter (property field)
 	GetSequenceCounter() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -68,16 +68,13 @@ func NewDeviceConfigurationRequestDataBlock(communicationChannelId uint8, sequen
 }
 
 func CastDeviceConfigurationRequestDataBlock(structType interface{}) *DeviceConfigurationRequestDataBlock {
-	castFunc := func(typ interface{}) *DeviceConfigurationRequestDataBlock {
-		if casted, ok := typ.(DeviceConfigurationRequestDataBlock); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DeviceConfigurationRequestDataBlock); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DeviceConfigurationRequestDataBlock); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DeviceConfigurationRequestDataBlock); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DeviceConfigurationRequestDataBlock) GetTypeName() string {
@@ -205,6 +202,8 @@ func (m *DeviceConfigurationRequestDataBlock) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,7 @@ const StandardFormatStatusReply_LF byte = 0x0A
 // The data-structure of this message
 type StandardFormatStatusReply struct {
 	StatusHeader *StatusHeader
-	Application  *Application
+	Application  ApplicationIdContainer
 	BlockStart   uint8
 	StatusBytes  []*StatusByte
 	Crc          *Checksum
@@ -42,15 +42,15 @@ type StandardFormatStatusReply struct {
 
 // The corresponding interface
 type IStandardFormatStatusReply interface {
-	// GetStatusHeader returns StatusHeader
+	// GetStatusHeader returns StatusHeader (property field)
 	GetStatusHeader() *StatusHeader
-	// GetApplication returns Application
-	GetApplication() *Application
-	// GetBlockStart returns BlockStart
+	// GetApplication returns Application (property field)
+	GetApplication() ApplicationIdContainer
+	// GetBlockStart returns BlockStart (property field)
 	GetBlockStart() uint8
-	// GetStatusBytes returns StatusBytes
+	// GetStatusBytes returns StatusBytes (property field)
 	GetStatusBytes() []*StatusByte
-	// GetCrc returns Crc
+	// GetCrc returns Crc (property field)
 	GetCrc() *Checksum
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -67,7 +67,7 @@ func (m *StandardFormatStatusReply) GetStatusHeader() *StatusHeader {
 	return m.StatusHeader
 }
 
-func (m *StandardFormatStatusReply) GetApplication() *Application {
+func (m *StandardFormatStatusReply) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
 
@@ -88,21 +88,18 @@ func (m *StandardFormatStatusReply) GetCrc() *Checksum {
 ///////////////////////////////////////////////////////////
 
 // NewStandardFormatStatusReply factory function for StandardFormatStatusReply
-func NewStandardFormatStatusReply(statusHeader *StatusHeader, application *Application, blockStart uint8, statusBytes []*StatusByte, crc *Checksum) *StandardFormatStatusReply {
+func NewStandardFormatStatusReply(statusHeader *StatusHeader, application ApplicationIdContainer, blockStart uint8, statusBytes []*StatusByte, crc *Checksum) *StandardFormatStatusReply {
 	return &StandardFormatStatusReply{StatusHeader: statusHeader, Application: application, BlockStart: blockStart, StatusBytes: statusBytes, Crc: crc}
 }
 
 func CastStandardFormatStatusReply(structType interface{}) *StandardFormatStatusReply {
-	castFunc := func(typ interface{}) *StandardFormatStatusReply {
-		if casted, ok := typ.(StandardFormatStatusReply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*StandardFormatStatusReply); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(StandardFormatStatusReply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*StandardFormatStatusReply); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *StandardFormatStatusReply) GetTypeName() string {
@@ -120,7 +117,7 @@ func (m *StandardFormatStatusReply) GetLengthInBitsConditional(lastItem bool) ui
 	lengthInBits += m.StatusHeader.GetLengthInBits()
 
 	// Simple field (application)
-	lengthInBits += m.Application.GetLengthInBits()
+	lengthInBits += 8
 
 	// Simple field (blockStart)
 	lengthInBits += 8
@@ -173,11 +170,11 @@ func StandardFormatStatusReplyParse(readBuffer utils.ReadBuffer) (*StandardForma
 	if pullErr := readBuffer.PullContext("application"); pullErr != nil {
 		return nil, pullErr
 	}
-	_application, _applicationErr := ApplicationParse(readBuffer)
+	_application, _applicationErr := ApplicationIdContainerParse(readBuffer)
 	if _applicationErr != nil {
 		return nil, errors.Wrap(_applicationErr, "Error parsing 'application' field")
 	}
-	application := CastApplication(_application)
+	application := _application
 	if closeErr := readBuffer.CloseContext("application"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -334,6 +331,8 @@ func (m *StandardFormatStatusReply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

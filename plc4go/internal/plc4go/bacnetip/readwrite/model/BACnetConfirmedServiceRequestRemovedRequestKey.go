@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestRemovedRequestKey struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestRemovedRequestKey interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestRemovedRequestKey(len uint16) *BACnetConfir
 }
 
 func CastBACnetConfirmedServiceRequestRemovedRequestKey(structType interface{}) *BACnetConfirmedServiceRequestRemovedRequestKey {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestRemovedRequestKey {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestRemovedRequestKey); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestRemovedRequestKey); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestRemovedRequestKey(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestRemovedRequestKey(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestRemovedRequestKey); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestRemovedRequestKey); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestRemovedRequestKey(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestRemovedRequestKey(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestRemovedRequestKey) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestRemovedRequestKey) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

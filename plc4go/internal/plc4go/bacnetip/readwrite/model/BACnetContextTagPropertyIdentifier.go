@@ -40,11 +40,12 @@ type BACnetContextTagPropertyIdentifier struct {
 
 // The corresponding interface
 type IBACnetContextTagPropertyIdentifier interface {
-	// GetPropertyIdentifier returns PropertyIdentifier
+	IBACnetContextTag
+	// GetPropertyIdentifier returns PropertyIdentifier (property field)
 	GetPropertyIdentifier() BACnetPropertyIdentifier
-	// GetProprietaryValue returns ProprietaryValue
+	// GetProprietaryValue returns ProprietaryValue (property field)
 	GetProprietaryValue() uint32
-	// GetIsProprietary returns IsProprietary
+	// GetIsProprietary returns IsProprietary (virtual field)
 	GetIsProprietary() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -99,22 +100,19 @@ func NewBACnetContextTagPropertyIdentifier(propertyIdentifier BACnetPropertyIden
 }
 
 func CastBACnetContextTagPropertyIdentifier(structType interface{}) *BACnetContextTagPropertyIdentifier {
-	castFunc := func(typ interface{}) *BACnetContextTagPropertyIdentifier {
-		if casted, ok := typ.(BACnetContextTagPropertyIdentifier); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagPropertyIdentifier); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagPropertyIdentifier(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagPropertyIdentifier(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagPropertyIdentifier); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagPropertyIdentifier); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagPropertyIdentifier(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagPropertyIdentifier(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagPropertyIdentifier) GetTypeName() string {
@@ -221,6 +219,8 @@ func (m *BACnetContextTagPropertyIdentifier) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

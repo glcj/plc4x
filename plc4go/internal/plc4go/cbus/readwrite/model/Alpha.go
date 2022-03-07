@@ -33,7 +33,7 @@ type Alpha struct {
 
 // The corresponding interface
 type IAlpha interface {
-	// GetCharacter returns Character
+	// GetCharacter returns Character (property field)
 	GetCharacter() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewAlpha(character byte) *Alpha {
 }
 
 func CastAlpha(structType interface{}) *Alpha {
-	castFunc := func(typ interface{}) *Alpha {
-		if casted, ok := typ.(Alpha); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*Alpha); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(Alpha); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*Alpha); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *Alpha) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *Alpha) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,8 @@ type ModbusPDUReadFifoQueueResponse struct {
 
 // The corresponding interface
 type IModbusPDUReadFifoQueueResponse interface {
-	// GetFifoValue returns FifoValue
+	IModbusPDU
+	// GetFifoValue returns FifoValue (property field)
 	GetFifoValue() []uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewModbusPDUReadFifoQueueResponse(fifoValue []uint16) *ModbusPDU {
 }
 
 func CastModbusPDUReadFifoQueueResponse(structType interface{}) *ModbusPDUReadFifoQueueResponse {
-	castFunc := func(typ interface{}) *ModbusPDUReadFifoQueueResponse {
-		if casted, ok := typ.(ModbusPDUReadFifoQueueResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadFifoQueueResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadFifoQueueResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadFifoQueueResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadFifoQueueResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadFifoQueueResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadFifoQueueResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadFifoQueueResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadFifoQueueResponse) GetTypeName() string {
@@ -244,6 +242,8 @@ func (m *ModbusPDUReadFifoQueueResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

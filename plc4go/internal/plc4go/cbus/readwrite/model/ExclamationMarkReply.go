@@ -34,7 +34,8 @@ type ExclamationMarkReply struct {
 
 // The corresponding interface
 type IExclamationMarkReply interface {
-	// GetIsA returns IsA
+	IReply
+	// GetIsA returns IsA (property field)
 	GetIsA() *ExclamationMark
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,22 +75,19 @@ func NewExclamationMarkReply(isA *ExclamationMark, magicByte byte) *Reply {
 }
 
 func CastExclamationMarkReply(structType interface{}) *ExclamationMarkReply {
-	castFunc := func(typ interface{}) *ExclamationMarkReply {
-		if casted, ok := typ.(ExclamationMarkReply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ExclamationMarkReply); ok {
-			return casted
-		}
-		if casted, ok := typ.(Reply); ok {
-			return CastExclamationMarkReply(casted.Child)
-		}
-		if casted, ok := typ.(*Reply); ok {
-			return CastExclamationMarkReply(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ExclamationMarkReply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ExclamationMarkReply); ok {
+		return casted
+	}
+	if casted, ok := structType.(Reply); ok {
+		return CastExclamationMarkReply(casted.Child)
+	}
+	if casted, ok := structType.(*Reply); ok {
+		return CastExclamationMarkReply(casted.Child)
+	}
+	return nil
 }
 
 func (m *ExclamationMarkReply) GetTypeName() string {
@@ -177,6 +175,8 @@ func (m *ExclamationMarkReply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

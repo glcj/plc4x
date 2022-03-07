@@ -36,6 +36,7 @@ type BACnetClosingTag struct {
 
 // The corresponding interface
 type IBACnetClosingTag interface {
+	IBACnetContextTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -77,22 +78,19 @@ func NewBACnetClosingTag(header *BACnetTagHeader, tagNumberArgument uint8, actua
 }
 
 func CastBACnetClosingTag(structType interface{}) *BACnetClosingTag {
-	castFunc := func(typ interface{}) *BACnetClosingTag {
-		if casted, ok := typ.(BACnetClosingTag); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetClosingTag); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetClosingTag(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetClosingTag(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetClosingTag); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetClosingTag); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetClosingTag(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetClosingTag(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetClosingTag) GetTypeName() string {
@@ -156,6 +154,8 @@ func (m *BACnetClosingTag) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

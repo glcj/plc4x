@@ -39,11 +39,12 @@ type ApduDataExtPropertyDescriptionRead struct {
 
 // The corresponding interface
 type IApduDataExtPropertyDescriptionRead interface {
-	// GetObjectIndex returns ObjectIndex
+	IApduDataExt
+	// GetObjectIndex returns ObjectIndex (property field)
 	GetObjectIndex() uint8
-	// GetPropertyId returns PropertyId
+	// GetPropertyId returns PropertyId (property field)
 	GetPropertyId() uint8
-	// GetIndex returns Index
+	// GetIndex returns Index (property field)
 	GetIndex() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -98,22 +99,19 @@ func NewApduDataExtPropertyDescriptionRead(objectIndex uint8, propertyId uint8, 
 }
 
 func CastApduDataExtPropertyDescriptionRead(structType interface{}) *ApduDataExtPropertyDescriptionRead {
-	castFunc := func(typ interface{}) *ApduDataExtPropertyDescriptionRead {
-		if casted, ok := typ.(ApduDataExtPropertyDescriptionRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtPropertyDescriptionRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtPropertyDescriptionRead(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtPropertyDescriptionRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtPropertyDescriptionRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtPropertyDescriptionRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtPropertyDescriptionRead(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtPropertyDescriptionRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtPropertyDescriptionRead) GetTypeName() string {
@@ -226,6 +224,8 @@ func (m *ApduDataExtPropertyDescriptionRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

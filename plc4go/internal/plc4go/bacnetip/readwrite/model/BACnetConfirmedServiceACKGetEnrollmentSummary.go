@@ -32,6 +32,7 @@ type BACnetConfirmedServiceACKGetEnrollmentSummary struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceACKGetEnrollmentSummary interface {
+	IBACnetConfirmedServiceACK
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,22 +73,19 @@ func NewBACnetConfirmedServiceACKGetEnrollmentSummary() *BACnetConfirmedServiceA
 }
 
 func CastBACnetConfirmedServiceACKGetEnrollmentSummary(structType interface{}) *BACnetConfirmedServiceACKGetEnrollmentSummary {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceACKGetEnrollmentSummary {
-		if casted, ok := typ.(BACnetConfirmedServiceACKGetEnrollmentSummary); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACKGetEnrollmentSummary); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKGetEnrollmentSummary(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKGetEnrollmentSummary(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceACKGetEnrollmentSummary); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceACKGetEnrollmentSummary); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKGetEnrollmentSummary(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKGetEnrollmentSummary(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceACKGetEnrollmentSummary) GetTypeName() string {
@@ -146,6 +144,8 @@ func (m *BACnetConfirmedServiceACKGetEnrollmentSummary) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

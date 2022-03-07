@@ -35,9 +35,10 @@ type KnxGroupAddress2Level struct {
 
 // The corresponding interface
 type IKnxGroupAddress2Level interface {
-	// GetMainGroup returns MainGroup
+	IKnxGroupAddress
+	// GetMainGroup returns MainGroup (property field)
 	GetMainGroup() uint8
-	// GetSubGroup returns SubGroup
+	// GetSubGroup returns SubGroup (property field)
 	GetSubGroup() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewKnxGroupAddress2Level(mainGroup uint8, subGroup uint16) *KnxGroupAddress
 }
 
 func CastKnxGroupAddress2Level(structType interface{}) *KnxGroupAddress2Level {
-	castFunc := func(typ interface{}) *KnxGroupAddress2Level {
-		if casted, ok := typ.(KnxGroupAddress2Level); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*KnxGroupAddress2Level); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxGroupAddress); ok {
-			return CastKnxGroupAddress2Level(casted.Child)
-		}
-		if casted, ok := typ.(*KnxGroupAddress); ok {
-			return CastKnxGroupAddress2Level(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(KnxGroupAddress2Level); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*KnxGroupAddress2Level); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxGroupAddress); ok {
+		return CastKnxGroupAddress2Level(casted.Child)
+	}
+	if casted, ok := structType.(*KnxGroupAddress); ok {
+		return CastKnxGroupAddress2Level(casted.Child)
+	}
+	return nil
 }
 
 func (m *KnxGroupAddress2Level) GetTypeName() string {
@@ -197,6 +195,8 @@ func (m *KnxGroupAddress2Level) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -52,37 +52,37 @@ type BACnetNotificationParametersExtendedParameters struct {
 
 // The corresponding interface
 type IBACnetNotificationParametersExtendedParameters interface {
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetNullValue returns NullValue
+	// GetNullValue returns NullValue (property field)
 	GetNullValue() *BACnetApplicationTagNull
-	// GetRealValue returns RealValue
+	// GetRealValue returns RealValue (property field)
 	GetRealValue() *BACnetApplicationTagReal
-	// GetUnsignedValue returns UnsignedValue
+	// GetUnsignedValue returns UnsignedValue (property field)
 	GetUnsignedValue() *BACnetApplicationTagUnsignedInteger
-	// GetBooleanValue returns BooleanValue
+	// GetBooleanValue returns BooleanValue (property field)
 	GetBooleanValue() *BACnetApplicationTagBoolean
-	// GetIntegerValue returns IntegerValue
+	// GetIntegerValue returns IntegerValue (property field)
 	GetIntegerValue() *BACnetApplicationTagSignedInteger
-	// GetDoubleValue returns DoubleValue
+	// GetDoubleValue returns DoubleValue (property field)
 	GetDoubleValue() *BACnetApplicationTagDouble
-	// GetOctetStringValue returns OctetStringValue
+	// GetOctetStringValue returns OctetStringValue (property field)
 	GetOctetStringValue() *BACnetApplicationTagOctetString
-	// GetCharacterStringValue returns CharacterStringValue
+	// GetCharacterStringValue returns CharacterStringValue (property field)
 	GetCharacterStringValue() *BACnetApplicationTagCharacterString
-	// GetBitStringValue returns BitStringValue
+	// GetBitStringValue returns BitStringValue (property field)
 	GetBitStringValue() *BACnetApplicationTagBitString
-	// GetEnumeratedValue returns EnumeratedValue
+	// GetEnumeratedValue returns EnumeratedValue (property field)
 	GetEnumeratedValue() *BACnetApplicationTagEnumerated
-	// GetDateValue returns DateValue
+	// GetDateValue returns DateValue (property field)
 	GetDateValue() *BACnetApplicationTagDate
-	// GetTimeValue returns TimeValue
+	// GetTimeValue returns TimeValue (property field)
 	GetTimeValue() *BACnetApplicationTagTime
-	// GetObjectIdentifier returns ObjectIdentifier
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetApplicationTagObjectIdentifier
-	// GetReference returns Reference
+	// GetReference returns Reference (property field)
 	GetReference() *BACnetDeviceObjectPropertyReference
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -169,16 +169,13 @@ func NewBACnetNotificationParametersExtendedParameters(openingTag *BACnetOpening
 }
 
 func CastBACnetNotificationParametersExtendedParameters(structType interface{}) *BACnetNotificationParametersExtendedParameters {
-	castFunc := func(typ interface{}) *BACnetNotificationParametersExtendedParameters {
-		if casted, ok := typ.(BACnetNotificationParametersExtendedParameters); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetNotificationParametersExtendedParameters); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetNotificationParametersExtendedParameters); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetNotificationParametersExtendedParameters); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetNotificationParametersExtendedParameters) GetTypeName() string {
@@ -874,6 +871,8 @@ func (m *BACnetNotificationParametersExtendedParameters) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

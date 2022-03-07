@@ -32,6 +32,7 @@ type SysexCommandReportFirmwareRequest struct {
 
 // The corresponding interface
 type ISysexCommandReportFirmwareRequest interface {
+	ISysexCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -79,22 +80,19 @@ func NewSysexCommandReportFirmwareRequest() *SysexCommand {
 }
 
 func CastSysexCommandReportFirmwareRequest(structType interface{}) *SysexCommandReportFirmwareRequest {
-	castFunc := func(typ interface{}) *SysexCommandReportFirmwareRequest {
-		if casted, ok := typ.(SysexCommandReportFirmwareRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandReportFirmwareRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandReportFirmwareRequest(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandReportFirmwareRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandReportFirmwareRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandReportFirmwareRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandReportFirmwareRequest(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandReportFirmwareRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandReportFirmwareRequest) GetTypeName() string {
@@ -153,6 +151,8 @@ func (m *SysexCommandReportFirmwareRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -37,7 +37,8 @@ type FirmataMessageCommand struct {
 
 // The corresponding interface
 type IFirmataMessageCommand interface {
-	// GetCommand returns Command
+	IFirmataMessage
+	// GetCommand returns Command (property field)
 	GetCommand() *FirmataCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewFirmataMessageCommand(command *FirmataCommand, response bool) *FirmataMe
 }
 
 func CastFirmataMessageCommand(structType interface{}) *FirmataMessageCommand {
-	castFunc := func(typ interface{}) *FirmataMessageCommand {
-		if casted, ok := typ.(FirmataMessageCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataMessageCommand); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataMessage); ok {
-			return CastFirmataMessageCommand(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataMessage); ok {
-			return CastFirmataMessageCommand(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataMessageCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataMessageCommand); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataMessage); ok {
+		return CastFirmataMessageCommand(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataMessage); ok {
+		return CastFirmataMessageCommand(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataMessageCommand) GetTypeName() string {
@@ -185,6 +183,8 @@ func (m *FirmataMessageCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

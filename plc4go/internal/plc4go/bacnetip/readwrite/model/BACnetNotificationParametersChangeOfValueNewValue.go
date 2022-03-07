@@ -39,15 +39,13 @@ type BACnetNotificationParametersChangeOfValueNewValue struct {
 
 // The corresponding interface
 type IBACnetNotificationParametersChangeOfValueNewValue interface {
-	// PeekedTagNumber returns PeekedTagNumber
-	PeekedTagNumber() uint8
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetPeekedTagHeader returns PeekedTagHeader
+	// GetPeekedTagHeader returns PeekedTagHeader (property field)
 	GetPeekedTagHeader() *BACnetTagHeader
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
-	// GetPeekedTagNumber returns PeekedTagNumber
+	// GetPeekedTagNumber returns PeekedTagNumber (virtual field)
 	GetPeekedTagNumber() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -97,16 +95,13 @@ func NewBACnetNotificationParametersChangeOfValueNewValue(openingTag *BACnetOpen
 }
 
 func CastBACnetNotificationParametersChangeOfValueNewValue(structType interface{}) *BACnetNotificationParametersChangeOfValueNewValue {
-	castFunc := func(typ interface{}) *BACnetNotificationParametersChangeOfValueNewValue {
-		if casted, ok := typ.(BACnetNotificationParametersChangeOfValueNewValue); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetNotificationParametersChangeOfValueNewValue); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetNotificationParametersChangeOfValueNewValue); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetNotificationParametersChangeOfValueNewValue); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetNotificationParametersChangeOfValueNewValue) GetTypeName() string {
@@ -263,6 +258,8 @@ func (m *BACnetNotificationParametersChangeOfValueNewValue) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

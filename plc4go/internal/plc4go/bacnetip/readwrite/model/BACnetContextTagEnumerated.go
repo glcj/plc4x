@@ -38,9 +38,10 @@ type BACnetContextTagEnumerated struct {
 
 // The corresponding interface
 type IBACnetContextTagEnumerated interface {
-	// GetPayload returns Payload
+	IBACnetContextTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadEnumerated
-	// GetActualValue returns ActualValue
+	// GetActualValue returns ActualValue (virtual field)
 	GetActualValue() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewBACnetContextTagEnumerated(payload *BACnetTagPayloadEnumerated, header *
 }
 
 func CastBACnetContextTagEnumerated(structType interface{}) *BACnetContextTagEnumerated {
-	castFunc := func(typ interface{}) *BACnetContextTagEnumerated {
-		if casted, ok := typ.(BACnetContextTagEnumerated); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagEnumerated); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagEnumerated(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagEnumerated(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagEnumerated); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagEnumerated); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagEnumerated(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagEnumerated(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagEnumerated) GetTypeName() string {
@@ -209,6 +207,8 @@ func (m *BACnetContextTagEnumerated) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

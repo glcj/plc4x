@@ -37,7 +37,8 @@ type BACnetTimeStampSequence struct {
 
 // The corresponding interface
 type IBACnetTimeStampSequence interface {
-	// GetSequenceNumber returns SequenceNumber
+	IBACnetTimeStamp
+	// GetSequenceNumber returns SequenceNumber (property field)
 	GetSequenceNumber() *BACnetContextTagUnsignedInteger
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type IBACnetTimeStampSequence interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetTimeStampSequence) PeekedTagNumber() uint8 {
-	return uint8(1)
-}
-
-func (m *BACnetTimeStampSequence) GetPeekedTagNumber() uint8 {
-	return uint8(1)
-}
 
 func (m *BACnetTimeStampSequence) InitializeParent(parent *BACnetTimeStamp, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetTimeStamp.OpeningTag = openingTag
@@ -86,22 +80,19 @@ func NewBACnetTimeStampSequence(sequenceNumber *BACnetContextTagUnsignedInteger,
 }
 
 func CastBACnetTimeStampSequence(structType interface{}) *BACnetTimeStampSequence {
-	castFunc := func(typ interface{}) *BACnetTimeStampSequence {
-		if casted, ok := typ.(BACnetTimeStampSequence); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTimeStampSequence); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetTimeStamp); ok {
-			return CastBACnetTimeStampSequence(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetTimeStamp); ok {
-			return CastBACnetTimeStampSequence(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetTimeStampSequence); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTimeStampSequence); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetTimeStamp); ok {
+		return CastBACnetTimeStampSequence(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetTimeStamp); ok {
+		return CastBACnetTimeStampSequence(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetTimeStampSequence) GetTypeName() string {
@@ -189,6 +180,8 @@ func (m *BACnetTimeStampSequence) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

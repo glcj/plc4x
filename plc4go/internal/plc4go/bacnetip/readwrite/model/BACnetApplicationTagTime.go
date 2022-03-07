@@ -34,7 +34,8 @@ type BACnetApplicationTagTime struct {
 
 // The corresponding interface
 type IBACnetApplicationTagTime interface {
-	// GetPayload returns Payload
+	IBACnetApplicationTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadTime
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -47,13 +48,6 @@ type IBACnetApplicationTagTime interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetApplicationTagTime) ActualTagNumber() uint8 {
-	return 0xB
-}
-
-func (m *BACnetApplicationTagTime) GetActualTagNumber() uint8 {
-	return 0xB
-}
 
 func (m *BACnetApplicationTagTime) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
@@ -81,22 +75,19 @@ func NewBACnetApplicationTagTime(payload *BACnetTagPayloadTime, header *BACnetTa
 }
 
 func CastBACnetApplicationTagTime(structType interface{}) *BACnetApplicationTagTime {
-	castFunc := func(typ interface{}) *BACnetApplicationTagTime {
-		if casted, ok := typ.(BACnetApplicationTagTime); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetApplicationTagTime); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagTime(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagTime(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetApplicationTagTime); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetApplicationTagTime); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagTime(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagTime(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetApplicationTagTime) GetTypeName() string {
@@ -184,6 +175,8 @@ func (m *BACnetApplicationTagTime) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

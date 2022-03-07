@@ -33,8 +33,8 @@ type IdentifyReplyCommand struct {
 
 // The corresponding interface
 type IIdentifyReplyCommand interface {
-	// Attribute returns Attribute
-	Attribute() Attribute
+	// GetAttribute returns Attribute (discriminator field)
+	GetAttribute() Attribute
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewIdentifyReplyCommand() *IdentifyReplyCommand {
 }
 
 func CastIdentifyReplyCommand(structType interface{}) *IdentifyReplyCommand {
-	castFunc := func(typ interface{}) *IdentifyReplyCommand {
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommand) GetTypeName() string {
@@ -192,6 +189,8 @@ func (m *IdentifyReplyCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

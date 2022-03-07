@@ -34,13 +34,11 @@ type BACnetApplicationTag struct {
 
 // The corresponding interface
 type IBACnetApplicationTag interface {
-	// ActualTagNumber returns ActualTagNumber
-	ActualTagNumber() uint8
-	// GetHeader returns Header
+	// GetHeader returns Header (property field)
 	GetHeader() *BACnetTagHeader
-	// GetActualTagNumber returns ActualTagNumber
+	// GetActualTagNumber returns ActualTagNumber (virtual field)
 	GetActualTagNumber() uint8
-	// GetActualLength returns ActualLength
+	// GetActualLength returns ActualLength (virtual field)
 	GetActualLength() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -86,16 +84,13 @@ func NewBACnetApplicationTag(header *BACnetTagHeader) *BACnetApplicationTag {
 }
 
 func CastBACnetApplicationTag(structType interface{}) *BACnetApplicationTag {
-	castFunc := func(typ interface{}) *BACnetApplicationTag {
-		if casted, ok := typ.(BACnetApplicationTag); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetApplicationTag); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetApplicationTag); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetApplicationTag); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetApplicationTag) GetTypeName() string {
@@ -254,6 +249,8 @@ func (m *BACnetApplicationTag) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

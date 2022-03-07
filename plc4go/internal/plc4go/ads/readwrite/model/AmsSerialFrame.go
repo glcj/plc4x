@@ -39,19 +39,19 @@ type AmsSerialFrame struct {
 
 // The corresponding interface
 type IAmsSerialFrame interface {
-	// GetMagicCookie returns MagicCookie
+	// GetMagicCookie returns MagicCookie (property field)
 	GetMagicCookie() uint16
-	// GetTransmitterAddress returns TransmitterAddress
+	// GetTransmitterAddress returns TransmitterAddress (property field)
 	GetTransmitterAddress() int8
-	// GetReceiverAddress returns ReceiverAddress
+	// GetReceiverAddress returns ReceiverAddress (property field)
 	GetReceiverAddress() int8
-	// GetFragmentNumber returns FragmentNumber
+	// GetFragmentNumber returns FragmentNumber (property field)
 	GetFragmentNumber() int8
-	// GetLength returns Length
+	// GetLength returns Length (property field)
 	GetLength() int8
-	// GetUserdata returns Userdata
+	// GetUserdata returns Userdata (property field)
 	GetUserdata() *AmsPacket
-	// GetCrc returns Crc
+	// GetCrc returns Crc (property field)
 	GetCrc() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -102,16 +102,13 @@ func NewAmsSerialFrame(magicCookie uint16, transmitterAddress int8, receiverAddr
 }
 
 func CastAmsSerialFrame(structType interface{}) *AmsSerialFrame {
-	castFunc := func(typ interface{}) *AmsSerialFrame {
-		if casted, ok := typ.(AmsSerialFrame); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AmsSerialFrame); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AmsSerialFrame); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AmsSerialFrame); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AmsSerialFrame) GetTypeName() string {
@@ -293,6 +290,8 @@ func (m *AmsSerialFrame) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

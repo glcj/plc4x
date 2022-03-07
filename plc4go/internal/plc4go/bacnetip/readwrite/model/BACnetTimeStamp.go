@@ -39,15 +39,13 @@ type BACnetTimeStamp struct {
 
 // The corresponding interface
 type IBACnetTimeStamp interface {
-	// PeekedTagNumber returns PeekedTagNumber
-	PeekedTagNumber() uint8
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetPeekedTagHeader returns PeekedTagHeader
+	// GetPeekedTagHeader returns PeekedTagHeader (property field)
 	GetPeekedTagHeader() *BACnetTagHeader
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
-	// GetPeekedTagNumber returns PeekedTagNumber
+	// GetPeekedTagNumber returns PeekedTagNumber (virtual field)
 	GetPeekedTagNumber() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -97,16 +95,13 @@ func NewBACnetTimeStamp(openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTag
 }
 
 func CastBACnetTimeStamp(structType interface{}) *BACnetTimeStamp {
-	castFunc := func(typ interface{}) *BACnetTimeStamp {
-		if casted, ok := typ.(BACnetTimeStamp); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTimeStamp); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTimeStamp); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTimeStamp); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTimeStamp) GetTypeName() string {
@@ -265,6 +260,8 @@ func (m *BACnetTimeStamp) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

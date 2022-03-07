@@ -37,7 +37,8 @@ type CBusCommandPointToPoint struct {
 
 // The corresponding interface
 type ICBusCommandPointToPoint interface {
-	// GetCommand returns Command
+	ICBusCommand
+	// GetCommand returns Command (property field)
 	GetCommand() *CBusPointToPointCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type ICBusCommandPointToPoint interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CBusCommandPointToPoint) DestinationAddressType() DestinationAddressType {
-	return DestinationAddressType_PointToPoint
-}
-
-func (m *CBusCommandPointToPoint) GetDestinationAddressType() DestinationAddressType {
-	return DestinationAddressType_PointToPoint
-}
 
 func (m *CBusCommandPointToPoint) InitializeParent(parent *CBusCommand, header *CBusHeader) {
 	m.CBusCommand.Header = header
@@ -84,22 +78,19 @@ func NewCBusCommandPointToPoint(command *CBusPointToPointCommand, header *CBusHe
 }
 
 func CastCBusCommandPointToPoint(structType interface{}) *CBusCommandPointToPoint {
-	castFunc := func(typ interface{}) *CBusCommandPointToPoint {
-		if casted, ok := typ.(CBusCommandPointToPoint); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusCommandPointToPoint); ok {
-			return casted
-		}
-		if casted, ok := typ.(CBusCommand); ok {
-			return CastCBusCommandPointToPoint(casted.Child)
-		}
-		if casted, ok := typ.(*CBusCommand); ok {
-			return CastCBusCommandPointToPoint(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CBusCommandPointToPoint); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusCommandPointToPoint); ok {
+		return casted
+	}
+	if casted, ok := structType.(CBusCommand); ok {
+		return CastCBusCommandPointToPoint(casted.Child)
+	}
+	if casted, ok := structType.(*CBusCommand); ok {
+		return CastCBusCommandPointToPoint(casted.Child)
+	}
+	return nil
 }
 
 func (m *CBusCommandPointToPoint) GetTypeName() string {
@@ -187,6 +178,8 @@ func (m *CBusCommandPointToPoint) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

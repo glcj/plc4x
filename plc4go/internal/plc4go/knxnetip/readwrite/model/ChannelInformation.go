@@ -34,9 +34,9 @@ type ChannelInformation struct {
 
 // The corresponding interface
 type IChannelInformation interface {
-	// GetNumChannels returns NumChannels
+	// GetNumChannels returns NumChannels (property field)
 	GetNumChannels() uint8
-	// GetChannelCode returns ChannelCode
+	// GetChannelCode returns ChannelCode (property field)
 	GetChannelCode() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -67,16 +67,13 @@ func NewChannelInformation(numChannels uint8, channelCode uint16) *ChannelInform
 }
 
 func CastChannelInformation(structType interface{}) *ChannelInformation {
-	castFunc := func(typ interface{}) *ChannelInformation {
-		if casted, ok := typ.(ChannelInformation); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ChannelInformation); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ChannelInformation); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ChannelInformation); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ChannelInformation) GetTypeName() string {
@@ -162,6 +159,8 @@ func (m *ChannelInformation) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

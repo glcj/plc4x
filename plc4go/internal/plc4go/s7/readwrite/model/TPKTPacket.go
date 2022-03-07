@@ -38,7 +38,7 @@ type TPKTPacket struct {
 
 // The corresponding interface
 type ITPKTPacket interface {
-	// GetPayload returns Payload
+	// GetPayload returns Payload (property field)
 	GetPayload() *COTPPacket
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -65,16 +65,13 @@ func NewTPKTPacket(payload *COTPPacket) *TPKTPacket {
 }
 
 func CastTPKTPacket(structType interface{}) *TPKTPacket {
-	castFunc := func(typ interface{}) *TPKTPacket {
-		if casted, ok := typ.(TPKTPacket); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*TPKTPacket); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(TPKTPacket); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*TPKTPacket); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *TPKTPacket) GetTypeName() string {
@@ -214,6 +211,8 @@ func (m *TPKTPacket) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

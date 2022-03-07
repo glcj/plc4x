@@ -32,6 +32,7 @@ type BACnetErrorPasswordFailure struct {
 
 // The corresponding interface
 type IBACnetErrorPasswordFailure interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorPasswordFailure(errorClass *BACnetApplicationTagEnumerated, e
 }
 
 func CastBACnetErrorPasswordFailure(structType interface{}) *BACnetErrorPasswordFailure {
-	castFunc := func(typ interface{}) *BACnetErrorPasswordFailure {
-		if casted, ok := typ.(BACnetErrorPasswordFailure); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorPasswordFailure); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorPasswordFailure(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorPasswordFailure(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorPasswordFailure); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorPasswordFailure); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorPasswordFailure(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorPasswordFailure(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorPasswordFailure) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorPasswordFailure) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

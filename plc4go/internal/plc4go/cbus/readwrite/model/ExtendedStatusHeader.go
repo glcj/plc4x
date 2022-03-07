@@ -34,7 +34,7 @@ type ExtendedStatusHeader struct {
 
 // The corresponding interface
 type IExtendedStatusHeader interface {
-	// GetNumberOfCharacterPairs returns NumberOfCharacterPairs
+	// GetNumberOfCharacterPairs returns NumberOfCharacterPairs (property field)
 	GetNumberOfCharacterPairs() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -61,16 +61,13 @@ func NewExtendedStatusHeader(numberOfCharacterPairs uint8) *ExtendedStatusHeader
 }
 
 func CastExtendedStatusHeader(structType interface{}) *ExtendedStatusHeader {
-	castFunc := func(typ interface{}) *ExtendedStatusHeader {
-		if casted, ok := typ.(ExtendedStatusHeader); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ExtendedStatusHeader); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ExtendedStatusHeader); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ExtendedStatusHeader); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ExtendedStatusHeader) GetTypeName() string {
@@ -164,6 +161,8 @@ func (m *ExtendedStatusHeader) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

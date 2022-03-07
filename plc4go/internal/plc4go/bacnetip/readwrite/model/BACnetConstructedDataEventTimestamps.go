@@ -40,11 +40,12 @@ type BACnetConstructedDataEventTimestamps struct {
 
 // The corresponding interface
 type IBACnetConstructedDataEventTimestamps interface {
-	// GetToOffnormal returns ToOffnormal
+	IBACnetConstructedData
+	// GetToOffnormal returns ToOffnormal (property field)
 	GetToOffnormal() *BACnetContextTagTime
-	// GetToFault returns ToFault
+	// GetToFault returns ToFault (property field)
 	GetToFault() *BACnetContextTagUnsignedInteger
-	// GetToNormal returns ToNormal
+	// GetToNormal returns ToNormal (property field)
 	GetToNormal() *BACnetDateTime
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -63,14 +64,6 @@ func (m *BACnetConstructedDataEventTimestamps) ObjectType() BACnetObjectType {
 
 func (m *BACnetConstructedDataEventTimestamps) GetObjectType() BACnetObjectType {
 	return 0
-}
-
-func (m *BACnetConstructedDataEventTimestamps) PropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return BACnetPropertyIdentifier_EVENT_TIME_STAMPS
-}
-
-func (m *BACnetConstructedDataEventTimestamps) GetPropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return BACnetPropertyIdentifier_EVENT_TIME_STAMPS
 }
 
 func (m *BACnetConstructedDataEventTimestamps) InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
@@ -110,22 +103,19 @@ func NewBACnetConstructedDataEventTimestamps(toOffnormal *BACnetContextTagTime, 
 }
 
 func CastBACnetConstructedDataEventTimestamps(structType interface{}) *BACnetConstructedDataEventTimestamps {
-	castFunc := func(typ interface{}) *BACnetConstructedDataEventTimestamps {
-		if casted, ok := typ.(BACnetConstructedDataEventTimestamps); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConstructedDataEventTimestamps); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConstructedData); ok {
-			return CastBACnetConstructedDataEventTimestamps(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConstructedData); ok {
-			return CastBACnetConstructedDataEventTimestamps(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConstructedDataEventTimestamps); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConstructedDataEventTimestamps); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConstructedData); ok {
+		return CastBACnetConstructedDataEventTimestamps(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConstructedData); ok {
+		return CastBACnetConstructedDataEventTimestamps(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConstructedDataEventTimestamps) GetTypeName() string {
@@ -271,6 +261,8 @@ func (m *BACnetConstructedDataEventTimestamps) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

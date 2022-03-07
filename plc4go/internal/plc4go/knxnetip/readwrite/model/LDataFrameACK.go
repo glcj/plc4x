@@ -32,6 +32,7 @@ type LDataFrameACK struct {
 
 // The corresponding interface
 type ILDataFrameACK interface {
+	ILDataFrame
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -85,22 +86,19 @@ func NewLDataFrameACK(frameType bool, notRepeated bool, priority CEMIPriority, a
 }
 
 func CastLDataFrameACK(structType interface{}) *LDataFrameACK {
-	castFunc := func(typ interface{}) *LDataFrameACK {
-		if casted, ok := typ.(LDataFrameACK); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LDataFrameACK); ok {
-			return casted
-		}
-		if casted, ok := typ.(LDataFrame); ok {
-			return CastLDataFrameACK(casted.Child)
-		}
-		if casted, ok := typ.(*LDataFrame); ok {
-			return CastLDataFrameACK(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LDataFrameACK); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LDataFrameACK); ok {
+		return casted
+	}
+	if casted, ok := structType.(LDataFrame); ok {
+		return CastLDataFrameACK(casted.Child)
+	}
+	if casted, ok := structType.(*LDataFrame); ok {
+		return CastLDataFrameACK(casted.Child)
+	}
+	return nil
 }
 
 func (m *LDataFrameACK) GetTypeName() string {
@@ -159,6 +157,8 @@ func (m *LDataFrameACK) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

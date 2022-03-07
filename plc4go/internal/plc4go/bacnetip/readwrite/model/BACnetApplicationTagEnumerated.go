@@ -34,9 +34,10 @@ type BACnetApplicationTagEnumerated struct {
 
 // The corresponding interface
 type IBACnetApplicationTagEnumerated interface {
-	// GetPayload returns Payload
+	IBACnetApplicationTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadEnumerated
-	// GetActualValue returns ActualValue
+	// GetActualValue returns ActualValue (virtual field)
 	GetActualValue() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -49,13 +50,6 @@ type IBACnetApplicationTagEnumerated interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetApplicationTagEnumerated) ActualTagNumber() uint8 {
-	return 0x9
-}
-
-func (m *BACnetApplicationTagEnumerated) GetActualTagNumber() uint8 {
-	return 0x9
-}
 
 func (m *BACnetApplicationTagEnumerated) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
@@ -86,22 +80,19 @@ func NewBACnetApplicationTagEnumerated(payload *BACnetTagPayloadEnumerated, head
 }
 
 func CastBACnetApplicationTagEnumerated(structType interface{}) *BACnetApplicationTagEnumerated {
-	castFunc := func(typ interface{}) *BACnetApplicationTagEnumerated {
-		if casted, ok := typ.(BACnetApplicationTagEnumerated); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetApplicationTagEnumerated); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagEnumerated(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagEnumerated(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetApplicationTagEnumerated); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetApplicationTagEnumerated); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagEnumerated(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagEnumerated(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetApplicationTagEnumerated) GetTypeName() string {
@@ -200,6 +191,8 @@ func (m *BACnetApplicationTagEnumerated) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,6 +35,7 @@ type BACnetContextTagEmpty struct {
 
 // The corresponding interface
 type IBACnetContextTagEmpty interface {
+	IBACnetContextTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -76,22 +77,19 @@ func NewBACnetContextTagEmpty(header *BACnetTagHeader, tagNumberArgument uint8) 
 }
 
 func CastBACnetContextTagEmpty(structType interface{}) *BACnetContextTagEmpty {
-	castFunc := func(typ interface{}) *BACnetContextTagEmpty {
-		if casted, ok := typ.(BACnetContextTagEmpty); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagEmpty); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagEmpty(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagEmpty(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagEmpty); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagEmpty); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagEmpty(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagEmpty(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagEmpty) GetTypeName() string {
@@ -150,6 +148,8 @@ func (m *BACnetContextTagEmpty) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

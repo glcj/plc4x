@@ -34,7 +34,8 @@ type ConnectionResponseDataBlockTunnelConnection struct {
 
 // The corresponding interface
 type IConnectionResponseDataBlockTunnelConnection interface {
-	// GetKnxAddress returns KnxAddress
+	IConnectionResponseDataBlock
+	// GetKnxAddress returns KnxAddress (property field)
 	GetKnxAddress() *KnxAddress
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -80,22 +81,19 @@ func NewConnectionResponseDataBlockTunnelConnection(knxAddress *KnxAddress) *Con
 }
 
 func CastConnectionResponseDataBlockTunnelConnection(structType interface{}) *ConnectionResponseDataBlockTunnelConnection {
-	castFunc := func(typ interface{}) *ConnectionResponseDataBlockTunnelConnection {
-		if casted, ok := typ.(ConnectionResponseDataBlockTunnelConnection); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConnectionResponseDataBlockTunnelConnection); ok {
-			return casted
-		}
-		if casted, ok := typ.(ConnectionResponseDataBlock); ok {
-			return CastConnectionResponseDataBlockTunnelConnection(casted.Child)
-		}
-		if casted, ok := typ.(*ConnectionResponseDataBlock); ok {
-			return CastConnectionResponseDataBlockTunnelConnection(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ConnectionResponseDataBlockTunnelConnection); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConnectionResponseDataBlockTunnelConnection); ok {
+		return casted
+	}
+	if casted, ok := structType.(ConnectionResponseDataBlock); ok {
+		return CastConnectionResponseDataBlockTunnelConnection(casted.Child)
+	}
+	if casted, ok := structType.(*ConnectionResponseDataBlock); ok {
+		return CastConnectionResponseDataBlockTunnelConnection(casted.Child)
+	}
+	return nil
 }
 
 func (m *ConnectionResponseDataBlockTunnelConnection) GetTypeName() string {
@@ -183,6 +181,8 @@ func (m *ConnectionResponseDataBlockTunnelConnection) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

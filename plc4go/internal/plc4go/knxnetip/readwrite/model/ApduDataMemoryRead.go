@@ -38,9 +38,10 @@ type ApduDataMemoryRead struct {
 
 // The corresponding interface
 type IApduDataMemoryRead interface {
-	// GetNumBytes returns NumBytes
+	IApduData
+	// GetNumBytes returns NumBytes (property field)
 	GetNumBytes() uint8
-	// GetAddress returns Address
+	// GetAddress returns Address (property field)
 	GetAddress() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewApduDataMemoryRead(numBytes uint8, address uint16, dataLength uint8) *Ap
 }
 
 func CastApduDataMemoryRead(structType interface{}) *ApduDataMemoryRead {
-	castFunc := func(typ interface{}) *ApduDataMemoryRead {
-		if casted, ok := typ.(ApduDataMemoryRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataMemoryRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduData); ok {
-			return CastApduDataMemoryRead(casted.Child)
-		}
-		if casted, ok := typ.(*ApduData); ok {
-			return CastApduDataMemoryRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataMemoryRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataMemoryRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduData); ok {
+		return CastApduDataMemoryRead(casted.Child)
+	}
+	if casted, ok := structType.(*ApduData); ok {
+		return CastApduDataMemoryRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataMemoryRead) GetTypeName() string {
@@ -200,6 +198,8 @@ func (m *ApduDataMemoryRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

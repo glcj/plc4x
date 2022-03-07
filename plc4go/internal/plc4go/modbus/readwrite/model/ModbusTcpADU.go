@@ -42,11 +42,11 @@ type ModbusTcpADU struct {
 
 // The corresponding interface
 type IModbusTcpADU interface {
-	// GetTransactionIdentifier returns TransactionIdentifier
+	// GetTransactionIdentifier returns TransactionIdentifier (property field)
 	GetTransactionIdentifier() uint16
-	// GetUnitIdentifier returns UnitIdentifier
+	// GetUnitIdentifier returns UnitIdentifier (property field)
 	GetUnitIdentifier() uint8
-	// GetPdu returns Pdu
+	// GetPdu returns Pdu (property field)
 	GetPdu() *ModbusPDU
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -81,16 +81,13 @@ func NewModbusTcpADU(transactionIdentifier uint16, unitIdentifier uint8, pdu *Mo
 }
 
 func CastModbusTcpADU(structType interface{}) *ModbusTcpADU {
-	castFunc := func(typ interface{}) *ModbusTcpADU {
-		if casted, ok := typ.(ModbusTcpADU); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusTcpADU); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ModbusTcpADU); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusTcpADU); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ModbusTcpADU) GetTypeName() string {
@@ -239,6 +236,8 @@ func (m *ModbusTcpADU) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

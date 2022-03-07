@@ -33,7 +33,7 @@ type SerialInterfaceAddress struct {
 
 // The corresponding interface
 type ISerialInterfaceAddress interface {
-	// GetAddress returns Address
+	// GetAddress returns Address (property field)
 	GetAddress() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewSerialInterfaceAddress(address byte) *SerialInterfaceAddress {
 }
 
 func CastSerialInterfaceAddress(structType interface{}) *SerialInterfaceAddress {
-	castFunc := func(typ interface{}) *SerialInterfaceAddress {
-		if casted, ok := typ.(SerialInterfaceAddress); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SerialInterfaceAddress); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(SerialInterfaceAddress); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SerialInterfaceAddress); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *SerialInterfaceAddress) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *SerialInterfaceAddress) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

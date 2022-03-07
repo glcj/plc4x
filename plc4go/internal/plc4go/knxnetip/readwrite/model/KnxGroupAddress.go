@@ -33,8 +33,8 @@ type KnxGroupAddress struct {
 
 // The corresponding interface
 type IKnxGroupAddress interface {
-	// NumLevels returns NumLevels
-	NumLevels() uint8
+	// GetNumLevels returns NumLevels (discriminator field)
+	GetNumLevels() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewKnxGroupAddress() *KnxGroupAddress {
 }
 
 func CastKnxGroupAddress(structType interface{}) *KnxGroupAddress {
-	castFunc := func(typ interface{}) *KnxGroupAddress {
-		if casted, ok := typ.(KnxGroupAddress); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*KnxGroupAddress); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(KnxGroupAddress); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*KnxGroupAddress); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *KnxGroupAddress) GetTypeName() string {
@@ -162,6 +159,8 @@ func (m *KnxGroupAddress) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

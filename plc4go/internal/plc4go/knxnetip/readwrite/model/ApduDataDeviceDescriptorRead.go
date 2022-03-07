@@ -37,7 +37,8 @@ type ApduDataDeviceDescriptorRead struct {
 
 // The corresponding interface
 type IApduDataDeviceDescriptorRead interface {
-	// GetDescriptorType returns DescriptorType
+	IApduData
+	// GetDescriptorType returns DescriptorType (property field)
 	GetDescriptorType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewApduDataDeviceDescriptorRead(descriptorType uint8, dataLength uint8) *Ap
 }
 
 func CastApduDataDeviceDescriptorRead(structType interface{}) *ApduDataDeviceDescriptorRead {
-	castFunc := func(typ interface{}) *ApduDataDeviceDescriptorRead {
-		if casted, ok := typ.(ApduDataDeviceDescriptorRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataDeviceDescriptorRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduData); ok {
-			return CastApduDataDeviceDescriptorRead(casted.Child)
-		}
-		if casted, ok := typ.(*ApduData); ok {
-			return CastApduDataDeviceDescriptorRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataDeviceDescriptorRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataDeviceDescriptorRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduData); ok {
+		return CastApduDataDeviceDescriptorRead(casted.Child)
+	}
+	if casted, ok := structType.(*ApduData); ok {
+		return CastApduDataDeviceDescriptorRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataDeviceDescriptorRead) GetTypeName() string {
@@ -174,6 +172,8 @@ func (m *ApduDataDeviceDescriptorRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

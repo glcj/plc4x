@@ -33,7 +33,7 @@ type BridgeCount struct {
 
 // The corresponding interface
 type IBridgeCount interface {
-	// GetCount returns Count
+	// GetCount returns Count (property field)
 	GetCount() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewBridgeCount(count uint8) *BridgeCount {
 }
 
 func CastBridgeCount(structType interface{}) *BridgeCount {
-	castFunc := func(typ interface{}) *BridgeCount {
-		if casted, ok := typ.(BridgeCount); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BridgeCount); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BridgeCount); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BridgeCount); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BridgeCount) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *BridgeCount) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

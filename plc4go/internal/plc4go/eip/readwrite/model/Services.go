@@ -38,11 +38,11 @@ type Services struct {
 
 // The corresponding interface
 type IServices interface {
-	// GetServiceNb returns ServiceNb
+	// GetServiceNb returns ServiceNb (property field)
 	GetServiceNb() uint16
-	// GetOffsets returns Offsets
+	// GetOffsets returns Offsets (property field)
 	GetOffsets() []uint16
-	// GetServices returns Services
+	// GetServices returns Services (property field)
 	GetServices() []*CipService
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -77,16 +77,13 @@ func NewServices(serviceNb uint16, offsets []uint16, services []*CipService, ser
 }
 
 func CastServices(structType interface{}) *Services {
-	castFunc := func(typ interface{}) *Services {
-		if casted, ok := typ.(Services); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*Services); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(Services); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*Services); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *Services) GetTypeName() string {
@@ -238,6 +235,8 @@ func (m *Services) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

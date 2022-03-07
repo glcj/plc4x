@@ -32,6 +32,7 @@ type ConnectionRequestInformationDeviceManagement struct {
 
 // The corresponding interface
 type IConnectionRequestInformationDeviceManagement interface {
+	IConnectionRequestInformation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,22 +73,19 @@ func NewConnectionRequestInformationDeviceManagement() *ConnectionRequestInforma
 }
 
 func CastConnectionRequestInformationDeviceManagement(structType interface{}) *ConnectionRequestInformationDeviceManagement {
-	castFunc := func(typ interface{}) *ConnectionRequestInformationDeviceManagement {
-		if casted, ok := typ.(ConnectionRequestInformationDeviceManagement); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConnectionRequestInformationDeviceManagement); ok {
-			return casted
-		}
-		if casted, ok := typ.(ConnectionRequestInformation); ok {
-			return CastConnectionRequestInformationDeviceManagement(casted.Child)
-		}
-		if casted, ok := typ.(*ConnectionRequestInformation); ok {
-			return CastConnectionRequestInformationDeviceManagement(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ConnectionRequestInformationDeviceManagement); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConnectionRequestInformationDeviceManagement); ok {
+		return casted
+	}
+	if casted, ok := structType.(ConnectionRequestInformation); ok {
+		return CastConnectionRequestInformationDeviceManagement(casted.Child)
+	}
+	if casted, ok := structType.(*ConnectionRequestInformation); ok {
+		return CastConnectionRequestInformationDeviceManagement(casted.Child)
+	}
+	return nil
 }
 
 func (m *ConnectionRequestInformationDeviceManagement) GetTypeName() string {
@@ -146,6 +144,8 @@ func (m *ConnectionRequestInformationDeviceManagement) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

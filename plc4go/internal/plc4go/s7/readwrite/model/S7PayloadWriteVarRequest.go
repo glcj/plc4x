@@ -37,7 +37,8 @@ type S7PayloadWriteVarRequest struct {
 
 // The corresponding interface
 type IS7PayloadWriteVarRequest interface {
-	// GetItems returns Items
+	IS7Payload
+	// GetItems returns Items (property field)
 	GetItems() []*S7VarPayloadDataItem
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewS7PayloadWriteVarRequest(items []*S7VarPayloadDataItem, parameter S7Para
 }
 
 func CastS7PayloadWriteVarRequest(structType interface{}) *S7PayloadWriteVarRequest {
-	castFunc := func(typ interface{}) *S7PayloadWriteVarRequest {
-		if casted, ok := typ.(S7PayloadWriteVarRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadWriteVarRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7Payload); ok {
-			return CastS7PayloadWriteVarRequest(casted.Child)
-		}
-		if casted, ok := typ.(*S7Payload); ok {
-			return CastS7PayloadWriteVarRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadWriteVarRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadWriteVarRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7Payload); ok {
+		return CastS7PayloadWriteVarRequest(casted.Child)
+	}
+	if casted, ok := structType.(*S7Payload); ok {
+		return CastS7PayloadWriteVarRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadWriteVarRequest) GetTypeName() string {
@@ -208,6 +206,8 @@ func (m *S7PayloadWriteVarRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

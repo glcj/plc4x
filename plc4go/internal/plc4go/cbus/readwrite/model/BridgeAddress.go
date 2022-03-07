@@ -33,7 +33,7 @@ type BridgeAddress struct {
 
 // The corresponding interface
 type IBridgeAddress interface {
-	// GetAddress returns Address
+	// GetAddress returns Address (property field)
 	GetAddress() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewBridgeAddress(address byte) *BridgeAddress {
 }
 
 func CastBridgeAddress(structType interface{}) *BridgeAddress {
-	castFunc := func(typ interface{}) *BridgeAddress {
-		if casted, ok := typ.(BridgeAddress); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BridgeAddress); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BridgeAddress); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BridgeAddress); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BridgeAddress) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *BridgeAddress) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

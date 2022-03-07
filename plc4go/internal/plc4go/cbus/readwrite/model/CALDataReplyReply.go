@@ -35,9 +35,10 @@ type CALDataReplyReply struct {
 
 // The corresponding interface
 type ICALDataReplyReply interface {
-	// GetParamNumber returns ParamNumber
+	ICALData
+	// GetParamNumber returns ParamNumber (property field)
 	GetParamNumber() uint8
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type ICALDataReplyReply interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CALDataReplyReply) CommandType() CALCommandType {
-	return CALCommandType_REPLY
-}
-
-func (m *CALDataReplyReply) GetCommandType() CALCommandType {
-	return CALCommandType_REPLY
-}
 
 func (m *CALDataReplyReply) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
@@ -89,22 +83,19 @@ func NewCALDataReplyReply(paramNumber uint8, data []byte, commandTypeContainer C
 }
 
 func CastCALDataReplyReply(structType interface{}) *CALDataReplyReply {
-	castFunc := func(typ interface{}) *CALDataReplyReply {
-		if casted, ok := typ.(CALDataReplyReply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CALDataReplyReply); ok {
-			return casted
-		}
-		if casted, ok := typ.(CALData); ok {
-			return CastCALDataReplyReply(casted.Child)
-		}
-		if casted, ok := typ.(*CALData); ok {
-			return CastCALDataReplyReply(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CALDataReplyReply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CALDataReplyReply); ok {
+		return casted
+	}
+	if casted, ok := structType.(CALData); ok {
+		return CastCALDataReplyReply(casted.Child)
+	}
+	if casted, ok := structType.(*CALData); ok {
+		return CastCALDataReplyReply(casted.Child)
+	}
+	return nil
 }
 
 func (m *CALDataReplyReply) GetTypeName() string {
@@ -202,6 +193,8 @@ func (m *CALDataReplyReply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

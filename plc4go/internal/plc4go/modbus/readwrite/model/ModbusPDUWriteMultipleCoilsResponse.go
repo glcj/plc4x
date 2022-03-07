@@ -35,9 +35,10 @@ type ModbusPDUWriteMultipleCoilsResponse struct {
 
 // The corresponding interface
 type IModbusPDUWriteMultipleCoilsResponse interface {
-	// GetStartingAddress returns StartingAddress
+	IModbusPDU
+	// GetStartingAddress returns StartingAddress (property field)
 	GetStartingAddress() uint16
-	// GetQuantity returns Quantity
+	// GetQuantity returns Quantity (property field)
 	GetQuantity() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewModbusPDUWriteMultipleCoilsResponse(startingAddress uint16, quantity uin
 }
 
 func CastModbusPDUWriteMultipleCoilsResponse(structType interface{}) *ModbusPDUWriteMultipleCoilsResponse {
-	castFunc := func(typ interface{}) *ModbusPDUWriteMultipleCoilsResponse {
-		if casted, ok := typ.(ModbusPDUWriteMultipleCoilsResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUWriteMultipleCoilsResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUWriteMultipleCoilsResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUWriteMultipleCoilsResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUWriteMultipleCoilsResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUWriteMultipleCoilsResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUWriteMultipleCoilsResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUWriteMultipleCoilsResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUWriteMultipleCoilsResponse) GetTypeName() string {
@@ -213,6 +211,8 @@ func (m *ModbusPDUWriteMultipleCoilsResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

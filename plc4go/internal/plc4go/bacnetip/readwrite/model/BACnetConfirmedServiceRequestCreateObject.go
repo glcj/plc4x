@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestCreateObject struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestCreateObject interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestCreateObject(len uint16) *BACnetConfirmedSe
 }
 
 func CastBACnetConfirmedServiceRequestCreateObject(structType interface{}) *BACnetConfirmedServiceRequestCreateObject {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestCreateObject {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestCreateObject); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestCreateObject); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestCreateObject(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestCreateObject(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestCreateObject); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestCreateObject); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestCreateObject(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestCreateObject(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestCreateObject) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestCreateObject) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

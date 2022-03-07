@@ -35,9 +35,10 @@ type SALDataRampToLevel struct {
 
 // The corresponding interface
 type ISALDataRampToLevel interface {
-	// GetGroup returns Group
+	ISALData
+	// GetGroup returns Group (property field)
 	GetGroup() byte
-	// GetLevel returns Level
+	// GetLevel returns Level (property field)
 	GetLevel() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type ISALDataRampToLevel interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SALDataRampToLevel) CommandType() SALCommandType {
-	return SALCommandType_RAMP_TO_LEVEL
-}
-
-func (m *SALDataRampToLevel) GetCommandType() SALCommandType {
-	return SALCommandType_RAMP_TO_LEVEL
-}
 
 func (m *SALDataRampToLevel) InitializeParent(parent *SALData, commandTypeContainer SALCommandTypeContainer) {
 	m.SALData.CommandTypeContainer = commandTypeContainer
@@ -89,22 +83,19 @@ func NewSALDataRampToLevel(group byte, level byte, commandTypeContainer SALComma
 }
 
 func CastSALDataRampToLevel(structType interface{}) *SALDataRampToLevel {
-	castFunc := func(typ interface{}) *SALDataRampToLevel {
-		if casted, ok := typ.(SALDataRampToLevel); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SALDataRampToLevel); ok {
-			return casted
-		}
-		if casted, ok := typ.(SALData); ok {
-			return CastSALDataRampToLevel(casted.Child)
-		}
-		if casted, ok := typ.(*SALData); ok {
-			return CastSALDataRampToLevel(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SALDataRampToLevel); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SALDataRampToLevel); ok {
+		return casted
+	}
+	if casted, ok := structType.(SALData); ok {
+		return CastSALDataRampToLevel(casted.Child)
+	}
+	if casted, ok := structType.(*SALData); ok {
+		return CastSALDataRampToLevel(casted.Child)
+	}
+	return nil
 }
 
 func (m *SALDataRampToLevel) GetTypeName() string {
@@ -199,6 +190,8 @@ func (m *SALDataRampToLevel) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

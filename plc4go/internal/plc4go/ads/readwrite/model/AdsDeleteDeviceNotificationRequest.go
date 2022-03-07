@@ -34,7 +34,8 @@ type AdsDeleteDeviceNotificationRequest struct {
 
 // The corresponding interface
 type IAdsDeleteDeviceNotificationRequest interface {
-	// GetNotificationHandle returns NotificationHandle
+	IAdsData
+	// GetNotificationHandle returns NotificationHandle (property field)
 	GetNotificationHandle() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewAdsDeleteDeviceNotificationRequest(notificationHandle uint32) *AdsData {
 }
 
 func CastAdsDeleteDeviceNotificationRequest(structType interface{}) *AdsDeleteDeviceNotificationRequest {
-	castFunc := func(typ interface{}) *AdsDeleteDeviceNotificationRequest {
-		if casted, ok := typ.(AdsDeleteDeviceNotificationRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsDeleteDeviceNotificationRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsDeleteDeviceNotificationRequest(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsDeleteDeviceNotificationRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsDeleteDeviceNotificationRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsDeleteDeviceNotificationRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsDeleteDeviceNotificationRequest(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsDeleteDeviceNotificationRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsDeleteDeviceNotificationRequest) GetTypeName() string {
@@ -179,6 +177,8 @@ func (m *AdsDeleteDeviceNotificationRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

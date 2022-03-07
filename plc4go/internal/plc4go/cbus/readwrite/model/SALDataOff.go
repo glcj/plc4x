@@ -34,7 +34,8 @@ type SALDataOff struct {
 
 // The corresponding interface
 type ISALDataOff interface {
-	// GetGroup returns Group
+	ISALData
+	// GetGroup returns Group (property field)
 	GetGroup() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -47,13 +48,6 @@ type ISALDataOff interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SALDataOff) CommandType() SALCommandType {
-	return SALCommandType_OFF
-}
-
-func (m *SALDataOff) GetCommandType() SALCommandType {
-	return SALCommandType_OFF
-}
 
 func (m *SALDataOff) InitializeParent(parent *SALData, commandTypeContainer SALCommandTypeContainer) {
 	m.SALData.CommandTypeContainer = commandTypeContainer
@@ -81,22 +75,19 @@ func NewSALDataOff(group byte, commandTypeContainer SALCommandTypeContainer) *SA
 }
 
 func CastSALDataOff(structType interface{}) *SALDataOff {
-	castFunc := func(typ interface{}) *SALDataOff {
-		if casted, ok := typ.(SALDataOff); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SALDataOff); ok {
-			return casted
-		}
-		if casted, ok := typ.(SALData); ok {
-			return CastSALDataOff(casted.Child)
-		}
-		if casted, ok := typ.(*SALData); ok {
-			return CastSALDataOff(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SALDataOff); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SALDataOff); ok {
+		return casted
+	}
+	if casted, ok := structType.(SALData); ok {
+		return CastSALDataOff(casted.Child)
+	}
+	if casted, ok := structType.(*SALData); ok {
+		return CastSALDataOff(casted.Child)
+	}
+	return nil
 }
 
 func (m *SALDataOff) GetTypeName() string {
@@ -173,6 +164,8 @@ func (m *SALDataOff) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -32,6 +32,7 @@ type BVLCReadForeignDeviceTable struct {
 
 // The corresponding interface
 type IBVLCReadForeignDeviceTable interface {
+	IBVLC
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewBVLCReadForeignDeviceTable() *BVLC {
 }
 
 func CastBVLCReadForeignDeviceTable(structType interface{}) *BVLCReadForeignDeviceTable {
-	castFunc := func(typ interface{}) *BVLCReadForeignDeviceTable {
-		if casted, ok := typ.(BVLCReadForeignDeviceTable); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLCReadForeignDeviceTable); ok {
-			return casted
-		}
-		if casted, ok := typ.(BVLC); ok {
-			return CastBVLCReadForeignDeviceTable(casted.Child)
-		}
-		if casted, ok := typ.(*BVLC); ok {
-			return CastBVLCReadForeignDeviceTable(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BVLCReadForeignDeviceTable); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLCReadForeignDeviceTable); ok {
+		return casted
+	}
+	if casted, ok := structType.(BVLC); ok {
+		return CastBVLCReadForeignDeviceTable(casted.Child)
+	}
+	if casted, ok := structType.(*BVLC); ok {
+		return CastBVLCReadForeignDeviceTable(casted.Child)
+	}
+	return nil
 }
 
 func (m *BVLCReadForeignDeviceTable) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *BVLCReadForeignDeviceTable) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

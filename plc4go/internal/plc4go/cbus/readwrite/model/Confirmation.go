@@ -34,9 +34,9 @@ type Confirmation struct {
 
 // The corresponding interface
 type IConfirmation interface {
-	// ConfirmationType returns ConfirmationType
-	ConfirmationType() byte
-	// GetAlpha returns Alpha
+	// GetConfirmationType returns ConfirmationType (discriminator field)
+	GetConfirmationType() byte
+	// GetAlpha returns Alpha (property field)
 	GetAlpha() *Alpha
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -75,16 +75,13 @@ func NewConfirmation(alpha *Alpha) *Confirmation {
 }
 
 func CastConfirmation(structType interface{}) *Confirmation {
-	castFunc := func(typ interface{}) *Confirmation {
-		if casted, ok := typ.(Confirmation); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*Confirmation); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(Confirmation); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*Confirmation); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *Confirmation) GetTypeName() string {
@@ -193,7 +190,7 @@ func (m *Confirmation) SerializeParent(writeBuffer utils.WriteBuffer, child ICon
 	}
 
 	// Discriminator Field (confirmationType) (Used as input to a switch field)
-	confirmationType := byte(child.ConfirmationType())
+	confirmationType := byte(child.GetConfirmationType())
 	_confirmationTypeErr := writeBuffer.WriteByte("confirmationType", (confirmationType))
 
 	if _confirmationTypeErr != nil {
@@ -216,6 +213,8 @@ func (m *Confirmation) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

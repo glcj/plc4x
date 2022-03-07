@@ -34,9 +34,10 @@ type BACnetApplicationTagReal struct {
 
 // The corresponding interface
 type IBACnetApplicationTagReal interface {
-	// GetPayload returns Payload
+	IBACnetApplicationTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadReal
-	// GetActualValue returns ActualValue
+	// GetActualValue returns ActualValue (virtual field)
 	GetActualValue() float32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -49,13 +50,6 @@ type IBACnetApplicationTagReal interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetApplicationTagReal) ActualTagNumber() uint8 {
-	return 0x4
-}
-
-func (m *BACnetApplicationTagReal) GetActualTagNumber() uint8 {
-	return 0x4
-}
 
 func (m *BACnetApplicationTagReal) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
@@ -86,22 +80,19 @@ func NewBACnetApplicationTagReal(payload *BACnetTagPayloadReal, header *BACnetTa
 }
 
 func CastBACnetApplicationTagReal(structType interface{}) *BACnetApplicationTagReal {
-	castFunc := func(typ interface{}) *BACnetApplicationTagReal {
-		if casted, ok := typ.(BACnetApplicationTagReal); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetApplicationTagReal); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagReal(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagReal(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetApplicationTagReal); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetApplicationTagReal); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagReal(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagReal(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetApplicationTagReal) GetTypeName() string {
@@ -200,6 +191,8 @@ func (m *BACnetApplicationTagReal) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

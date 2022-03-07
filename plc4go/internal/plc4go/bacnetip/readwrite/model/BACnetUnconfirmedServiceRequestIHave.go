@@ -39,11 +39,12 @@ type BACnetUnconfirmedServiceRequestIHave struct {
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequestIHave interface {
-	// GetDeviceIdentifier returns DeviceIdentifier
+	IBACnetUnconfirmedServiceRequest
+	// GetDeviceIdentifier returns DeviceIdentifier (property field)
 	GetDeviceIdentifier() *BACnetApplicationTagObjectIdentifier
-	// GetObjectIdentifier returns ObjectIdentifier
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetApplicationTagObjectIdentifier
-	// GetObjectName returns ObjectName
+	// GetObjectName returns ObjectName (property field)
 	GetObjectName() *BACnetApplicationTagCharacterString
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -99,22 +100,19 @@ func NewBACnetUnconfirmedServiceRequestIHave(deviceIdentifier *BACnetApplication
 }
 
 func CastBACnetUnconfirmedServiceRequestIHave(structType interface{}) *BACnetUnconfirmedServiceRequestIHave {
-	castFunc := func(typ interface{}) *BACnetUnconfirmedServiceRequestIHave {
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequestIHave); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequestIHave); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestIHave(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestIHave(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequestIHave); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequestIHave); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestIHave(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestIHave(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestIHave) GetTypeName() string {
@@ -260,6 +258,8 @@ func (m *BACnetUnconfirmedServiceRequestIHave) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

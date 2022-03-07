@@ -42,15 +42,16 @@ type BACnetConfirmedServiceRequestAtomicWriteFile struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestAtomicWriteFile interface {
-	// GetDeviceIdentifier returns DeviceIdentifier
+	IBACnetConfirmedServiceRequest
+	// GetDeviceIdentifier returns DeviceIdentifier (property field)
 	GetDeviceIdentifier() *BACnetApplicationTagObjectIdentifier
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetFileStartPosition returns FileStartPosition
+	// GetFileStartPosition returns FileStartPosition (property field)
 	GetFileStartPosition() *BACnetApplicationTagSignedInteger
-	// GetFileData returns FileData
+	// GetFileData returns FileData (property field)
 	GetFileData() *BACnetApplicationTagOctetString
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -116,22 +117,19 @@ func NewBACnetConfirmedServiceRequestAtomicWriteFile(deviceIdentifier *BACnetApp
 }
 
 func CastBACnetConfirmedServiceRequestAtomicWriteFile(structType interface{}) *BACnetConfirmedServiceRequestAtomicWriteFile {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestAtomicWriteFile {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestAtomicWriteFile); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestAtomicWriteFile); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestAtomicWriteFile(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestAtomicWriteFile(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestAtomicWriteFile); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestAtomicWriteFile); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestAtomicWriteFile(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestAtomicWriteFile(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestAtomicWriteFile) GetTypeName() string {
@@ -363,6 +361,8 @@ func (m *BACnetConfirmedServiceRequestAtomicWriteFile) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

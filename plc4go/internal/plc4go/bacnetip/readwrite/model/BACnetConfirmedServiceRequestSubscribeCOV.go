@@ -40,13 +40,14 @@ type BACnetConfirmedServiceRequestSubscribeCOV struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestSubscribeCOV interface {
-	// GetSubscriberProcessIdentifier returns SubscriberProcessIdentifier
+	IBACnetConfirmedServiceRequest
+	// GetSubscriberProcessIdentifier returns SubscriberProcessIdentifier (property field)
 	GetSubscriberProcessIdentifier() *BACnetContextTagUnsignedInteger
-	// GetMonitoredObjectIdentifier returns MonitoredObjectIdentifier
+	// GetMonitoredObjectIdentifier returns MonitoredObjectIdentifier (property field)
 	GetMonitoredObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetIssueConfirmed returns IssueConfirmed
+	// GetIssueConfirmed returns IssueConfirmed (property field)
 	GetIssueConfirmed() *BACnetContextTagBoolean
-	// GetLifetimeInSeconds returns LifetimeInSeconds
+	// GetLifetimeInSeconds returns LifetimeInSeconds (property field)
 	GetLifetimeInSeconds() *BACnetContextTagUnsignedInteger
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -107,22 +108,19 @@ func NewBACnetConfirmedServiceRequestSubscribeCOV(subscriberProcessIdentifier *B
 }
 
 func CastBACnetConfirmedServiceRequestSubscribeCOV(structType interface{}) *BACnetConfirmedServiceRequestSubscribeCOV {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestSubscribeCOV {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestSubscribeCOV); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestSubscribeCOV); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestSubscribeCOV(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestSubscribeCOV(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestSubscribeCOV); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestSubscribeCOV); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestSubscribeCOV(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestSubscribeCOV(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestSubscribeCOV) GetTypeName() string {
@@ -297,6 +295,8 @@ func (m *BACnetConfirmedServiceRequestSubscribeCOV) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

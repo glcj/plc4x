@@ -32,6 +32,7 @@ type ApduControlAck struct {
 
 // The corresponding interface
 type IApduControlAck interface {
+	IApduControl
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewApduControlAck() *ApduControl {
 }
 
 func CastApduControlAck(structType interface{}) *ApduControlAck {
-	castFunc := func(typ interface{}) *ApduControlAck {
-		if casted, ok := typ.(ApduControlAck); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduControlAck); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduControl); ok {
-			return CastApduControlAck(casted.Child)
-		}
-		if casted, ok := typ.(*ApduControl); ok {
-			return CastApduControlAck(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduControlAck); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduControlAck); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduControl); ok {
+		return CastApduControlAck(casted.Child)
+	}
+	if casted, ok := structType.(*ApduControl); ok {
+		return CastApduControlAck(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduControlAck) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *ApduControlAck) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

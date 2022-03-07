@@ -32,6 +32,7 @@ type NotTransmittedToManyReTransmissions struct {
 
 // The corresponding interface
 type INotTransmittedToManyReTransmissions interface {
+	IConfirmation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -73,22 +74,19 @@ func NewNotTransmittedToManyReTransmissions(alpha *Alpha) *Confirmation {
 }
 
 func CastNotTransmittedToManyReTransmissions(structType interface{}) *NotTransmittedToManyReTransmissions {
-	castFunc := func(typ interface{}) *NotTransmittedToManyReTransmissions {
-		if casted, ok := typ.(NotTransmittedToManyReTransmissions); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NotTransmittedToManyReTransmissions); ok {
-			return casted
-		}
-		if casted, ok := typ.(Confirmation); ok {
-			return CastNotTransmittedToManyReTransmissions(casted.Child)
-		}
-		if casted, ok := typ.(*Confirmation); ok {
-			return CastNotTransmittedToManyReTransmissions(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NotTransmittedToManyReTransmissions); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NotTransmittedToManyReTransmissions); ok {
+		return casted
+	}
+	if casted, ok := structType.(Confirmation); ok {
+		return CastNotTransmittedToManyReTransmissions(casted.Child)
+	}
+	if casted, ok := structType.(*Confirmation); ok {
+		return CastNotTransmittedToManyReTransmissions(casted.Child)
+	}
+	return nil
 }
 
 func (m *NotTransmittedToManyReTransmissions) GetTypeName() string {
@@ -147,6 +145,8 @@ func (m *NotTransmittedToManyReTransmissions) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

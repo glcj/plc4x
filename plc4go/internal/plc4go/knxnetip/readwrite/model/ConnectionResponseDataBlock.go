@@ -33,8 +33,8 @@ type ConnectionResponseDataBlock struct {
 
 // The corresponding interface
 type IConnectionResponseDataBlock interface {
-	// ConnectionType returns ConnectionType
-	ConnectionType() uint8
+	// GetConnectionType returns ConnectionType (discriminator field)
+	GetConnectionType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewConnectionResponseDataBlock() *ConnectionResponseDataBlock {
 }
 
 func CastConnectionResponseDataBlock(structType interface{}) *ConnectionResponseDataBlock {
-	castFunc := func(typ interface{}) *ConnectionResponseDataBlock {
-		if casted, ok := typ.(ConnectionResponseDataBlock); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConnectionResponseDataBlock); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ConnectionResponseDataBlock); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConnectionResponseDataBlock); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ConnectionResponseDataBlock) GetTypeName() string {
@@ -170,7 +167,7 @@ func (m *ConnectionResponseDataBlock) SerializeParent(writeBuffer utils.WriteBuf
 	}
 
 	// Discriminator Field (connectionType) (Used as input to a switch field)
-	connectionType := uint8(child.ConnectionType())
+	connectionType := uint8(child.GetConnectionType())
 	_connectionTypeErr := writeBuffer.WriteUint8("connectionType", 8, (connectionType))
 
 	if _connectionTypeErr != nil {
@@ -193,6 +190,8 @@ func (m *ConnectionResponseDataBlock) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

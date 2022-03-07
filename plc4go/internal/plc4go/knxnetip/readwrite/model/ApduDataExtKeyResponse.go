@@ -35,6 +35,7 @@ type ApduDataExtKeyResponse struct {
 
 // The corresponding interface
 type IApduDataExtKeyResponse interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtKeyResponse(length uint8) *ApduDataExt {
 }
 
 func CastApduDataExtKeyResponse(structType interface{}) *ApduDataExtKeyResponse {
-	castFunc := func(typ interface{}) *ApduDataExtKeyResponse {
-		if casted, ok := typ.(ApduDataExtKeyResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtKeyResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtKeyResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtKeyResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtKeyResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtKeyResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtKeyResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtKeyResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtKeyResponse) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtKeyResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

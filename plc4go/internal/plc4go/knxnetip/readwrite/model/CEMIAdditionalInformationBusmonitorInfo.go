@@ -43,17 +43,18 @@ type CEMIAdditionalInformationBusmonitorInfo struct {
 
 // The corresponding interface
 type ICEMIAdditionalInformationBusmonitorInfo interface {
-	// GetFrameErrorFlag returns FrameErrorFlag
+	ICEMIAdditionalInformation
+	// GetFrameErrorFlag returns FrameErrorFlag (property field)
 	GetFrameErrorFlag() bool
-	// GetBitErrorFlag returns BitErrorFlag
+	// GetBitErrorFlag returns BitErrorFlag (property field)
 	GetBitErrorFlag() bool
-	// GetParityErrorFlag returns ParityErrorFlag
+	// GetParityErrorFlag returns ParityErrorFlag (property field)
 	GetParityErrorFlag() bool
-	// GetUnknownFlag returns UnknownFlag
+	// GetUnknownFlag returns UnknownFlag (property field)
 	GetUnknownFlag() bool
-	// GetLostFlag returns LostFlag
+	// GetLostFlag returns LostFlag (property field)
 	GetLostFlag() bool
-	// GetSequenceNumber returns SequenceNumber
+	// GetSequenceNumber returns SequenceNumber (property field)
 	GetSequenceNumber() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -124,22 +125,19 @@ func NewCEMIAdditionalInformationBusmonitorInfo(frameErrorFlag bool, bitErrorFla
 }
 
 func CastCEMIAdditionalInformationBusmonitorInfo(structType interface{}) *CEMIAdditionalInformationBusmonitorInfo {
-	castFunc := func(typ interface{}) *CEMIAdditionalInformationBusmonitorInfo {
-		if casted, ok := typ.(CEMIAdditionalInformationBusmonitorInfo); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CEMIAdditionalInformationBusmonitorInfo); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMIAdditionalInformation); ok {
-			return CastCEMIAdditionalInformationBusmonitorInfo(casted.Child)
-		}
-		if casted, ok := typ.(*CEMIAdditionalInformation); ok {
-			return CastCEMIAdditionalInformationBusmonitorInfo(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CEMIAdditionalInformationBusmonitorInfo); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CEMIAdditionalInformationBusmonitorInfo); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMIAdditionalInformation); ok {
+		return CastCEMIAdditionalInformationBusmonitorInfo(casted.Child)
+	}
+	if casted, ok := structType.(*CEMIAdditionalInformation); ok {
+		return CastCEMIAdditionalInformationBusmonitorInfo(casted.Child)
+	}
+	return nil
 }
 
 func (m *CEMIAdditionalInformationBusmonitorInfo) GetTypeName() string {
@@ -324,6 +322,8 @@ func (m *CEMIAdditionalInformationBusmonitorInfo) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

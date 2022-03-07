@@ -34,9 +34,9 @@ type ModbusDeviceInformationObject struct {
 
 // The corresponding interface
 type IModbusDeviceInformationObject interface {
-	// GetObjectId returns ObjectId
+	// GetObjectId returns ObjectId (property field)
 	GetObjectId() uint8
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -67,16 +67,13 @@ func NewModbusDeviceInformationObject(objectId uint8, data []byte) *ModbusDevice
 }
 
 func CastModbusDeviceInformationObject(structType interface{}) *ModbusDeviceInformationObject {
-	castFunc := func(typ interface{}) *ModbusDeviceInformationObject {
-		if casted, ok := typ.(ModbusDeviceInformationObject); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusDeviceInformationObject); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ModbusDeviceInformationObject); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusDeviceInformationObject); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ModbusDeviceInformationObject) GetTypeName() string {
@@ -182,6 +179,8 @@ func (m *ModbusDeviceInformationObject) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

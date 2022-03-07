@@ -41,9 +41,10 @@ type S7PayloadUserDataItemCpuFunctionAlarmQueryResponse struct {
 
 // The corresponding interface
 type IS7PayloadUserDataItemCpuFunctionAlarmQueryResponse interface {
-	// GetPudicfReturnCode returns PudicfReturnCode
+	IS7PayloadUserDataItem
+	// GetPudicfReturnCode returns PudicfReturnCode (property field)
 	GetPudicfReturnCode() DataTransportErrorCode
-	// GetPudicftransportSize returns PudicftransportSize
+	// GetPudicftransportSize returns PudicftransportSize (property field)
 	GetPudicftransportSize() DataTransportSize
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -112,22 +113,19 @@ func NewS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(pudicfReturnCode Data
 }
 
 func CastS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse {
-	castFunc := func(typ interface{}) *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse {
-		if casted, ok := typ.(S7PayloadUserDataItemCpuFunctionAlarmQueryResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItemCpuFunctionAlarmQueryResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(casted.Child)
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadUserDataItemCpuFunctionAlarmQueryResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadUserDataItemCpuFunctionAlarmQueryResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(casted.Child)
+	}
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetTypeName() string {
@@ -305,6 +303,8 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

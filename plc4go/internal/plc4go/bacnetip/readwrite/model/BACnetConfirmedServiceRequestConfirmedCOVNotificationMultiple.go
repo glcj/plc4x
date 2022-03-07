@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(len uint16
 }
 
 func CastBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(structType interface{}) *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) String()
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

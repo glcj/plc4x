@@ -40,11 +40,12 @@ type S7PayloadUserDataItemCpuFunctionReadSzlResponse struct {
 
 // The corresponding interface
 type IS7PayloadUserDataItemCpuFunctionReadSzlResponse interface {
-	// GetSzlId returns SzlId
+	IS7PayloadUserDataItem
+	// GetSzlId returns SzlId (property field)
 	GetSzlId() *SzlId
-	// GetSzlIndex returns SzlIndex
+	// GetSzlIndex returns SzlIndex (property field)
 	GetSzlIndex() uint16
-	// GetItems returns Items
+	// GetItems returns Items (property field)
 	GetItems() []*SzlDataTreeItem
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -118,22 +119,19 @@ func NewS7PayloadUserDataItemCpuFunctionReadSzlResponse(szlId *SzlId, szlIndex u
 }
 
 func CastS7PayloadUserDataItemCpuFunctionReadSzlResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionReadSzlResponse {
-	castFunc := func(typ interface{}) *S7PayloadUserDataItemCpuFunctionReadSzlResponse {
-		if casted, ok := typ.(S7PayloadUserDataItemCpuFunctionReadSzlResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItemCpuFunctionReadSzlResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionReadSzlResponse(casted.Child)
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionReadSzlResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadUserDataItemCpuFunctionReadSzlResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadUserDataItemCpuFunctionReadSzlResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionReadSzlResponse(casted.Child)
+	}
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionReadSzlResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetTypeName() string {
@@ -318,6 +316,8 @@ func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

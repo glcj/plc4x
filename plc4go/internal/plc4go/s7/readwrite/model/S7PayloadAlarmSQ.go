@@ -34,7 +34,8 @@ type S7PayloadAlarmSQ struct {
 
 // The corresponding interface
 type IS7PayloadAlarmSQ interface {
-	// GetAlarmMessage returns AlarmMessage
+	IS7PayloadUserDataItem
+	// GetAlarmMessage returns AlarmMessage (property field)
 	GetAlarmMessage() *AlarmMessagePushType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -98,22 +99,19 @@ func NewS7PayloadAlarmSQ(alarmMessage *AlarmMessagePushType, returnCode DataTran
 }
 
 func CastS7PayloadAlarmSQ(structType interface{}) *S7PayloadAlarmSQ {
-	castFunc := func(typ interface{}) *S7PayloadAlarmSQ {
-		if casted, ok := typ.(S7PayloadAlarmSQ); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadAlarmSQ); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return CastS7PayloadAlarmSQ(casted.Child)
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return CastS7PayloadAlarmSQ(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadAlarmSQ); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadAlarmSQ); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return CastS7PayloadAlarmSQ(casted.Child)
+	}
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return CastS7PayloadAlarmSQ(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadAlarmSQ) GetTypeName() string {
@@ -201,6 +199,8 @@ func (m *S7PayloadAlarmSQ) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,8 @@ type KnxNetIpDeviceManagement struct {
 
 // The corresponding interface
 type IKnxNetIpDeviceManagement interface {
-	// GetVersion returns Version
+	IServiceId
+	// GetVersion returns Version (property field)
 	GetVersion() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewKnxNetIpDeviceManagement(version uint8) *ServiceId {
 }
 
 func CastKnxNetIpDeviceManagement(structType interface{}) *KnxNetIpDeviceManagement {
-	castFunc := func(typ interface{}) *KnxNetIpDeviceManagement {
-		if casted, ok := typ.(KnxNetIpDeviceManagement); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*KnxNetIpDeviceManagement); ok {
-			return casted
-		}
-		if casted, ok := typ.(ServiceId); ok {
-			return CastKnxNetIpDeviceManagement(casted.Child)
-		}
-		if casted, ok := typ.(*ServiceId); ok {
-			return CastKnxNetIpDeviceManagement(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(KnxNetIpDeviceManagement); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*KnxNetIpDeviceManagement); ok {
+		return casted
+	}
+	if casted, ok := structType.(ServiceId); ok {
+		return CastKnxNetIpDeviceManagement(casted.Child)
+	}
+	if casted, ok := structType.(*ServiceId); ok {
+		return CastKnxNetIpDeviceManagement(casted.Child)
+	}
+	return nil
 }
 
 func (m *KnxNetIpDeviceManagement) GetTypeName() string {
@@ -171,6 +169,8 @@ func (m *KnxNetIpDeviceManagement) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

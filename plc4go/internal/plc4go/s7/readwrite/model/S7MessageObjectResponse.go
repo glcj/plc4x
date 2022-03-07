@@ -36,9 +36,10 @@ type S7MessageObjectResponse struct {
 
 // The corresponding interface
 type IS7MessageObjectResponse interface {
-	// GetReturnCode returns ReturnCode
+	IS7DataAlarmMessage
+	// GetReturnCode returns ReturnCode (property field)
 	GetReturnCode() DataTransportErrorCode
-	// GetTransportSize returns TransportSize
+	// GetTransportSize returns TransportSize (property field)
 	GetTransportSize() DataTransportSize
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -88,22 +89,19 @@ func NewS7MessageObjectResponse(returnCode DataTransportErrorCode, transportSize
 }
 
 func CastS7MessageObjectResponse(structType interface{}) *S7MessageObjectResponse {
-	castFunc := func(typ interface{}) *S7MessageObjectResponse {
-		if casted, ok := typ.(S7MessageObjectResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7MessageObjectResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7DataAlarmMessage); ok {
-			return CastS7MessageObjectResponse(casted.Child)
-		}
-		if casted, ok := typ.(*S7DataAlarmMessage); ok {
-			return CastS7MessageObjectResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7MessageObjectResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7MessageObjectResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7DataAlarmMessage); ok {
+		return CastS7MessageObjectResponse(casted.Child)
+	}
+	if casted, ok := structType.(*S7DataAlarmMessage); ok {
+		return CastS7MessageObjectResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7MessageObjectResponse) GetTypeName() string {
@@ -245,6 +243,8 @@ func (m *S7MessageObjectResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

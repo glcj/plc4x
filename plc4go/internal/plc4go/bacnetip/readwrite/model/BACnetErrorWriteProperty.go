@@ -32,6 +32,7 @@ type BACnetErrorWriteProperty struct {
 
 // The corresponding interface
 type IBACnetErrorWriteProperty interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorWriteProperty(errorClass *BACnetApplicationTagEnumerated, err
 }
 
 func CastBACnetErrorWriteProperty(structType interface{}) *BACnetErrorWriteProperty {
-	castFunc := func(typ interface{}) *BACnetErrorWriteProperty {
-		if casted, ok := typ.(BACnetErrorWriteProperty); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorWriteProperty); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorWriteProperty(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorWriteProperty(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorWriteProperty); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorWriteProperty); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorWriteProperty(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorWriteProperty(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorWriteProperty) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorWriteProperty) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

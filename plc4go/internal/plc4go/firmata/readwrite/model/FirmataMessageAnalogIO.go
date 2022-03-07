@@ -38,9 +38,10 @@ type FirmataMessageAnalogIO struct {
 
 // The corresponding interface
 type IFirmataMessageAnalogIO interface {
-	// GetPin returns Pin
+	IFirmataMessage
+	// GetPin returns Pin (property field)
 	GetPin() uint8
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []int8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewFirmataMessageAnalogIO(pin uint8, data []int8, response bool) *FirmataMe
 }
 
 func CastFirmataMessageAnalogIO(structType interface{}) *FirmataMessageAnalogIO {
-	castFunc := func(typ interface{}) *FirmataMessageAnalogIO {
-		if casted, ok := typ.(FirmataMessageAnalogIO); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataMessageAnalogIO); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataMessage); ok {
-			return CastFirmataMessageAnalogIO(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataMessage); ok {
-			return CastFirmataMessageAnalogIO(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataMessageAnalogIO); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataMessageAnalogIO); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataMessage); ok {
+		return CastFirmataMessageAnalogIO(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataMessage); ok {
+		return CastFirmataMessageAnalogIO(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataMessageAnalogIO) GetTypeName() string {
@@ -223,6 +221,8 @@ func (m *FirmataMessageAnalogIO) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

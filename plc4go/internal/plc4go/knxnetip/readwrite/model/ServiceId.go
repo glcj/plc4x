@@ -33,8 +33,8 @@ type ServiceId struct {
 
 // The corresponding interface
 type IServiceId interface {
-	// ServiceType returns ServiceType
-	ServiceType() uint8
+	// GetServiceType returns ServiceType (discriminator field)
+	GetServiceType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewServiceId() *ServiceId {
 }
 
 func CastServiceId(structType interface{}) *ServiceId {
-	castFunc := func(typ interface{}) *ServiceId {
-		if casted, ok := typ.(ServiceId); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ServiceId); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ServiceId); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ServiceId); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ServiceId) GetTypeName() string {
@@ -163,7 +160,7 @@ func (m *ServiceId) SerializeParent(writeBuffer utils.WriteBuffer, child IServic
 	}
 
 	// Discriminator Field (serviceType) (Used as input to a switch field)
-	serviceType := uint8(child.ServiceType())
+	serviceType := uint8(child.GetServiceType())
 	_serviceTypeErr := writeBuffer.WriteUint8("serviceType", 8, (serviceType))
 
 	if _serviceTypeErr != nil {
@@ -186,6 +183,8 @@ func (m *ServiceId) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

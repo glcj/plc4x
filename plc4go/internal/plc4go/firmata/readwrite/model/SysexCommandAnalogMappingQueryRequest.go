@@ -32,6 +32,7 @@ type SysexCommandAnalogMappingQueryRequest struct {
 
 // The corresponding interface
 type ISysexCommandAnalogMappingQueryRequest interface {
+	ISysexCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -79,22 +80,19 @@ func NewSysexCommandAnalogMappingQueryRequest() *SysexCommand {
 }
 
 func CastSysexCommandAnalogMappingQueryRequest(structType interface{}) *SysexCommandAnalogMappingQueryRequest {
-	castFunc := func(typ interface{}) *SysexCommandAnalogMappingQueryRequest {
-		if casted, ok := typ.(SysexCommandAnalogMappingQueryRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandAnalogMappingQueryRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandAnalogMappingQueryRequest(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandAnalogMappingQueryRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandAnalogMappingQueryRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandAnalogMappingQueryRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandAnalogMappingQueryRequest(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandAnalogMappingQueryRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandAnalogMappingQueryRequest) GetTypeName() string {
@@ -153,6 +151,8 @@ func (m *SysexCommandAnalogMappingQueryRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

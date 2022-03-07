@@ -33,8 +33,8 @@ type ComObjectTable struct {
 
 // The corresponding interface
 type IComObjectTable interface {
-	// FirmwareType returns FirmwareType
-	FirmwareType() FirmwareType
+	// GetFirmwareType returns FirmwareType (discriminator field)
+	GetFirmwareType() FirmwareType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewComObjectTable() *ComObjectTable {
 }
 
 func CastComObjectTable(structType interface{}) *ComObjectTable {
-	castFunc := func(typ interface{}) *ComObjectTable {
-		if casted, ok := typ.(ComObjectTable); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ComObjectTable); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ComObjectTable); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ComObjectTable); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ComObjectTable) GetTypeName() string {
@@ -162,6 +159,8 @@ func (m *ComObjectTable) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

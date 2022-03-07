@@ -34,7 +34,8 @@ type SysexCommandExtendedId struct {
 
 // The corresponding interface
 type ISysexCommandExtendedId interface {
-	// GetId returns Id
+	ISysexCommand
+	// GetId returns Id (property field)
 	GetId() []int8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewSysexCommandExtendedId(id []int8) *SysexCommand {
 }
 
 func CastSysexCommandExtendedId(structType interface{}) *SysexCommandExtendedId {
-	castFunc := func(typ interface{}) *SysexCommandExtendedId {
-		if casted, ok := typ.(SysexCommandExtendedId); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandExtendedId); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandExtendedId(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandExtendedId(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandExtendedId); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandExtendedId); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandExtendedId(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandExtendedId(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandExtendedId) GetTypeName() string {
@@ -202,6 +200,8 @@ func (m *SysexCommandExtendedId) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

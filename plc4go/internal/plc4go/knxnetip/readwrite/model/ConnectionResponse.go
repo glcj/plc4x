@@ -38,13 +38,14 @@ type ConnectionResponse struct {
 
 // The corresponding interface
 type IConnectionResponse interface {
-	// GetCommunicationChannelId returns CommunicationChannelId
+	IKnxNetIpMessage
+	// GetCommunicationChannelId returns CommunicationChannelId (property field)
 	GetCommunicationChannelId() uint8
-	// GetStatus returns Status
+	// GetStatus returns Status (property field)
 	GetStatus() Status
-	// GetHpaiDataEndpoint returns HpaiDataEndpoint
+	// GetHpaiDataEndpoint returns HpaiDataEndpoint (property field)
 	GetHpaiDataEndpoint() *HPAIDataEndpoint
-	// GetConnectionResponseDataBlock returns ConnectionResponseDataBlock
+	// GetConnectionResponseDataBlock returns ConnectionResponseDataBlock (property field)
 	GetConnectionResponseDataBlock() *ConnectionResponseDataBlock
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -104,22 +105,19 @@ func NewConnectionResponse(communicationChannelId uint8, status Status, hpaiData
 }
 
 func CastConnectionResponse(structType interface{}) *ConnectionResponse {
-	castFunc := func(typ interface{}) *ConnectionResponse {
-		if casted, ok := typ.(ConnectionResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConnectionResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastConnectionResponse(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastConnectionResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ConnectionResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConnectionResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastConnectionResponse(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastConnectionResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ConnectionResponse) GetTypeName() string {
@@ -311,6 +309,8 @@ func (m *ConnectionResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

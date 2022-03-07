@@ -42,15 +42,16 @@ type MultipleServiceResponse struct {
 
 // The corresponding interface
 type IMultipleServiceResponse interface {
-	// GetStatus returns Status
+	ICipService
+	// GetStatus returns Status (property field)
 	GetStatus() uint8
-	// GetExtStatus returns ExtStatus
+	// GetExtStatus returns ExtStatus (property field)
 	GetExtStatus() uint8
-	// GetServiceNb returns ServiceNb
+	// GetServiceNb returns ServiceNb (property field)
 	GetServiceNb() uint16
-	// GetOffsets returns Offsets
+	// GetOffsets returns Offsets (property field)
 	GetOffsets() []uint16
-	// GetServicesData returns ServicesData
+	// GetServicesData returns ServicesData (property field)
 	GetServicesData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -115,22 +116,19 @@ func NewMultipleServiceResponse(status uint8, extStatus uint8, serviceNb uint16,
 }
 
 func CastMultipleServiceResponse(structType interface{}) *MultipleServiceResponse {
-	castFunc := func(typ interface{}) *MultipleServiceResponse {
-		if casted, ok := typ.(MultipleServiceResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MultipleServiceResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(CipService); ok {
-			return CastMultipleServiceResponse(casted.Child)
-		}
-		if casted, ok := typ.(*CipService); ok {
-			return CastMultipleServiceResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MultipleServiceResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MultipleServiceResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(CipService); ok {
+		return CastMultipleServiceResponse(casted.Child)
+	}
+	if casted, ok := structType.(*CipService); ok {
+		return CastMultipleServiceResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *MultipleServiceResponse) GetTypeName() string {
@@ -330,6 +328,8 @@ func (m *MultipleServiceResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

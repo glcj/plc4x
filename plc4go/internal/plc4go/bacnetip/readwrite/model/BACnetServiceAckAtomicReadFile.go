@@ -35,9 +35,10 @@ type BACnetServiceAckAtomicReadFile struct {
 
 // The corresponding interface
 type IBACnetServiceAckAtomicReadFile interface {
-	// GetEndOfFile returns EndOfFile
+	IBACnetServiceAck
+	// GetEndOfFile returns EndOfFile (property field)
 	GetEndOfFile() *BACnetApplicationTagBoolean
-	// GetAccessMethod returns AccessMethod
+	// GetAccessMethod returns AccessMethod (property field)
 	GetAccessMethod() *BACnetServiceAckAtomicReadFileStreamOrRecord
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewBACnetServiceAckAtomicReadFile(endOfFile *BACnetApplicationTagBoolean, a
 }
 
 func CastBACnetServiceAckAtomicReadFile(structType interface{}) *BACnetServiceAckAtomicReadFile {
-	castFunc := func(typ interface{}) *BACnetServiceAckAtomicReadFile {
-		if casted, ok := typ.(BACnetServiceAckAtomicReadFile); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAckAtomicReadFile); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetServiceAck); ok {
-			return CastBACnetServiceAckAtomicReadFile(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetServiceAck); ok {
-			return CastBACnetServiceAckAtomicReadFile(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAckAtomicReadFile); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAckAtomicReadFile); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetServiceAck); ok {
+		return CastBACnetServiceAckAtomicReadFile(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetServiceAck); ok {
+		return CastBACnetServiceAckAtomicReadFile(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetServiceAckAtomicReadFile) GetTypeName() string {
@@ -219,6 +217,8 @@ func (m *BACnetServiceAckAtomicReadFile) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestDeleteObject struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestDeleteObject interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestDeleteObject(len uint16) *BACnetConfirmedSe
 }
 
 func CastBACnetConfirmedServiceRequestDeleteObject(structType interface{}) *BACnetConfirmedServiceRequestDeleteObject {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestDeleteObject {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestDeleteObject); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestDeleteObject); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestDeleteObject(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestDeleteObject(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestDeleteObject); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestDeleteObject); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestDeleteObject(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestDeleteObject(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestDeleteObject) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestDeleteObject) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

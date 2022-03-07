@@ -41,15 +41,15 @@ type AlarmMessageQueryType struct {
 
 // The corresponding interface
 type IAlarmMessageQueryType interface {
-	// GetFunctionId returns FunctionId
+	// GetFunctionId returns FunctionId (property field)
 	GetFunctionId() uint8
-	// GetNumberOfObjects returns NumberOfObjects
+	// GetNumberOfObjects returns NumberOfObjects (property field)
 	GetNumberOfObjects() uint8
-	// GetReturnCode returns ReturnCode
+	// GetReturnCode returns ReturnCode (property field)
 	GetReturnCode() DataTransportErrorCode
-	// GetTransportSize returns TransportSize
+	// GetTransportSize returns TransportSize (property field)
 	GetTransportSize() DataTransportSize
-	// GetMessageObjects returns MessageObjects
+	// GetMessageObjects returns MessageObjects (property field)
 	GetMessageObjects() []*AlarmMessageObjectQueryType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -92,16 +92,13 @@ func NewAlarmMessageQueryType(functionId uint8, numberOfObjects uint8, returnCod
 }
 
 func CastAlarmMessageQueryType(structType interface{}) *AlarmMessageQueryType {
-	castFunc := func(typ interface{}) *AlarmMessageQueryType {
-		if casted, ok := typ.(AlarmMessageQueryType); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AlarmMessageQueryType); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AlarmMessageQueryType); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AlarmMessageQueryType); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AlarmMessageQueryType) GetTypeName() string {
@@ -304,6 +301,8 @@ func (m *AlarmMessageQueryType) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

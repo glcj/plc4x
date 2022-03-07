@@ -53,16 +53,13 @@ func NewGroupObjectDescriptorRealisationType6() *GroupObjectDescriptorRealisatio
 }
 
 func CastGroupObjectDescriptorRealisationType6(structType interface{}) *GroupObjectDescriptorRealisationType6 {
-	castFunc := func(typ interface{}) *GroupObjectDescriptorRealisationType6 {
-		if casted, ok := typ.(GroupObjectDescriptorRealisationType6); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*GroupObjectDescriptorRealisationType6); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(GroupObjectDescriptorRealisationType6); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*GroupObjectDescriptorRealisationType6); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *GroupObjectDescriptorRealisationType6) GetTypeName() string {
@@ -114,6 +111,8 @@ func (m *GroupObjectDescriptorRealisationType6) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

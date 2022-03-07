@@ -32,6 +32,7 @@ type BACnetServiceAckCreateObject struct {
 
 // The corresponding interface
 type IBACnetServiceAckCreateObject interface {
+	IBACnetServiceAck
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewBACnetServiceAckCreateObject() *BACnetServiceAck {
 }
 
 func CastBACnetServiceAckCreateObject(structType interface{}) *BACnetServiceAckCreateObject {
-	castFunc := func(typ interface{}) *BACnetServiceAckCreateObject {
-		if casted, ok := typ.(BACnetServiceAckCreateObject); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAckCreateObject); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetServiceAck); ok {
-			return CastBACnetServiceAckCreateObject(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetServiceAck); ok {
-			return CastBACnetServiceAckCreateObject(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAckCreateObject); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAckCreateObject); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetServiceAck); ok {
+		return CastBACnetServiceAckCreateObject(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetServiceAck); ok {
+		return CastBACnetServiceAckCreateObject(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetServiceAckCreateObject) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *BACnetServiceAckCreateObject) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

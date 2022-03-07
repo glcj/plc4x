@@ -61,16 +61,13 @@ func NewParameterChange() *ParameterChange {
 }
 
 func CastParameterChange(structType interface{}) *ParameterChange {
-	castFunc := func(typ interface{}) *ParameterChange {
-		if casted, ok := typ.(ParameterChange); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ParameterChange); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ParameterChange); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ParameterChange); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ParameterChange) GetTypeName() string {
@@ -194,6 +191,8 @@ func (m *ParameterChange) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

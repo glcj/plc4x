@@ -36,8 +36,8 @@ type COTPParameter struct {
 
 // The corresponding interface
 type ICOTPParameter interface {
-	// ParameterType returns ParameterType
-	ParameterType() uint8
+	// GetParameterType returns ParameterType (discriminator field)
+	GetParameterType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,16 +72,13 @@ func NewCOTPParameter(rest uint8) *COTPParameter {
 }
 
 func CastCOTPParameter(structType interface{}) *COTPParameter {
-	castFunc := func(typ interface{}) *COTPParameter {
-		if casted, ok := typ.(COTPParameter); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPParameter); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(COTPParameter); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPParameter); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *COTPParameter) GetTypeName() string {
@@ -172,7 +169,7 @@ func (m *COTPParameter) SerializeParent(writeBuffer utils.WriteBuffer, child ICO
 	}
 
 	// Discriminator Field (parameterType) (Used as input to a switch field)
-	parameterType := uint8(child.ParameterType())
+	parameterType := uint8(child.GetParameterType())
 	_parameterTypeErr := writeBuffer.WriteUint8("parameterType", 8, (parameterType))
 
 	if _parameterTypeErr != nil {
@@ -202,6 +199,8 @@ func (m *COTPParameter) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

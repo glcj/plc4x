@@ -38,15 +38,16 @@ type AdsReadDeviceInfoResponse struct {
 
 // The corresponding interface
 type IAdsReadDeviceInfoResponse interface {
-	// GetResult returns Result
+	IAdsData
+	// GetResult returns Result (property field)
 	GetResult() ReturnCode
-	// GetMajorVersion returns MajorVersion
+	// GetMajorVersion returns MajorVersion (property field)
 	GetMajorVersion() uint8
-	// GetMinorVersion returns MinorVersion
+	// GetMinorVersion returns MinorVersion (property field)
 	GetMinorVersion() uint8
-	// GetVersion returns Version
+	// GetVersion returns Version (property field)
 	GetVersion() uint16
-	// GetDevice returns Device
+	// GetDevice returns Device (property field)
 	GetDevice() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -119,22 +120,19 @@ func NewAdsReadDeviceInfoResponse(result ReturnCode, majorVersion uint8, minorVe
 }
 
 func CastAdsReadDeviceInfoResponse(structType interface{}) *AdsReadDeviceInfoResponse {
-	castFunc := func(typ interface{}) *AdsReadDeviceInfoResponse {
-		if casted, ok := typ.(AdsReadDeviceInfoResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsReadDeviceInfoResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsReadDeviceInfoResponse(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsReadDeviceInfoResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsReadDeviceInfoResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsReadDeviceInfoResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsReadDeviceInfoResponse(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsReadDeviceInfoResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsReadDeviceInfoResponse) GetTypeName() string {
@@ -297,6 +295,8 @@ func (m *AdsReadDeviceInfoResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

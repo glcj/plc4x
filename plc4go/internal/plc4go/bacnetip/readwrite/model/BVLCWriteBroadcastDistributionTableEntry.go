@@ -35,11 +35,11 @@ type BVLCWriteBroadcastDistributionTableEntry struct {
 
 // The corresponding interface
 type IBVLCWriteBroadcastDistributionTableEntry interface {
-	// GetIp returns Ip
+	// GetIp returns Ip (property field)
 	GetIp() []uint8
-	// GetPort returns Port
+	// GetPort returns Port (property field)
 	GetPort() uint16
-	// GetBroadcastDistributionMap returns BroadcastDistributionMap
+	// GetBroadcastDistributionMap returns BroadcastDistributionMap (property field)
 	GetBroadcastDistributionMap() []uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewBVLCWriteBroadcastDistributionTableEntry(ip []uint8, port uint16, broadc
 }
 
 func CastBVLCWriteBroadcastDistributionTableEntry(structType interface{}) *BVLCWriteBroadcastDistributionTableEntry {
-	castFunc := func(typ interface{}) *BVLCWriteBroadcastDistributionTableEntry {
-		if casted, ok := typ.(BVLCWriteBroadcastDistributionTableEntry); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLCWriteBroadcastDistributionTableEntry); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BVLCWriteBroadcastDistributionTableEntry); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLCWriteBroadcastDistributionTableEntry); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BVLCWriteBroadcastDistributionTableEntry) GetTypeName() string {
@@ -232,6 +229,8 @@ func (m *BVLCWriteBroadcastDistributionTableEntry) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

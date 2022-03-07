@@ -39,11 +39,12 @@ type COTPPacketConnectionRequest struct {
 
 // The corresponding interface
 type ICOTPPacketConnectionRequest interface {
-	// GetDestinationReference returns DestinationReference
+	ICOTPPacket
+	// GetDestinationReference returns DestinationReference (property field)
 	GetDestinationReference() uint16
-	// GetSourceReference returns SourceReference
+	// GetSourceReference returns SourceReference (property field)
 	GetSourceReference() uint16
-	// GetProtocolClass returns ProtocolClass
+	// GetProtocolClass returns ProtocolClass (property field)
 	GetProtocolClass() COTPProtocolClass
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -101,22 +102,19 @@ func NewCOTPPacketConnectionRequest(destinationReference uint16, sourceReference
 }
 
 func CastCOTPPacketConnectionRequest(structType interface{}) *COTPPacketConnectionRequest {
-	castFunc := func(typ interface{}) *COTPPacketConnectionRequest {
-		if casted, ok := typ.(COTPPacketConnectionRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPPacketConnectionRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(COTPPacket); ok {
-			return CastCOTPPacketConnectionRequest(casted.Child)
-		}
-		if casted, ok := typ.(*COTPPacket); ok {
-			return CastCOTPPacketConnectionRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(COTPPacketConnectionRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPPacketConnectionRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(COTPPacket); ok {
+		return CastCOTPPacketConnectionRequest(casted.Child)
+	}
+	if casted, ok := structType.(*COTPPacket); ok {
+		return CastCOTPPacketConnectionRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *COTPPacketConnectionRequest) GetTypeName() string {
@@ -240,6 +238,8 @@ func (m *COTPPacketConnectionRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

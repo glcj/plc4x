@@ -35,11 +35,11 @@ type SzlId struct {
 
 // The corresponding interface
 type ISzlId interface {
-	// GetTypeClass returns TypeClass
+	// GetTypeClass returns TypeClass (property field)
 	GetTypeClass() SzlModuleTypeClass
-	// GetSublistExtract returns SublistExtract
+	// GetSublistExtract returns SublistExtract (property field)
 	GetSublistExtract() uint8
-	// GetSublistList returns SublistList
+	// GetSublistList returns SublistList (property field)
 	GetSublistList() SzlSublist
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewSzlId(typeClass SzlModuleTypeClass, sublistExtract uint8, sublistList Sz
 }
 
 func CastSzlId(structType interface{}) *SzlId {
-	castFunc := func(typ interface{}) *SzlId {
-		if casted, ok := typ.(SzlId); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SzlId); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(SzlId); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SzlId); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *SzlId) GetTypeName() string {
@@ -208,6 +205,8 @@ func (m *SzlId) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

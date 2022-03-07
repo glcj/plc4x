@@ -39,11 +39,12 @@ type CBusPointToPointCommandIndirect struct {
 
 // The corresponding interface
 type ICBusPointToPointCommandIndirect interface {
-	// GetBridgeAddress returns BridgeAddress
+	ICBusPointToPointCommand
+	// GetBridgeAddress returns BridgeAddress (property field)
 	GetBridgeAddress() *BridgeAddress
-	// GetNetworkRoute returns NetworkRoute
+	// GetNetworkRoute returns NetworkRoute (property field)
 	GetNetworkRoute() *NetworkRoute
-	// GetUnitAddress returns UnitAddress
+	// GetUnitAddress returns UnitAddress (property field)
 	GetUnitAddress() *UnitAddress
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -56,13 +57,6 @@ type ICBusPointToPointCommandIndirect interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CBusPointToPointCommandIndirect) IsDirect() bool {
-	return bool(false)
-}
-
-func (m *CBusPointToPointCommandIndirect) GetIsDirect() bool {
-	return bool(false)
-}
 
 func (m *CBusPointToPointCommandIndirect) InitializeParent(parent *CBusPointToPointCommand, bridgeAddressCountPeek uint16, calData *CALData, crc *Checksum, peekAlpha byte, alpha *Alpha) {
 	m.CBusPointToPointCommand.BridgeAddressCountPeek = bridgeAddressCountPeek
@@ -104,22 +98,19 @@ func NewCBusPointToPointCommandIndirect(bridgeAddress *BridgeAddress, networkRou
 }
 
 func CastCBusPointToPointCommandIndirect(structType interface{}) *CBusPointToPointCommandIndirect {
-	castFunc := func(typ interface{}) *CBusPointToPointCommandIndirect {
-		if casted, ok := typ.(CBusPointToPointCommandIndirect); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusPointToPointCommandIndirect); ok {
-			return casted
-		}
-		if casted, ok := typ.(CBusPointToPointCommand); ok {
-			return CastCBusPointToPointCommandIndirect(casted.Child)
-		}
-		if casted, ok := typ.(*CBusPointToPointCommand); ok {
-			return CastCBusPointToPointCommandIndirect(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CBusPointToPointCommandIndirect); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusPointToPointCommandIndirect); ok {
+		return casted
+	}
+	if casted, ok := structType.(CBusPointToPointCommand); ok {
+		return CastCBusPointToPointCommandIndirect(casted.Child)
+	}
+	if casted, ok := structType.(*CBusPointToPointCommand); ok {
+		return CastCBusPointToPointCommandIndirect(casted.Child)
+	}
+	return nil
 }
 
 func (m *CBusPointToPointCommandIndirect) GetTypeName() string {
@@ -265,6 +256,8 @@ func (m *CBusPointToPointCommandIndirect) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

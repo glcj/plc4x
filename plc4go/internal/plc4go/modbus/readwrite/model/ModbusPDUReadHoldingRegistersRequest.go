@@ -35,9 +35,10 @@ type ModbusPDUReadHoldingRegistersRequest struct {
 
 // The corresponding interface
 type IModbusPDUReadHoldingRegistersRequest interface {
-	// GetStartingAddress returns StartingAddress
+	IModbusPDU
+	// GetStartingAddress returns StartingAddress (property field)
 	GetStartingAddress() uint16
-	// GetQuantity returns Quantity
+	// GetQuantity returns Quantity (property field)
 	GetQuantity() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewModbusPDUReadHoldingRegistersRequest(startingAddress uint16, quantity ui
 }
 
 func CastModbusPDUReadHoldingRegistersRequest(structType interface{}) *ModbusPDUReadHoldingRegistersRequest {
-	castFunc := func(typ interface{}) *ModbusPDUReadHoldingRegistersRequest {
-		if casted, ok := typ.(ModbusPDUReadHoldingRegistersRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadHoldingRegistersRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadHoldingRegistersRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadHoldingRegistersRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadHoldingRegistersRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadHoldingRegistersRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadHoldingRegistersRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadHoldingRegistersRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadHoldingRegistersRequest) GetTypeName() string {
@@ -213,6 +211,8 @@ func (m *ModbusPDUReadHoldingRegistersRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

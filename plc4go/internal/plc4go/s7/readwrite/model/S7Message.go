@@ -42,13 +42,13 @@ type S7Message struct {
 
 // The corresponding interface
 type IS7Message interface {
-	// MessageType returns MessageType
-	MessageType() uint8
-	// GetTpduReference returns TpduReference
+	// GetMessageType returns MessageType (discriminator field)
+	GetMessageType() uint8
+	// GetTpduReference returns TpduReference (property field)
 	GetTpduReference() uint16
-	// GetParameter returns Parameter
+	// GetParameter returns Parameter (property field)
 	GetParameter() *S7Parameter
-	// GetPayload returns Payload
+	// GetPayload returns Payload (property field)
 	GetPayload() *S7Payload
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,16 +95,13 @@ func NewS7Message(tpduReference uint16, parameter *S7Parameter, payload *S7Paylo
 }
 
 func CastS7Message(structType interface{}) *S7Message {
-	castFunc := func(typ interface{}) *S7Message {
-		if casted, ok := typ.(S7Message); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7Message); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(S7Message); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7Message); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *S7Message) GetTypeName() string {
@@ -300,7 +297,7 @@ func (m *S7Message) SerializeParent(writeBuffer utils.WriteBuffer, child IS7Mess
 	}
 
 	// Discriminator Field (messageType) (Used as input to a switch field)
-	messageType := uint8(child.MessageType())
+	messageType := uint8(child.GetMessageType())
 	_messageTypeErr := writeBuffer.WriteUint8("messageType", 8, (messageType))
 
 	if _messageTypeErr != nil {
@@ -384,6 +381,8 @@ func (m *S7Message) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

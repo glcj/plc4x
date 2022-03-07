@@ -33,12 +33,12 @@ type ModbusPDU struct {
 
 // The corresponding interface
 type IModbusPDU interface {
-	// ErrorFlag returns ErrorFlag
-	ErrorFlag() bool
-	// FunctionFlag returns FunctionFlag
-	FunctionFlag() uint8
-	// Response returns Response
-	Response() bool
+	// GetErrorFlag returns ErrorFlag (discriminator field)
+	GetErrorFlag() bool
+	// GetFunctionFlag returns FunctionFlag (discriminator field)
+	GetFunctionFlag() uint8
+	// GetResponse returns Response (discriminator field)
+	GetResponse() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -73,16 +73,13 @@ func NewModbusPDU() *ModbusPDU {
 }
 
 func CastModbusPDU(structType interface{}) *ModbusPDU {
-	castFunc := func(typ interface{}) *ModbusPDU {
-		if casted, ok := typ.(ModbusPDU); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDU); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ModbusPDU) GetTypeName() string {
@@ -239,7 +236,7 @@ func (m *ModbusPDU) SerializeParent(writeBuffer utils.WriteBuffer, child IModbus
 	}
 
 	// Discriminator Field (errorFlag) (Used as input to a switch field)
-	errorFlag := bool(child.ErrorFlag())
+	errorFlag := bool(child.GetErrorFlag())
 	_errorFlagErr := writeBuffer.WriteBit("errorFlag", (errorFlag))
 
 	if _errorFlagErr != nil {
@@ -247,7 +244,7 @@ func (m *ModbusPDU) SerializeParent(writeBuffer utils.WriteBuffer, child IModbus
 	}
 
 	// Discriminator Field (functionFlag) (Used as input to a switch field)
-	functionFlag := uint8(child.FunctionFlag())
+	functionFlag := uint8(child.GetFunctionFlag())
 	_functionFlagErr := writeBuffer.WriteUint8("functionFlag", 7, (functionFlag))
 
 	if _functionFlagErr != nil {
@@ -270,6 +267,8 @@ func (m *ModbusPDU) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

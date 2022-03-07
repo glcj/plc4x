@@ -35,9 +35,10 @@ type ModbusPDUReadCoilsRequest struct {
 
 // The corresponding interface
 type IModbusPDUReadCoilsRequest interface {
-	// GetStartingAddress returns StartingAddress
+	IModbusPDU
+	// GetStartingAddress returns StartingAddress (property field)
 	GetStartingAddress() uint16
-	// GetQuantity returns Quantity
+	// GetQuantity returns Quantity (property field)
 	GetQuantity() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewModbusPDUReadCoilsRequest(startingAddress uint16, quantity uint16) *Modb
 }
 
 func CastModbusPDUReadCoilsRequest(structType interface{}) *ModbusPDUReadCoilsRequest {
-	castFunc := func(typ interface{}) *ModbusPDUReadCoilsRequest {
-		if casted, ok := typ.(ModbusPDUReadCoilsRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadCoilsRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadCoilsRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadCoilsRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadCoilsRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadCoilsRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadCoilsRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadCoilsRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadCoilsRequest) GetTypeName() string {
@@ -213,6 +211,8 @@ func (m *ModbusPDUReadCoilsRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

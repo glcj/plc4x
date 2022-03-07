@@ -35,6 +35,7 @@ type BACnetUnconfirmedServiceRequestWriteGroup struct {
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequestWriteGroup interface {
+	IBACnetUnconfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetUnconfirmedServiceRequestWriteGroup(len uint16) *BACnetUnconfirmed
 }
 
 func CastBACnetUnconfirmedServiceRequestWriteGroup(structType interface{}) *BACnetUnconfirmedServiceRequestWriteGroup {
-	castFunc := func(typ interface{}) *BACnetUnconfirmedServiceRequestWriteGroup {
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequestWriteGroup); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequestWriteGroup); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestWriteGroup(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestWriteGroup(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequestWriteGroup); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequestWriteGroup); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestWriteGroup(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestWriteGroup(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestWriteGroup) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetUnconfirmedServiceRequestWriteGroup) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

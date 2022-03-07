@@ -32,6 +32,7 @@ type BACnetErrorConfirmedPrivateTransfer struct {
 
 // The corresponding interface
 type IBACnetErrorConfirmedPrivateTransfer interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorConfirmedPrivateTransfer(errorClass *BACnetApplicationTagEnum
 }
 
 func CastBACnetErrorConfirmedPrivateTransfer(structType interface{}) *BACnetErrorConfirmedPrivateTransfer {
-	castFunc := func(typ interface{}) *BACnetErrorConfirmedPrivateTransfer {
-		if casted, ok := typ.(BACnetErrorConfirmedPrivateTransfer); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorConfirmedPrivateTransfer); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorConfirmedPrivateTransfer(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorConfirmedPrivateTransfer(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorConfirmedPrivateTransfer); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorConfirmedPrivateTransfer); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorConfirmedPrivateTransfer(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorConfirmedPrivateTransfer(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorConfirmedPrivateTransfer) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorConfirmedPrivateTransfer) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -32,6 +32,7 @@ type BACnetServiceAckConfirmedPrivateTransfer struct {
 
 // The corresponding interface
 type IBACnetServiceAckConfirmedPrivateTransfer interface {
+	IBACnetServiceAck
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewBACnetServiceAckConfirmedPrivateTransfer() *BACnetServiceAck {
 }
 
 func CastBACnetServiceAckConfirmedPrivateTransfer(structType interface{}) *BACnetServiceAckConfirmedPrivateTransfer {
-	castFunc := func(typ interface{}) *BACnetServiceAckConfirmedPrivateTransfer {
-		if casted, ok := typ.(BACnetServiceAckConfirmedPrivateTransfer); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAckConfirmedPrivateTransfer); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetServiceAck); ok {
-			return CastBACnetServiceAckConfirmedPrivateTransfer(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetServiceAck); ok {
-			return CastBACnetServiceAckConfirmedPrivateTransfer(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAckConfirmedPrivateTransfer); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAckConfirmedPrivateTransfer); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetServiceAck); ok {
+		return CastBACnetServiceAckConfirmedPrivateTransfer(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetServiceAck); ok {
+		return CastBACnetServiceAckConfirmedPrivateTransfer(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetServiceAckConfirmedPrivateTransfer) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *BACnetServiceAckConfirmedPrivateTransfer) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestWritePropertyMultiple struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestWritePropertyMultiple interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestWritePropertyMultiple(len uint16) *BACnetCo
 }
 
 func CastBACnetConfirmedServiceRequestWritePropertyMultiple(structType interface{}) *BACnetConfirmedServiceRequestWritePropertyMultiple {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestWritePropertyMultiple {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestWritePropertyMultiple); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestWritePropertyMultiple); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestWritePropertyMultiple(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestWritePropertyMultiple(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestWritePropertyMultiple); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestWritePropertyMultiple); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestWritePropertyMultiple(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestWritePropertyMultiple(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestWritePropertyMultiple) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestWritePropertyMultiple) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -32,6 +32,7 @@ type IdentifyReplyCommandMinimumLevels struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandMinimumLevels interface {
+	IIdentifyReplyCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewIdentifyReplyCommandMinimumLevels() *IdentifyReplyCommand {
 }
 
 func CastIdentifyReplyCommandMinimumLevels(structType interface{}) *IdentifyReplyCommandMinimumLevels {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandMinimumLevels {
-		if casted, ok := typ.(IdentifyReplyCommandMinimumLevels); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandMinimumLevels); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandMinimumLevels(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandMinimumLevels(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandMinimumLevels); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandMinimumLevels); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandMinimumLevels(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandMinimumLevels(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandMinimumLevels) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *IdentifyReplyCommandMinimumLevels) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

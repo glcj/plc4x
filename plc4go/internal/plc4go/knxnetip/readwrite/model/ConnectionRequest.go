@@ -36,11 +36,12 @@ type ConnectionRequest struct {
 
 // The corresponding interface
 type IConnectionRequest interface {
-	// GetHpaiDiscoveryEndpoint returns HpaiDiscoveryEndpoint
+	IKnxNetIpMessage
+	// GetHpaiDiscoveryEndpoint returns HpaiDiscoveryEndpoint (property field)
 	GetHpaiDiscoveryEndpoint() *HPAIDiscoveryEndpoint
-	// GetHpaiDataEndpoint returns HpaiDataEndpoint
+	// GetHpaiDataEndpoint returns HpaiDataEndpoint (property field)
 	GetHpaiDataEndpoint() *HPAIDataEndpoint
-	// GetConnectionRequestInformation returns ConnectionRequestInformation
+	// GetConnectionRequestInformation returns ConnectionRequestInformation (property field)
 	GetConnectionRequestInformation() *ConnectionRequestInformation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewConnectionRequest(hpaiDiscoveryEndpoint *HPAIDiscoveryEndpoint, hpaiData
 }
 
 func CastConnectionRequest(structType interface{}) *ConnectionRequest {
-	castFunc := func(typ interface{}) *ConnectionRequest {
-		if casted, ok := typ.(ConnectionRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConnectionRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastConnectionRequest(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastConnectionRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ConnectionRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConnectionRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastConnectionRequest(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastConnectionRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ConnectionRequest) GetTypeName() string {
@@ -256,6 +254,8 @@ func (m *ConnectionRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -36,8 +36,8 @@ type FirmataMessage struct {
 
 // The corresponding interface
 type IFirmataMessage interface {
-	// MessageType returns MessageType
-	MessageType() uint8
+	// GetMessageType returns MessageType (discriminator field)
+	GetMessageType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,16 +72,13 @@ func NewFirmataMessage(response bool) *FirmataMessage {
 }
 
 func CastFirmataMessage(structType interface{}) *FirmataMessage {
-	castFunc := func(typ interface{}) *FirmataMessage {
-		if casted, ok := typ.(FirmataMessage); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataMessage); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(FirmataMessage); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataMessage); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *FirmataMessage) GetTypeName() string {
@@ -162,7 +159,7 @@ func (m *FirmataMessage) SerializeParent(writeBuffer utils.WriteBuffer, child IF
 	}
 
 	// Discriminator Field (messageType) (Used as input to a switch field)
-	messageType := uint8(child.MessageType())
+	messageType := uint8(child.GetMessageType())
 	_messageTypeErr := writeBuffer.WriteUint8("messageType", 4, (messageType))
 
 	if _messageTypeErr != nil {
@@ -185,6 +182,8 @@ func (m *FirmataMessage) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

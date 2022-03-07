@@ -33,8 +33,8 @@ type BACnetServiceAck struct {
 
 // The corresponding interface
 type IBACnetServiceAck interface {
-	// ServiceChoice returns ServiceChoice
-	ServiceChoice() uint8
+	// GetServiceChoice returns ServiceChoice (discriminator field)
+	GetServiceChoice() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewBACnetServiceAck() *BACnetServiceAck {
 }
 
 func CastBACnetServiceAck(structType interface{}) *BACnetServiceAck {
-	castFunc := func(typ interface{}) *BACnetServiceAck {
-		if casted, ok := typ.(BACnetServiceAck); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAck); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAck); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAck); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetServiceAck) GetTypeName() string {
@@ -177,7 +174,7 @@ func (m *BACnetServiceAck) SerializeParent(writeBuffer utils.WriteBuffer, child 
 	}
 
 	// Discriminator Field (serviceChoice) (Used as input to a switch field)
-	serviceChoice := uint8(child.ServiceChoice())
+	serviceChoice := uint8(child.GetServiceChoice())
 	_serviceChoiceErr := writeBuffer.WriteUint8("serviceChoice", 8, (serviceChoice))
 
 	if _serviceChoiceErr != nil {
@@ -200,6 +197,8 @@ func (m *BACnetServiceAck) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

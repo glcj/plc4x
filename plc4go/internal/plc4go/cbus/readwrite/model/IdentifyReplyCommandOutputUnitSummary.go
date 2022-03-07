@@ -32,6 +32,7 @@ type IdentifyReplyCommandOutputUnitSummary struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandOutputUnitSummary interface {
+	IIdentifyReplyCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewIdentifyReplyCommandOutputUnitSummary() *IdentifyReplyCommand {
 }
 
 func CastIdentifyReplyCommandOutputUnitSummary(structType interface{}) *IdentifyReplyCommandOutputUnitSummary {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandOutputUnitSummary {
-		if casted, ok := typ.(IdentifyReplyCommandOutputUnitSummary); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandOutputUnitSummary); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandOutputUnitSummary(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandOutputUnitSummary(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandOutputUnitSummary); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandOutputUnitSummary); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandOutputUnitSummary(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandOutputUnitSummary(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandOutputUnitSummary) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *IdentifyReplyCommandOutputUnitSummary) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

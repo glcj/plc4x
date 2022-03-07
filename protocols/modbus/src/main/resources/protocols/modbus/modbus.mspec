@@ -47,14 +47,14 @@
     [simple         ModbusPDU('response')   pdu]
 ]
 
+// This is the base type used by both ModbusRTU and ModbusASCII
 [type ModbusSerialADU(bit response) byteOrder='LITTLE_ENDIAN'
-    [simple         uint 16     transactionId]
-    [reserved       uint 16     '0x0000']
-    [simple         uint 16     length]
     [simple         uint 8      address]
 
     // The actual modbus payload
     [simple         ModbusPDU('response')   pdu]
+
+    [checksum       uint 16     crc         'STATIC_CALL("crcCheck", address, pdu)']
 ]
 
 [discriminatedType ModbusPDU(bit response)

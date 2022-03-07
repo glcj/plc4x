@@ -35,9 +35,10 @@ type DescriptionResponse struct {
 
 // The corresponding interface
 type IDescriptionResponse interface {
-	// GetDibDeviceInfo returns DibDeviceInfo
+	IKnxNetIpMessage
+	// GetDibDeviceInfo returns DibDeviceInfo (property field)
 	GetDibDeviceInfo() *DIBDeviceInfo
-	// GetDibSuppSvcFamilies returns DibSuppSvcFamilies
+	// GetDibSuppSvcFamilies returns DibSuppSvcFamilies (property field)
 	GetDibSuppSvcFamilies() *DIBSuppSvcFamilies
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewDescriptionResponse(dibDeviceInfo *DIBDeviceInfo, dibSuppSvcFamilies *DI
 }
 
 func CastDescriptionResponse(structType interface{}) *DescriptionResponse {
-	castFunc := func(typ interface{}) *DescriptionResponse {
-		if casted, ok := typ.(DescriptionResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DescriptionResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastDescriptionResponse(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastDescriptionResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DescriptionResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DescriptionResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastDescriptionResponse(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastDescriptionResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *DescriptionResponse) GetTypeName() string {
@@ -219,6 +217,8 @@ func (m *DescriptionResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

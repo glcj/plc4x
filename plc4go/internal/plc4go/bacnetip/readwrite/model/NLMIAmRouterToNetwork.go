@@ -37,7 +37,8 @@ type NLMIAmRouterToNetwork struct {
 
 // The corresponding interface
 type INLMIAmRouterToNetwork interface {
-	// GetDestinationNetworkAddress returns DestinationNetworkAddress
+	INLM
+	// GetDestinationNetworkAddress returns DestinationNetworkAddress (property field)
 	GetDestinationNetworkAddress() []uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -84,22 +85,19 @@ func NewNLMIAmRouterToNetwork(destinationNetworkAddress []uint16, vendorId *uint
 }
 
 func CastNLMIAmRouterToNetwork(structType interface{}) *NLMIAmRouterToNetwork {
-	castFunc := func(typ interface{}) *NLMIAmRouterToNetwork {
-		if casted, ok := typ.(NLMIAmRouterToNetwork); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NLMIAmRouterToNetwork); ok {
-			return casted
-		}
-		if casted, ok := typ.(NLM); ok {
-			return CastNLMIAmRouterToNetwork(casted.Child)
-		}
-		if casted, ok := typ.(*NLM); ok {
-			return CastNLMIAmRouterToNetwork(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NLMIAmRouterToNetwork); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NLMIAmRouterToNetwork); ok {
+		return casted
+	}
+	if casted, ok := structType.(NLM); ok {
+		return CastNLMIAmRouterToNetwork(casted.Child)
+	}
+	if casted, ok := structType.(*NLM); ok {
+		return CastNLMIAmRouterToNetwork(casted.Child)
+	}
+	return nil
 }
 
 func (m *NLMIAmRouterToNetwork) GetTypeName() string {
@@ -201,6 +199,8 @@ func (m *NLMIAmRouterToNetwork) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

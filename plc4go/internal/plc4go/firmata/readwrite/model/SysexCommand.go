@@ -33,10 +33,10 @@ type SysexCommand struct {
 
 // The corresponding interface
 type ISysexCommand interface {
-	// CommandType returns CommandType
-	CommandType() uint8
-	// Response returns Response
-	Response() bool
+	// GetCommandType returns CommandType (discriminator field)
+	GetCommandType() uint8
+	// GetResponse returns Response (discriminator field)
+	GetResponse() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,16 +71,13 @@ func NewSysexCommand() *SysexCommand {
 }
 
 func CastSysexCommand(structType interface{}) *SysexCommand {
-	castFunc := func(typ interface{}) *SysexCommand {
-		if casted, ok := typ.(SysexCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(SysexCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommand); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *SysexCommand) GetTypeName() string {
@@ -181,7 +178,7 @@ func (m *SysexCommand) SerializeParent(writeBuffer utils.WriteBuffer, child ISys
 	}
 
 	// Discriminator Field (commandType) (Used as input to a switch field)
-	commandType := uint8(child.CommandType())
+	commandType := uint8(child.GetCommandType())
 	_commandTypeErr := writeBuffer.WriteUint8("commandType", 8, (commandType))
 
 	if _commandTypeErr != nil {
@@ -204,6 +201,8 @@ func (m *SysexCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -38,8 +38,8 @@ type S7DataAlarmMessage struct {
 
 // The corresponding interface
 type IS7DataAlarmMessage interface {
-	// CpuFunctionType returns CpuFunctionType
-	CpuFunctionType() uint8
+	// GetCpuFunctionType returns CpuFunctionType (discriminator field)
+	GetCpuFunctionType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,16 +74,13 @@ func NewS7DataAlarmMessage() *S7DataAlarmMessage {
 }
 
 func CastS7DataAlarmMessage(structType interface{}) *S7DataAlarmMessage {
-	castFunc := func(typ interface{}) *S7DataAlarmMessage {
-		if casted, ok := typ.(S7DataAlarmMessage); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7DataAlarmMessage); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(S7DataAlarmMessage); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7DataAlarmMessage); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *S7DataAlarmMessage) GetTypeName() string {
@@ -201,6 +198,8 @@ func (m *S7DataAlarmMessage) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

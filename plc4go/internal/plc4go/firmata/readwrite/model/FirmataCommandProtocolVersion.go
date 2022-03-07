@@ -38,9 +38,10 @@ type FirmataCommandProtocolVersion struct {
 
 // The corresponding interface
 type IFirmataCommandProtocolVersion interface {
-	// GetMajorVersion returns MajorVersion
+	IFirmataCommand
+	// GetMajorVersion returns MajorVersion (property field)
 	GetMajorVersion() uint8
-	// GetMinorVersion returns MinorVersion
+	// GetMinorVersion returns MinorVersion (property field)
 	GetMinorVersion() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewFirmataCommandProtocolVersion(majorVersion uint8, minorVersion uint8, re
 }
 
 func CastFirmataCommandProtocolVersion(structType interface{}) *FirmataCommandProtocolVersion {
-	castFunc := func(typ interface{}) *FirmataCommandProtocolVersion {
-		if casted, ok := typ.(FirmataCommandProtocolVersion); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataCommandProtocolVersion); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataCommand); ok {
-			return CastFirmataCommandProtocolVersion(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataCommand); ok {
-			return CastFirmataCommandProtocolVersion(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataCommandProtocolVersion); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataCommandProtocolVersion); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataCommand); ok {
+		return CastFirmataCommandProtocolVersion(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataCommand); ok {
+		return CastFirmataCommandProtocolVersion(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataCommandProtocolVersion) GetTypeName() string {
@@ -200,6 +198,8 @@ func (m *FirmataCommandProtocolVersion) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

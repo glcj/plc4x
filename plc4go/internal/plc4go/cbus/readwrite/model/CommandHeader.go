@@ -33,7 +33,7 @@ type CommandHeader struct {
 
 // The corresponding interface
 type ICommandHeader interface {
-	// GetValue returns Value
+	// GetValue returns Value (property field)
 	GetValue() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewCommandHeader(value byte) *CommandHeader {
 }
 
 func CastCommandHeader(structType interface{}) *CommandHeader {
-	castFunc := func(typ interface{}) *CommandHeader {
-		if casted, ok := typ.(CommandHeader); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CommandHeader); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CommandHeader); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CommandHeader); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CommandHeader) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *CommandHeader) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

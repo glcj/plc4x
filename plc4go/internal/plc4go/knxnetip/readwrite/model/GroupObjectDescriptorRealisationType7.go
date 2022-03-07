@@ -41,23 +41,23 @@ type GroupObjectDescriptorRealisationType7 struct {
 
 // The corresponding interface
 type IGroupObjectDescriptorRealisationType7 interface {
-	// GetDataAddress returns DataAddress
+	// GetDataAddress returns DataAddress (property field)
 	GetDataAddress() uint16
-	// GetUpdateEnable returns UpdateEnable
+	// GetUpdateEnable returns UpdateEnable (property field)
 	GetUpdateEnable() bool
-	// GetTransmitEnable returns TransmitEnable
+	// GetTransmitEnable returns TransmitEnable (property field)
 	GetTransmitEnable() bool
-	// GetSegmentSelectorEnable returns SegmentSelectorEnable
+	// GetSegmentSelectorEnable returns SegmentSelectorEnable (property field)
 	GetSegmentSelectorEnable() bool
-	// GetWriteEnable returns WriteEnable
+	// GetWriteEnable returns WriteEnable (property field)
 	GetWriteEnable() bool
-	// GetReadEnable returns ReadEnable
+	// GetReadEnable returns ReadEnable (property field)
 	GetReadEnable() bool
-	// GetCommunicationEnable returns CommunicationEnable
+	// GetCommunicationEnable returns CommunicationEnable (property field)
 	GetCommunicationEnable() bool
-	// GetPriority returns Priority
+	// GetPriority returns Priority (property field)
 	GetPriority() CEMIPriority
-	// GetValueType returns ValueType
+	// GetValueType returns ValueType (property field)
 	GetValueType() ComObjectValueType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -116,16 +116,13 @@ func NewGroupObjectDescriptorRealisationType7(dataAddress uint16, updateEnable b
 }
 
 func CastGroupObjectDescriptorRealisationType7(structType interface{}) *GroupObjectDescriptorRealisationType7 {
-	castFunc := func(typ interface{}) *GroupObjectDescriptorRealisationType7 {
-		if casted, ok := typ.(GroupObjectDescriptorRealisationType7); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*GroupObjectDescriptorRealisationType7); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(GroupObjectDescriptorRealisationType7); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*GroupObjectDescriptorRealisationType7); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *GroupObjectDescriptorRealisationType7) GetTypeName() string {
@@ -352,6 +349,8 @@ func (m *GroupObjectDescriptorRealisationType7) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

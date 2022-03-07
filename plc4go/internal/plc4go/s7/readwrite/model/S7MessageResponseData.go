@@ -35,9 +35,10 @@ type S7MessageResponseData struct {
 
 // The corresponding interface
 type IS7MessageResponseData interface {
-	// GetErrorClass returns ErrorClass
+	IS7Message
+	// GetErrorClass returns ErrorClass (property field)
 	GetErrorClass() uint8
-	// GetErrorCode returns ErrorCode
+	// GetErrorCode returns ErrorCode (property field)
 	GetErrorCode() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -91,22 +92,19 @@ func NewS7MessageResponseData(errorClass uint8, errorCode uint8, tpduReference u
 }
 
 func CastS7MessageResponseData(structType interface{}) *S7MessageResponseData {
-	castFunc := func(typ interface{}) *S7MessageResponseData {
-		if casted, ok := typ.(S7MessageResponseData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7MessageResponseData); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7Message); ok {
-			return CastS7MessageResponseData(casted.Child)
-		}
-		if casted, ok := typ.(*S7Message); ok {
-			return CastS7MessageResponseData(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7MessageResponseData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7MessageResponseData); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7Message); ok {
+		return CastS7MessageResponseData(casted.Child)
+	}
+	if casted, ok := structType.(*S7Message); ok {
+		return CastS7MessageResponseData(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7MessageResponseData) GetTypeName() string {
@@ -201,6 +199,8 @@ func (m *S7MessageResponseData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

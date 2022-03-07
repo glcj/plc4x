@@ -34,7 +34,8 @@ type ModbusPDUReadWriteMultipleHoldingRegistersResponse struct {
 
 // The corresponding interface
 type IModbusPDUReadWriteMultipleHoldingRegistersResponse interface {
-	// GetValue returns Value
+	IModbusPDU
+	// GetValue returns Value (property field)
 	GetValue() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewModbusPDUReadWriteMultipleHoldingRegistersResponse(value []byte) *Modbus
 }
 
 func CastModbusPDUReadWriteMultipleHoldingRegistersResponse(structType interface{}) *ModbusPDUReadWriteMultipleHoldingRegistersResponse {
-	castFunc := func(typ interface{}) *ModbusPDUReadWriteMultipleHoldingRegistersResponse {
-		if casted, ok := typ.(ModbusPDUReadWriteMultipleHoldingRegistersResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadWriteMultipleHoldingRegistersResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadWriteMultipleHoldingRegistersResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadWriteMultipleHoldingRegistersResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadWriteMultipleHoldingRegistersResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadWriteMultipleHoldingRegistersResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadWriteMultipleHoldingRegistersResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadWriteMultipleHoldingRegistersResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadWriteMultipleHoldingRegistersResponse) GetTypeName() string {
@@ -207,6 +205,8 @@ func (m *ModbusPDUReadWriteMultipleHoldingRegistersResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -40,13 +40,13 @@ type BACnetPropertyValue struct {
 
 // The corresponding interface
 type IBACnetPropertyValue interface {
-	// GetPropertyIdentifier returns PropertyIdentifier
+	// GetPropertyIdentifier returns PropertyIdentifier (property field)
 	GetPropertyIdentifier() *BACnetContextTagPropertyIdentifier
-	// GetPropertyArrayIndex returns PropertyArrayIndex
+	// GetPropertyArrayIndex returns PropertyArrayIndex (property field)
 	GetPropertyArrayIndex() *BACnetContextTagUnsignedInteger
-	// GetPropertyValue returns PropertyValue
+	// GetPropertyValue returns PropertyValue (property field)
 	GetPropertyValue() *BACnetConstructedDataElement
-	// GetPriority returns Priority
+	// GetPriority returns Priority (property field)
 	GetPriority() *BACnetContextTagUnsignedInteger
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -85,16 +85,13 @@ func NewBACnetPropertyValue(propertyIdentifier *BACnetContextTagPropertyIdentifi
 }
 
 func CastBACnetPropertyValue(structType interface{}) *BACnetPropertyValue {
-	castFunc := func(typ interface{}) *BACnetPropertyValue {
-		if casted, ok := typ.(BACnetPropertyValue); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetPropertyValue); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetPropertyValue); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetPropertyValue); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetPropertyValue) GetTypeName() string {
@@ -300,6 +297,8 @@ func (m *BACnetPropertyValue) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -41,15 +41,16 @@ type ApduDataExtPropertyValueResponse struct {
 
 // The corresponding interface
 type IApduDataExtPropertyValueResponse interface {
-	// GetObjectIndex returns ObjectIndex
+	IApduDataExt
+	// GetObjectIndex returns ObjectIndex (property field)
 	GetObjectIndex() uint8
-	// GetPropertyId returns PropertyId
+	// GetPropertyId returns PropertyId (property field)
 	GetPropertyId() uint8
-	// GetCount returns Count
+	// GetCount returns Count (property field)
 	GetCount() uint8
-	// GetIndex returns Index
+	// GetIndex returns Index (property field)
 	GetIndex() uint16
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -114,22 +115,19 @@ func NewApduDataExtPropertyValueResponse(objectIndex uint8, propertyId uint8, co
 }
 
 func CastApduDataExtPropertyValueResponse(structType interface{}) *ApduDataExtPropertyValueResponse {
-	castFunc := func(typ interface{}) *ApduDataExtPropertyValueResponse {
-		if casted, ok := typ.(ApduDataExtPropertyValueResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtPropertyValueResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtPropertyValueResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtPropertyValueResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtPropertyValueResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtPropertyValueResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtPropertyValueResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtPropertyValueResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtPropertyValueResponse) GetTypeName() string {
@@ -281,6 +279,8 @@ func (m *ApduDataExtPropertyValueResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -36,9 +36,10 @@ type ConnectionStateRequest struct {
 
 // The corresponding interface
 type IConnectionStateRequest interface {
-	// GetCommunicationChannelId returns CommunicationChannelId
+	IKnxNetIpMessage
+	// GetCommunicationChannelId returns CommunicationChannelId (property field)
 	GetCommunicationChannelId() uint8
-	// GetHpaiControlEndpoint returns HpaiControlEndpoint
+	// GetHpaiControlEndpoint returns HpaiControlEndpoint (property field)
 	GetHpaiControlEndpoint() *HPAIControlEndpoint
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -88,22 +89,19 @@ func NewConnectionStateRequest(communicationChannelId uint8, hpaiControlEndpoint
 }
 
 func CastConnectionStateRequest(structType interface{}) *ConnectionStateRequest {
-	castFunc := func(typ interface{}) *ConnectionStateRequest {
-		if casted, ok := typ.(ConnectionStateRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConnectionStateRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastConnectionStateRequest(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastConnectionStateRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ConnectionStateRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConnectionStateRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastConnectionStateRequest(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastConnectionStateRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ConnectionStateRequest) GetTypeName() string {
@@ -234,6 +232,8 @@ func (m *ConnectionStateRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -108,23 +108,26 @@ type ${type.name} struct {
 
 // The corresponding interface
 type I${type.name} interface {
+<#if type.isDiscriminatedChildTypeDefinition()>
+	I${type.parentType.orElseThrow().name?cap_first}
+</#if>
 <#if type.isDiscriminatedParentTypeDefinition()>
 	<#list helper.getDiscriminatorTypes() as discriminatorName, discriminatorType>
 	<#-- If the discriminator name matches that of another field, suppress the methods generation -->
 		<#if !type.isNonDiscriminatorField(discriminatorName)>
-	// ${discriminatorName?cap_first} returns ${discriminatorName?cap_first}
-	${discriminatorName?cap_first}() <#if discriminatorType?has_content && discriminatorType.isNonSimpleTypeReference() && !discriminatorType.isEnumTypeReference()>I</#if>${helper.getLanguageTypeNameForTypeReference(discriminatorType)}
+	// Get${discriminatorName?cap_first} returns ${discriminatorName?cap_first} (discriminator field)
+	Get${discriminatorName?cap_first}() <#if discriminatorType?has_content && discriminatorType.isNonSimpleTypeReference() && !discriminatorType.isEnumTypeReference()>I</#if>${helper.getLanguageTypeNameForTypeReference(discriminatorType)}
 		</#if>
 	</#list>
 </#if>
 <#list type.propertyFields as field>
     <#assign typeRef=field.asTypedField().orElseThrow().type>
-	// Get${field.name?cap_first} returns ${field.name?cap_first}
+	// Get${field.name?cap_first} returns ${field.name?cap_first} (property field)
 	Get${field.name?cap_first}() <#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)}
 </#list>
 <#list type.virtualFields as field>
     <#assign typeRef=field.asTypedField().orElseThrow().type>
-	// Get${field.name?cap_first} returns ${field.name?cap_first}
+	// Get${field.name?cap_first} returns ${field.name?cap_first} (virtual field)
 	Get${field.name?cap_first}() <#if helper.needsPointerAccess(field)>*</#if>${helper.getLanguageTypeNameForTypeReference(typeRef)}
 </#list>
 	// GetLengthInBytes returns the length in bytes
@@ -222,14 +225,6 @@ type I${type.name}Child interface {
 	GetTypeName() string
 	I${type.name}
 }
-	<#--list helper.getDiscriminatorTypes() as discriminatorName, discriminatorType>
-	<#- If the discriminator name matches that of another field, suppress the methods generation ->
-		<#if !helper.isNonDiscriminatorField(discriminatorName)>
-func ${type.name}${discriminatorName?cap_first}(m I${type.name}) ${helper.getLanguageTypeNameForTypeReference(helper.getDiscriminatorTypes()[discriminatorName])} {
-	return m.${discriminatorName?cap_first}()
-}
-		</#if>
-	</#list-->
 <#elseif type.parentType.isPresent()>
 
 <@compress single_line=true>
@@ -335,24 +330,21 @@ func New${type.name}(
 }
 
 func Cast${type.name}(structType interface{}) *${type.name} {
-	castFunc := func(typ interface{}) *${type.name} {
-		if casted, ok := typ.(${type.name}); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*${type.name}); ok {
-			return casted
-		}
-	<#if type.parentType.isPresent()>
-		if casted, ok := typ.(${type.parentType.orElseThrow().name}); ok {
-			return Cast${type.name}(casted.Child)
-		}
-		if casted, ok := typ.(*${type.parentType.orElseThrow().name}); ok {
-			return Cast${type.name}(casted.Child)
-		}
-	</#if>
-		return nil
+	if casted, ok := structType.(${type.name}); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*${type.name}); ok {
+		return casted
+	}
+	<#if type.parentType.isPresent()>
+	if casted, ok := structType.(${type.parentType.orElseThrow().name}); ok {
+		return Cast${type.name}(casted.Child)
+	}
+	if casted, ok := structType.(*${type.parentType.orElseThrow().name}); ok {
+		return Cast${type.name}(casted.Child)
+	}
+	</#if>
+	return nil
 }
 
 func (m *${type.name}) GetTypeName() string {
@@ -888,12 +880,9 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 		if _checksumRefErr != nil {
 			return nil, errors.Wrap(_checksumRefErr, "Error parsing 'checksum' field")<@emitImport import="github.com/pkg/errors" />
 		}
-		checksum, _checksumErr := ${helper.toParseExpression(checksumField, checksumField.type, checksumField.checksumExpression, parserArguments)}
-		if _checksumErr != nil {
-			return nil, errors.Wrap(_checksumErr, "Error parsing 'checksum' field")<@emitImport import="github.com/pkg/errors" />
-		}
+		checksum := ${helper.toParseExpression(checksumField, checksumField.type, checksumField.checksumExpression, parserArguments)}
 		if checksum != checksumRef {
-			return nil, errors.Errorf("Checksum verification failed. Expected %d but got %d", (checksumRef & 0xFFFF), (checksum & 0xFFFF))<@emitImport import="github.com/pkg/errors" />
+			return nil, errors.Errorf("Checksum verification failed. Expected %x but got %x", checksumRef, checksum)<@emitImport import="github.com/pkg/errors" />
 		}
 	}
 				<#break>
@@ -1515,11 +1504,8 @@ func (m *${type.name}) Serialize(writeBuffer utils.WriteBuffer) error {
 
 	// Checksum Field (checksum) (Calculated)
 	{
-		_checksum, _checksumErr := ${helper.toSerializationExpression(checksumField, checksumField.type, checksumField.checksumExpression, parserArguments)}
-		if _checksumErr != nil {
-			return errors.Wrap(_checksumErr, "Error serializing 'checksum' field")<@emitImport import="github.com/pkg/errors" />
-		}
-		_checksumErr = ${helper.getWriteBufferWriteMethodCall("checksum", simpleTypeReference, "(_checksum)", checksumField)}
+		_checksum := ${helper.toSerializationExpression(checksumField, checksumField.type, checksumField.checksumExpression, parserArguments)}
+		_checksumErr := ${helper.getWriteBufferWriteMethodCall("checksum", simpleTypeReference, "(_checksum)", checksumField)}
 		if _checksumErr != nil {
 			return errors.Wrap(_checksumErr, "Error serializing 'checksum' field")<@emitImport import="github.com/pkg/errors" />
 		}
@@ -1557,7 +1543,7 @@ func (m *${type.name}) Serialize(writeBuffer utils.WriteBuffer) error {
 					<#assign discriminatorField = field.asDiscriminatorField().orElseThrow()>
 
 	// Discriminator Field (${discriminatorField.name}) (Used as input to a switch field)
-	${discriminatorField.name} := ${helper.getLanguageTypeNameForField(field)}(child.${discriminatorField.name?cap_first}())
+	${discriminatorField.name} := ${helper.getLanguageTypeNameForField(field)}(child.Get${discriminatorField.name?cap_first}())
 					<#if helper.isEnumField(field)>
 	_${discriminatorField.name}Err := ${discriminatorField.name}.Serialize(writeBuffer)
 					<#else>
@@ -1751,7 +1737,9 @@ func (m *${type.name}) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }
 

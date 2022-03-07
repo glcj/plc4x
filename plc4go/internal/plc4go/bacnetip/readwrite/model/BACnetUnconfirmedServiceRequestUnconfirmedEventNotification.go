@@ -35,6 +35,7 @@ type BACnetUnconfirmedServiceRequestUnconfirmedEventNotification struct {
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequestUnconfirmedEventNotification interface {
+	IBACnetUnconfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetUnconfirmedServiceRequestUnconfirmedEventNotification(len uint16) 
 }
 
 func CastBACnetUnconfirmedServiceRequestUnconfirmedEventNotification(structType interface{}) *BACnetUnconfirmedServiceRequestUnconfirmedEventNotification {
-	castFunc := func(typ interface{}) *BACnetUnconfirmedServiceRequestUnconfirmedEventNotification {
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequestUnconfirmedEventNotification); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequestUnconfirmedEventNotification); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestUnconfirmedEventNotification(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestUnconfirmedEventNotification(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequestUnconfirmedEventNotification); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequestUnconfirmedEventNotification); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestUnconfirmedEventNotification(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestUnconfirmedEventNotification(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestUnconfirmedEventNotification) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetUnconfirmedServiceRequestUnconfirmedEventNotification) String() s
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -37,8 +37,8 @@ type DF1Symbol struct {
 
 // The corresponding interface
 type IDF1Symbol interface {
-	// SymbolType returns SymbolType
-	SymbolType() uint8
+	// GetSymbolType returns SymbolType (discriminator field)
+	GetSymbolType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -73,16 +73,13 @@ func NewDF1Symbol() *DF1Symbol {
 }
 
 func CastDF1Symbol(structType interface{}) *DF1Symbol {
-	castFunc := func(typ interface{}) *DF1Symbol {
-		if casted, ok := typ.(DF1Symbol); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DF1Symbol); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DF1Symbol); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DF1Symbol); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DF1Symbol) GetTypeName() string {
@@ -177,7 +174,7 @@ func (m *DF1Symbol) SerializeParent(writeBuffer utils.WriteBuffer, child IDF1Sym
 	}
 
 	// Discriminator Field (symbolType) (Used as input to a switch field)
-	symbolType := uint8(child.SymbolType())
+	symbolType := uint8(child.GetSymbolType())
 	_symbolTypeErr := writeBuffer.WriteUint8("symbolType", 8, (symbolType))
 
 	if _symbolTypeErr != nil {
@@ -200,6 +197,8 @@ func (m *DF1Symbol) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

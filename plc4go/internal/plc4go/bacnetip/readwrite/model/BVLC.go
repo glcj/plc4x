@@ -37,9 +37,9 @@ type BVLC struct {
 
 // The corresponding interface
 type IBVLC interface {
-	// BvlcFunction returns BvlcFunction
-	BvlcFunction() uint8
-	// GetBvlcPayloadLength returns BvlcPayloadLength
+	// GetBvlcFunction returns BvlcFunction (discriminator field)
+	GetBvlcFunction() uint8
+	// GetBvlcPayloadLength returns BvlcPayloadLength (virtual field)
 	GetBvlcPayloadLength() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -78,16 +78,13 @@ func NewBVLC() *BVLC {
 }
 
 func CastBVLC(structType interface{}) *BVLC {
-	castFunc := func(typ interface{}) *BVLC {
-		if casted, ok := typ.(BVLC); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLC); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BVLC); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLC); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BVLC) GetTypeName() string {
@@ -219,7 +216,7 @@ func (m *BVLC) SerializeParent(writeBuffer utils.WriteBuffer, child IBVLC, seria
 	}
 
 	// Discriminator Field (bvlcFunction) (Used as input to a switch field)
-	bvlcFunction := uint8(child.BvlcFunction())
+	bvlcFunction := uint8(child.GetBvlcFunction())
 	_bvlcFunctionErr := writeBuffer.WriteUint8("bvlcFunction", 8, (bvlcFunction))
 
 	if _bvlcFunctionErr != nil {
@@ -253,6 +250,8 @@ func (m *BVLC) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

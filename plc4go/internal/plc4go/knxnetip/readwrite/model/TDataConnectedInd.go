@@ -35,6 +35,7 @@ type TDataConnectedInd struct {
 
 // The corresponding interface
 type ITDataConnectedInd interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewTDataConnectedInd(size uint16) *CEMI {
 }
 
 func CastTDataConnectedInd(structType interface{}) *TDataConnectedInd {
-	castFunc := func(typ interface{}) *TDataConnectedInd {
-		if casted, ok := typ.(TDataConnectedInd); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*TDataConnectedInd); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastTDataConnectedInd(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastTDataConnectedInd(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(TDataConnectedInd); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*TDataConnectedInd); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastTDataConnectedInd(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastTDataConnectedInd(casted.Child)
+	}
+	return nil
 }
 
 func (m *TDataConnectedInd) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *TDataConnectedInd) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

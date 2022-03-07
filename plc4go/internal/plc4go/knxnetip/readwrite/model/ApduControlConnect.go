@@ -32,6 +32,7 @@ type ApduControlConnect struct {
 
 // The corresponding interface
 type IApduControlConnect interface {
+	IApduControl
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewApduControlConnect() *ApduControl {
 }
 
 func CastApduControlConnect(structType interface{}) *ApduControlConnect {
-	castFunc := func(typ interface{}) *ApduControlConnect {
-		if casted, ok := typ.(ApduControlConnect); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduControlConnect); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduControl); ok {
-			return CastApduControlConnect(casted.Child)
-		}
-		if casted, ok := typ.(*ApduControl); ok {
-			return CastApduControlConnect(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduControlConnect); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduControlConnect); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduControl); ok {
+		return CastApduControlConnect(casted.Child)
+	}
+	if casted, ok := structType.(*ApduControl); ok {
+		return CastApduControlConnect(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduControlConnect) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *ApduControlConnect) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

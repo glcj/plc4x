@@ -43,17 +43,18 @@ type ModbusPDUReadDeviceIdentificationResponse struct {
 
 // The corresponding interface
 type IModbusPDUReadDeviceIdentificationResponse interface {
-	// GetLevel returns Level
+	IModbusPDU
+	// GetLevel returns Level (property field)
 	GetLevel() ModbusDeviceInformationLevel
-	// GetIndividualAccess returns IndividualAccess
+	// GetIndividualAccess returns IndividualAccess (property field)
 	GetIndividualAccess() bool
-	// GetConformityLevel returns ConformityLevel
+	// GetConformityLevel returns ConformityLevel (property field)
 	GetConformityLevel() ModbusDeviceInformationConformityLevel
-	// GetMoreFollows returns MoreFollows
+	// GetMoreFollows returns MoreFollows (property field)
 	GetMoreFollows() ModbusDeviceInformationMoreFollows
-	// GetNextObjectId returns NextObjectId
+	// GetNextObjectId returns NextObjectId (property field)
 	GetNextObjectId() uint8
-	// GetObjects returns Objects
+	// GetObjects returns Objects (property field)
 	GetObjects() []*ModbusDeviceInformationObject
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -139,22 +140,19 @@ func NewModbusPDUReadDeviceIdentificationResponse(level ModbusDeviceInformationL
 }
 
 func CastModbusPDUReadDeviceIdentificationResponse(structType interface{}) *ModbusPDUReadDeviceIdentificationResponse {
-	castFunc := func(typ interface{}) *ModbusPDUReadDeviceIdentificationResponse {
-		if casted, ok := typ.(ModbusPDUReadDeviceIdentificationResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadDeviceIdentificationResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadDeviceIdentificationResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadDeviceIdentificationResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadDeviceIdentificationResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadDeviceIdentificationResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadDeviceIdentificationResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadDeviceIdentificationResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadDeviceIdentificationResponse) GetTypeName() string {
@@ -415,6 +413,8 @@ func (m *ModbusPDUReadDeviceIdentificationResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

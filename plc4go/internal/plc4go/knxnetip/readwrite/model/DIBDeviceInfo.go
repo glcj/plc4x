@@ -41,23 +41,23 @@ type DIBDeviceInfo struct {
 
 // The corresponding interface
 type IDIBDeviceInfo interface {
-	// GetDescriptionType returns DescriptionType
+	// GetDescriptionType returns DescriptionType (property field)
 	GetDescriptionType() uint8
-	// GetKnxMedium returns KnxMedium
+	// GetKnxMedium returns KnxMedium (property field)
 	GetKnxMedium() KnxMedium
-	// GetDeviceStatus returns DeviceStatus
+	// GetDeviceStatus returns DeviceStatus (property field)
 	GetDeviceStatus() *DeviceStatus
-	// GetKnxAddress returns KnxAddress
+	// GetKnxAddress returns KnxAddress (property field)
 	GetKnxAddress() *KnxAddress
-	// GetProjectInstallationIdentifier returns ProjectInstallationIdentifier
+	// GetProjectInstallationIdentifier returns ProjectInstallationIdentifier (property field)
 	GetProjectInstallationIdentifier() *ProjectInstallationIdentifier
-	// GetKnxNetIpDeviceSerialNumber returns KnxNetIpDeviceSerialNumber
+	// GetKnxNetIpDeviceSerialNumber returns KnxNetIpDeviceSerialNumber (property field)
 	GetKnxNetIpDeviceSerialNumber() []byte
-	// GetKnxNetIpDeviceMulticastAddress returns KnxNetIpDeviceMulticastAddress
+	// GetKnxNetIpDeviceMulticastAddress returns KnxNetIpDeviceMulticastAddress (property field)
 	GetKnxNetIpDeviceMulticastAddress() *IPAddress
-	// GetKnxNetIpDeviceMacAddress returns KnxNetIpDeviceMacAddress
+	// GetKnxNetIpDeviceMacAddress returns KnxNetIpDeviceMacAddress (property field)
 	GetKnxNetIpDeviceMacAddress() *MACAddress
-	// GetDeviceFriendlyName returns DeviceFriendlyName
+	// GetDeviceFriendlyName returns DeviceFriendlyName (property field)
 	GetDeviceFriendlyName() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -116,16 +116,13 @@ func NewDIBDeviceInfo(descriptionType uint8, knxMedium KnxMedium, deviceStatus *
 }
 
 func CastDIBDeviceInfo(structType interface{}) *DIBDeviceInfo {
-	castFunc := func(typ interface{}) *DIBDeviceInfo {
-		if casted, ok := typ.(DIBDeviceInfo); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DIBDeviceInfo); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DIBDeviceInfo); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DIBDeviceInfo); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DIBDeviceInfo) GetTypeName() string {
@@ -419,6 +416,8 @@ func (m *DIBDeviceInfo) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

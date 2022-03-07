@@ -38,7 +38,8 @@ type BACnetContextTagTime struct {
 
 // The corresponding interface
 type IBACnetContextTagTime interface {
-	// GetPayload returns Payload
+	IBACnetContextTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadTime
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -85,22 +86,19 @@ func NewBACnetContextTagTime(payload *BACnetTagPayloadTime, header *BACnetTagHea
 }
 
 func CastBACnetContextTagTime(structType interface{}) *BACnetContextTagTime {
-	castFunc := func(typ interface{}) *BACnetContextTagTime {
-		if casted, ok := typ.(BACnetContextTagTime); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagTime); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagTime(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagTime(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagTime); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagTime); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagTime(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagTime(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagTime) GetTypeName() string {
@@ -193,6 +191,8 @@ func (m *BACnetContextTagTime) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

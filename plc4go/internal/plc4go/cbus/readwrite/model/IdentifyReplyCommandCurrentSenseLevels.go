@@ -32,6 +32,7 @@ type IdentifyReplyCommandCurrentSenseLevels struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandCurrentSenseLevels interface {
+	IIdentifyReplyCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewIdentifyReplyCommandCurrentSenseLevels() *IdentifyReplyCommand {
 }
 
 func CastIdentifyReplyCommandCurrentSenseLevels(structType interface{}) *IdentifyReplyCommandCurrentSenseLevels {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandCurrentSenseLevels {
-		if casted, ok := typ.(IdentifyReplyCommandCurrentSenseLevels); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandCurrentSenseLevels); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandCurrentSenseLevels(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandCurrentSenseLevels(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandCurrentSenseLevels); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandCurrentSenseLevels); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandCurrentSenseLevels(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandCurrentSenseLevels(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandCurrentSenseLevels) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *IdentifyReplyCommandCurrentSenseLevels) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,8 @@ type BACnetServiceAckAtomicWriteFile struct {
 
 // The corresponding interface
 type IBACnetServiceAckAtomicWriteFile interface {
-	// GetFileStartPosition returns FileStartPosition
+	IBACnetServiceAck
+	// GetFileStartPosition returns FileStartPosition (property field)
 	GetFileStartPosition() *BACnetContextTagSignedInteger
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewBACnetServiceAckAtomicWriteFile(fileStartPosition *BACnetContextTagSigne
 }
 
 func CastBACnetServiceAckAtomicWriteFile(structType interface{}) *BACnetServiceAckAtomicWriteFile {
-	castFunc := func(typ interface{}) *BACnetServiceAckAtomicWriteFile {
-		if casted, ok := typ.(BACnetServiceAckAtomicWriteFile); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAckAtomicWriteFile); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetServiceAck); ok {
-			return CastBACnetServiceAckAtomicWriteFile(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetServiceAck); ok {
-			return CastBACnetServiceAckAtomicWriteFile(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAckAtomicWriteFile); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAckAtomicWriteFile); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetServiceAck); ok {
+		return CastBACnetServiceAckAtomicWriteFile(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetServiceAck); ok {
+		return CastBACnetServiceAckAtomicWriteFile(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetServiceAckAtomicWriteFile) GetTypeName() string {
@@ -182,6 +180,8 @@ func (m *BACnetServiceAckAtomicWriteFile) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

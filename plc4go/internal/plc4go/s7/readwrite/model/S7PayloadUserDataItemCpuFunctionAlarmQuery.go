@@ -44,11 +44,12 @@ type S7PayloadUserDataItemCpuFunctionAlarmQuery struct {
 
 // The corresponding interface
 type IS7PayloadUserDataItemCpuFunctionAlarmQuery interface {
-	// GetSyntaxId returns SyntaxId
+	IS7PayloadUserDataItem
+	// GetSyntaxId returns SyntaxId (property field)
 	GetSyntaxId() SyntaxIdType
-	// GetQueryType returns QueryType
+	// GetQueryType returns QueryType (property field)
 	GetQueryType() QueryType
-	// GetAlarmType returns AlarmType
+	// GetAlarmType returns AlarmType (property field)
 	GetAlarmType() AlarmType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -122,22 +123,19 @@ func NewS7PayloadUserDataItemCpuFunctionAlarmQuery(syntaxId SyntaxIdType, queryT
 }
 
 func CastS7PayloadUserDataItemCpuFunctionAlarmQuery(structType interface{}) *S7PayloadUserDataItemCpuFunctionAlarmQuery {
-	castFunc := func(typ interface{}) *S7PayloadUserDataItemCpuFunctionAlarmQuery {
-		if casted, ok := typ.(S7PayloadUserDataItemCpuFunctionAlarmQuery); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItemCpuFunctionAlarmQuery); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionAlarmQuery(casted.Child)
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionAlarmQuery(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadUserDataItemCpuFunctionAlarmQuery); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadUserDataItemCpuFunctionAlarmQuery); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionAlarmQuery(casted.Child)
+	}
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionAlarmQuery(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) GetTypeName() string {
@@ -405,6 +403,8 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmQuery) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

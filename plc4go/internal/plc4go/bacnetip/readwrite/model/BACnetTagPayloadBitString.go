@@ -38,11 +38,11 @@ type BACnetTagPayloadBitString struct {
 
 // The corresponding interface
 type IBACnetTagPayloadBitString interface {
-	// GetUnusedBits returns UnusedBits
+	// GetUnusedBits returns UnusedBits (property field)
 	GetUnusedBits() uint8
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []bool
-	// GetUnused returns Unused
+	// GetUnused returns Unused (property field)
 	GetUnused() []bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -77,16 +77,13 @@ func NewBACnetTagPayloadBitString(unusedBits uint8, data []bool, unused []bool, 
 }
 
 func CastBACnetTagPayloadBitString(structType interface{}) *BACnetTagPayloadBitString {
-	castFunc := func(typ interface{}) *BACnetTagPayloadBitString {
-		if casted, ok := typ.(BACnetTagPayloadBitString); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagPayloadBitString); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagPayloadBitString); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagPayloadBitString); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagPayloadBitString) GetTypeName() string {
@@ -235,6 +232,8 @@ func (m *BACnetTagPayloadBitString) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

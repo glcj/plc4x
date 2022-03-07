@@ -39,11 +39,12 @@ type BVLCForwardedNPDU struct {
 
 // The corresponding interface
 type IBVLCForwardedNPDU interface {
-	// GetIp returns Ip
+	IBVLC
+	// GetIp returns Ip (property field)
 	GetIp() []uint8
-	// GetPort returns Port
+	// GetPort returns Port (property field)
 	GetPort() uint16
-	// GetNpdu returns Npdu
+	// GetNpdu returns Npdu (property field)
 	GetNpdu() *NPDU
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -98,22 +99,19 @@ func NewBVLCForwardedNPDU(ip []uint8, port uint16, npdu *NPDU, bvlcPayloadLength
 }
 
 func CastBVLCForwardedNPDU(structType interface{}) *BVLCForwardedNPDU {
-	castFunc := func(typ interface{}) *BVLCForwardedNPDU {
-		if casted, ok := typ.(BVLCForwardedNPDU); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLCForwardedNPDU); ok {
-			return casted
-		}
-		if casted, ok := typ.(BVLC); ok {
-			return CastBVLCForwardedNPDU(casted.Child)
-		}
-		if casted, ok := typ.(*BVLC); ok {
-			return CastBVLCForwardedNPDU(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BVLCForwardedNPDU); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLCForwardedNPDU); ok {
+		return casted
+	}
+	if casted, ok := structType.(BVLC); ok {
+		return CastBVLCForwardedNPDU(casted.Child)
+	}
+	if casted, ok := structType.(*BVLC); ok {
+		return CastBVLCForwardedNPDU(casted.Child)
+	}
+	return nil
 }
 
 func (m *BVLCForwardedNPDU) GetTypeName() string {
@@ -260,6 +258,8 @@ func (m *BVLCForwardedNPDU) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -39,11 +39,11 @@ type COTPPacket struct {
 
 // The corresponding interface
 type ICOTPPacket interface {
-	// TpduCode returns TpduCode
-	TpduCode() uint8
-	// GetParameters returns Parameters
+	// GetTpduCode returns TpduCode (discriminator field)
+	GetTpduCode() uint8
+	// GetParameters returns Parameters (property field)
 	GetParameters() []*COTPParameter
-	// GetPayload returns Payload
+	// GetPayload returns Payload (property field)
 	GetPayload() *S7Message
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -86,16 +86,13 @@ func NewCOTPPacket(parameters []*COTPParameter, payload *S7Message, cotpLen uint
 }
 
 func CastCOTPPacket(structType interface{}) *COTPPacket {
-	castFunc := func(typ interface{}) *COTPPacket {
-		if casted, ok := typ.(COTPPacket); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPPacket); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(COTPPacket); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPPacket); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *COTPPacket) GetTypeName() string {
@@ -254,7 +251,7 @@ func (m *COTPPacket) SerializeParent(writeBuffer utils.WriteBuffer, child ICOTPP
 	}
 
 	// Discriminator Field (tpduCode) (Used as input to a switch field)
-	tpduCode := uint8(child.TpduCode())
+	tpduCode := uint8(child.GetTpduCode())
 	_tpduCodeErr := writeBuffer.WriteUint8("tpduCode", 8, (tpduCode))
 
 	if _tpduCodeErr != nil {
@@ -309,6 +306,8 @@ func (m *COTPPacket) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

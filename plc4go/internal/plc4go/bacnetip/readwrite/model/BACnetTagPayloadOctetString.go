@@ -36,9 +36,9 @@ type BACnetTagPayloadOctetString struct {
 
 // The corresponding interface
 type IBACnetTagPayloadOctetString interface {
-	// GetValue returns Value
+	// GetValue returns Value (property field)
 	GetValue() string
-	// GetActualLengthInBit returns ActualLengthInBit
+	// GetActualLengthInBit returns ActualLengthInBit (virtual field)
 	GetActualLengthInBit() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -68,16 +68,13 @@ func NewBACnetTagPayloadOctetString(value string, actualLength uint32) *BACnetTa
 }
 
 func CastBACnetTagPayloadOctetString(structType interface{}) *BACnetTagPayloadOctetString {
-	castFunc := func(typ interface{}) *BACnetTagPayloadOctetString {
-		if casted, ok := typ.(BACnetTagPayloadOctetString); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagPayloadOctetString); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagPayloadOctetString); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagPayloadOctetString); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagPayloadOctetString) GetTypeName() string {
@@ -157,6 +154,8 @@ func (m *BACnetTagPayloadOctetString) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

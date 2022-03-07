@@ -35,6 +35,7 @@ type ApduDataExtDomainAddressSelectiveRead struct {
 
 // The corresponding interface
 type IApduDataExtDomainAddressSelectiveRead interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtDomainAddressSelectiveRead(length uint8) *ApduDataExt {
 }
 
 func CastApduDataExtDomainAddressSelectiveRead(structType interface{}) *ApduDataExtDomainAddressSelectiveRead {
-	castFunc := func(typ interface{}) *ApduDataExtDomainAddressSelectiveRead {
-		if casted, ok := typ.(ApduDataExtDomainAddressSelectiveRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtDomainAddressSelectiveRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtDomainAddressSelectiveRead(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtDomainAddressSelectiveRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtDomainAddressSelectiveRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtDomainAddressSelectiveRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtDomainAddressSelectiveRead(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtDomainAddressSelectiveRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtDomainAddressSelectiveRead) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtDomainAddressSelectiveRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

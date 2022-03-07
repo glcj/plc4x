@@ -33,10 +33,10 @@ type S7Parameter struct {
 
 // The corresponding interface
 type IS7Parameter interface {
-	// MessageType returns MessageType
-	MessageType() uint8
-	// ParameterType returns ParameterType
-	ParameterType() uint8
+	// GetMessageType returns MessageType (discriminator field)
+	GetMessageType() uint8
+	// GetParameterType returns ParameterType (discriminator field)
+	GetParameterType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,16 +71,13 @@ func NewS7Parameter() *S7Parameter {
 }
 
 func CastS7Parameter(structType interface{}) *S7Parameter {
-	castFunc := func(typ interface{}) *S7Parameter {
-		if casted, ok := typ.(S7Parameter); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7Parameter); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(S7Parameter); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7Parameter); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *S7Parameter) GetTypeName() string {
@@ -165,7 +162,7 @@ func (m *S7Parameter) SerializeParent(writeBuffer utils.WriteBuffer, child IS7Pa
 	}
 
 	// Discriminator Field (parameterType) (Used as input to a switch field)
-	parameterType := uint8(child.ParameterType())
+	parameterType := uint8(child.GetParameterType())
 	_parameterTypeErr := writeBuffer.WriteUint8("parameterType", 8, (parameterType))
 
 	if _parameterTypeErr != nil {
@@ -188,6 +185,8 @@ func (m *S7Parameter) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

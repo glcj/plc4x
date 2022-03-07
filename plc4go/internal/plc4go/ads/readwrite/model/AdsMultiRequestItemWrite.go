@@ -36,11 +36,12 @@ type AdsMultiRequestItemWrite struct {
 
 // The corresponding interface
 type IAdsMultiRequestItemWrite interface {
-	// GetItemIndexGroup returns ItemIndexGroup
+	IAdsMultiRequestItem
+	// GetItemIndexGroup returns ItemIndexGroup (property field)
 	GetItemIndexGroup() uint32
-	// GetItemIndexOffset returns ItemIndexOffset
+	// GetItemIndexOffset returns ItemIndexOffset (property field)
 	GetItemIndexOffset() uint32
-	// GetItemWriteLength returns ItemWriteLength
+	// GetItemWriteLength returns ItemWriteLength (property field)
 	GetItemWriteLength() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewAdsMultiRequestItemWrite(itemIndexGroup uint32, itemIndexOffset uint32, 
 }
 
 func CastAdsMultiRequestItemWrite(structType interface{}) *AdsMultiRequestItemWrite {
-	castFunc := func(typ interface{}) *AdsMultiRequestItemWrite {
-		if casted, ok := typ.(AdsMultiRequestItemWrite); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsMultiRequestItemWrite); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsMultiRequestItem); ok {
-			return CastAdsMultiRequestItemWrite(casted.Child)
-		}
-		if casted, ok := typ.(*AdsMultiRequestItem); ok {
-			return CastAdsMultiRequestItemWrite(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsMultiRequestItemWrite); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsMultiRequestItemWrite); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsMultiRequestItem); ok {
+		return CastAdsMultiRequestItemWrite(casted.Child)
+	}
+	if casted, ok := structType.(*AdsMultiRequestItem); ok {
+		return CastAdsMultiRequestItemWrite(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsMultiRequestItemWrite) GetTypeName() string {
@@ -223,6 +221,8 @@ func (m *AdsMultiRequestItemWrite) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

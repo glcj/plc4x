@@ -40,21 +40,21 @@ type DateAndTime struct {
 
 // The corresponding interface
 type IDateAndTime interface {
-	// GetYear returns Year
+	// GetYear returns Year (property field)
 	GetYear() uint8
-	// GetMonth returns Month
+	// GetMonth returns Month (property field)
 	GetMonth() uint8
-	// GetDay returns Day
+	// GetDay returns Day (property field)
 	GetDay() uint8
-	// GetHour returns Hour
+	// GetHour returns Hour (property field)
 	GetHour() uint8
-	// GetMinutes returns Minutes
+	// GetMinutes returns Minutes (property field)
 	GetMinutes() uint8
-	// GetSeconds returns Seconds
+	// GetSeconds returns Seconds (property field)
 	GetSeconds() uint8
-	// GetMsec returns Msec
+	// GetMsec returns Msec (property field)
 	GetMsec() uint16
-	// GetDow returns Dow
+	// GetDow returns Dow (property field)
 	GetDow() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -109,16 +109,13 @@ func NewDateAndTime(year uint8, month uint8, day uint8, hour uint8, minutes uint
 }
 
 func CastDateAndTime(structType interface{}) *DateAndTime {
-	castFunc := func(typ interface{}) *DateAndTime {
-		if casted, ok := typ.(DateAndTime); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DateAndTime); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DateAndTime); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DateAndTime); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DateAndTime) GetTypeName() string {
@@ -292,6 +289,8 @@ func (m *DateAndTime) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

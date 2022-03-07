@@ -41,11 +41,9 @@ type CBusCommand struct {
 
 // The corresponding interface
 type ICBusCommand interface {
-	// DestinationAddressType returns DestinationAddressType
-	DestinationAddressType() DestinationAddressType
-	// GetHeader returns Header
+	// GetHeader returns Header (property field)
 	GetHeader() *CBusHeader
-	// GetDestinationAddressType returns DestinationAddressType
+	// GetDestinationAddressType returns DestinationAddressType (virtual field)
 	GetDestinationAddressType() DestinationAddressType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,16 +85,13 @@ func NewCBusCommand(header *CBusHeader, srchk bool) *CBusCommand {
 }
 
 func CastCBusCommand(structType interface{}) *CBusCommand {
-	castFunc := func(typ interface{}) *CBusCommand {
-		if casted, ok := typ.(CBusCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusCommand); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CBusCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusCommand); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CBusCommand) GetTypeName() string {
@@ -237,6 +232,8 @@ func (m *CBusCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

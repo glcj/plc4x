@@ -33,7 +33,7 @@ type Dummy struct {
 
 // The corresponding interface
 type IDummy interface {
-	// GetDummy returns Dummy
+	// GetDummy returns Dummy (property field)
 	GetDummy() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewDummy(dummy uint16) *Dummy {
 }
 
 func CastDummy(structType interface{}) *Dummy {
-	castFunc := func(typ interface{}) *Dummy {
-		if casted, ok := typ.(Dummy); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*Dummy); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(Dummy); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*Dummy); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *Dummy) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *Dummy) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestRemovedReadPropertyConditional struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestRemovedReadPropertyConditional interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestRemovedReadPropertyConditional(len uint16) 
 }
 
 func CastBACnetConfirmedServiceRequestRemovedReadPropertyConditional(structType interface{}) *BACnetConfirmedServiceRequestRemovedReadPropertyConditional {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestRemovedReadPropertyConditional {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestRemovedReadPropertyConditional); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestRemovedReadPropertyConditional); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestRemovedReadPropertyConditional(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestRemovedReadPropertyConditional(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestRemovedReadPropertyConditional); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestRemovedReadPropertyConditional); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestRemovedReadPropertyConditional(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestRemovedReadPropertyConditional(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestRemovedReadPropertyConditional) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestRemovedReadPropertyConditional) String() s
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -36,11 +36,12 @@ type AdsReadRequest struct {
 
 // The corresponding interface
 type IAdsReadRequest interface {
-	// GetIndexGroup returns IndexGroup
+	IAdsData
+	// GetIndexGroup returns IndexGroup (property field)
 	GetIndexGroup() uint32
-	// GetIndexOffset returns IndexOffset
+	// GetIndexOffset returns IndexOffset (property field)
 	GetIndexOffset() uint32
-	// GetLength returns Length
+	// GetLength returns Length (property field)
 	GetLength() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewAdsReadRequest(indexGroup uint32, indexOffset uint32, length uint32) *Ad
 }
 
 func CastAdsReadRequest(structType interface{}) *AdsReadRequest {
-	castFunc := func(typ interface{}) *AdsReadRequest {
-		if casted, ok := typ.(AdsReadRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsReadRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsReadRequest(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsReadRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsReadRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsReadRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsReadRequest(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsReadRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsReadRequest) GetTypeName() string {
@@ -231,6 +229,8 @@ func (m *AdsReadRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

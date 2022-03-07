@@ -44,11 +44,12 @@ type CipUnconnectedRequest struct {
 
 // The corresponding interface
 type ICipUnconnectedRequest interface {
-	// GetUnconnectedService returns UnconnectedService
+	ICipService
+	// GetUnconnectedService returns UnconnectedService (property field)
 	GetUnconnectedService() *CipService
-	// GetBackPlane returns BackPlane
+	// GetBackPlane returns BackPlane (property field)
 	GetBackPlane() int8
-	// GetSlot returns Slot
+	// GetSlot returns Slot (property field)
 	GetSlot() int8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewCipUnconnectedRequest(unconnectedService *CipService, backPlane int8, sl
 }
 
 func CastCipUnconnectedRequest(structType interface{}) *CipUnconnectedRequest {
-	castFunc := func(typ interface{}) *CipUnconnectedRequest {
-		if casted, ok := typ.(CipUnconnectedRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CipUnconnectedRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(CipService); ok {
-			return CastCipUnconnectedRequest(casted.Child)
-		}
-		if casted, ok := typ.(*CipService); ok {
-			return CastCipUnconnectedRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CipUnconnectedRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CipUnconnectedRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(CipService); ok {
+		return CastCipUnconnectedRequest(casted.Child)
+	}
+	if casted, ok := structType.(*CipService); ok {
+		return CastCipUnconnectedRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *CipUnconnectedRequest) GetTypeName() string {
@@ -427,6 +425,8 @@ func (m *CipUnconnectedRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

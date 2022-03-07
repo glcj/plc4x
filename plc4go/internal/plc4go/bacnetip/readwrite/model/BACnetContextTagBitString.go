@@ -38,7 +38,8 @@ type BACnetContextTagBitString struct {
 
 // The corresponding interface
 type IBACnetContextTagBitString interface {
-	// GetPayload returns Payload
+	IBACnetContextTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadBitString
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -85,22 +86,19 @@ func NewBACnetContextTagBitString(payload *BACnetTagPayloadBitString, header *BA
 }
 
 func CastBACnetContextTagBitString(structType interface{}) *BACnetContextTagBitString {
-	castFunc := func(typ interface{}) *BACnetContextTagBitString {
-		if casted, ok := typ.(BACnetContextTagBitString); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagBitString); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagBitString(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagBitString(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagBitString); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagBitString); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagBitString(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagBitString(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagBitString) GetTypeName() string {
@@ -193,6 +191,8 @@ func (m *BACnetContextTagBitString) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -41,13 +41,14 @@ type BACnetUnconfirmedServiceRequestWhoHas struct {
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequestWhoHas interface {
-	// GetDeviceInstanceRangeLowLimit returns DeviceInstanceRangeLowLimit
+	IBACnetUnconfirmedServiceRequest
+	// GetDeviceInstanceRangeLowLimit returns DeviceInstanceRangeLowLimit (property field)
 	GetDeviceInstanceRangeLowLimit() *BACnetContextTagUnsignedInteger
-	// GetDeviceInstanceRangeHighLimit returns DeviceInstanceRangeHighLimit
+	// GetDeviceInstanceRangeHighLimit returns DeviceInstanceRangeHighLimit (property field)
 	GetDeviceInstanceRangeHighLimit() *BACnetContextTagUnsignedInteger
-	// GetObjectIdentifier returns ObjectIdentifier
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetObjectName returns ObjectName
+	// GetObjectName returns ObjectName (property field)
 	GetObjectName() *BACnetContextTagOctetString
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -108,22 +109,19 @@ func NewBACnetUnconfirmedServiceRequestWhoHas(deviceInstanceRangeLowLimit *BACne
 }
 
 func CastBACnetUnconfirmedServiceRequestWhoHas(structType interface{}) *BACnetUnconfirmedServiceRequestWhoHas {
-	castFunc := func(typ interface{}) *BACnetUnconfirmedServiceRequestWhoHas {
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequestWhoHas); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequestWhoHas); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestWhoHas(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequest); ok {
-			return CastBACnetUnconfirmedServiceRequestWhoHas(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequestWhoHas); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequestWhoHas); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestWhoHas(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequest); ok {
+		return CastBACnetUnconfirmedServiceRequestWhoHas(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestWhoHas) GetTypeName() string {
@@ -354,6 +352,8 @@ func (m *BACnetUnconfirmedServiceRequestWhoHas) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

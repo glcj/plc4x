@@ -33,7 +33,8 @@ type DF1UnprotectedReadResponse struct {
 
 // The corresponding interface
 type IDF1UnprotectedReadResponse interface {
-	// GetData returns Data
+	IDF1Command
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -81,22 +82,19 @@ func NewDF1UnprotectedReadResponse(data []byte, status uint8, transactionCounter
 }
 
 func CastDF1UnprotectedReadResponse(structType interface{}) *DF1UnprotectedReadResponse {
-	castFunc := func(typ interface{}) *DF1UnprotectedReadResponse {
-		if casted, ok := typ.(DF1UnprotectedReadResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DF1UnprotectedReadResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(DF1Command); ok {
-			return CastDF1UnprotectedReadResponse(casted.Child)
-		}
-		if casted, ok := typ.(*DF1Command); ok {
-			return CastDF1UnprotectedReadResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DF1UnprotectedReadResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DF1UnprotectedReadResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(DF1Command); ok {
+		return CastDF1UnprotectedReadResponse(casted.Child)
+	}
+	if casted, ok := structType.(*DF1Command); ok {
+		return CastDF1UnprotectedReadResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *DF1UnprotectedReadResponse) GetTypeName() string {
@@ -191,6 +189,8 @@ func (m *DF1UnprotectedReadResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

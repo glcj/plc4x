@@ -36,11 +36,12 @@ type AdsMultiRequestItemRead struct {
 
 // The corresponding interface
 type IAdsMultiRequestItemRead interface {
-	// GetItemIndexGroup returns ItemIndexGroup
+	IAdsMultiRequestItem
+	// GetItemIndexGroup returns ItemIndexGroup (property field)
 	GetItemIndexGroup() uint32
-	// GetItemIndexOffset returns ItemIndexOffset
+	// GetItemIndexOffset returns ItemIndexOffset (property field)
 	GetItemIndexOffset() uint32
-	// GetItemReadLength returns ItemReadLength
+	// GetItemReadLength returns ItemReadLength (property field)
 	GetItemReadLength() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewAdsMultiRequestItemRead(itemIndexGroup uint32, itemIndexOffset uint32, i
 }
 
 func CastAdsMultiRequestItemRead(structType interface{}) *AdsMultiRequestItemRead {
-	castFunc := func(typ interface{}) *AdsMultiRequestItemRead {
-		if casted, ok := typ.(AdsMultiRequestItemRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsMultiRequestItemRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsMultiRequestItem); ok {
-			return CastAdsMultiRequestItemRead(casted.Child)
-		}
-		if casted, ok := typ.(*AdsMultiRequestItem); ok {
-			return CastAdsMultiRequestItemRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsMultiRequestItemRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsMultiRequestItemRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsMultiRequestItem); ok {
+		return CastAdsMultiRequestItemRead(casted.Child)
+	}
+	if casted, ok := structType.(*AdsMultiRequestItem); ok {
+		return CastAdsMultiRequestItemRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsMultiRequestItemRead) GetTypeName() string {
@@ -223,6 +221,8 @@ func (m *AdsMultiRequestItemRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

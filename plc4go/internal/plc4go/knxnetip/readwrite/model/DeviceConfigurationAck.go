@@ -34,7 +34,8 @@ type DeviceConfigurationAck struct {
 
 // The corresponding interface
 type IDeviceConfigurationAck interface {
-	// GetDeviceConfigurationAckDataBlock returns DeviceConfigurationAckDataBlock
+	IKnxNetIpMessage
+	// GetDeviceConfigurationAckDataBlock returns DeviceConfigurationAckDataBlock (property field)
 	GetDeviceConfigurationAckDataBlock() *DeviceConfigurationAckDataBlock
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewDeviceConfigurationAck(deviceConfigurationAckDataBlock *DeviceConfigurat
 }
 
 func CastDeviceConfigurationAck(structType interface{}) *DeviceConfigurationAck {
-	castFunc := func(typ interface{}) *DeviceConfigurationAck {
-		if casted, ok := typ.(DeviceConfigurationAck); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DeviceConfigurationAck); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastDeviceConfigurationAck(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastDeviceConfigurationAck(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DeviceConfigurationAck); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DeviceConfigurationAck); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastDeviceConfigurationAck(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastDeviceConfigurationAck(casted.Child)
+	}
+	return nil
 }
 
 func (m *DeviceConfigurationAck) GetTypeName() string {
@@ -182,6 +180,8 @@ func (m *DeviceConfigurationAck) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

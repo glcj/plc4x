@@ -35,11 +35,11 @@ type HPAIDataEndpoint struct {
 
 // The corresponding interface
 type IHPAIDataEndpoint interface {
-	// GetHostProtocolCode returns HostProtocolCode
+	// GetHostProtocolCode returns HostProtocolCode (property field)
 	GetHostProtocolCode() HostProtocolCode
-	// GetIpAddress returns IpAddress
+	// GetIpAddress returns IpAddress (property field)
 	GetIpAddress() *IPAddress
-	// GetIpPort returns IpPort
+	// GetIpPort returns IpPort (property field)
 	GetIpPort() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewHPAIDataEndpoint(hostProtocolCode HostProtocolCode, ipAddress *IPAddress
 }
 
 func CastHPAIDataEndpoint(structType interface{}) *HPAIDataEndpoint {
-	castFunc := func(typ interface{}) *HPAIDataEndpoint {
-		if casted, ok := typ.(HPAIDataEndpoint); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*HPAIDataEndpoint); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(HPAIDataEndpoint); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*HPAIDataEndpoint); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *HPAIDataEndpoint) GetTypeName() string {
@@ -225,6 +222,8 @@ func (m *HPAIDataEndpoint) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

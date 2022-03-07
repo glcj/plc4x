@@ -38,9 +38,10 @@ type TunnelingRequest struct {
 
 // The corresponding interface
 type ITunnelingRequest interface {
-	// GetTunnelingRequestDataBlock returns TunnelingRequestDataBlock
+	IKnxNetIpMessage
+	// GetTunnelingRequestDataBlock returns TunnelingRequestDataBlock (property field)
 	GetTunnelingRequestDataBlock() *TunnelingRequestDataBlock
-	// GetCemi returns Cemi
+	// GetCemi returns Cemi (property field)
 	GetCemi() *CEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewTunnelingRequest(tunnelingRequestDataBlock *TunnelingRequestDataBlock, c
 }
 
 func CastTunnelingRequest(structType interface{}) *TunnelingRequest {
-	castFunc := func(typ interface{}) *TunnelingRequest {
-		if casted, ok := typ.(TunnelingRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*TunnelingRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastTunnelingRequest(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastTunnelingRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(TunnelingRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*TunnelingRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastTunnelingRequest(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastTunnelingRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *TunnelingRequest) GetTypeName() string {
@@ -222,6 +220,8 @@ func (m *TunnelingRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

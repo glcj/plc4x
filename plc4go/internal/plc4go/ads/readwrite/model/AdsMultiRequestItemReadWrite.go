@@ -37,13 +37,14 @@ type AdsMultiRequestItemReadWrite struct {
 
 // The corresponding interface
 type IAdsMultiRequestItemReadWrite interface {
-	// GetItemIndexGroup returns ItemIndexGroup
+	IAdsMultiRequestItem
+	// GetItemIndexGroup returns ItemIndexGroup (property field)
 	GetItemIndexGroup() uint32
-	// GetItemIndexOffset returns ItemIndexOffset
+	// GetItemIndexOffset returns ItemIndexOffset (property field)
 	GetItemIndexOffset() uint32
-	// GetItemReadLength returns ItemReadLength
+	// GetItemReadLength returns ItemReadLength (property field)
 	GetItemReadLength() uint32
-	// GetItemWriteLength returns ItemWriteLength
+	// GetItemWriteLength returns ItemWriteLength (property field)
 	GetItemWriteLength() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewAdsMultiRequestItemReadWrite(itemIndexGroup uint32, itemIndexOffset uint
 }
 
 func CastAdsMultiRequestItemReadWrite(structType interface{}) *AdsMultiRequestItemReadWrite {
-	castFunc := func(typ interface{}) *AdsMultiRequestItemReadWrite {
-		if casted, ok := typ.(AdsMultiRequestItemReadWrite); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsMultiRequestItemReadWrite); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsMultiRequestItem); ok {
-			return CastAdsMultiRequestItemReadWrite(casted.Child)
-		}
-		if casted, ok := typ.(*AdsMultiRequestItem); ok {
-			return CastAdsMultiRequestItemReadWrite(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsMultiRequestItemReadWrite); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsMultiRequestItemReadWrite); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsMultiRequestItem); ok {
+		return CastAdsMultiRequestItemReadWrite(casted.Child)
+	}
+	if casted, ok := structType.(*AdsMultiRequestItem); ok {
+		return CastAdsMultiRequestItemReadWrite(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsMultiRequestItemReadWrite) GetTypeName() string {
@@ -249,6 +247,8 @@ func (m *AdsMultiRequestItemReadWrite) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

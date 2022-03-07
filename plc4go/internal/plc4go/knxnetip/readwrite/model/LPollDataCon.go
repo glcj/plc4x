@@ -35,6 +35,7 @@ type LPollDataCon struct {
 
 // The corresponding interface
 type ILPollDataCon interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewLPollDataCon(size uint16) *CEMI {
 }
 
 func CastLPollDataCon(structType interface{}) *LPollDataCon {
-	castFunc := func(typ interface{}) *LPollDataCon {
-		if casted, ok := typ.(LPollDataCon); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LPollDataCon); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastLPollDataCon(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastLPollDataCon(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LPollDataCon); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LPollDataCon); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastLPollDataCon(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastLPollDataCon(casted.Child)
+	}
+	return nil
 }
 
 func (m *LPollDataCon) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *LPollDataCon) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,8 @@ type S7ParameterUserData struct {
 
 // The corresponding interface
 type IS7ParameterUserData interface {
-	// GetItems returns Items
+	IS7Parameter
+	// GetItems returns Items (property field)
 	GetItems() []*S7ParameterUserDataItem
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewS7ParameterUserData(items []*S7ParameterUserDataItem) *S7Parameter {
 }
 
 func CastS7ParameterUserData(structType interface{}) *S7ParameterUserData {
-	castFunc := func(typ interface{}) *S7ParameterUserData {
-		if casted, ok := typ.(S7ParameterUserData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7ParameterUserData); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7Parameter); ok {
-			return CastS7ParameterUserData(casted.Child)
-		}
-		if casted, ok := typ.(*S7Parameter); ok {
-			return CastS7ParameterUserData(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7ParameterUserData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7ParameterUserData); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7Parameter); ok {
+		return CastS7ParameterUserData(casted.Child)
+	}
+	if casted, ok := structType.(*S7Parameter); ok {
+		return CastS7ParameterUserData(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7ParameterUserData) GetTypeName() string {
@@ -222,6 +220,8 @@ func (m *S7ParameterUserData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

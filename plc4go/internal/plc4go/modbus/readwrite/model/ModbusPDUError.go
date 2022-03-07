@@ -34,7 +34,8 @@ type ModbusPDUError struct {
 
 // The corresponding interface
 type IModbusPDUError interface {
-	// GetExceptionCode returns ExceptionCode
+	IModbusPDU
+	// GetExceptionCode returns ExceptionCode (property field)
 	GetExceptionCode() ModbusErrorCode
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewModbusPDUError(exceptionCode ModbusErrorCode) *ModbusPDU {
 }
 
 func CastModbusPDUError(structType interface{}) *ModbusPDUError {
-	castFunc := func(typ interface{}) *ModbusPDUError {
-		if casted, ok := typ.(ModbusPDUError); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUError); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUError(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUError(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUError); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUError); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUError(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUError(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUError) GetTypeName() string {
@@ -198,6 +196,8 @@ func (m *ModbusPDUError) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

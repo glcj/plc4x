@@ -38,15 +38,16 @@ type ModbusPDUReadWriteMultipleHoldingRegistersRequest struct {
 
 // The corresponding interface
 type IModbusPDUReadWriteMultipleHoldingRegistersRequest interface {
-	// GetReadStartingAddress returns ReadStartingAddress
+	IModbusPDU
+	// GetReadStartingAddress returns ReadStartingAddress (property field)
 	GetReadStartingAddress() uint16
-	// GetReadQuantity returns ReadQuantity
+	// GetReadQuantity returns ReadQuantity (property field)
 	GetReadQuantity() uint16
-	// GetWriteStartingAddress returns WriteStartingAddress
+	// GetWriteStartingAddress returns WriteStartingAddress (property field)
 	GetWriteStartingAddress() uint16
-	// GetWriteQuantity returns WriteQuantity
+	// GetWriteQuantity returns WriteQuantity (property field)
 	GetWriteQuantity() uint16
-	// GetValue returns Value
+	// GetValue returns Value (property field)
 	GetValue() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -127,22 +128,19 @@ func NewModbusPDUReadWriteMultipleHoldingRegistersRequest(readStartingAddress ui
 }
 
 func CastModbusPDUReadWriteMultipleHoldingRegistersRequest(structType interface{}) *ModbusPDUReadWriteMultipleHoldingRegistersRequest {
-	castFunc := func(typ interface{}) *ModbusPDUReadWriteMultipleHoldingRegistersRequest {
-		if casted, ok := typ.(ModbusPDUReadWriteMultipleHoldingRegistersRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadWriteMultipleHoldingRegistersRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadWriteMultipleHoldingRegistersRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadWriteMultipleHoldingRegistersRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadWriteMultipleHoldingRegistersRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadWriteMultipleHoldingRegistersRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadWriteMultipleHoldingRegistersRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadWriteMultipleHoldingRegistersRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadWriteMultipleHoldingRegistersRequest) GetTypeName() string {
@@ -311,6 +309,8 @@ func (m *ModbusPDUReadWriteMultipleHoldingRegistersRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

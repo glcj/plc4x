@@ -36,10 +36,10 @@ type S7Payload struct {
 
 // The corresponding interface
 type IS7Payload interface {
-	// MessageType returns MessageType
-	MessageType() uint8
-	// ParameterParameterType returns ParameterParameterType
-	ParameterParameterType() uint8
+	// GetMessageType returns MessageType (discriminator field)
+	GetMessageType() uint8
+	// GetParameterParameterType returns ParameterParameterType (discriminator field)
+	GetParameterParameterType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,16 +74,13 @@ func NewS7Payload(parameter S7Parameter) *S7Payload {
 }
 
 func CastS7Payload(structType interface{}) *S7Payload {
-	castFunc := func(typ interface{}) *S7Payload {
-		if casted, ok := typ.(S7Payload); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7Payload); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(S7Payload); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7Payload); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *S7Payload) GetTypeName() string {
@@ -119,13 +116,13 @@ func S7PayloadParse(readBuffer utils.ReadBuffer, messageType uint8, parameter *S
 	var _parent *S7Payload
 	var typeSwitchError error
 	switch {
-	case CastS7Parameter(parameter).Child.ParameterType() == 0x04 && messageType == 0x03: // S7PayloadReadVarResponse
+	case CastS7Parameter(parameter).Child.GetParameterType() == 0x04 && messageType == 0x03: // S7PayloadReadVarResponse
 		_parent, typeSwitchError = S7PayloadReadVarResponseParse(readBuffer, messageType, parameter)
-	case CastS7Parameter(parameter).Child.ParameterType() == 0x05 && messageType == 0x01: // S7PayloadWriteVarRequest
+	case CastS7Parameter(parameter).Child.GetParameterType() == 0x05 && messageType == 0x01: // S7PayloadWriteVarRequest
 		_parent, typeSwitchError = S7PayloadWriteVarRequestParse(readBuffer, messageType, parameter)
-	case CastS7Parameter(parameter).Child.ParameterType() == 0x05 && messageType == 0x03: // S7PayloadWriteVarResponse
+	case CastS7Parameter(parameter).Child.GetParameterType() == 0x05 && messageType == 0x03: // S7PayloadWriteVarResponse
 		_parent, typeSwitchError = S7PayloadWriteVarResponseParse(readBuffer, messageType, parameter)
-	case CastS7Parameter(parameter).Child.ParameterType() == 0x00 && messageType == 0x07: // S7PayloadUserData
+	case CastS7Parameter(parameter).Child.GetParameterType() == 0x00 && messageType == 0x07: // S7PayloadUserData
 		_parent, typeSwitchError = S7PayloadUserDataParse(readBuffer, messageType, parameter)
 	default:
 		// TODO: return actual type
@@ -169,6 +166,8 @@ func (m *S7Payload) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,11 +35,11 @@ type AdsStampHeader struct {
 
 // The corresponding interface
 type IAdsStampHeader interface {
-	// GetTimestamp returns Timestamp
+	// GetTimestamp returns Timestamp (property field)
 	GetTimestamp() uint64
-	// GetSamples returns Samples
+	// GetSamples returns Samples (property field)
 	GetSamples() uint32
-	// GetAdsNotificationSamples returns AdsNotificationSamples
+	// GetAdsNotificationSamples returns AdsNotificationSamples (property field)
 	GetAdsNotificationSamples() []*AdsNotificationSample
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewAdsStampHeader(timestamp uint64, samples uint32, adsNotificationSamples 
 }
 
 func CastAdsStampHeader(structType interface{}) *AdsStampHeader {
-	castFunc := func(typ interface{}) *AdsStampHeader {
-		if casted, ok := typ.(AdsStampHeader); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsStampHeader); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AdsStampHeader); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsStampHeader); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AdsStampHeader) GetTypeName() string {
@@ -212,6 +209,8 @@ func (m *AdsStampHeader) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

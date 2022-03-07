@@ -35,9 +35,10 @@ type CALDataRequestRecall struct {
 
 // The corresponding interface
 type ICALDataRequestRecall interface {
-	// GetParamNo returns ParamNo
+	ICALData
+	// GetParamNo returns ParamNo (property field)
 	GetParamNo() uint8
-	// GetCount returns Count
+	// GetCount returns Count (property field)
 	GetCount() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type ICALDataRequestRecall interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CALDataRequestRecall) CommandType() CALCommandType {
-	return CALCommandType_RECALL
-}
-
-func (m *CALDataRequestRecall) GetCommandType() CALCommandType {
-	return CALCommandType_RECALL
-}
 
 func (m *CALDataRequestRecall) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
@@ -89,22 +83,19 @@ func NewCALDataRequestRecall(paramNo uint8, count uint8, commandTypeContainer CA
 }
 
 func CastCALDataRequestRecall(structType interface{}) *CALDataRequestRecall {
-	castFunc := func(typ interface{}) *CALDataRequestRecall {
-		if casted, ok := typ.(CALDataRequestRecall); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CALDataRequestRecall); ok {
-			return casted
-		}
-		if casted, ok := typ.(CALData); ok {
-			return CastCALDataRequestRecall(casted.Child)
-		}
-		if casted, ok := typ.(*CALData); ok {
-			return CastCALDataRequestRecall(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CALDataRequestRecall); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CALDataRequestRecall); ok {
+		return casted
+	}
+	if casted, ok := structType.(CALData); ok {
+		return CastCALDataRequestRecall(casted.Child)
+	}
+	if casted, ok := structType.(*CALData); ok {
+		return CastCALDataRequestRecall(casted.Child)
+	}
+	return nil
 }
 
 func (m *CALDataRequestRecall) GetTypeName() string {
@@ -199,6 +190,8 @@ func (m *CALDataRequestRecall) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

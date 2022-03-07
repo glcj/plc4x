@@ -36,13 +36,13 @@ type ModbusPDUWriteFileRecordRequestItem struct {
 
 // The corresponding interface
 type IModbusPDUWriteFileRecordRequestItem interface {
-	// GetReferenceType returns ReferenceType
+	// GetReferenceType returns ReferenceType (property field)
 	GetReferenceType() uint8
-	// GetFileNumber returns FileNumber
+	// GetFileNumber returns FileNumber (property field)
 	GetFileNumber() uint16
-	// GetRecordNumber returns RecordNumber
+	// GetRecordNumber returns RecordNumber (property field)
 	GetRecordNumber() uint16
-	// GetRecordData returns RecordData
+	// GetRecordData returns RecordData (property field)
 	GetRecordData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -81,16 +81,13 @@ func NewModbusPDUWriteFileRecordRequestItem(referenceType uint8, fileNumber uint
 }
 
 func CastModbusPDUWriteFileRecordRequestItem(structType interface{}) *ModbusPDUWriteFileRecordRequestItem {
-	castFunc := func(typ interface{}) *ModbusPDUWriteFileRecordRequestItem {
-		if casted, ok := typ.(ModbusPDUWriteFileRecordRequestItem); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUWriteFileRecordRequestItem); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUWriteFileRecordRequestItem); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUWriteFileRecordRequestItem); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ModbusPDUWriteFileRecordRequestItem) GetTypeName() string {
@@ -230,6 +227,8 @@ func (m *ModbusPDUWriteFileRecordRequestItem) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

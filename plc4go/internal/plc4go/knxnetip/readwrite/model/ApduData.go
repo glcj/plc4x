@@ -36,8 +36,8 @@ type ApduData struct {
 
 // The corresponding interface
 type IApduData interface {
-	// ApciType returns ApciType
-	ApciType() uint8
+	// GetApciType returns ApciType (discriminator field)
+	GetApciType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,16 +72,13 @@ func NewApduData(dataLength uint8) *ApduData {
 }
 
 func CastApduData(structType interface{}) *ApduData {
-	castFunc := func(typ interface{}) *ApduData {
-		if casted, ok := typ.(ApduData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduData); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ApduData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduData); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ApduData) GetTypeName() string {
@@ -184,7 +181,7 @@ func (m *ApduData) SerializeParent(writeBuffer utils.WriteBuffer, child IApduDat
 	}
 
 	// Discriminator Field (apciType) (Used as input to a switch field)
-	apciType := uint8(child.ApciType())
+	apciType := uint8(child.GetApciType())
 	_apciTypeErr := writeBuffer.WriteUint8("apciType", 4, (apciType))
 
 	if _apciTypeErr != nil {
@@ -207,6 +204,8 @@ func (m *ApduData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

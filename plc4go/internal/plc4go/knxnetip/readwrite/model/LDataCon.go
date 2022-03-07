@@ -39,11 +39,12 @@ type LDataCon struct {
 
 // The corresponding interface
 type ILDataCon interface {
-	// GetAdditionalInformationLength returns AdditionalInformationLength
+	ICEMI
+	// GetAdditionalInformationLength returns AdditionalInformationLength (property field)
 	GetAdditionalInformationLength() uint8
-	// GetAdditionalInformation returns AdditionalInformation
+	// GetAdditionalInformation returns AdditionalInformation (property field)
 	GetAdditionalInformation() []*CEMIAdditionalInformation
-	// GetDataFrame returns DataFrame
+	// GetDataFrame returns DataFrame (property field)
 	GetDataFrame() *LDataFrame
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -98,22 +99,19 @@ func NewLDataCon(additionalInformationLength uint8, additionalInformation []*CEM
 }
 
 func CastLDataCon(structType interface{}) *LDataCon {
-	castFunc := func(typ interface{}) *LDataCon {
-		if casted, ok := typ.(LDataCon); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LDataCon); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastLDataCon(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastLDataCon(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LDataCon); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LDataCon); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastLDataCon(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastLDataCon(casted.Child)
+	}
+	return nil
 }
 
 func (m *LDataCon) GetTypeName() string {
@@ -264,6 +262,8 @@ func (m *LDataCon) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

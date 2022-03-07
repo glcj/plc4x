@@ -39,11 +39,11 @@ type CBusPointToPointToMultipointCommand struct {
 
 // The corresponding interface
 type ICBusPointToPointToMultipointCommand interface {
-	// GetBridgeAddress returns BridgeAddress
+	// GetBridgeAddress returns BridgeAddress (property field)
 	GetBridgeAddress() *BridgeAddress
-	// GetNetworkRoute returns NetworkRoute
+	// GetNetworkRoute returns NetworkRoute (property field)
 	GetNetworkRoute() *NetworkRoute
-	// GetPeekedApplication returns PeekedApplication
+	// GetPeekedApplication returns PeekedApplication (property field)
 	GetPeekedApplication() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,16 +90,13 @@ func NewCBusPointToPointToMultipointCommand(bridgeAddress *BridgeAddress, networ
 }
 
 func CastCBusPointToPointToMultipointCommand(structType interface{}) *CBusPointToPointToMultipointCommand {
-	castFunc := func(typ interface{}) *CBusPointToPointToMultipointCommand {
-		if casted, ok := typ.(CBusPointToPointToMultipointCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusPointToPointToMultipointCommand); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CBusPointToPointToMultipointCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusPointToPointToMultipointCommand); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CBusPointToPointToMultipointCommand) GetTypeName() string {
@@ -246,6 +243,8 @@ func (m *CBusPointToPointToMultipointCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

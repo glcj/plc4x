@@ -32,6 +32,7 @@ type BACnetErrorAtomicWriteFile struct {
 
 // The corresponding interface
 type IBACnetErrorAtomicWriteFile interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorAtomicWriteFile(errorClass *BACnetApplicationTagEnumerated, e
 }
 
 func CastBACnetErrorAtomicWriteFile(structType interface{}) *BACnetErrorAtomicWriteFile {
-	castFunc := func(typ interface{}) *BACnetErrorAtomicWriteFile {
-		if casted, ok := typ.(BACnetErrorAtomicWriteFile); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorAtomicWriteFile); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorAtomicWriteFile(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorAtomicWriteFile(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorAtomicWriteFile); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorAtomicWriteFile); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorAtomicWriteFile(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorAtomicWriteFile(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorAtomicWriteFile) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorAtomicWriteFile) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,9 +35,9 @@ type TunnelingRequestDataBlock struct {
 
 // The corresponding interface
 type ITunnelingRequestDataBlock interface {
-	// GetCommunicationChannelId returns CommunicationChannelId
+	// GetCommunicationChannelId returns CommunicationChannelId (property field)
 	GetCommunicationChannelId() uint8
-	// GetSequenceCounter returns SequenceCounter
+	// GetSequenceCounter returns SequenceCounter (property field)
 	GetSequenceCounter() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -68,16 +68,13 @@ func NewTunnelingRequestDataBlock(communicationChannelId uint8, sequenceCounter 
 }
 
 func CastTunnelingRequestDataBlock(structType interface{}) *TunnelingRequestDataBlock {
-	castFunc := func(typ interface{}) *TunnelingRequestDataBlock {
-		if casted, ok := typ.(TunnelingRequestDataBlock); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*TunnelingRequestDataBlock); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(TunnelingRequestDataBlock); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*TunnelingRequestDataBlock); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *TunnelingRequestDataBlock) GetTypeName() string {
@@ -205,6 +202,8 @@ func (m *TunnelingRequestDataBlock) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -38,9 +38,10 @@ type FirmataCommandSetPinMode struct {
 
 // The corresponding interface
 type IFirmataCommandSetPinMode interface {
-	// GetPin returns Pin
+	IFirmataCommand
+	// GetPin returns Pin (property field)
 	GetPin() uint8
-	// GetMode returns Mode
+	// GetMode returns Mode (property field)
 	GetMode() PinMode
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewFirmataCommandSetPinMode(pin uint8, mode PinMode, response bool) *Firmat
 }
 
 func CastFirmataCommandSetPinMode(structType interface{}) *FirmataCommandSetPinMode {
-	castFunc := func(typ interface{}) *FirmataCommandSetPinMode {
-		if casted, ok := typ.(FirmataCommandSetPinMode); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataCommandSetPinMode); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataCommand); ok {
-			return CastFirmataCommandSetPinMode(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataCommand); ok {
-			return CastFirmataCommandSetPinMode(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataCommandSetPinMode); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataCommandSetPinMode); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataCommand); ok {
+		return CastFirmataCommandSetPinMode(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataCommand); ok {
+		return CastFirmataCommandSetPinMode(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataCommandSetPinMode) GetTypeName() string {
@@ -211,6 +209,8 @@ func (m *FirmataCommandSetPinMode) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

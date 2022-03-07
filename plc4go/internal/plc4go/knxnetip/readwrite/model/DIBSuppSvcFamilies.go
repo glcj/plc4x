@@ -34,9 +34,9 @@ type DIBSuppSvcFamilies struct {
 
 // The corresponding interface
 type IDIBSuppSvcFamilies interface {
-	// GetDescriptionType returns DescriptionType
+	// GetDescriptionType returns DescriptionType (property field)
 	GetDescriptionType() uint8
-	// GetServiceIds returns ServiceIds
+	// GetServiceIds returns ServiceIds (property field)
 	GetServiceIds() []*ServiceId
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -67,16 +67,13 @@ func NewDIBSuppSvcFamilies(descriptionType uint8, serviceIds []*ServiceId) *DIBS
 }
 
 func CastDIBSuppSvcFamilies(structType interface{}) *DIBSuppSvcFamilies {
-	castFunc := func(typ interface{}) *DIBSuppSvcFamilies {
-		if casted, ok := typ.(DIBSuppSvcFamilies); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DIBSuppSvcFamilies); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DIBSuppSvcFamilies); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DIBSuppSvcFamilies); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DIBSuppSvcFamilies) GetTypeName() string {
@@ -206,6 +203,8 @@ func (m *DIBSuppSvcFamilies) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

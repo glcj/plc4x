@@ -32,6 +32,7 @@ type ConfirmationSuccessful struct {
 
 // The corresponding interface
 type IConfirmationSuccessful interface {
+	IConfirmation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -73,22 +74,19 @@ func NewConfirmationSuccessful(alpha *Alpha) *Confirmation {
 }
 
 func CastConfirmationSuccessful(structType interface{}) *ConfirmationSuccessful {
-	castFunc := func(typ interface{}) *ConfirmationSuccessful {
-		if casted, ok := typ.(ConfirmationSuccessful); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConfirmationSuccessful); ok {
-			return casted
-		}
-		if casted, ok := typ.(Confirmation); ok {
-			return CastConfirmationSuccessful(casted.Child)
-		}
-		if casted, ok := typ.(*Confirmation); ok {
-			return CastConfirmationSuccessful(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ConfirmationSuccessful); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConfirmationSuccessful); ok {
+		return casted
+	}
+	if casted, ok := structType.(Confirmation); ok {
+		return CastConfirmationSuccessful(casted.Child)
+	}
+	if casted, ok := structType.(*Confirmation); ok {
+		return CastConfirmationSuccessful(casted.Child)
+	}
+	return nil
 }
 
 func (m *ConfirmationSuccessful) GetTypeName() string {
@@ -147,6 +145,8 @@ func (m *ConfirmationSuccessful) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -39,13 +39,13 @@ type BACnetDateTime struct {
 
 // The corresponding interface
 type IBACnetDateTime interface {
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetDateValue returns DateValue
+	// GetDateValue returns DateValue (property field)
 	GetDateValue() *BACnetApplicationTagDate
-	// GetTimeValue returns TimeValue
+	// GetTimeValue returns TimeValue (property field)
 	GetTimeValue() *BACnetApplicationTagTime
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -84,16 +84,13 @@ func NewBACnetDateTime(openingTag *BACnetOpeningTag, dateValue *BACnetApplicatio
 }
 
 func CastBACnetDateTime(structType interface{}) *BACnetDateTime {
-	castFunc := func(typ interface{}) *BACnetDateTime {
-		if casted, ok := typ.(BACnetDateTime); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetDateTime); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetDateTime); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetDateTime); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetDateTime) GetTypeName() string {
@@ -257,6 +254,8 @@ func (m *BACnetDateTime) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

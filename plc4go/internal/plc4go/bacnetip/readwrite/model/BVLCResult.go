@@ -34,7 +34,8 @@ type BVLCResult struct {
 
 // The corresponding interface
 type IBVLCResult interface {
-	// GetCode returns Code
+	IBVLC
+	// GetCode returns Code (property field)
 	GetCode() BVLCResultCode
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewBVLCResult(code BVLCResultCode) *BVLC {
 }
 
 func CastBVLCResult(structType interface{}) *BVLCResult {
-	castFunc := func(typ interface{}) *BVLCResult {
-		if casted, ok := typ.(BVLCResult); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLCResult); ok {
-			return casted
-		}
-		if casted, ok := typ.(BVLC); ok {
-			return CastBVLCResult(casted.Child)
-		}
-		if casted, ok := typ.(*BVLC); ok {
-			return CastBVLCResult(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BVLCResult); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLCResult); ok {
+		return casted
+	}
+	if casted, ok := structType.(BVLC); ok {
+		return CastBVLCResult(casted.Child)
+	}
+	if casted, ok := structType.(*BVLC); ok {
+		return CastBVLCResult(casted.Child)
+	}
+	return nil
 }
 
 func (m *BVLCResult) GetTypeName() string {
@@ -182,6 +180,8 @@ func (m *BVLCResult) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

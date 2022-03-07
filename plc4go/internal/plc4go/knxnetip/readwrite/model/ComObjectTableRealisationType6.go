@@ -34,7 +34,8 @@ type ComObjectTableRealisationType6 struct {
 
 // The corresponding interface
 type IComObjectTableRealisationType6 interface {
-	// GetComObjectDescriptors returns ComObjectDescriptors
+	IComObjectTable
+	// GetComObjectDescriptors returns ComObjectDescriptors (property field)
 	GetComObjectDescriptors() *GroupObjectDescriptorRealisationType6
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewComObjectTableRealisationType6(comObjectDescriptors *GroupObjectDescript
 }
 
 func CastComObjectTableRealisationType6(structType interface{}) *ComObjectTableRealisationType6 {
-	castFunc := func(typ interface{}) *ComObjectTableRealisationType6 {
-		if casted, ok := typ.(ComObjectTableRealisationType6); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ComObjectTableRealisationType6); ok {
-			return casted
-		}
-		if casted, ok := typ.(ComObjectTable); ok {
-			return CastComObjectTableRealisationType6(casted.Child)
-		}
-		if casted, ok := typ.(*ComObjectTable); ok {
-			return CastComObjectTableRealisationType6(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ComObjectTableRealisationType6); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ComObjectTableRealisationType6); ok {
+		return casted
+	}
+	if casted, ok := structType.(ComObjectTable); ok {
+		return CastComObjectTableRealisationType6(casted.Child)
+	}
+	if casted, ok := structType.(*ComObjectTable); ok {
+		return CastComObjectTableRealisationType6(casted.Child)
+	}
+	return nil
 }
 
 func (m *ComObjectTableRealisationType6) GetTypeName() string {
@@ -182,6 +180,8 @@ func (m *ComObjectTableRealisationType6) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -33,7 +33,7 @@ type UnitAddress struct {
 
 // The corresponding interface
 type IUnitAddress interface {
-	// GetAddress returns Address
+	// GetAddress returns Address (property field)
 	GetAddress() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewUnitAddress(address byte) *UnitAddress {
 }
 
 func CastUnitAddress(structType interface{}) *UnitAddress {
-	castFunc := func(typ interface{}) *UnitAddress {
-		if casted, ok := typ.(UnitAddress); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*UnitAddress); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(UnitAddress); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*UnitAddress); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *UnitAddress) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *UnitAddress) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

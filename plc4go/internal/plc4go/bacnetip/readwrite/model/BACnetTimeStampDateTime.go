@@ -37,7 +37,8 @@ type BACnetTimeStampDateTime struct {
 
 // The corresponding interface
 type IBACnetTimeStampDateTime interface {
-	// GetDateTimeValue returns DateTimeValue
+	IBACnetTimeStamp
+	// GetDateTimeValue returns DateTimeValue (property field)
 	GetDateTimeValue() *BACnetDateTime
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type IBACnetTimeStampDateTime interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetTimeStampDateTime) PeekedTagNumber() uint8 {
-	return uint8(2)
-}
-
-func (m *BACnetTimeStampDateTime) GetPeekedTagNumber() uint8 {
-	return uint8(2)
-}
 
 func (m *BACnetTimeStampDateTime) InitializeParent(parent *BACnetTimeStamp, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetTimeStamp.OpeningTag = openingTag
@@ -86,22 +80,19 @@ func NewBACnetTimeStampDateTime(dateTimeValue *BACnetDateTime, openingTag *BACne
 }
 
 func CastBACnetTimeStampDateTime(structType interface{}) *BACnetTimeStampDateTime {
-	castFunc := func(typ interface{}) *BACnetTimeStampDateTime {
-		if casted, ok := typ.(BACnetTimeStampDateTime); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTimeStampDateTime); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetTimeStamp); ok {
-			return CastBACnetTimeStampDateTime(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetTimeStamp); ok {
-			return CastBACnetTimeStampDateTime(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetTimeStampDateTime); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTimeStampDateTime); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetTimeStamp); ok {
+		return CastBACnetTimeStampDateTime(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetTimeStamp); ok {
+		return CastBACnetTimeStampDateTime(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetTimeStampDateTime) GetTypeName() string {
@@ -189,6 +180,8 @@ func (m *BACnetTimeStampDateTime) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

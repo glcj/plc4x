@@ -32,6 +32,7 @@ type IdentifyReplyCommandDelays struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandDelays interface {
+	IIdentifyReplyCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewIdentifyReplyCommandDelays() *IdentifyReplyCommand {
 }
 
 func CastIdentifyReplyCommandDelays(structType interface{}) *IdentifyReplyCommandDelays {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandDelays {
-		if casted, ok := typ.(IdentifyReplyCommandDelays); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandDelays); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandDelays(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandDelays(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandDelays); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandDelays); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandDelays(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandDelays(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandDelays) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *IdentifyReplyCommandDelays) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

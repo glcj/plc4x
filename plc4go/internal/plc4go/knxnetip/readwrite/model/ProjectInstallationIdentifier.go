@@ -34,9 +34,9 @@ type ProjectInstallationIdentifier struct {
 
 // The corresponding interface
 type IProjectInstallationIdentifier interface {
-	// GetProjectNumber returns ProjectNumber
+	// GetProjectNumber returns ProjectNumber (property field)
 	GetProjectNumber() uint8
-	// GetInstallationNumber returns InstallationNumber
+	// GetInstallationNumber returns InstallationNumber (property field)
 	GetInstallationNumber() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -67,16 +67,13 @@ func NewProjectInstallationIdentifier(projectNumber uint8, installationNumber ui
 }
 
 func CastProjectInstallationIdentifier(structType interface{}) *ProjectInstallationIdentifier {
-	castFunc := func(typ interface{}) *ProjectInstallationIdentifier {
-		if casted, ok := typ.(ProjectInstallationIdentifier); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ProjectInstallationIdentifier); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ProjectInstallationIdentifier); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ProjectInstallationIdentifier); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ProjectInstallationIdentifier) GetTypeName() string {
@@ -162,6 +159,8 @@ func (m *ProjectInstallationIdentifier) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

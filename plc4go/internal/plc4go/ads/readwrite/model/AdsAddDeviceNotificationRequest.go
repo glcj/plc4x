@@ -40,17 +40,18 @@ type AdsAddDeviceNotificationRequest struct {
 
 // The corresponding interface
 type IAdsAddDeviceNotificationRequest interface {
-	// GetIndexGroup returns IndexGroup
+	IAdsData
+	// GetIndexGroup returns IndexGroup (property field)
 	GetIndexGroup() uint32
-	// GetIndexOffset returns IndexOffset
+	// GetIndexOffset returns IndexOffset (property field)
 	GetIndexOffset() uint32
-	// GetLength returns Length
+	// GetLength returns Length (property field)
 	GetLength() uint32
-	// GetTransmissionMode returns TransmissionMode
+	// GetTransmissionMode returns TransmissionMode (property field)
 	GetTransmissionMode() uint32
-	// GetMaxDelay returns MaxDelay
+	// GetMaxDelay returns MaxDelay (property field)
 	GetMaxDelay() uint32
-	// GetCycleTime returns CycleTime
+	// GetCycleTime returns CycleTime (property field)
 	GetCycleTime() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -128,22 +129,19 @@ func NewAdsAddDeviceNotificationRequest(indexGroup uint32, indexOffset uint32, l
 }
 
 func CastAdsAddDeviceNotificationRequest(structType interface{}) *AdsAddDeviceNotificationRequest {
-	castFunc := func(typ interface{}) *AdsAddDeviceNotificationRequest {
-		if casted, ok := typ.(AdsAddDeviceNotificationRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsAddDeviceNotificationRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsAddDeviceNotificationRequest(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsAddDeviceNotificationRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsAddDeviceNotificationRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsAddDeviceNotificationRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsAddDeviceNotificationRequest(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsAddDeviceNotificationRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsAddDeviceNotificationRequest) GetTypeName() string {
@@ -360,6 +358,8 @@ func (m *AdsAddDeviceNotificationRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,13 +35,13 @@ type BACnetTagPayloadObjectIdentifier struct {
 
 // The corresponding interface
 type IBACnetTagPayloadObjectIdentifier interface {
-	// GetObjectType returns ObjectType
+	// GetObjectType returns ObjectType (property field)
 	GetObjectType() BACnetObjectType
-	// GetProprietaryValue returns ProprietaryValue
+	// GetProprietaryValue returns ProprietaryValue (property field)
 	GetProprietaryValue() uint16
-	// GetInstanceNumber returns InstanceNumber
+	// GetInstanceNumber returns InstanceNumber (property field)
 	GetInstanceNumber() uint32
-	// GetIsProprietary returns IsProprietary
+	// GetIsProprietary returns IsProprietary (virtual field)
 	GetIsProprietary() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,16 +79,13 @@ func NewBACnetTagPayloadObjectIdentifier(objectType BACnetObjectType, proprietar
 }
 
 func CastBACnetTagPayloadObjectIdentifier(structType interface{}) *BACnetTagPayloadObjectIdentifier {
-	castFunc := func(typ interface{}) *BACnetTagPayloadObjectIdentifier {
-		if casted, ok := typ.(BACnetTagPayloadObjectIdentifier); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagPayloadObjectIdentifier); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagPayloadObjectIdentifier); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagPayloadObjectIdentifier); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagPayloadObjectIdentifier) GetTypeName() string {
@@ -198,6 +195,8 @@ func (m *BACnetTagPayloadObjectIdentifier) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

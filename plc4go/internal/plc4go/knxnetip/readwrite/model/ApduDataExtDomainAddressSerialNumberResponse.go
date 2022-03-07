@@ -35,6 +35,7 @@ type ApduDataExtDomainAddressSerialNumberResponse struct {
 
 // The corresponding interface
 type IApduDataExtDomainAddressSerialNumberResponse interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtDomainAddressSerialNumberResponse(length uint8) *ApduDataExt 
 }
 
 func CastApduDataExtDomainAddressSerialNumberResponse(structType interface{}) *ApduDataExtDomainAddressSerialNumberResponse {
-	castFunc := func(typ interface{}) *ApduDataExtDomainAddressSerialNumberResponse {
-		if casted, ok := typ.(ApduDataExtDomainAddressSerialNumberResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtDomainAddressSerialNumberResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtDomainAddressSerialNumberResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtDomainAddressSerialNumberResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtDomainAddressSerialNumberResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtDomainAddressSerialNumberResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtDomainAddressSerialNumberResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtDomainAddressSerialNumberResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtDomainAddressSerialNumberResponse) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtDomainAddressSerialNumberResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

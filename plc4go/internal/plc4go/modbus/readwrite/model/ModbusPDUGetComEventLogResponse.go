@@ -37,13 +37,14 @@ type ModbusPDUGetComEventLogResponse struct {
 
 // The corresponding interface
 type IModbusPDUGetComEventLogResponse interface {
-	// GetStatus returns Status
+	IModbusPDU
+	// GetStatus returns Status (property field)
 	GetStatus() uint16
-	// GetEventCount returns EventCount
+	// GetEventCount returns EventCount (property field)
 	GetEventCount() uint16
-	// GetMessageCount returns MessageCount
+	// GetMessageCount returns MessageCount (property field)
 	GetMessageCount() uint16
-	// GetEvents returns Events
+	// GetEvents returns Events (property field)
 	GetEvents() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -119,22 +120,19 @@ func NewModbusPDUGetComEventLogResponse(status uint16, eventCount uint16, messag
 }
 
 func CastModbusPDUGetComEventLogResponse(structType interface{}) *ModbusPDUGetComEventLogResponse {
-	castFunc := func(typ interface{}) *ModbusPDUGetComEventLogResponse {
-		if casted, ok := typ.(ModbusPDUGetComEventLogResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUGetComEventLogResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUGetComEventLogResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUGetComEventLogResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUGetComEventLogResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUGetComEventLogResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUGetComEventLogResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUGetComEventLogResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUGetComEventLogResponse) GetTypeName() string {
@@ -285,6 +283,8 @@ func (m *ModbusPDUGetComEventLogResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

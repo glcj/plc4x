@@ -33,7 +33,7 @@ type Checksum struct {
 
 // The corresponding interface
 type IChecksum interface {
-	// GetCrc returns Crc
+	// GetCrc returns Crc (property field)
 	GetCrc() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewChecksum(crc byte) *Checksum {
 }
 
 func CastChecksum(structType interface{}) *Checksum {
-	castFunc := func(typ interface{}) *Checksum {
-		if casted, ok := typ.(Checksum); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*Checksum); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(Checksum); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*Checksum); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *Checksum) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *Checksum) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

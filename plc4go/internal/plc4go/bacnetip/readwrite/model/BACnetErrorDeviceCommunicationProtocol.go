@@ -32,6 +32,7 @@ type BACnetErrorDeviceCommunicationProtocol struct {
 
 // The corresponding interface
 type IBACnetErrorDeviceCommunicationProtocol interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorDeviceCommunicationProtocol(errorClass *BACnetApplicationTagE
 }
 
 func CastBACnetErrorDeviceCommunicationProtocol(structType interface{}) *BACnetErrorDeviceCommunicationProtocol {
-	castFunc := func(typ interface{}) *BACnetErrorDeviceCommunicationProtocol {
-		if casted, ok := typ.(BACnetErrorDeviceCommunicationProtocol); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorDeviceCommunicationProtocol); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorDeviceCommunicationProtocol(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorDeviceCommunicationProtocol(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorDeviceCommunicationProtocol); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorDeviceCommunicationProtocol); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorDeviceCommunicationProtocol(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorDeviceCommunicationProtocol(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorDeviceCommunicationProtocol) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorDeviceCommunicationProtocol) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

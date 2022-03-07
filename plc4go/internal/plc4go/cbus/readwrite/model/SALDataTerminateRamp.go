@@ -34,7 +34,8 @@ type SALDataTerminateRamp struct {
 
 // The corresponding interface
 type ISALDataTerminateRamp interface {
-	// GetGroup returns Group
+	ISALData
+	// GetGroup returns Group (property field)
 	GetGroup() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -47,13 +48,6 @@ type ISALDataTerminateRamp interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SALDataTerminateRamp) CommandType() SALCommandType {
-	return SALCommandType_TERMINATE_RAMP
-}
-
-func (m *SALDataTerminateRamp) GetCommandType() SALCommandType {
-	return SALCommandType_TERMINATE_RAMP
-}
 
 func (m *SALDataTerminateRamp) InitializeParent(parent *SALData, commandTypeContainer SALCommandTypeContainer) {
 	m.SALData.CommandTypeContainer = commandTypeContainer
@@ -81,22 +75,19 @@ func NewSALDataTerminateRamp(group byte, commandTypeContainer SALCommandTypeCont
 }
 
 func CastSALDataTerminateRamp(structType interface{}) *SALDataTerminateRamp {
-	castFunc := func(typ interface{}) *SALDataTerminateRamp {
-		if casted, ok := typ.(SALDataTerminateRamp); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SALDataTerminateRamp); ok {
-			return casted
-		}
-		if casted, ok := typ.(SALData); ok {
-			return CastSALDataTerminateRamp(casted.Child)
-		}
-		if casted, ok := typ.(*SALData); ok {
-			return CastSALDataTerminateRamp(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SALDataTerminateRamp); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SALDataTerminateRamp); ok {
+		return casted
+	}
+	if casted, ok := structType.(SALData); ok {
+		return CastSALDataTerminateRamp(casted.Child)
+	}
+	if casted, ok := structType.(*SALData); ok {
+		return CastSALDataTerminateRamp(casted.Child)
+	}
+	return nil
 }
 
 func (m *SALDataTerminateRamp) GetTypeName() string {
@@ -173,6 +164,8 @@ func (m *SALDataTerminateRamp) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

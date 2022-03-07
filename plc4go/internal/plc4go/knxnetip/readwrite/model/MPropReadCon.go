@@ -42,17 +42,18 @@ type MPropReadCon struct {
 
 // The corresponding interface
 type IMPropReadCon interface {
-	// GetInterfaceObjectType returns InterfaceObjectType
+	ICEMI
+	// GetInterfaceObjectType returns InterfaceObjectType (property field)
 	GetInterfaceObjectType() uint16
-	// GetObjectInstance returns ObjectInstance
+	// GetObjectInstance returns ObjectInstance (property field)
 	GetObjectInstance() uint8
-	// GetPropertyId returns PropertyId
+	// GetPropertyId returns PropertyId (property field)
 	GetPropertyId() uint8
-	// GetNumberOfElements returns NumberOfElements
+	// GetNumberOfElements returns NumberOfElements (property field)
 	GetNumberOfElements() uint8
-	// GetStartIndex returns StartIndex
+	// GetStartIndex returns StartIndex (property field)
 	GetStartIndex() uint16
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -122,22 +123,19 @@ func NewMPropReadCon(interfaceObjectType uint16, objectInstance uint8, propertyI
 }
 
 func CastMPropReadCon(structType interface{}) *MPropReadCon {
-	castFunc := func(typ interface{}) *MPropReadCon {
-		if casted, ok := typ.(MPropReadCon); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MPropReadCon); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastMPropReadCon(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastMPropReadCon(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MPropReadCon); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MPropReadCon); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastMPropReadCon(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastMPropReadCon(casted.Child)
+	}
+	return nil
 }
 
 func (m *MPropReadCon) GetTypeName() string {
@@ -304,6 +302,8 @@ func (m *MPropReadCon) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

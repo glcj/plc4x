@@ -35,11 +35,11 @@ type DF1Command struct {
 
 // The corresponding interface
 type IDF1Command interface {
-	// CommandCode returns CommandCode
-	CommandCode() uint8
-	// GetStatus returns Status
+	// GetCommandCode returns CommandCode (discriminator field)
+	GetCommandCode() uint8
+	// GetStatus returns Status (property field)
 	GetStatus() uint8
-	// GetTransactionCounter returns TransactionCounter
+	// GetTransactionCounter returns TransactionCounter (property field)
 	GetTransactionCounter() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,16 +82,13 @@ func NewDF1Command(status uint8, transactionCounter uint16) *DF1Command {
 }
 
 func CastDF1Command(structType interface{}) *DF1Command {
-	castFunc := func(typ interface{}) *DF1Command {
-		if casted, ok := typ.(DF1Command); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DF1Command); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DF1Command); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DF1Command); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DF1Command) GetTypeName() string {
@@ -186,7 +183,7 @@ func (m *DF1Command) SerializeParent(writeBuffer utils.WriteBuffer, child IDF1Co
 	}
 
 	// Discriminator Field (commandCode) (Used as input to a switch field)
-	commandCode := uint8(child.CommandCode())
+	commandCode := uint8(child.GetCommandCode())
 	_commandCodeErr := writeBuffer.WriteUint8("commandCode", 8, (commandCode))
 
 	if _commandCodeErr != nil {
@@ -223,6 +220,8 @@ func (m *DF1Command) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

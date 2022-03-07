@@ -38,9 +38,10 @@ type COTPPacketData struct {
 
 // The corresponding interface
 type ICOTPPacketData interface {
-	// GetEot returns Eot
+	ICOTPPacket
+	// GetEot returns Eot (property field)
 	GetEot() bool
-	// GetTpduRef returns TpduRef
+	// GetTpduRef returns TpduRef (property field)
 	GetTpduRef() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -93,22 +94,19 @@ func NewCOTPPacketData(eot bool, tpduRef uint8, parameters []*COTPParameter, pay
 }
 
 func CastCOTPPacketData(structType interface{}) *COTPPacketData {
-	castFunc := func(typ interface{}) *COTPPacketData {
-		if casted, ok := typ.(COTPPacketData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPPacketData); ok {
-			return casted
-		}
-		if casted, ok := typ.(COTPPacket); ok {
-			return CastCOTPPacketData(casted.Child)
-		}
-		if casted, ok := typ.(*COTPPacket); ok {
-			return CastCOTPPacketData(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(COTPPacketData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPPacketData); ok {
+		return casted
+	}
+	if casted, ok := structType.(COTPPacket); ok {
+		return CastCOTPPacketData(casted.Child)
+	}
+	if casted, ok := structType.(*COTPPacket); ok {
+		return CastCOTPPacketData(casted.Child)
+	}
+	return nil
 }
 
 func (m *COTPPacketData) GetTypeName() string {
@@ -203,6 +201,8 @@ func (m *COTPPacketData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

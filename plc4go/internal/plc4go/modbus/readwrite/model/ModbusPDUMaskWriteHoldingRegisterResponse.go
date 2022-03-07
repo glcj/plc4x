@@ -36,11 +36,12 @@ type ModbusPDUMaskWriteHoldingRegisterResponse struct {
 
 // The corresponding interface
 type IModbusPDUMaskWriteHoldingRegisterResponse interface {
-	// GetReferenceAddress returns ReferenceAddress
+	IModbusPDU
+	// GetReferenceAddress returns ReferenceAddress (property field)
 	GetReferenceAddress() uint16
-	// GetAndMask returns AndMask
+	// GetAndMask returns AndMask (property field)
 	GetAndMask() uint16
-	// GetOrMask returns OrMask
+	// GetOrMask returns OrMask (property field)
 	GetOrMask() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -111,22 +112,19 @@ func NewModbusPDUMaskWriteHoldingRegisterResponse(referenceAddress uint16, andMa
 }
 
 func CastModbusPDUMaskWriteHoldingRegisterResponse(structType interface{}) *ModbusPDUMaskWriteHoldingRegisterResponse {
-	castFunc := func(typ interface{}) *ModbusPDUMaskWriteHoldingRegisterResponse {
-		if casted, ok := typ.(ModbusPDUMaskWriteHoldingRegisterResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUMaskWriteHoldingRegisterResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUMaskWriteHoldingRegisterResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUMaskWriteHoldingRegisterResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUMaskWriteHoldingRegisterResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUMaskWriteHoldingRegisterResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUMaskWriteHoldingRegisterResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUMaskWriteHoldingRegisterResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetTypeName() string {
@@ -239,6 +237,8 @@ func (m *ModbusPDUMaskWriteHoldingRegisterResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

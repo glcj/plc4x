@@ -45,21 +45,21 @@ type AlarmMessageObjectQueryType struct {
 
 // The corresponding interface
 type IAlarmMessageObjectQueryType interface {
-	// GetLengthDataset returns LengthDataset
+	// GetLengthDataset returns LengthDataset (property field)
 	GetLengthDataset() uint8
-	// GetEventState returns EventState
+	// GetEventState returns EventState (property field)
 	GetEventState() *State
-	// GetAckStateGoing returns AckStateGoing
+	// GetAckStateGoing returns AckStateGoing (property field)
 	GetAckStateGoing() *State
-	// GetAckStateComing returns AckStateComing
+	// GetAckStateComing returns AckStateComing (property field)
 	GetAckStateComing() *State
-	// GetTimeComing returns TimeComing
+	// GetTimeComing returns TimeComing (property field)
 	GetTimeComing() *DateAndTime
-	// GetValueComing returns ValueComing
+	// GetValueComing returns ValueComing (property field)
 	GetValueComing() *AssociatedValueType
-	// GetTimeGoing returns TimeGoing
+	// GetTimeGoing returns TimeGoing (property field)
 	GetTimeGoing() *DateAndTime
-	// GetValueGoing returns ValueGoing
+	// GetValueGoing returns ValueGoing (property field)
 	GetValueGoing() *AssociatedValueType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -114,16 +114,13 @@ func NewAlarmMessageObjectQueryType(lengthDataset uint8, eventState *State, ackS
 }
 
 func CastAlarmMessageObjectQueryType(structType interface{}) *AlarmMessageObjectQueryType {
-	castFunc := func(typ interface{}) *AlarmMessageObjectQueryType {
-		if casted, ok := typ.(AlarmMessageObjectQueryType); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AlarmMessageObjectQueryType); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AlarmMessageObjectQueryType); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AlarmMessageObjectQueryType); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AlarmMessageObjectQueryType) GetTypeName() string {
@@ -431,6 +428,8 @@ func (m *AlarmMessageObjectQueryType) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,7 @@ const CBusCommandPointToPointToMultiPointNormal_CR byte = 0xD
 // The data-structure of this message
 type CBusCommandPointToPointToMultiPointNormal struct {
 	*CBusPointToPointToMultipointCommand
-	Application *Application
+	Application ApplicationIdContainer
 	SalData     *SALData
 	Crc         *Checksum
 	PeekAlpha   byte
@@ -46,15 +46,16 @@ type CBusCommandPointToPointToMultiPointNormal struct {
 
 // The corresponding interface
 type ICBusCommandPointToPointToMultiPointNormal interface {
-	// GetApplication returns Application
-	GetApplication() *Application
-	// GetSalData returns SalData
+	ICBusPointToPointToMultipointCommand
+	// GetApplication returns Application (property field)
+	GetApplication() ApplicationIdContainer
+	// GetSalData returns SalData (property field)
 	GetSalData() *SALData
-	// GetCrc returns Crc
+	// GetCrc returns Crc (property field)
 	GetCrc() *Checksum
-	// GetPeekAlpha returns PeekAlpha
+	// GetPeekAlpha returns PeekAlpha (property field)
 	GetPeekAlpha() byte
-	// GetAlpha returns Alpha
+	// GetAlpha returns Alpha (property field)
 	GetAlpha() *Alpha
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -77,7 +78,7 @@ func (m *CBusCommandPointToPointToMultiPointNormal) InitializeParent(parent *CBu
 ///////////////////////////////////////////////////////////
 // Accessors for property fields.
 ///////////////////////////////////////////////////////////
-func (m *CBusCommandPointToPointToMultiPointNormal) GetApplication() *Application {
+func (m *CBusCommandPointToPointToMultiPointNormal) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
 
@@ -102,7 +103,7 @@ func (m *CBusCommandPointToPointToMultiPointNormal) GetAlpha() *Alpha {
 ///////////////////////////////////////////////////////////
 
 // NewCBusCommandPointToPointToMultiPointNormal factory function for CBusCommandPointToPointToMultiPointNormal
-func NewCBusCommandPointToPointToMultiPointNormal(application *Application, salData *SALData, crc *Checksum, peekAlpha byte, alpha *Alpha, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte, srchk bool) *CBusPointToPointToMultipointCommand {
+func NewCBusCommandPointToPointToMultiPointNormal(application ApplicationIdContainer, salData *SALData, crc *Checksum, peekAlpha byte, alpha *Alpha, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte, srchk bool) *CBusPointToPointToMultipointCommand {
 	child := &CBusCommandPointToPointToMultiPointNormal{
 		Application:                         application,
 		SalData:                             salData,
@@ -116,22 +117,19 @@ func NewCBusCommandPointToPointToMultiPointNormal(application *Application, salD
 }
 
 func CastCBusCommandPointToPointToMultiPointNormal(structType interface{}) *CBusCommandPointToPointToMultiPointNormal {
-	castFunc := func(typ interface{}) *CBusCommandPointToPointToMultiPointNormal {
-		if casted, ok := typ.(CBusCommandPointToPointToMultiPointNormal); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusCommandPointToPointToMultiPointNormal); ok {
-			return casted
-		}
-		if casted, ok := typ.(CBusPointToPointToMultipointCommand); ok {
-			return CastCBusCommandPointToPointToMultiPointNormal(casted.Child)
-		}
-		if casted, ok := typ.(*CBusPointToPointToMultipointCommand); ok {
-			return CastCBusCommandPointToPointToMultiPointNormal(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CBusCommandPointToPointToMultiPointNormal); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusCommandPointToPointToMultiPointNormal); ok {
+		return casted
+	}
+	if casted, ok := structType.(CBusPointToPointToMultipointCommand); ok {
+		return CastCBusCommandPointToPointToMultiPointNormal(casted.Child)
+	}
+	if casted, ok := structType.(*CBusPointToPointToMultipointCommand); ok {
+		return CastCBusCommandPointToPointToMultiPointNormal(casted.Child)
+	}
+	return nil
 }
 
 func (m *CBusCommandPointToPointToMultiPointNormal) GetTypeName() string {
@@ -146,7 +144,7 @@ func (m *CBusCommandPointToPointToMultiPointNormal) GetLengthInBitsConditional(l
 	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (application)
-	lengthInBits += m.Application.GetLengthInBits()
+	lengthInBits += 8
 
 	// Simple field (salData)
 	lengthInBits += m.SalData.GetLengthInBits()
@@ -182,11 +180,11 @@ func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer,
 	if pullErr := readBuffer.PullContext("application"); pullErr != nil {
 		return nil, pullErr
 	}
-	_application, _applicationErr := ApplicationParse(readBuffer)
+	_application, _applicationErr := ApplicationIdContainerParse(readBuffer)
 	if _applicationErr != nil {
 		return nil, errors.Wrap(_applicationErr, "Error parsing 'application' field")
 	}
-	application := CastApplication(_application)
+	application := _application
 	if closeErr := readBuffer.CloseContext("application"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -270,7 +268,7 @@ func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer,
 
 	// Create a partially initialized instance
 	_child := &CBusCommandPointToPointToMultiPointNormal{
-		Application:                         CastApplication(application),
+		Application:                         application,
 		SalData:                             CastSALData(salData),
 		Crc:                                 CastChecksum(crc),
 		PeekAlpha:                           peekAlpha,
@@ -362,6 +360,8 @@ func (m *CBusCommandPointToPointToMultiPointNormal) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

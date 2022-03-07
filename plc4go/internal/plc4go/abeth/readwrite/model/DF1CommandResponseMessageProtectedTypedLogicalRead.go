@@ -37,7 +37,8 @@ type DF1CommandResponseMessageProtectedTypedLogicalRead struct {
 
 // The corresponding interface
 type IDF1CommandResponseMessageProtectedTypedLogicalRead interface {
-	// GetData returns Data
+	IDF1ResponseMessage
+	// GetData returns Data (property field)
 	GetData() []uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewDF1CommandResponseMessageProtectedTypedLogicalRead(data []uint8, destina
 }
 
 func CastDF1CommandResponseMessageProtectedTypedLogicalRead(structType interface{}) *DF1CommandResponseMessageProtectedTypedLogicalRead {
-	castFunc := func(typ interface{}) *DF1CommandResponseMessageProtectedTypedLogicalRead {
-		if casted, ok := typ.(DF1CommandResponseMessageProtectedTypedLogicalRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DF1CommandResponseMessageProtectedTypedLogicalRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(DF1ResponseMessage); ok {
-			return CastDF1CommandResponseMessageProtectedTypedLogicalRead(casted.Child)
-		}
-		if casted, ok := typ.(*DF1ResponseMessage); ok {
-			return CastDF1CommandResponseMessageProtectedTypedLogicalRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DF1CommandResponseMessageProtectedTypedLogicalRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DF1CommandResponseMessageProtectedTypedLogicalRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(DF1ResponseMessage); ok {
+		return CastDF1CommandResponseMessageProtectedTypedLogicalRead(casted.Child)
+	}
+	if casted, ok := structType.(*DF1ResponseMessage); ok {
+		return CastDF1CommandResponseMessageProtectedTypedLogicalRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) GetTypeName() string {
@@ -204,6 +202,8 @@ func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

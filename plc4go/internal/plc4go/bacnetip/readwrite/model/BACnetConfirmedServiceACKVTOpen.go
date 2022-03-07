@@ -32,6 +32,7 @@ type BACnetConfirmedServiceACKVTOpen struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceACKVTOpen interface {
+	IBACnetConfirmedServiceACK
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewBACnetConfirmedServiceACKVTOpen() *BACnetConfirmedServiceACK {
 }
 
 func CastBACnetConfirmedServiceACKVTOpen(structType interface{}) *BACnetConfirmedServiceACKVTOpen {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceACKVTOpen {
-		if casted, ok := typ.(BACnetConfirmedServiceACKVTOpen); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACKVTOpen); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKVTOpen(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKVTOpen(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceACKVTOpen); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceACKVTOpen); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKVTOpen(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKVTOpen(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceACKVTOpen) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *BACnetConfirmedServiceACKVTOpen) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

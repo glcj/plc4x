@@ -45,21 +45,22 @@ type ApduDataExtPropertyDescriptionResponse struct {
 
 // The corresponding interface
 type IApduDataExtPropertyDescriptionResponse interface {
-	// GetObjectIndex returns ObjectIndex
+	IApduDataExt
+	// GetObjectIndex returns ObjectIndex (property field)
 	GetObjectIndex() uint8
-	// GetPropertyId returns PropertyId
+	// GetPropertyId returns PropertyId (property field)
 	GetPropertyId() uint8
-	// GetIndex returns Index
+	// GetIndex returns Index (property field)
 	GetIndex() uint8
-	// GetWriteEnabled returns WriteEnabled
+	// GetWriteEnabled returns WriteEnabled (property field)
 	GetWriteEnabled() bool
-	// GetPropertyDataType returns PropertyDataType
+	// GetPropertyDataType returns PropertyDataType (property field)
 	GetPropertyDataType() KnxPropertyDataType
-	// GetMaxNrOfElements returns MaxNrOfElements
+	// GetMaxNrOfElements returns MaxNrOfElements (property field)
 	GetMaxNrOfElements() uint16
-	// GetReadLevel returns ReadLevel
+	// GetReadLevel returns ReadLevel (property field)
 	GetReadLevel() AccessLevel
-	// GetWriteLevel returns WriteLevel
+	// GetWriteLevel returns WriteLevel (property field)
 	GetWriteLevel() AccessLevel
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -139,22 +140,19 @@ func NewApduDataExtPropertyDescriptionResponse(objectIndex uint8, propertyId uin
 }
 
 func CastApduDataExtPropertyDescriptionResponse(structType interface{}) *ApduDataExtPropertyDescriptionResponse {
-	castFunc := func(typ interface{}) *ApduDataExtPropertyDescriptionResponse {
-		if casted, ok := typ.(ApduDataExtPropertyDescriptionResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtPropertyDescriptionResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtPropertyDescriptionResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtPropertyDescriptionResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtPropertyDescriptionResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtPropertyDescriptionResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtPropertyDescriptionResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtPropertyDescriptionResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtPropertyDescriptionResponse) GetTypeName() string {
@@ -440,6 +438,8 @@ func (m *ApduDataExtPropertyDescriptionResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

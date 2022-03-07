@@ -32,6 +32,7 @@ type BACnetConfirmedServiceACKGetAlarmSummary struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceACKGetAlarmSummary interface {
+	IBACnetConfirmedServiceACK
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,22 +73,19 @@ func NewBACnetConfirmedServiceACKGetAlarmSummary() *BACnetConfirmedServiceACK {
 }
 
 func CastBACnetConfirmedServiceACKGetAlarmSummary(structType interface{}) *BACnetConfirmedServiceACKGetAlarmSummary {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceACKGetAlarmSummary {
-		if casted, ok := typ.(BACnetConfirmedServiceACKGetAlarmSummary); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACKGetAlarmSummary); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKGetAlarmSummary(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKGetAlarmSummary(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceACKGetAlarmSummary); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceACKGetAlarmSummary); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKGetAlarmSummary(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKGetAlarmSummary(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceACKGetAlarmSummary) GetTypeName() string {
@@ -146,6 +144,8 @@ func (m *BACnetConfirmedServiceACKGetAlarmSummary) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

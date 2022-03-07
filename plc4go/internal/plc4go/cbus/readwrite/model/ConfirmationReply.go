@@ -34,7 +34,8 @@ type ConfirmationReply struct {
 
 // The corresponding interface
 type IConfirmationReply interface {
-	// GetIsA returns IsA
+	IReply
+	// GetIsA returns IsA (property field)
 	GetIsA() *Confirmation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,22 +75,19 @@ func NewConfirmationReply(isA *Confirmation, magicByte byte) *Reply {
 }
 
 func CastConfirmationReply(structType interface{}) *ConfirmationReply {
-	castFunc := func(typ interface{}) *ConfirmationReply {
-		if casted, ok := typ.(ConfirmationReply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ConfirmationReply); ok {
-			return casted
-		}
-		if casted, ok := typ.(Reply); ok {
-			return CastConfirmationReply(casted.Child)
-		}
-		if casted, ok := typ.(*Reply); ok {
-			return CastConfirmationReply(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ConfirmationReply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ConfirmationReply); ok {
+		return casted
+	}
+	if casted, ok := structType.(Reply); ok {
+		return CastConfirmationReply(casted.Child)
+	}
+	if casted, ok := structType.(*Reply); ok {
+		return CastConfirmationReply(casted.Child)
+	}
+	return nil
 }
 
 func (m *ConfirmationReply) GetTypeName() string {
@@ -177,6 +175,8 @@ func (m *ConfirmationReply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

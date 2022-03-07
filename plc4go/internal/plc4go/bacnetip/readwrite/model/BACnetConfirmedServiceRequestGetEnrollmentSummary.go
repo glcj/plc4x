@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestGetEnrollmentSummary struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestGetEnrollmentSummary interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestGetEnrollmentSummary(len uint16) *BACnetCon
 }
 
 func CastBACnetConfirmedServiceRequestGetEnrollmentSummary(structType interface{}) *BACnetConfirmedServiceRequestGetEnrollmentSummary {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestGetEnrollmentSummary {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestGetEnrollmentSummary); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestGetEnrollmentSummary); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestGetEnrollmentSummary(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestGetEnrollmentSummary(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestGetEnrollmentSummary); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestGetEnrollmentSummary); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestGetEnrollmentSummary(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestGetEnrollmentSummary(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

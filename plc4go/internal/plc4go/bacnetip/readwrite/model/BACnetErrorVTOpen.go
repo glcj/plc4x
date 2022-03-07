@@ -32,6 +32,7 @@ type BACnetErrorVTOpen struct {
 
 // The corresponding interface
 type IBACnetErrorVTOpen interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorVTOpen(errorClass *BACnetApplicationTagEnumerated, errorCode 
 }
 
 func CastBACnetErrorVTOpen(structType interface{}) *BACnetErrorVTOpen {
-	castFunc := func(typ interface{}) *BACnetErrorVTOpen {
-		if casted, ok := typ.(BACnetErrorVTOpen); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorVTOpen); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorVTOpen(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorVTOpen(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorVTOpen); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorVTOpen); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorVTOpen(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorVTOpen(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorVTOpen) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorVTOpen) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

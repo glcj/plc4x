@@ -34,7 +34,8 @@ type KnxNetIpTunneling struct {
 
 // The corresponding interface
 type IKnxNetIpTunneling interface {
-	// GetVersion returns Version
+	IServiceId
+	// GetVersion returns Version (property field)
 	GetVersion() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewKnxNetIpTunneling(version uint8) *ServiceId {
 }
 
 func CastKnxNetIpTunneling(structType interface{}) *KnxNetIpTunneling {
-	castFunc := func(typ interface{}) *KnxNetIpTunneling {
-		if casted, ok := typ.(KnxNetIpTunneling); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*KnxNetIpTunneling); ok {
-			return casted
-		}
-		if casted, ok := typ.(ServiceId); ok {
-			return CastKnxNetIpTunneling(casted.Child)
-		}
-		if casted, ok := typ.(*ServiceId); ok {
-			return CastKnxNetIpTunneling(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(KnxNetIpTunneling); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*KnxNetIpTunneling); ok {
+		return casted
+	}
+	if casted, ok := structType.(ServiceId); ok {
+		return CastKnxNetIpTunneling(casted.Child)
+	}
+	if casted, ok := structType.(*ServiceId); ok {
+		return CastKnxNetIpTunneling(casted.Child)
+	}
+	return nil
 }
 
 func (m *KnxNetIpTunneling) GetTypeName() string {
@@ -171,6 +169,8 @@ func (m *KnxNetIpTunneling) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

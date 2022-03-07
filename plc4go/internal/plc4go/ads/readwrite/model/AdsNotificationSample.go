@@ -35,11 +35,11 @@ type AdsNotificationSample struct {
 
 // The corresponding interface
 type IAdsNotificationSample interface {
-	// GetNotificationHandle returns NotificationHandle
+	// GetNotificationHandle returns NotificationHandle (property field)
 	GetNotificationHandle() uint32
-	// GetSampleSize returns SampleSize
+	// GetSampleSize returns SampleSize (property field)
 	GetSampleSize() uint32
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewAdsNotificationSample(notificationHandle uint32, sampleSize uint32, data
 }
 
 func CastAdsNotificationSample(structType interface{}) *AdsNotificationSample {
-	castFunc := func(typ interface{}) *AdsNotificationSample {
-		if casted, ok := typ.(AdsNotificationSample); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsNotificationSample); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AdsNotificationSample); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsNotificationSample); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AdsNotificationSample) GetTypeName() string {
@@ -189,6 +186,8 @@ func (m *AdsNotificationSample) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

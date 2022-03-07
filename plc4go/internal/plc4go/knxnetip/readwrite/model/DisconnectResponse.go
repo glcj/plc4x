@@ -35,9 +35,10 @@ type DisconnectResponse struct {
 
 // The corresponding interface
 type IDisconnectResponse interface {
-	// GetCommunicationChannelId returns CommunicationChannelId
+	IKnxNetIpMessage
+	// GetCommunicationChannelId returns CommunicationChannelId (property field)
 	GetCommunicationChannelId() uint8
-	// GetStatus returns Status
+	// GetStatus returns Status (property field)
 	GetStatus() Status
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewDisconnectResponse(communicationChannelId uint8, status Status) *KnxNetI
 }
 
 func CastDisconnectResponse(structType interface{}) *DisconnectResponse {
-	castFunc := func(typ interface{}) *DisconnectResponse {
-		if casted, ok := typ.(DisconnectResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DisconnectResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastDisconnectResponse(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastDisconnectResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DisconnectResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DisconnectResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastDisconnectResponse(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastDisconnectResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *DisconnectResponse) GetTypeName() string {
@@ -208,6 +206,8 @@ func (m *DisconnectResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

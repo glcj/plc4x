@@ -38,9 +38,10 @@ type NLMICouldBeRouterToNetwork struct {
 
 // The corresponding interface
 type INLMICouldBeRouterToNetwork interface {
-	// GetDestinationNetworkAddress returns DestinationNetworkAddress
+	INLM
+	// GetDestinationNetworkAddress returns DestinationNetworkAddress (property field)
 	GetDestinationNetworkAddress() uint16
-	// GetPerformanceIndex returns PerformanceIndex
+	// GetPerformanceIndex returns PerformanceIndex (property field)
 	GetPerformanceIndex() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -92,22 +93,19 @@ func NewNLMICouldBeRouterToNetwork(destinationNetworkAddress uint16, performance
 }
 
 func CastNLMICouldBeRouterToNetwork(structType interface{}) *NLMICouldBeRouterToNetwork {
-	castFunc := func(typ interface{}) *NLMICouldBeRouterToNetwork {
-		if casted, ok := typ.(NLMICouldBeRouterToNetwork); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NLMICouldBeRouterToNetwork); ok {
-			return casted
-		}
-		if casted, ok := typ.(NLM); ok {
-			return CastNLMICouldBeRouterToNetwork(casted.Child)
-		}
-		if casted, ok := typ.(*NLM); ok {
-			return CastNLMICouldBeRouterToNetwork(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NLMICouldBeRouterToNetwork); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NLMICouldBeRouterToNetwork); ok {
+		return casted
+	}
+	if casted, ok := structType.(NLM); ok {
+		return CastNLMICouldBeRouterToNetwork(casted.Child)
+	}
+	if casted, ok := structType.(*NLM); ok {
+		return CastNLMICouldBeRouterToNetwork(casted.Child)
+	}
+	return nil
 }
 
 func (m *NLMICouldBeRouterToNetwork) GetTypeName() string {
@@ -202,6 +200,8 @@ func (m *NLMICouldBeRouterToNetwork) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -38,9 +38,10 @@ type BACnetContextTagReal struct {
 
 // The corresponding interface
 type IBACnetContextTagReal interface {
-	// GetPayload returns Payload
+	IBACnetContextTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadReal
-	// GetActualValue returns ActualValue
+	// GetActualValue returns ActualValue (virtual field)
 	GetActualValue() float32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewBACnetContextTagReal(payload *BACnetTagPayloadReal, header *BACnetTagHea
 }
 
 func CastBACnetContextTagReal(structType interface{}) *BACnetContextTagReal {
-	castFunc := func(typ interface{}) *BACnetContextTagReal {
-		if casted, ok := typ.(BACnetContextTagReal); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagReal); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagReal(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagReal(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagReal); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagReal); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagReal(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagReal(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagReal) GetTypeName() string {
@@ -209,6 +207,8 @@ func (m *BACnetContextTagReal) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

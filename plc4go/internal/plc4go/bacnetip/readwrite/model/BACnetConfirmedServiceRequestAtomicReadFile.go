@@ -38,9 +38,10 @@ type BACnetConfirmedServiceRequestAtomicReadFile struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestAtomicReadFile interface {
-	// GetFileIdentifier returns FileIdentifier
+	IBACnetConfirmedServiceRequest
+	// GetFileIdentifier returns FileIdentifier (property field)
 	GetFileIdentifier() *BACnetApplicationTagObjectIdentifier
-	// GetAccessMethod returns AccessMethod
+	// GetAccessMethod returns AccessMethod (property field)
 	GetAccessMethod() *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -91,22 +92,19 @@ func NewBACnetConfirmedServiceRequestAtomicReadFile(fileIdentifier *BACnetApplic
 }
 
 func CastBACnetConfirmedServiceRequestAtomicReadFile(structType interface{}) *BACnetConfirmedServiceRequestAtomicReadFile {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestAtomicReadFile {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestAtomicReadFile); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestAtomicReadFile); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestAtomicReadFile(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestAtomicReadFile(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestAtomicReadFile); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestAtomicReadFile); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestAtomicReadFile(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestAtomicReadFile(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestAtomicReadFile) GetTypeName() string {
@@ -223,6 +221,8 @@ func (m *BACnetConfirmedServiceRequestAtomicReadFile) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

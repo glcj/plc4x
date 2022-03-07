@@ -42,23 +42,23 @@ type BACnetActionCommand struct {
 
 // The corresponding interface
 type IBACnetActionCommand interface {
-	// GetDeviceIdentifier returns DeviceIdentifier
+	// GetDeviceIdentifier returns DeviceIdentifier (property field)
 	GetDeviceIdentifier() *BACnetContextTagObjectIdentifier
-	// GetObjectIdentifier returns ObjectIdentifier
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetPropertyIdentifier returns PropertyIdentifier
+	// GetPropertyIdentifier returns PropertyIdentifier (property field)
 	GetPropertyIdentifier() *BACnetContextTagPropertyIdentifier
-	// GetArrayIndex returns ArrayIndex
+	// GetArrayIndex returns ArrayIndex (property field)
 	GetArrayIndex() *BACnetContextTagUnsignedInteger
-	// GetPropertyValue returns PropertyValue
+	// GetPropertyValue returns PropertyValue (property field)
 	GetPropertyValue() *BACnetConstructedData
-	// GetPriority returns Priority
+	// GetPriority returns Priority (property field)
 	GetPriority() *BACnetContextTagUnsignedInteger
-	// GetPostDelay returns PostDelay
+	// GetPostDelay returns PostDelay (property field)
 	GetPostDelay() *BACnetContextTagBoolean
-	// GetQuitOnFailure returns QuitOnFailure
+	// GetQuitOnFailure returns QuitOnFailure (property field)
 	GetQuitOnFailure() *BACnetContextTagBoolean
-	// GetWriteSuccessful returns WriteSuccessful
+	// GetWriteSuccessful returns WriteSuccessful (property field)
 	GetWriteSuccessful() *BACnetContextTagBoolean
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -117,16 +117,13 @@ func NewBACnetActionCommand(deviceIdentifier *BACnetContextTagObjectIdentifier, 
 }
 
 func CastBACnetActionCommand(structType interface{}) *BACnetActionCommand {
-	castFunc := func(typ interface{}) *BACnetActionCommand {
-		if casted, ok := typ.(BACnetActionCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetActionCommand); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetActionCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetActionCommand); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetActionCommand) GetTypeName() string {
@@ -500,6 +497,8 @@ func (m *BACnetActionCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

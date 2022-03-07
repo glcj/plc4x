@@ -37,7 +37,8 @@ type CBusCommandPointToPointToMultiPoint struct {
 
 // The corresponding interface
 type ICBusCommandPointToPointToMultiPoint interface {
-	// GetCommand returns Command
+	ICBusCommand
+	// GetCommand returns Command (property field)
 	GetCommand() *CBusPointToPointToMultipointCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type ICBusCommandPointToPointToMultiPoint interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CBusCommandPointToPointToMultiPoint) DestinationAddressType() DestinationAddressType {
-	return DestinationAddressType_PointToPointToMultiPoint
-}
-
-func (m *CBusCommandPointToPointToMultiPoint) GetDestinationAddressType() DestinationAddressType {
-	return DestinationAddressType_PointToPointToMultiPoint
-}
 
 func (m *CBusCommandPointToPointToMultiPoint) InitializeParent(parent *CBusCommand, header *CBusHeader) {
 	m.CBusCommand.Header = header
@@ -84,22 +78,19 @@ func NewCBusCommandPointToPointToMultiPoint(command *CBusPointToPointToMultipoin
 }
 
 func CastCBusCommandPointToPointToMultiPoint(structType interface{}) *CBusCommandPointToPointToMultiPoint {
-	castFunc := func(typ interface{}) *CBusCommandPointToPointToMultiPoint {
-		if casted, ok := typ.(CBusCommandPointToPointToMultiPoint); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusCommandPointToPointToMultiPoint); ok {
-			return casted
-		}
-		if casted, ok := typ.(CBusCommand); ok {
-			return CastCBusCommandPointToPointToMultiPoint(casted.Child)
-		}
-		if casted, ok := typ.(*CBusCommand); ok {
-			return CastCBusCommandPointToPointToMultiPoint(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CBusCommandPointToPointToMultiPoint); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusCommandPointToPointToMultiPoint); ok {
+		return casted
+	}
+	if casted, ok := structType.(CBusCommand); ok {
+		return CastCBusCommandPointToPointToMultiPoint(casted.Child)
+	}
+	if casted, ok := structType.(*CBusCommand); ok {
+		return CastCBusCommandPointToPointToMultiPoint(casted.Child)
+	}
+	return nil
 }
 
 func (m *CBusCommandPointToPointToMultiPoint) GetTypeName() string {
@@ -187,6 +178,8 @@ func (m *CBusCommandPointToPointToMultiPoint) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

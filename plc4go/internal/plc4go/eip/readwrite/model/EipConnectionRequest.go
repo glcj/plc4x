@@ -38,6 +38,7 @@ type EipConnectionRequest struct {
 
 // The corresponding interface
 type IEipConnectionRequest interface {
+	IEipPacket
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -82,22 +83,19 @@ func NewEipConnectionRequest(sessionHandle uint32, status uint32, senderContext 
 }
 
 func CastEipConnectionRequest(structType interface{}) *EipConnectionRequest {
-	castFunc := func(typ interface{}) *EipConnectionRequest {
-		if casted, ok := typ.(EipConnectionRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*EipConnectionRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(EipPacket); ok {
-			return CastEipConnectionRequest(casted.Child)
-		}
-		if casted, ok := typ.(*EipPacket); ok {
-			return CastEipConnectionRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(EipConnectionRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*EipConnectionRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(EipPacket); ok {
+		return CastEipConnectionRequest(casted.Child)
+	}
+	if casted, ok := structType.(*EipPacket); ok {
+		return CastEipConnectionRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *EipConnectionRequest) GetTypeName() string {
@@ -192,6 +190,8 @@ func (m *EipConnectionRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

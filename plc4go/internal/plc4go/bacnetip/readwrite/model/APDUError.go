@@ -39,9 +39,10 @@ type APDUError struct {
 
 // The corresponding interface
 type IAPDUError interface {
-	// GetOriginalInvokeId returns OriginalInvokeId
+	IAPDU
+	// GetOriginalInvokeId returns OriginalInvokeId (property field)
 	GetOriginalInvokeId() uint8
-	// GetError returns Error
+	// GetError returns Error (property field)
 	GetError() *BACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -91,22 +92,19 @@ func NewAPDUError(originalInvokeId uint8, error *BACnetError, apduLength uint16)
 }
 
 func CastAPDUError(structType interface{}) *APDUError {
-	castFunc := func(typ interface{}) *APDUError {
-		if casted, ok := typ.(APDUError); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*APDUError); ok {
-			return casted
-		}
-		if casted, ok := typ.(APDU); ok {
-			return CastAPDUError(casted.Child)
-		}
-		if casted, ok := typ.(*APDU); ok {
-			return CastAPDUError(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(APDUError); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*APDUError); ok {
+		return casted
+	}
+	if casted, ok := structType.(APDU); ok {
+		return CastAPDUError(casted.Child)
+	}
+	if casted, ok := structType.(*APDU); ok {
+		return CastAPDUError(casted.Child)
+	}
+	return nil
 }
 
 func (m *APDUError) GetTypeName() string {
@@ -237,6 +235,8 @@ func (m *APDUError) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

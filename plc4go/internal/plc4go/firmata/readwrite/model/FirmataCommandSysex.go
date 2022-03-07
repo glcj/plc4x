@@ -38,7 +38,8 @@ type FirmataCommandSysex struct {
 
 // The corresponding interface
 type IFirmataCommandSysex interface {
-	// GetCommand returns Command
+	IFirmataCommand
+	// GetCommand returns Command (property field)
 	GetCommand() *SysexCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -83,22 +84,19 @@ func NewFirmataCommandSysex(command *SysexCommand, response bool) *FirmataComman
 }
 
 func CastFirmataCommandSysex(structType interface{}) *FirmataCommandSysex {
-	castFunc := func(typ interface{}) *FirmataCommandSysex {
-		if casted, ok := typ.(FirmataCommandSysex); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataCommandSysex); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataCommand); ok {
-			return CastFirmataCommandSysex(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataCommand); ok {
-			return CastFirmataCommandSysex(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataCommandSysex); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataCommandSysex); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataCommand); ok {
+		return CastFirmataCommandSysex(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataCommand); ok {
+		return CastFirmataCommandSysex(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataCommandSysex) GetTypeName() string {
@@ -211,6 +209,8 @@ func (m *FirmataCommandSysex) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

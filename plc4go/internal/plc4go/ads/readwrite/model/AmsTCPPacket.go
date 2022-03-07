@@ -34,7 +34,7 @@ type AmsTCPPacket struct {
 
 // The corresponding interface
 type IAmsTCPPacket interface {
-	// GetUserdata returns Userdata
+	// GetUserdata returns Userdata (property field)
 	GetUserdata() *AmsPacket
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -61,16 +61,13 @@ func NewAmsTCPPacket(userdata *AmsPacket) *AmsTCPPacket {
 }
 
 func CastAmsTCPPacket(structType interface{}) *AmsTCPPacket {
-	castFunc := func(typ interface{}) *AmsTCPPacket {
-		if casted, ok := typ.(AmsTCPPacket); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AmsTCPPacket); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AmsTCPPacket); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AmsTCPPacket); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AmsTCPPacket) GetTypeName() string {
@@ -192,6 +189,8 @@ func (m *AmsTCPPacket) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

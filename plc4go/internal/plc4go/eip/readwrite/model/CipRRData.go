@@ -38,7 +38,8 @@ type CipRRData struct {
 
 // The corresponding interface
 type ICipRRData interface {
-	// GetExchange returns Exchange
+	IEipPacket
+	// GetExchange returns Exchange (property field)
 	GetExchange() *CipExchange
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -88,22 +89,19 @@ func NewCipRRData(exchange *CipExchange, sessionHandle uint32, status uint32, se
 }
 
 func CastCipRRData(structType interface{}) *CipRRData {
-	castFunc := func(typ interface{}) *CipRRData {
-		if casted, ok := typ.(CipRRData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CipRRData); ok {
-			return casted
-		}
-		if casted, ok := typ.(EipPacket); ok {
-			return CastCipRRData(casted.Child)
-		}
-		if casted, ok := typ.(*EipPacket); ok {
-			return CastCipRRData(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CipRRData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CipRRData); ok {
+		return casted
+	}
+	if casted, ok := structType.(EipPacket); ok {
+		return CastCipRRData(casted.Child)
+	}
+	if casted, ok := structType.(*EipPacket); ok {
+		return CastCipRRData(casted.Child)
+	}
+	return nil
 }
 
 func (m *CipRRData) GetTypeName() string {
@@ -241,6 +239,8 @@ func (m *CipRRData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -43,17 +43,18 @@ type BACnetNotificationParametersFloatingLimit struct {
 
 // The corresponding interface
 type IBACnetNotificationParametersFloatingLimit interface {
-	// GetInnerOpeningTag returns InnerOpeningTag
+	IBACnetNotificationParameters
+	// GetInnerOpeningTag returns InnerOpeningTag (property field)
 	GetInnerOpeningTag() *BACnetOpeningTag
-	// GetReferenceValue returns ReferenceValue
+	// GetReferenceValue returns ReferenceValue (property field)
 	GetReferenceValue() *BACnetContextTagReal
-	// GetStatusFlags returns StatusFlags
+	// GetStatusFlags returns StatusFlags (property field)
 	GetStatusFlags() *BACnetStatusFlags
-	// GetSetPointValue returns SetPointValue
+	// GetSetPointValue returns SetPointValue (property field)
 	GetSetPointValue() *BACnetContextTagReal
-	// GetErrorLimit returns ErrorLimit
+	// GetErrorLimit returns ErrorLimit (property field)
 	GetErrorLimit() *BACnetContextTagReal
-	// GetInnerClosingTag returns InnerClosingTag
+	// GetInnerClosingTag returns InnerClosingTag (property field)
 	GetInnerClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -66,13 +67,6 @@ type IBACnetNotificationParametersFloatingLimit interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetNotificationParametersFloatingLimit) PeekedTagNumber() uint8 {
-	return uint8(4)
-}
-
-func (m *BACnetNotificationParametersFloatingLimit) GetPeekedTagNumber() uint8 {
-	return uint8(4)
-}
 
 func (m *BACnetNotificationParametersFloatingLimit) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetNotificationParameters.OpeningTag = openingTag
@@ -127,22 +121,19 @@ func NewBACnetNotificationParametersFloatingLimit(innerOpeningTag *BACnetOpening
 }
 
 func CastBACnetNotificationParametersFloatingLimit(structType interface{}) *BACnetNotificationParametersFloatingLimit {
-	castFunc := func(typ interface{}) *BACnetNotificationParametersFloatingLimit {
-		if casted, ok := typ.(BACnetNotificationParametersFloatingLimit); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetNotificationParametersFloatingLimit); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersFloatingLimit(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersFloatingLimit(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetNotificationParametersFloatingLimit); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetNotificationParametersFloatingLimit); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersFloatingLimit(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersFloatingLimit(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetNotificationParametersFloatingLimit) GetTypeName() string {
@@ -375,6 +366,8 @@ func (m *BACnetNotificationParametersFloatingLimit) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,11 +34,9 @@ type CALData struct {
 
 // The corresponding interface
 type ICALData interface {
-	// CommandType returns CommandType
-	CommandType() CALCommandType
-	// GetCommandTypeContainer returns CommandTypeContainer
+	// GetCommandTypeContainer returns CommandTypeContainer (property field)
 	GetCommandTypeContainer() CALCommandTypeContainer
-	// GetCommandType returns CommandType
+	// GetCommandType returns CommandType (virtual field)
 	GetCommandType() CALCommandType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -80,16 +78,13 @@ func NewCALData(commandTypeContainer CALCommandTypeContainer) *CALData {
 }
 
 func CastCALData(structType interface{}) *CALData {
-	castFunc := func(typ interface{}) *CALData {
-		if casted, ok := typ.(CALData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CALData); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CALData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CALData); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CALData) GetTypeName() string {
@@ -222,6 +217,8 @@ func (m *CALData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

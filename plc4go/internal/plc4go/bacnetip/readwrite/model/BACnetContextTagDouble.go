@@ -38,9 +38,10 @@ type BACnetContextTagDouble struct {
 
 // The corresponding interface
 type IBACnetContextTagDouble interface {
-	// GetPayload returns Payload
+	IBACnetContextTag
+	// GetPayload returns Payload (property field)
 	GetPayload() *BACnetTagPayloadDouble
-	// GetActualValue returns ActualValue
+	// GetActualValue returns ActualValue (virtual field)
 	GetActualValue() float64
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewBACnetContextTagDouble(payload *BACnetTagPayloadDouble, header *BACnetTa
 }
 
 func CastBACnetContextTagDouble(structType interface{}) *BACnetContextTagDouble {
-	castFunc := func(typ interface{}) *BACnetContextTagDouble {
-		if casted, ok := typ.(BACnetContextTagDouble); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagDouble); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagDouble(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagDouble(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagDouble); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagDouble); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagDouble(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagDouble(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagDouble) GetTypeName() string {
@@ -209,6 +207,8 @@ func (m *BACnetContextTagDouble) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

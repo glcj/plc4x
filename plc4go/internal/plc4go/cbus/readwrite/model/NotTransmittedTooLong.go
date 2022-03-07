@@ -32,6 +32,7 @@ type NotTransmittedTooLong struct {
 
 // The corresponding interface
 type INotTransmittedTooLong interface {
+	IConfirmation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -73,22 +74,19 @@ func NewNotTransmittedTooLong(alpha *Alpha) *Confirmation {
 }
 
 func CastNotTransmittedTooLong(structType interface{}) *NotTransmittedTooLong {
-	castFunc := func(typ interface{}) *NotTransmittedTooLong {
-		if casted, ok := typ.(NotTransmittedTooLong); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NotTransmittedTooLong); ok {
-			return casted
-		}
-		if casted, ok := typ.(Confirmation); ok {
-			return CastNotTransmittedTooLong(casted.Child)
-		}
-		if casted, ok := typ.(*Confirmation); ok {
-			return CastNotTransmittedTooLong(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NotTransmittedTooLong); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NotTransmittedTooLong); ok {
+		return casted
+	}
+	if casted, ok := structType.(Confirmation); ok {
+		return CastNotTransmittedTooLong(casted.Child)
+	}
+	if casted, ok := structType.(*Confirmation); ok {
+		return CastNotTransmittedTooLong(casted.Child)
+	}
+	return nil
 }
 
 func (m *NotTransmittedTooLong) GetTypeName() string {
@@ -147,6 +145,8 @@ func (m *NotTransmittedTooLong) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

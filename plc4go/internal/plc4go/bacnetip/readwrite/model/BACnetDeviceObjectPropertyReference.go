@@ -42,17 +42,17 @@ type BACnetDeviceObjectPropertyReference struct {
 
 // The corresponding interface
 type IBACnetDeviceObjectPropertyReference interface {
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetObjectIdentifier returns ObjectIdentifier
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetPropertyIdentifier returns PropertyIdentifier
+	// GetPropertyIdentifier returns PropertyIdentifier (property field)
 	GetPropertyIdentifier() *BACnetContextTagPropertyIdentifier
-	// GetArrayIndex returns ArrayIndex
+	// GetArrayIndex returns ArrayIndex (property field)
 	GetArrayIndex() *BACnetContextTagUnsignedInteger
-	// GetDeviceIdentifier returns DeviceIdentifier
+	// GetDeviceIdentifier returns DeviceIdentifier (property field)
 	GetDeviceIdentifier() *BACnetContextTagObjectIdentifier
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -99,16 +99,13 @@ func NewBACnetDeviceObjectPropertyReference(openingTag *BACnetOpeningTag, object
 }
 
 func CastBACnetDeviceObjectPropertyReference(structType interface{}) *BACnetDeviceObjectPropertyReference {
-	castFunc := func(typ interface{}) *BACnetDeviceObjectPropertyReference {
-		if casted, ok := typ.(BACnetDeviceObjectPropertyReference); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetDeviceObjectPropertyReference); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetDeviceObjectPropertyReference); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetDeviceObjectPropertyReference); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetDeviceObjectPropertyReference) GetTypeName() string {
@@ -356,6 +353,8 @@ func (m *BACnetDeviceObjectPropertyReference) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

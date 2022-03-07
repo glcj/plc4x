@@ -34,7 +34,8 @@ type SALDataOn struct {
 
 // The corresponding interface
 type ISALDataOn interface {
-	// GetGroup returns Group
+	ISALData
+	// GetGroup returns Group (property field)
 	GetGroup() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -47,13 +48,6 @@ type ISALDataOn interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SALDataOn) CommandType() SALCommandType {
-	return SALCommandType_ON
-}
-
-func (m *SALDataOn) GetCommandType() SALCommandType {
-	return SALCommandType_ON
-}
 
 func (m *SALDataOn) InitializeParent(parent *SALData, commandTypeContainer SALCommandTypeContainer) {
 	m.SALData.CommandTypeContainer = commandTypeContainer
@@ -81,22 +75,19 @@ func NewSALDataOn(group byte, commandTypeContainer SALCommandTypeContainer) *SAL
 }
 
 func CastSALDataOn(structType interface{}) *SALDataOn {
-	castFunc := func(typ interface{}) *SALDataOn {
-		if casted, ok := typ.(SALDataOn); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SALDataOn); ok {
-			return casted
-		}
-		if casted, ok := typ.(SALData); ok {
-			return CastSALDataOn(casted.Child)
-		}
-		if casted, ok := typ.(*SALData); ok {
-			return CastSALDataOn(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SALDataOn); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SALDataOn); ok {
+		return casted
+	}
+	if casted, ok := structType.(SALData); ok {
+		return CastSALDataOn(casted.Child)
+	}
+	if casted, ok := structType.(*SALData); ok {
+		return CastSALDataOn(casted.Child)
+	}
+	return nil
 }
 
 func (m *SALDataOn) GetTypeName() string {
@@ -173,6 +164,8 @@ func (m *SALDataOn) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

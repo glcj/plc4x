@@ -43,17 +43,18 @@ type BACnetNotificationParametersOutOfRange struct {
 
 // The corresponding interface
 type IBACnetNotificationParametersOutOfRange interface {
-	// GetInnerOpeningTag returns InnerOpeningTag
+	IBACnetNotificationParameters
+	// GetInnerOpeningTag returns InnerOpeningTag (property field)
 	GetInnerOpeningTag() *BACnetOpeningTag
-	// GetExceedingValue returns ExceedingValue
+	// GetExceedingValue returns ExceedingValue (property field)
 	GetExceedingValue() *BACnetContextTagReal
-	// GetStatusFlags returns StatusFlags
+	// GetStatusFlags returns StatusFlags (property field)
 	GetStatusFlags() *BACnetStatusFlags
-	// GetDeadband returns Deadband
+	// GetDeadband returns Deadband (property field)
 	GetDeadband() *BACnetContextTagReal
-	// GetExceededLimit returns ExceededLimit
+	// GetExceededLimit returns ExceededLimit (property field)
 	GetExceededLimit() *BACnetContextTagReal
-	// GetInnerClosingTag returns InnerClosingTag
+	// GetInnerClosingTag returns InnerClosingTag (property field)
 	GetInnerClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -66,13 +67,6 @@ type IBACnetNotificationParametersOutOfRange interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetNotificationParametersOutOfRange) PeekedTagNumber() uint8 {
-	return uint8(5)
-}
-
-func (m *BACnetNotificationParametersOutOfRange) GetPeekedTagNumber() uint8 {
-	return uint8(5)
-}
 
 func (m *BACnetNotificationParametersOutOfRange) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetNotificationParameters.OpeningTag = openingTag
@@ -127,22 +121,19 @@ func NewBACnetNotificationParametersOutOfRange(innerOpeningTag *BACnetOpeningTag
 }
 
 func CastBACnetNotificationParametersOutOfRange(structType interface{}) *BACnetNotificationParametersOutOfRange {
-	castFunc := func(typ interface{}) *BACnetNotificationParametersOutOfRange {
-		if casted, ok := typ.(BACnetNotificationParametersOutOfRange); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetNotificationParametersOutOfRange); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersOutOfRange(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersOutOfRange(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetNotificationParametersOutOfRange); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetNotificationParametersOutOfRange); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersOutOfRange(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersOutOfRange(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetNotificationParametersOutOfRange) GetTypeName() string {
@@ -375,6 +366,8 @@ func (m *BACnetNotificationParametersOutOfRange) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

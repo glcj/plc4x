@@ -39,9 +39,10 @@ type FirmataCommandSetDigitalPinValue struct {
 
 // The corresponding interface
 type IFirmataCommandSetDigitalPinValue interface {
-	// GetPin returns Pin
+	IFirmataCommand
+	// GetPin returns Pin (property field)
 	GetPin() uint8
-	// GetOn returns On
+	// GetOn returns On (property field)
 	GetOn() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -91,22 +92,19 @@ func NewFirmataCommandSetDigitalPinValue(pin uint8, on bool, response bool) *Fir
 }
 
 func CastFirmataCommandSetDigitalPinValue(structType interface{}) *FirmataCommandSetDigitalPinValue {
-	castFunc := func(typ interface{}) *FirmataCommandSetDigitalPinValue {
-		if casted, ok := typ.(FirmataCommandSetDigitalPinValue); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataCommandSetDigitalPinValue); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataCommand); ok {
-			return CastFirmataCommandSetDigitalPinValue(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataCommand); ok {
-			return CastFirmataCommandSetDigitalPinValue(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataCommandSetDigitalPinValue); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataCommandSetDigitalPinValue); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataCommand); ok {
+		return CastFirmataCommandSetDigitalPinValue(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataCommand); ok {
+		return CastFirmataCommandSetDigitalPinValue(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataCommandSetDigitalPinValue) GetTypeName() string {
@@ -226,6 +224,8 @@ func (m *FirmataCommandSetDigitalPinValue) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

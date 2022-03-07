@@ -39,11 +39,11 @@ type BACnetPropertyValues struct {
 
 // The corresponding interface
 type IBACnetPropertyValues interface {
-	// GetInnerOpeningTag returns InnerOpeningTag
+	// GetInnerOpeningTag returns InnerOpeningTag (property field)
 	GetInnerOpeningTag() *BACnetOpeningTag
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []*BACnetPropertyValue
-	// GetInnerClosingTag returns InnerClosingTag
+	// GetInnerClosingTag returns InnerClosingTag (property field)
 	GetInnerClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -78,16 +78,13 @@ func NewBACnetPropertyValues(innerOpeningTag *BACnetOpeningTag, data []*BACnetPr
 }
 
 func CastBACnetPropertyValues(structType interface{}) *BACnetPropertyValues {
-	castFunc := func(typ interface{}) *BACnetPropertyValues {
-		if casted, ok := typ.(BACnetPropertyValues); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetPropertyValues); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetPropertyValues); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetPropertyValues); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetPropertyValues) GetTypeName() string {
@@ -238,6 +235,8 @@ func (m *BACnetPropertyValues) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

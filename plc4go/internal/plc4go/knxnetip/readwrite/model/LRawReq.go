@@ -35,6 +35,7 @@ type LRawReq struct {
 
 // The corresponding interface
 type ILRawReq interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewLRawReq(size uint16) *CEMI {
 }
 
 func CastLRawReq(structType interface{}) *LRawReq {
-	castFunc := func(typ interface{}) *LRawReq {
-		if casted, ok := typ.(LRawReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LRawReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastLRawReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastLRawReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LRawReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LRawReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastLRawReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastLRawReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *LRawReq) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *LRawReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

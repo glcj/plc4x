@@ -33,8 +33,8 @@ type S7ParameterUserDataItem struct {
 
 // The corresponding interface
 type IS7ParameterUserDataItem interface {
-	// ItemType returns ItemType
-	ItemType() uint8
+	// GetItemType returns ItemType (discriminator field)
+	GetItemType() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewS7ParameterUserDataItem() *S7ParameterUserDataItem {
 }
 
 func CastS7ParameterUserDataItem(structType interface{}) *S7ParameterUserDataItem {
-	castFunc := func(typ interface{}) *S7ParameterUserDataItem {
-		if casted, ok := typ.(S7ParameterUserDataItem); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7ParameterUserDataItem); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(S7ParameterUserDataItem); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7ParameterUserDataItem); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *S7ParameterUserDataItem) GetTypeName() string {
@@ -151,7 +148,7 @@ func (m *S7ParameterUserDataItem) SerializeParent(writeBuffer utils.WriteBuffer,
 	}
 
 	// Discriminator Field (itemType) (Used as input to a switch field)
-	itemType := uint8(child.ItemType())
+	itemType := uint8(child.GetItemType())
 	_itemTypeErr := writeBuffer.WriteUint8("itemType", 8, (itemType))
 
 	if _itemTypeErr != nil {
@@ -174,6 +171,8 @@ func (m *S7ParameterUserDataItem) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

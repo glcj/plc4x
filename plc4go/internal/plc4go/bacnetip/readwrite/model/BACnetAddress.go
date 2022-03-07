@@ -34,9 +34,9 @@ type BACnetAddress struct {
 
 // The corresponding interface
 type IBACnetAddress interface {
-	// GetAddress returns Address
+	// GetAddress returns Address (property field)
 	GetAddress() []uint8
-	// GetPort returns Port
+	// GetPort returns Port (property field)
 	GetPort() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -67,16 +67,13 @@ func NewBACnetAddress(address []uint8, port uint16) *BACnetAddress {
 }
 
 func CastBACnetAddress(structType interface{}) *BACnetAddress {
-	castFunc := func(typ interface{}) *BACnetAddress {
-		if casted, ok := typ.(BACnetAddress); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetAddress); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetAddress); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetAddress); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetAddress) GetTypeName() string {
@@ -185,6 +182,8 @@ func (m *BACnetAddress) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

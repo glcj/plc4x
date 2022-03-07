@@ -35,9 +35,9 @@ type NetworkProtocolControlInformation struct {
 
 // The corresponding interface
 type INetworkProtocolControlInformation interface {
-	// GetStackCounter returns StackCounter
+	// GetStackCounter returns StackCounter (property field)
 	GetStackCounter() uint8
-	// GetStackDepth returns StackDepth
+	// GetStackDepth returns StackDepth (property field)
 	GetStackDepth() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -68,16 +68,13 @@ func NewNetworkProtocolControlInformation(stackCounter uint8, stackDepth uint8) 
 }
 
 func CastNetworkProtocolControlInformation(structType interface{}) *NetworkProtocolControlInformation {
-	castFunc := func(typ interface{}) *NetworkProtocolControlInformation {
-		if casted, ok := typ.(NetworkProtocolControlInformation); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NetworkProtocolControlInformation); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(NetworkProtocolControlInformation); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NetworkProtocolControlInformation); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *NetworkProtocolControlInformation) GetTypeName() string {
@@ -188,6 +185,8 @@ func (m *NetworkProtocolControlInformation) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

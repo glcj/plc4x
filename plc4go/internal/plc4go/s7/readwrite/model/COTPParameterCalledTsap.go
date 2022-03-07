@@ -37,7 +37,8 @@ type COTPParameterCalledTsap struct {
 
 // The corresponding interface
 type ICOTPParameterCalledTsap interface {
-	// GetTsapId returns TsapId
+	ICOTPParameter
+	// GetTsapId returns TsapId (property field)
 	GetTsapId() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewCOTPParameterCalledTsap(tsapId uint16, rest uint8) *COTPParameter {
 }
 
 func CastCOTPParameterCalledTsap(structType interface{}) *COTPParameterCalledTsap {
-	castFunc := func(typ interface{}) *COTPParameterCalledTsap {
-		if casted, ok := typ.(COTPParameterCalledTsap); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPParameterCalledTsap); ok {
-			return casted
-		}
-		if casted, ok := typ.(COTPParameter); ok {
-			return CastCOTPParameterCalledTsap(casted.Child)
-		}
-		if casted, ok := typ.(*COTPParameter); ok {
-			return CastCOTPParameterCalledTsap(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(COTPParameterCalledTsap); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPParameterCalledTsap); ok {
+		return casted
+	}
+	if casted, ok := structType.(COTPParameter); ok {
+		return CastCOTPParameterCalledTsap(casted.Child)
+	}
+	if casted, ok := structType.(*COTPParameter); ok {
+		return CastCOTPParameterCalledTsap(casted.Child)
+	}
+	return nil
 }
 
 func (m *COTPParameterCalledTsap) GetTypeName() string {
@@ -174,6 +172,8 @@ func (m *COTPParameterCalledTsap) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

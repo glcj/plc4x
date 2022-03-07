@@ -40,21 +40,21 @@ type State struct {
 
 // The corresponding interface
 type IState interface {
-	// GetSIG_8 returns SIG_8
+	// GetSIG_8 returns SIG_8 (property field)
 	GetSIG_8() bool
-	// GetSIG_7 returns SIG_7
+	// GetSIG_7 returns SIG_7 (property field)
 	GetSIG_7() bool
-	// GetSIG_6 returns SIG_6
+	// GetSIG_6 returns SIG_6 (property field)
 	GetSIG_6() bool
-	// GetSIG_5 returns SIG_5
+	// GetSIG_5 returns SIG_5 (property field)
 	GetSIG_5() bool
-	// GetSIG_4 returns SIG_4
+	// GetSIG_4 returns SIG_4 (property field)
 	GetSIG_4() bool
-	// GetSIG_3 returns SIG_3
+	// GetSIG_3 returns SIG_3 (property field)
 	GetSIG_3() bool
-	// GetSIG_2 returns SIG_2
+	// GetSIG_2 returns SIG_2 (property field)
 	GetSIG_2() bool
-	// GetSIG_1 returns SIG_1
+	// GetSIG_1 returns SIG_1 (property field)
 	GetSIG_1() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -109,16 +109,13 @@ func NewState(SIG_8 bool, SIG_7 bool, SIG_6 bool, SIG_5 bool, SIG_4 bool, SIG_3 
 }
 
 func CastState(structType interface{}) *State {
-	castFunc := func(typ interface{}) *State {
-		if casted, ok := typ.(State); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*State); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(State); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*State); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *State) GetTypeName() string {
@@ -306,6 +303,8 @@ func (m *State) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

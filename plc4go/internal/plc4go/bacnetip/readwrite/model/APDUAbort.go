@@ -40,11 +40,12 @@ type APDUAbort struct {
 
 // The corresponding interface
 type IAPDUAbort interface {
-	// GetServer returns Server
+	IAPDU
+	// GetServer returns Server (property field)
 	GetServer() bool
-	// GetOriginalInvokeId returns OriginalInvokeId
+	// GetOriginalInvokeId returns OriginalInvokeId (property field)
 	GetOriginalInvokeId() uint8
-	// GetAbortReason returns AbortReason
+	// GetAbortReason returns AbortReason (property field)
 	GetAbortReason() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -99,22 +100,19 @@ func NewAPDUAbort(server bool, originalInvokeId uint8, abortReason uint8, apduLe
 }
 
 func CastAPDUAbort(structType interface{}) *APDUAbort {
-	castFunc := func(typ interface{}) *APDUAbort {
-		if casted, ok := typ.(APDUAbort); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*APDUAbort); ok {
-			return casted
-		}
-		if casted, ok := typ.(APDU); ok {
-			return CastAPDUAbort(casted.Child)
-		}
-		if casted, ok := typ.(*APDU); ok {
-			return CastAPDUAbort(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(APDUAbort); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*APDUAbort); ok {
+		return casted
+	}
+	if casted, ok := structType.(APDU); ok {
+		return CastAPDUAbort(casted.Child)
+	}
+	if casted, ok := structType.(*APDU); ok {
+		return CastAPDUAbort(casted.Child)
+	}
+	return nil
 }
 
 func (m *APDUAbort) GetTypeName() string {
@@ -252,6 +250,8 @@ func (m *APDUAbort) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

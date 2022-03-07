@@ -40,13 +40,14 @@ type ApduDataExtPropertyValueRead struct {
 
 // The corresponding interface
 type IApduDataExtPropertyValueRead interface {
-	// GetObjectIndex returns ObjectIndex
+	IApduDataExt
+	// GetObjectIndex returns ObjectIndex (property field)
 	GetObjectIndex() uint8
-	// GetPropertyId returns PropertyId
+	// GetPropertyId returns PropertyId (property field)
 	GetPropertyId() uint8
-	// GetCount returns Count
+	// GetCount returns Count (property field)
 	GetCount() uint8
-	// GetIndex returns Index
+	// GetIndex returns Index (property field)
 	GetIndex() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -106,22 +107,19 @@ func NewApduDataExtPropertyValueRead(objectIndex uint8, propertyId uint8, count 
 }
 
 func CastApduDataExtPropertyValueRead(structType interface{}) *ApduDataExtPropertyValueRead {
-	castFunc := func(typ interface{}) *ApduDataExtPropertyValueRead {
-		if casted, ok := typ.(ApduDataExtPropertyValueRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtPropertyValueRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtPropertyValueRead(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtPropertyValueRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtPropertyValueRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtPropertyValueRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtPropertyValueRead(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtPropertyValueRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtPropertyValueRead) GetTypeName() string {
@@ -252,6 +250,8 @@ func (m *ApduDataExtPropertyValueRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

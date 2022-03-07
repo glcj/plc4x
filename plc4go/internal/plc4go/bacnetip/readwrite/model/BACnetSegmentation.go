@@ -33,15 +33,15 @@ type BACnetSegmentation struct {
 
 // The corresponding interface
 type IBACnetSegmentation interface {
-	// GetRawData returns RawData
+	// GetRawData returns RawData (property field)
 	GetRawData() *BACnetApplicationTagEnumerated
-	// GetIsSegmentedBoth returns IsSegmentedBoth
+	// GetIsSegmentedBoth returns IsSegmentedBoth (virtual field)
 	GetIsSegmentedBoth() bool
-	// GetIsSegmentedTransmit returns IsSegmentedTransmit
+	// GetIsSegmentedTransmit returns IsSegmentedTransmit (virtual field)
 	GetIsSegmentedTransmit() bool
-	// GetIsSegmentedReceive returns IsSegmentedReceive
+	// GetIsSegmentedReceive returns IsSegmentedReceive (virtual field)
 	GetIsSegmentedReceive() bool
-	// GetIsNoSegmentation returns IsNoSegmentation
+	// GetIsNoSegmentation returns IsNoSegmentation (virtual field)
 	GetIsNoSegmentation() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -83,16 +83,13 @@ func NewBACnetSegmentation(rawData *BACnetApplicationTagEnumerated) *BACnetSegme
 }
 
 func CastBACnetSegmentation(structType interface{}) *BACnetSegmentation {
-	castFunc := func(typ interface{}) *BACnetSegmentation {
-		if casted, ok := typ.(BACnetSegmentation); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetSegmentation); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetSegmentation); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetSegmentation); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetSegmentation) GetTypeName() string {
@@ -216,6 +213,8 @@ func (m *BACnetSegmentation) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

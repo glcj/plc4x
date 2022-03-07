@@ -35,6 +35,7 @@ type BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple interface {
+	IBACnetConfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewBACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple(len uint16) *B
 }
 
 func CastBACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple(structType interface{}) *BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple) String() str
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,21 +34,22 @@ type MonitoredSALShortFormBasicMode struct {
 	BridgeCount   *BridgeCount
 	NetworkNumber *NetworkNumber
 	NoCounts      *byte
-	Application   *Application
+	Application   ApplicationIdContainer
 }
 
 // The corresponding interface
 type IMonitoredSALShortFormBasicMode interface {
-	// GetCounts returns Counts
+	IMonitoredSAL
+	// GetCounts returns Counts (property field)
 	GetCounts() byte
-	// GetBridgeCount returns BridgeCount
+	// GetBridgeCount returns BridgeCount (property field)
 	GetBridgeCount() *BridgeCount
-	// GetNetworkNumber returns NetworkNumber
+	// GetNetworkNumber returns NetworkNumber (property field)
 	GetNetworkNumber() *NetworkNumber
-	// GetNoCounts returns NoCounts
+	// GetNoCounts returns NoCounts (property field)
 	GetNoCounts() *byte
-	// GetApplication returns Application
-	GetApplication() *Application
+	// GetApplication returns Application (property field)
+	GetApplication() ApplicationIdContainer
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -85,7 +86,7 @@ func (m *MonitoredSALShortFormBasicMode) GetNoCounts() *byte {
 	return m.NoCounts
 }
 
-func (m *MonitoredSALShortFormBasicMode) GetApplication() *Application {
+func (m *MonitoredSALShortFormBasicMode) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
 
@@ -94,7 +95,7 @@ func (m *MonitoredSALShortFormBasicMode) GetApplication() *Application {
 ///////////////////////////////////////////////////////////
 
 // NewMonitoredSALShortFormBasicMode factory function for MonitoredSALShortFormBasicMode
-func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount *BridgeCount, networkNumber *NetworkNumber, noCounts *byte, application *Application, salType byte, salData *SALData) *MonitoredSAL {
+func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount *BridgeCount, networkNumber *NetworkNumber, noCounts *byte, application ApplicationIdContainer, salType byte, salData *SALData) *MonitoredSAL {
 	child := &MonitoredSALShortFormBasicMode{
 		Counts:        counts,
 		BridgeCount:   bridgeCount,
@@ -108,22 +109,19 @@ func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount *BridgeCount, ne
 }
 
 func CastMonitoredSALShortFormBasicMode(structType interface{}) *MonitoredSALShortFormBasicMode {
-	castFunc := func(typ interface{}) *MonitoredSALShortFormBasicMode {
-		if casted, ok := typ.(MonitoredSALShortFormBasicMode); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MonitoredSALShortFormBasicMode); ok {
-			return casted
-		}
-		if casted, ok := typ.(MonitoredSAL); ok {
-			return CastMonitoredSALShortFormBasicMode(casted.Child)
-		}
-		if casted, ok := typ.(*MonitoredSAL); ok {
-			return CastMonitoredSALShortFormBasicMode(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MonitoredSALShortFormBasicMode); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MonitoredSALShortFormBasicMode); ok {
+		return casted
+	}
+	if casted, ok := structType.(MonitoredSAL); ok {
+		return CastMonitoredSALShortFormBasicMode(casted.Child)
+	}
+	if casted, ok := structType.(*MonitoredSAL); ok {
+		return CastMonitoredSALShortFormBasicMode(casted.Child)
+	}
+	return nil
 }
 
 func (m *MonitoredSALShortFormBasicMode) GetTypeName() string {
@@ -153,7 +151,7 @@ func (m *MonitoredSALShortFormBasicMode) GetLengthInBitsConditional(lastItem boo
 	}
 
 	// Simple field (application)
-	lengthInBits += m.Application.GetLengthInBits()
+	lengthInBits += 8
 
 	return lengthInBits
 }
@@ -234,11 +232,11 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (*Monitore
 	if pullErr := readBuffer.PullContext("application"); pullErr != nil {
 		return nil, pullErr
 	}
-	_application, _applicationErr := ApplicationParse(readBuffer)
+	_application, _applicationErr := ApplicationIdContainerParse(readBuffer)
 	if _applicationErr != nil {
 		return nil, errors.Wrap(_applicationErr, "Error parsing 'application' field")
 	}
-	application := CastApplication(_application)
+	application := _application
 	if closeErr := readBuffer.CloseContext("application"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -253,7 +251,7 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (*Monitore
 		BridgeCount:   CastBridgeCount(bridgeCount),
 		NetworkNumber: CastNetworkNumber(networkNumber),
 		NoCounts:      noCounts,
-		Application:   CastApplication(application),
+		Application:   application,
 		MonitoredSAL:  &MonitoredSAL{},
 	}
 	_child.MonitoredSAL.Child = _child
@@ -333,6 +331,8 @@ func (m *MonitoredSALShortFormBasicMode) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

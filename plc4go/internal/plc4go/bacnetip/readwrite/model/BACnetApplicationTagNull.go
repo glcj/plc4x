@@ -32,6 +32,7 @@ type BACnetApplicationTagNull struct {
 
 // The corresponding interface
 type IBACnetApplicationTagNull interface {
+	IBACnetApplicationTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -43,13 +44,6 @@ type IBACnetApplicationTagNull interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetApplicationTagNull) ActualTagNumber() uint8 {
-	return 0x0
-}
-
-func (m *BACnetApplicationTagNull) GetActualTagNumber() uint8 {
-	return 0x0
-}
 
 func (m *BACnetApplicationTagNull) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
@@ -73,22 +67,19 @@ func NewBACnetApplicationTagNull(header *BACnetTagHeader) *BACnetApplicationTag 
 }
 
 func CastBACnetApplicationTagNull(structType interface{}) *BACnetApplicationTagNull {
-	castFunc := func(typ interface{}) *BACnetApplicationTagNull {
-		if casted, ok := typ.(BACnetApplicationTagNull); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetApplicationTagNull); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagNull(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetApplicationTag); ok {
-			return CastBACnetApplicationTagNull(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetApplicationTagNull); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetApplicationTagNull); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagNull(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetApplicationTag); ok {
+		return CastBACnetApplicationTagNull(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetApplicationTagNull) GetTypeName() string {
@@ -147,6 +138,8 @@ func (m *BACnetApplicationTagNull) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

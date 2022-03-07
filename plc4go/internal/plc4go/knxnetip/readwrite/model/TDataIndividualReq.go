@@ -35,6 +35,7 @@ type TDataIndividualReq struct {
 
 // The corresponding interface
 type ITDataIndividualReq interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewTDataIndividualReq(size uint16) *CEMI {
 }
 
 func CastTDataIndividualReq(structType interface{}) *TDataIndividualReq {
-	castFunc := func(typ interface{}) *TDataIndividualReq {
-		if casted, ok := typ.(TDataIndividualReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*TDataIndividualReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastTDataIndividualReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastTDataIndividualReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(TDataIndividualReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*TDataIndividualReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastTDataIndividualReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastTDataIndividualReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *TDataIndividualReq) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *TDataIndividualReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

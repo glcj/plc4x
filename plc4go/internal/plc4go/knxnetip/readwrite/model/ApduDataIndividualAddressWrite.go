@@ -35,6 +35,7 @@ type ApduDataIndividualAddressWrite struct {
 
 // The corresponding interface
 type IApduDataIndividualAddressWrite interface {
+	IApduData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataIndividualAddressWrite(dataLength uint8) *ApduData {
 }
 
 func CastApduDataIndividualAddressWrite(structType interface{}) *ApduDataIndividualAddressWrite {
-	castFunc := func(typ interface{}) *ApduDataIndividualAddressWrite {
-		if casted, ok := typ.(ApduDataIndividualAddressWrite); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataIndividualAddressWrite); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduData); ok {
-			return CastApduDataIndividualAddressWrite(casted.Child)
-		}
-		if casted, ok := typ.(*ApduData); ok {
-			return CastApduDataIndividualAddressWrite(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataIndividualAddressWrite); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataIndividualAddressWrite); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduData); ok {
+		return CastApduDataIndividualAddressWrite(casted.Child)
+	}
+	if casted, ok := structType.(*ApduData); ok {
+		return CastApduDataIndividualAddressWrite(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataIndividualAddressWrite) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataIndividualAddressWrite) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

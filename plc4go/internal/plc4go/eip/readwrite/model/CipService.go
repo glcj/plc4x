@@ -36,8 +36,8 @@ type CipService struct {
 
 // The corresponding interface
 type ICipService interface {
-	// Service returns Service
-	Service() uint8
+	// GetService returns Service (discriminator field)
+	GetService() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,16 +72,13 @@ func NewCipService(serviceLen uint16) *CipService {
 }
 
 func CastCipService(structType interface{}) *CipService {
-	castFunc := func(typ interface{}) *CipService {
-		if casted, ok := typ.(CipService); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CipService); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CipService); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CipService); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CipService) GetTypeName() string {
@@ -166,7 +163,7 @@ func (m *CipService) SerializeParent(writeBuffer utils.WriteBuffer, child ICipSe
 	}
 
 	// Discriminator Field (service) (Used as input to a switch field)
-	service := uint8(child.Service())
+	service := uint8(child.GetService())
 	_serviceErr := writeBuffer.WriteUint8("service", 8, (service))
 
 	if _serviceErr != nil {
@@ -189,6 +186,8 @@ func (m *CipService) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

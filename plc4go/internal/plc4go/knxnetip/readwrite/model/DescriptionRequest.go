@@ -34,7 +34,8 @@ type DescriptionRequest struct {
 
 // The corresponding interface
 type IDescriptionRequest interface {
-	// GetHpaiControlEndpoint returns HpaiControlEndpoint
+	IKnxNetIpMessage
+	// GetHpaiControlEndpoint returns HpaiControlEndpoint (property field)
 	GetHpaiControlEndpoint() *HPAIControlEndpoint
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewDescriptionRequest(hpaiControlEndpoint *HPAIControlEndpoint) *KnxNetIpMe
 }
 
 func CastDescriptionRequest(structType interface{}) *DescriptionRequest {
-	castFunc := func(typ interface{}) *DescriptionRequest {
-		if casted, ok := typ.(DescriptionRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DescriptionRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastDescriptionRequest(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastDescriptionRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DescriptionRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DescriptionRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastDescriptionRequest(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastDescriptionRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *DescriptionRequest) GetTypeName() string {
@@ -182,6 +180,8 @@ func (m *DescriptionRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

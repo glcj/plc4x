@@ -36,15 +36,13 @@ type BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord interface {
-	// PeekedTagNumber returns PeekedTagNumber
-	PeekedTagNumber() uint8
-	// GetPeekedTagHeader returns PeekedTagHeader
+	// GetPeekedTagHeader returns PeekedTagHeader (property field)
 	GetPeekedTagHeader() *BACnetTagHeader
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
-	// GetPeekedTagNumber returns PeekedTagNumber
+	// GetPeekedTagNumber returns PeekedTagNumber (virtual field)
 	GetPeekedTagNumber() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -94,16 +92,13 @@ func NewBACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord(peekedTagHeade
 }
 
 func CastBACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord(structType interface{}) *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord) GetTypeName() string {
@@ -260,6 +255,8 @@ func (m *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord) String() str
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -34,7 +34,8 @@ type SysexCommandPinStateQuery struct {
 
 // The corresponding interface
 type ISysexCommandPinStateQuery interface {
-	// GetPin returns Pin
+	ISysexCommand
+	// GetPin returns Pin (property field)
 	GetPin() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewSysexCommandPinStateQuery(pin uint8) *SysexCommand {
 }
 
 func CastSysexCommandPinStateQuery(structType interface{}) *SysexCommandPinStateQuery {
-	castFunc := func(typ interface{}) *SysexCommandPinStateQuery {
-		if casted, ok := typ.(SysexCommandPinStateQuery); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandPinStateQuery); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandPinStateQuery(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandPinStateQuery(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandPinStateQuery); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandPinStateQuery); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandPinStateQuery(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandPinStateQuery(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandPinStateQuery) GetTypeName() string {
@@ -179,6 +177,8 @@ func (m *SysexCommandPinStateQuery) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

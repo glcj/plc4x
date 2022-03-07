@@ -41,15 +41,16 @@ type MPropReadReq struct {
 
 // The corresponding interface
 type IMPropReadReq interface {
-	// GetInterfaceObjectType returns InterfaceObjectType
+	ICEMI
+	// GetInterfaceObjectType returns InterfaceObjectType (property field)
 	GetInterfaceObjectType() uint16
-	// GetObjectInstance returns ObjectInstance
+	// GetObjectInstance returns ObjectInstance (property field)
 	GetObjectInstance() uint8
-	// GetPropertyId returns PropertyId
+	// GetPropertyId returns PropertyId (property field)
 	GetPropertyId() uint8
-	// GetNumberOfElements returns NumberOfElements
+	// GetNumberOfElements returns NumberOfElements (property field)
 	GetNumberOfElements() uint8
-	// GetStartIndex returns StartIndex
+	// GetStartIndex returns StartIndex (property field)
 	GetStartIndex() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -114,22 +115,19 @@ func NewMPropReadReq(interfaceObjectType uint16, objectInstance uint8, propertyI
 }
 
 func CastMPropReadReq(structType interface{}) *MPropReadReq {
-	castFunc := func(typ interface{}) *MPropReadReq {
-		if casted, ok := typ.(MPropReadReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MPropReadReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastMPropReadReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastMPropReadReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MPropReadReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MPropReadReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastMPropReadReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastMPropReadReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *MPropReadReq) GetTypeName() string {
@@ -278,6 +276,8 @@ func (m *MPropReadReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

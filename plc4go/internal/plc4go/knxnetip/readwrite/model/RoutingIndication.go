@@ -32,6 +32,7 @@ type RoutingIndication struct {
 
 // The corresponding interface
 type IRoutingIndication interface {
+	IKnxNetIpMessage
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewRoutingIndication() *KnxNetIpMessage {
 }
 
 func CastRoutingIndication(structType interface{}) *RoutingIndication {
-	castFunc := func(typ interface{}) *RoutingIndication {
-		if casted, ok := typ.(RoutingIndication); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*RoutingIndication); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastRoutingIndication(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastRoutingIndication(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(RoutingIndication); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*RoutingIndication); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastRoutingIndication(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastRoutingIndication(casted.Child)
+	}
+	return nil
 }
 
 func (m *RoutingIndication) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *RoutingIndication) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

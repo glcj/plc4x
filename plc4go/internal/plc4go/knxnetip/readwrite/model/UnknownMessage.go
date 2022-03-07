@@ -37,7 +37,8 @@ type UnknownMessage struct {
 
 // The corresponding interface
 type IUnknownMessage interface {
-	// GetUnknownData returns UnknownData
+	IKnxNetIpMessage
+	// GetUnknownData returns UnknownData (property field)
 	GetUnknownData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewUnknownMessage(unknownData []byte, totalLength uint16) *KnxNetIpMessage 
 }
 
 func CastUnknownMessage(structType interface{}) *UnknownMessage {
-	castFunc := func(typ interface{}) *UnknownMessage {
-		if casted, ok := typ.(UnknownMessage); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*UnknownMessage); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastUnknownMessage(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastUnknownMessage(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(UnknownMessage); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*UnknownMessage); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastUnknownMessage(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastUnknownMessage(casted.Child)
+	}
+	return nil
 }
 
 func (m *UnknownMessage) GetTypeName() string {
@@ -177,6 +175,8 @@ func (m *UnknownMessage) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

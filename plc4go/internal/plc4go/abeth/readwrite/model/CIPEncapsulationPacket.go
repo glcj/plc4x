@@ -38,15 +38,15 @@ type CIPEncapsulationPacket struct {
 
 // The corresponding interface
 type ICIPEncapsulationPacket interface {
-	// CommandType returns CommandType
-	CommandType() uint16
-	// GetSessionHandle returns SessionHandle
+	// GetCommandType returns CommandType (discriminator field)
+	GetCommandType() uint16
+	// GetSessionHandle returns SessionHandle (property field)
 	GetSessionHandle() uint32
-	// GetStatus returns Status
+	// GetStatus returns Status (property field)
 	GetStatus() uint32
-	// GetSenderContext returns SenderContext
+	// GetSenderContext returns SenderContext (property field)
 	GetSenderContext() []uint8
-	// GetOptions returns Options
+	// GetOptions returns Options (property field)
 	GetOptions() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -97,16 +97,13 @@ func NewCIPEncapsulationPacket(sessionHandle uint32, status uint32, senderContex
 }
 
 func CastCIPEncapsulationPacket(structType interface{}) *CIPEncapsulationPacket {
-	castFunc := func(typ interface{}) *CIPEncapsulationPacket {
-		if casted, ok := typ.(CIPEncapsulationPacket); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CIPEncapsulationPacket); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CIPEncapsulationPacket); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CIPEncapsulationPacket); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CIPEncapsulationPacket) GetTypeName() string {
@@ -266,7 +263,7 @@ func (m *CIPEncapsulationPacket) SerializeParent(writeBuffer utils.WriteBuffer, 
 	}
 
 	// Discriminator Field (commandType) (Used as input to a switch field)
-	commandType := uint16(child.CommandType())
+	commandType := uint16(child.GetCommandType())
 	_commandTypeErr := writeBuffer.WriteUint16("commandType", 16, (commandType))
 
 	if _commandTypeErr != nil {
@@ -341,6 +338,8 @@ func (m *CIPEncapsulationPacket) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

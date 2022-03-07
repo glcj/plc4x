@@ -37,7 +37,8 @@ type BVLCWriteBroadcastDistributionTable struct {
 
 // The corresponding interface
 type IBVLCWriteBroadcastDistributionTable interface {
-	// GetTable returns Table
+	IBVLC
+	// GetTable returns Table (property field)
 	GetTable() []*BVLCWriteBroadcastDistributionTableEntry
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewBVLCWriteBroadcastDistributionTable(table []*BVLCWriteBroadcastDistribut
 }
 
 func CastBVLCWriteBroadcastDistributionTable(structType interface{}) *BVLCWriteBroadcastDistributionTable {
-	castFunc := func(typ interface{}) *BVLCWriteBroadcastDistributionTable {
-		if casted, ok := typ.(BVLCWriteBroadcastDistributionTable); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BVLCWriteBroadcastDistributionTable); ok {
-			return casted
-		}
-		if casted, ok := typ.(BVLC); ok {
-			return CastBVLCWriteBroadcastDistributionTable(casted.Child)
-		}
-		if casted, ok := typ.(*BVLC); ok {
-			return CastBVLCWriteBroadcastDistributionTable(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BVLCWriteBroadcastDistributionTable); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BVLCWriteBroadcastDistributionTable); ok {
+		return casted
+	}
+	if casted, ok := structType.(BVLC); ok {
+		return CastBVLCWriteBroadcastDistributionTable(casted.Child)
+	}
+	if casted, ok := structType.(*BVLC); ok {
+		return CastBVLCWriteBroadcastDistributionTable(casted.Child)
+	}
+	return nil
 }
 
 func (m *BVLCWriteBroadcastDistributionTable) GetTypeName() string {
@@ -201,6 +199,8 @@ func (m *BVLCWriteBroadcastDistributionTable) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

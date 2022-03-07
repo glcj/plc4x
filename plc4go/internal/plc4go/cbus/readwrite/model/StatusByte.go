@@ -36,13 +36,13 @@ type StatusByte struct {
 
 // The corresponding interface
 type IStatusByte interface {
-	// GetGav3 returns Gav3
+	// GetGav3 returns Gav3 (property field)
 	GetGav3() GAVState
-	// GetGav2 returns Gav2
+	// GetGav2 returns Gav2 (property field)
 	GetGav2() GAVState
-	// GetGav1 returns Gav1
+	// GetGav1 returns Gav1 (property field)
 	GetGav1() GAVState
-	// GetGav0 returns Gav0
+	// GetGav0 returns Gav0 (property field)
 	GetGav0() GAVState
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -81,16 +81,13 @@ func NewStatusByte(gav3 GAVState, gav2 GAVState, gav1 GAVState, gav0 GAVState) *
 }
 
 func CastStatusByte(structType interface{}) *StatusByte {
-	castFunc := func(typ interface{}) *StatusByte {
-		if casted, ok := typ.(StatusByte); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*StatusByte); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(StatusByte); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*StatusByte); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *StatusByte) GetTypeName() string {
@@ -254,6 +251,8 @@ func (m *StatusByte) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

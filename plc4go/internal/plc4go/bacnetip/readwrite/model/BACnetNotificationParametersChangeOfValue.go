@@ -41,13 +41,14 @@ type BACnetNotificationParametersChangeOfValue struct {
 
 // The corresponding interface
 type IBACnetNotificationParametersChangeOfValue interface {
-	// GetInnerOpeningTag returns InnerOpeningTag
+	IBACnetNotificationParameters
+	// GetInnerOpeningTag returns InnerOpeningTag (property field)
 	GetInnerOpeningTag() *BACnetOpeningTag
-	// GetNewValue returns NewValue
+	// GetNewValue returns NewValue (property field)
 	GetNewValue() *BACnetNotificationParametersChangeOfValueNewValue
-	// GetStatusFlags returns StatusFlags
+	// GetStatusFlags returns StatusFlags (property field)
 	GetStatusFlags() *BACnetStatusFlags
-	// GetInnerClosingTag returns InnerClosingTag
+	// GetInnerClosingTag returns InnerClosingTag (property field)
 	GetInnerClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,13 +61,6 @@ type IBACnetNotificationParametersChangeOfValue interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetNotificationParametersChangeOfValue) PeekedTagNumber() uint8 {
-	return uint8(2)
-}
-
-func (m *BACnetNotificationParametersChangeOfValue) GetPeekedTagNumber() uint8 {
-	return uint8(2)
-}
 
 func (m *BACnetNotificationParametersChangeOfValue) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetNotificationParameters.OpeningTag = openingTag
@@ -111,22 +105,19 @@ func NewBACnetNotificationParametersChangeOfValue(innerOpeningTag *BACnetOpening
 }
 
 func CastBACnetNotificationParametersChangeOfValue(structType interface{}) *BACnetNotificationParametersChangeOfValue {
-	castFunc := func(typ interface{}) *BACnetNotificationParametersChangeOfValue {
-		if casted, ok := typ.(BACnetNotificationParametersChangeOfValue); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetNotificationParametersChangeOfValue); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersChangeOfValue(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersChangeOfValue(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetNotificationParametersChangeOfValue); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetNotificationParametersChangeOfValue); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersChangeOfValue(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersChangeOfValue(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetNotificationParametersChangeOfValue) GetTypeName() string {
@@ -301,6 +292,8 @@ func (m *BACnetNotificationParametersChangeOfValue) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

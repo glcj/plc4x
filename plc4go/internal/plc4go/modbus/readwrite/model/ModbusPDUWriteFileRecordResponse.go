@@ -34,7 +34,8 @@ type ModbusPDUWriteFileRecordResponse struct {
 
 // The corresponding interface
 type IModbusPDUWriteFileRecordResponse interface {
-	// GetItems returns Items
+	IModbusPDU
+	// GetItems returns Items (property field)
 	GetItems() []*ModbusPDUWriteFileRecordResponseItem
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewModbusPDUWriteFileRecordResponse(items []*ModbusPDUWriteFileRecordRespon
 }
 
 func CastModbusPDUWriteFileRecordResponse(structType interface{}) *ModbusPDUWriteFileRecordResponse {
-	castFunc := func(typ interface{}) *ModbusPDUWriteFileRecordResponse {
-		if casted, ok := typ.(ModbusPDUWriteFileRecordResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUWriteFileRecordResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUWriteFileRecordResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUWriteFileRecordResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUWriteFileRecordResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUWriteFileRecordResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUWriteFileRecordResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUWriteFileRecordResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUWriteFileRecordResponse) GetTypeName() string {
@@ -238,6 +236,8 @@ func (m *ModbusPDUWriteFileRecordResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

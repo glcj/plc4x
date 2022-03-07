@@ -37,11 +37,12 @@ type LPollData struct {
 
 // The corresponding interface
 type ILPollData interface {
-	// GetSourceAddress returns SourceAddress
+	ILDataFrame
+	// GetSourceAddress returns SourceAddress (property field)
 	GetSourceAddress() *KnxAddress
-	// GetTargetAddress returns TargetAddress
+	// GetTargetAddress returns TargetAddress (property field)
 	GetTargetAddress() []byte
-	// GetNumberExpectedPollData returns NumberExpectedPollData
+	// GetNumberExpectedPollData returns NumberExpectedPollData (property field)
 	GetNumberExpectedPollData() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -110,22 +111,19 @@ func NewLPollData(sourceAddress *KnxAddress, targetAddress []byte, numberExpecte
 }
 
 func CastLPollData(structType interface{}) *LPollData {
-	castFunc := func(typ interface{}) *LPollData {
-		if casted, ok := typ.(LPollData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LPollData); ok {
-			return casted
-		}
-		if casted, ok := typ.(LDataFrame); ok {
-			return CastLPollData(casted.Child)
-		}
-		if casted, ok := typ.(*LDataFrame); ok {
-			return CastLPollData(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LPollData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LPollData); ok {
+		return casted
+	}
+	if casted, ok := structType.(LDataFrame); ok {
+		return CastLPollData(casted.Child)
+	}
+	if casted, ok := structType.(*LDataFrame); ok {
+		return CastLPollData(casted.Child)
+	}
+	return nil
 }
 
 func (m *LPollData) GetTypeName() string {
@@ -277,6 +275,8 @@ func (m *LPollData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

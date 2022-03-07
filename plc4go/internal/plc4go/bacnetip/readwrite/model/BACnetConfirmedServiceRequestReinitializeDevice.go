@@ -39,9 +39,10 @@ type BACnetConfirmedServiceRequestReinitializeDevice struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestReinitializeDevice interface {
-	// GetReinitializedStateOfDevice returns ReinitializedStateOfDevice
+	IBACnetConfirmedServiceRequest
+	// GetReinitializedStateOfDevice returns ReinitializedStateOfDevice (property field)
 	GetReinitializedStateOfDevice() *BACnetContextTagDeviceState
-	// GetPassword returns Password
+	// GetPassword returns Password (property field)
 	GetPassword() *BACnetContextTagCharacterString
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -92,22 +93,19 @@ func NewBACnetConfirmedServiceRequestReinitializeDevice(reinitializedStateOfDevi
 }
 
 func CastBACnetConfirmedServiceRequestReinitializeDevice(structType interface{}) *BACnetConfirmedServiceRequestReinitializeDevice {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestReinitializeDevice {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestReinitializeDevice); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestReinitializeDevice); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestReinitializeDevice(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestReinitializeDevice(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestReinitializeDevice); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestReinitializeDevice); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestReinitializeDevice(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestReinitializeDevice(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestReinitializeDevice) GetTypeName() string {
@@ -238,6 +236,8 @@ func (m *BACnetConfirmedServiceRequestReinitializeDevice) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,6 +35,7 @@ type ApduDataExtFileStreamInfoReport struct {
 
 // The corresponding interface
 type IApduDataExtFileStreamInfoReport interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtFileStreamInfoReport(length uint8) *ApduDataExt {
 }
 
 func CastApduDataExtFileStreamInfoReport(structType interface{}) *ApduDataExtFileStreamInfoReport {
-	castFunc := func(typ interface{}) *ApduDataExtFileStreamInfoReport {
-		if casted, ok := typ.(ApduDataExtFileStreamInfoReport); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtFileStreamInfoReport); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtFileStreamInfoReport(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtFileStreamInfoReport(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtFileStreamInfoReport); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtFileStreamInfoReport); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtFileStreamInfoReport(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtFileStreamInfoReport(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtFileStreamInfoReport) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtFileStreamInfoReport) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

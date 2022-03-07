@@ -35,6 +35,7 @@ type MResetReq struct {
 
 // The corresponding interface
 type IMResetReq interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewMResetReq(size uint16) *CEMI {
 }
 
 func CastMResetReq(structType interface{}) *MResetReq {
-	castFunc := func(typ interface{}) *MResetReq {
-		if casted, ok := typ.(MResetReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MResetReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastMResetReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastMResetReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MResetReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MResetReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastMResetReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastMResetReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *MResetReq) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *MResetReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

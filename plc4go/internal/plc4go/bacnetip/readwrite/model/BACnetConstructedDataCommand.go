@@ -40,11 +40,12 @@ type BACnetConstructedDataCommand struct {
 
 // The corresponding interface
 type IBACnetConstructedDataCommand interface {
-	// GetInnerOpeningTag returns InnerOpeningTag
+	IBACnetConstructedData
+	// GetInnerOpeningTag returns InnerOpeningTag (property field)
 	GetInnerOpeningTag() *BACnetOpeningTag
-	// GetAction returns Action
+	// GetAction returns Action (property field)
 	GetAction() []*BACnetActionCommand
-	// GetInnerClosingTag returns InnerClosingTag
+	// GetInnerClosingTag returns InnerClosingTag (property field)
 	GetInnerClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -63,14 +64,6 @@ func (m *BACnetConstructedDataCommand) ObjectType() BACnetObjectType {
 
 func (m *BACnetConstructedDataCommand) GetObjectType() BACnetObjectType {
 	return BACnetObjectType_COMMAND
-}
-
-func (m *BACnetConstructedDataCommand) PropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return 0
-}
-
-func (m *BACnetConstructedDataCommand) GetPropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return 0
 }
 
 func (m *BACnetConstructedDataCommand) InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
@@ -110,22 +103,19 @@ func NewBACnetConstructedDataCommand(innerOpeningTag *BACnetOpeningTag, action [
 }
 
 func CastBACnetConstructedDataCommand(structType interface{}) *BACnetConstructedDataCommand {
-	castFunc := func(typ interface{}) *BACnetConstructedDataCommand {
-		if casted, ok := typ.(BACnetConstructedDataCommand); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConstructedDataCommand); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConstructedData); ok {
-			return CastBACnetConstructedDataCommand(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConstructedData); ok {
-			return CastBACnetConstructedDataCommand(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConstructedDataCommand); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConstructedDataCommand); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConstructedData); ok {
+		return CastBACnetConstructedDataCommand(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConstructedData); ok {
+		return CastBACnetConstructedDataCommand(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConstructedDataCommand) GetTypeName() string {
@@ -286,6 +276,8 @@ func (m *BACnetConstructedDataCommand) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

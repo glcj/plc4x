@@ -33,7 +33,7 @@ type NetworkNumber struct {
 
 // The corresponding interface
 type INetworkNumber interface {
-	// GetNumber returns Number
+	// GetNumber returns Number (property field)
 	GetNumber() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewNetworkNumber(number uint8) *NetworkNumber {
 }
 
 func CastNetworkNumber(structType interface{}) *NetworkNumber {
-	castFunc := func(typ interface{}) *NetworkNumber {
-		if casted, ok := typ.(NetworkNumber); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NetworkNumber); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(NetworkNumber); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NetworkNumber); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *NetworkNumber) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *NetworkNumber) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

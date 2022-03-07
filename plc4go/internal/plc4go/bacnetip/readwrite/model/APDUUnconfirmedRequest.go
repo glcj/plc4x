@@ -38,7 +38,8 @@ type APDUUnconfirmedRequest struct {
 
 // The corresponding interface
 type IAPDUUnconfirmedRequest interface {
-	// GetServiceRequest returns ServiceRequest
+	IAPDU
+	// GetServiceRequest returns ServiceRequest (property field)
 	GetServiceRequest() *BACnetUnconfirmedServiceRequest
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -83,22 +84,19 @@ func NewAPDUUnconfirmedRequest(serviceRequest *BACnetUnconfirmedServiceRequest, 
 }
 
 func CastAPDUUnconfirmedRequest(structType interface{}) *APDUUnconfirmedRequest {
-	castFunc := func(typ interface{}) *APDUUnconfirmedRequest {
-		if casted, ok := typ.(APDUUnconfirmedRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*APDUUnconfirmedRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(APDU); ok {
-			return CastAPDUUnconfirmedRequest(casted.Child)
-		}
-		if casted, ok := typ.(*APDU); ok {
-			return CastAPDUUnconfirmedRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(APDUUnconfirmedRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*APDUUnconfirmedRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(APDU); ok {
+		return CastAPDUUnconfirmedRequest(casted.Child)
+	}
+	if casted, ok := structType.(*APDU); ok {
+		return CastAPDUUnconfirmedRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *APDUUnconfirmedRequest) GetTypeName() string {
@@ -211,6 +209,8 @@ func (m *APDUUnconfirmedRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -39,17 +39,18 @@ type LDataExtended struct {
 
 // The corresponding interface
 type ILDataExtended interface {
-	// GetGroupAddress returns GroupAddress
+	ILDataFrame
+	// GetGroupAddress returns GroupAddress (property field)
 	GetGroupAddress() bool
-	// GetHopCount returns HopCount
+	// GetHopCount returns HopCount (property field)
 	GetHopCount() uint8
-	// GetExtendedFrameFormat returns ExtendedFrameFormat
+	// GetExtendedFrameFormat returns ExtendedFrameFormat (property field)
 	GetExtendedFrameFormat() uint8
-	// GetSourceAddress returns SourceAddress
+	// GetSourceAddress returns SourceAddress (property field)
 	GetSourceAddress() *KnxAddress
-	// GetDestinationAddress returns DestinationAddress
+	// GetDestinationAddress returns DestinationAddress (property field)
 	GetDestinationAddress() []byte
-	// GetApdu returns Apdu
+	// GetApdu returns Apdu (property field)
 	GetApdu() *Apdu
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -133,22 +134,19 @@ func NewLDataExtended(groupAddress bool, hopCount uint8, extendedFrameFormat uin
 }
 
 func CastLDataExtended(structType interface{}) *LDataExtended {
-	castFunc := func(typ interface{}) *LDataExtended {
-		if casted, ok := typ.(LDataExtended); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LDataExtended); ok {
-			return casted
-		}
-		if casted, ok := typ.(LDataFrame); ok {
-			return CastLDataExtended(casted.Child)
-		}
-		if casted, ok := typ.(*LDataFrame); ok {
-			return CastLDataExtended(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LDataExtended); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LDataExtended); ok {
+		return casted
+	}
+	if casted, ok := structType.(LDataFrame); ok {
+		return CastLDataExtended(casted.Child)
+	}
+	if casted, ok := structType.(*LDataFrame); ok {
+		return CastLDataExtended(casted.Child)
+	}
+	return nil
 }
 
 func (m *LDataExtended) GetTypeName() string {
@@ -357,6 +355,8 @@ func (m *LDataExtended) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

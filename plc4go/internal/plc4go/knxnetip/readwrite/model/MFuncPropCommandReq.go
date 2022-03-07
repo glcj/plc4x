@@ -35,6 +35,7 @@ type MFuncPropCommandReq struct {
 
 // The corresponding interface
 type IMFuncPropCommandReq interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewMFuncPropCommandReq(size uint16) *CEMI {
 }
 
 func CastMFuncPropCommandReq(structType interface{}) *MFuncPropCommandReq {
-	castFunc := func(typ interface{}) *MFuncPropCommandReq {
-		if casted, ok := typ.(MFuncPropCommandReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MFuncPropCommandReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastMFuncPropCommandReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastMFuncPropCommandReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MFuncPropCommandReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MFuncPropCommandReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastMFuncPropCommandReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastMFuncPropCommandReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *MFuncPropCommandReq) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *MFuncPropCommandReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

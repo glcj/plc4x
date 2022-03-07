@@ -33,8 +33,8 @@ type AdsMultiRequestItem struct {
 
 // The corresponding interface
 type IAdsMultiRequestItem interface {
-	// IndexGroup returns IndexGroup
-	IndexGroup() uint32
+	// GetIndexGroup returns IndexGroup (discriminator field)
+	GetIndexGroup() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -69,16 +69,13 @@ func NewAdsMultiRequestItem() *AdsMultiRequestItem {
 }
 
 func CastAdsMultiRequestItem(structType interface{}) *AdsMultiRequestItem {
-	castFunc := func(typ interface{}) *AdsMultiRequestItem {
-		if casted, ok := typ.(AdsMultiRequestItem); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsMultiRequestItem); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AdsMultiRequestItem); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsMultiRequestItem); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AdsMultiRequestItem) GetTypeName() string {
@@ -162,6 +159,8 @@ func (m *AdsMultiRequestItem) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

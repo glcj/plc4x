@@ -38,9 +38,10 @@ type COTPPacketDisconnectResponse struct {
 
 // The corresponding interface
 type ICOTPPacketDisconnectResponse interface {
-	// GetDestinationReference returns DestinationReference
+	ICOTPPacket
+	// GetDestinationReference returns DestinationReference (property field)
 	GetDestinationReference() uint16
-	// GetSourceReference returns SourceReference
+	// GetSourceReference returns SourceReference (property field)
 	GetSourceReference() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -93,22 +94,19 @@ func NewCOTPPacketDisconnectResponse(destinationReference uint16, sourceReferenc
 }
 
 func CastCOTPPacketDisconnectResponse(structType interface{}) *COTPPacketDisconnectResponse {
-	castFunc := func(typ interface{}) *COTPPacketDisconnectResponse {
-		if casted, ok := typ.(COTPPacketDisconnectResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPPacketDisconnectResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(COTPPacket); ok {
-			return CastCOTPPacketDisconnectResponse(casted.Child)
-		}
-		if casted, ok := typ.(*COTPPacket); ok {
-			return CastCOTPPacketDisconnectResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(COTPPacketDisconnectResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPPacketDisconnectResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(COTPPacket); ok {
+		return CastCOTPPacketDisconnectResponse(casted.Child)
+	}
+	if casted, ok := structType.(*COTPPacket); ok {
+		return CastCOTPPacketDisconnectResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *COTPPacketDisconnectResponse) GetTypeName() string {
@@ -203,6 +201,8 @@ func (m *COTPPacketDisconnectResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

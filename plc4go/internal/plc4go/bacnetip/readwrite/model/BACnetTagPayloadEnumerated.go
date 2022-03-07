@@ -36,9 +36,9 @@ type BACnetTagPayloadEnumerated struct {
 
 // The corresponding interface
 type IBACnetTagPayloadEnumerated interface {
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
-	// GetActualValue returns ActualValue
+	// GetActualValue returns ActualValue (virtual field)
 	GetActualValue() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -68,16 +68,13 @@ func NewBACnetTagPayloadEnumerated(data []byte, actualLength uint32) *BACnetTagP
 }
 
 func CastBACnetTagPayloadEnumerated(structType interface{}) *BACnetTagPayloadEnumerated {
-	castFunc := func(typ interface{}) *BACnetTagPayloadEnumerated {
-		if casted, ok := typ.(BACnetTagPayloadEnumerated); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagPayloadEnumerated); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagPayloadEnumerated); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagPayloadEnumerated); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagPayloadEnumerated) GetTypeName() string {
@@ -160,6 +157,8 @@ func (m *BACnetTagPayloadEnumerated) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

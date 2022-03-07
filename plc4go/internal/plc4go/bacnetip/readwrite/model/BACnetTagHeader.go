@@ -39,29 +39,29 @@ type BACnetTagHeader struct {
 
 // The corresponding interface
 type IBACnetTagHeader interface {
-	// GetTagNumber returns TagNumber
+	// GetTagNumber returns TagNumber (property field)
 	GetTagNumber() uint8
-	// GetTagClass returns TagClass
+	// GetTagClass returns TagClass (property field)
 	GetTagClass() TagClass
-	// GetLengthValueType returns LengthValueType
+	// GetLengthValueType returns LengthValueType (property field)
 	GetLengthValueType() uint8
-	// GetExtTagNumber returns ExtTagNumber
+	// GetExtTagNumber returns ExtTagNumber (property field)
 	GetExtTagNumber() *uint8
-	// GetExtLength returns ExtLength
+	// GetExtLength returns ExtLength (property field)
 	GetExtLength() *uint8
-	// GetExtExtLength returns ExtExtLength
+	// GetExtExtLength returns ExtExtLength (property field)
 	GetExtExtLength() *uint16
-	// GetExtExtExtLength returns ExtExtExtLength
+	// GetExtExtExtLength returns ExtExtExtLength (property field)
 	GetExtExtExtLength() *uint32
-	// GetActualTagNumber returns ActualTagNumber
+	// GetActualTagNumber returns ActualTagNumber (virtual field)
 	GetActualTagNumber() uint8
-	// GetIsBoolean returns IsBoolean
+	// GetIsBoolean returns IsBoolean (virtual field)
 	GetIsBoolean() bool
-	// GetIsConstructed returns IsConstructed
+	// GetIsConstructed returns IsConstructed (virtual field)
 	GetIsConstructed() bool
-	// GetIsPrimitiveAndNotBoolean returns IsPrimitiveAndNotBoolean
+	// GetIsPrimitiveAndNotBoolean returns IsPrimitiveAndNotBoolean (virtual field)
 	GetIsPrimitiveAndNotBoolean() bool
-	// GetActualLength returns ActualLength
+	// GetActualLength returns ActualLength (virtual field)
 	GetActualLength() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -175,16 +175,13 @@ func NewBACnetTagHeader(tagNumber uint8, tagClass TagClass, lengthValueType uint
 }
 
 func CastBACnetTagHeader(structType interface{}) *BACnetTagHeader {
-	castFunc := func(typ interface{}) *BACnetTagHeader {
-		if casted, ok := typ.(BACnetTagHeader); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagHeader); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagHeader); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagHeader); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagHeader) GetTypeName() string {
@@ -457,6 +454,8 @@ func (m *BACnetTagHeader) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -41,21 +41,21 @@ type GroupObjectDescriptorRealisationType1 struct {
 
 // The corresponding interface
 type IGroupObjectDescriptorRealisationType1 interface {
-	// GetDataPointer returns DataPointer
+	// GetDataPointer returns DataPointer (property field)
 	GetDataPointer() uint8
-	// GetTransmitEnable returns TransmitEnable
+	// GetTransmitEnable returns TransmitEnable (property field)
 	GetTransmitEnable() bool
-	// GetSegmentSelectorEnable returns SegmentSelectorEnable
+	// GetSegmentSelectorEnable returns SegmentSelectorEnable (property field)
 	GetSegmentSelectorEnable() bool
-	// GetWriteEnable returns WriteEnable
+	// GetWriteEnable returns WriteEnable (property field)
 	GetWriteEnable() bool
-	// GetReadEnable returns ReadEnable
+	// GetReadEnable returns ReadEnable (property field)
 	GetReadEnable() bool
-	// GetCommunicationEnable returns CommunicationEnable
+	// GetCommunicationEnable returns CommunicationEnable (property field)
 	GetCommunicationEnable() bool
-	// GetPriority returns Priority
+	// GetPriority returns Priority (property field)
 	GetPriority() CEMIPriority
-	// GetValueType returns ValueType
+	// GetValueType returns ValueType (property field)
 	GetValueType() ComObjectValueType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -110,16 +110,13 @@ func NewGroupObjectDescriptorRealisationType1(dataPointer uint8, transmitEnable 
 }
 
 func CastGroupObjectDescriptorRealisationType1(structType interface{}) *GroupObjectDescriptorRealisationType1 {
-	castFunc := func(typ interface{}) *GroupObjectDescriptorRealisationType1 {
-		if casted, ok := typ.(GroupObjectDescriptorRealisationType1); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*GroupObjectDescriptorRealisationType1); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(GroupObjectDescriptorRealisationType1); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*GroupObjectDescriptorRealisationType1); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *GroupObjectDescriptorRealisationType1) GetTypeName() string {
@@ -354,6 +351,8 @@ func (m *GroupObjectDescriptorRealisationType1) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

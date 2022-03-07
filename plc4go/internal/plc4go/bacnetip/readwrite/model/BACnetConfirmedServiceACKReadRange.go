@@ -32,6 +32,7 @@ type BACnetConfirmedServiceACKReadRange struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceACKReadRange interface {
+	IBACnetConfirmedServiceACK
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewBACnetConfirmedServiceACKReadRange() *BACnetConfirmedServiceACK {
 }
 
 func CastBACnetConfirmedServiceACKReadRange(structType interface{}) *BACnetConfirmedServiceACKReadRange {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceACKReadRange {
-		if casted, ok := typ.(BACnetConfirmedServiceACKReadRange); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACKReadRange); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKReadRange(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKReadRange(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceACKReadRange); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceACKReadRange); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKReadRange(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKReadRange(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceACKReadRange) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *BACnetConfirmedServiceACKReadRange) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

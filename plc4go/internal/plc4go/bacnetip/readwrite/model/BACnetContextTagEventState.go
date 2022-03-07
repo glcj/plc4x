@@ -40,11 +40,12 @@ type BACnetContextTagEventState struct {
 
 // The corresponding interface
 type IBACnetContextTagEventState interface {
-	// GetEventState returns EventState
+	IBACnetContextTag
+	// GetEventState returns EventState (property field)
 	GetEventState() BACnetEventState
-	// GetProprietaryValue returns ProprietaryValue
+	// GetProprietaryValue returns ProprietaryValue (property field)
 	GetProprietaryValue() uint32
-	// GetIsProprietary returns IsProprietary
+	// GetIsProprietary returns IsProprietary (virtual field)
 	GetIsProprietary() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -99,22 +100,19 @@ func NewBACnetContextTagEventState(eventState BACnetEventState, proprietaryValue
 }
 
 func CastBACnetContextTagEventState(structType interface{}) *BACnetContextTagEventState {
-	castFunc := func(typ interface{}) *BACnetContextTagEventState {
-		if casted, ok := typ.(BACnetContextTagEventState); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagEventState); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagEventState(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagEventState(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagEventState); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagEventState); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagEventState(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagEventState(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagEventState) GetTypeName() string {
@@ -221,6 +219,8 @@ func (m *BACnetContextTagEventState) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

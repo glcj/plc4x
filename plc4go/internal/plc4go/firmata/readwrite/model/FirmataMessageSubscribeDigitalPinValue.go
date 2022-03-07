@@ -39,9 +39,10 @@ type FirmataMessageSubscribeDigitalPinValue struct {
 
 // The corresponding interface
 type IFirmataMessageSubscribeDigitalPinValue interface {
-	// GetPin returns Pin
+	IFirmataMessage
+	// GetPin returns Pin (property field)
 	GetPin() uint8
-	// GetEnable returns Enable
+	// GetEnable returns Enable (property field)
 	GetEnable() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -91,22 +92,19 @@ func NewFirmataMessageSubscribeDigitalPinValue(pin uint8, enable bool, response 
 }
 
 func CastFirmataMessageSubscribeDigitalPinValue(structType interface{}) *FirmataMessageSubscribeDigitalPinValue {
-	castFunc := func(typ interface{}) *FirmataMessageSubscribeDigitalPinValue {
-		if casted, ok := typ.(FirmataMessageSubscribeDigitalPinValue); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataMessageSubscribeDigitalPinValue); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataMessage); ok {
-			return CastFirmataMessageSubscribeDigitalPinValue(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataMessage); ok {
-			return CastFirmataMessageSubscribeDigitalPinValue(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataMessageSubscribeDigitalPinValue); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataMessageSubscribeDigitalPinValue); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataMessage); ok {
+		return CastFirmataMessageSubscribeDigitalPinValue(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataMessage); ok {
+		return CastFirmataMessageSubscribeDigitalPinValue(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataMessageSubscribeDigitalPinValue) GetTypeName() string {
@@ -226,6 +224,8 @@ func (m *FirmataMessageSubscribeDigitalPinValue) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

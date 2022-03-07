@@ -42,7 +42,7 @@ type CipExchange struct {
 
 // The corresponding interface
 type ICipExchange interface {
-	// GetService returns Service
+	// GetService returns Service (property field)
 	GetService() *CipService
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -69,16 +69,13 @@ func NewCipExchange(service *CipService, exchangeLen uint16) *CipExchange {
 }
 
 func CastCipExchange(structType interface{}) *CipExchange {
-	castFunc := func(typ interface{}) *CipExchange {
-		if casted, ok := typ.(CipExchange); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CipExchange); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CipExchange); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CipExchange); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CipExchange) GetTypeName() string {
@@ -229,6 +226,8 @@ func (m *CipExchange) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

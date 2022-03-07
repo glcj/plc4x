@@ -37,11 +37,11 @@ type BACnetTagPayloadCharacterString struct {
 
 // The corresponding interface
 type IBACnetTagPayloadCharacterString interface {
-	// GetEncoding returns Encoding
+	// GetEncoding returns Encoding (property field)
 	GetEncoding() BACnetCharacterEncoding
-	// GetValue returns Value
+	// GetValue returns Value (property field)
 	GetValue() string
-	// GetActualLengthInBit returns ActualLengthInBit
+	// GetActualLengthInBit returns ActualLengthInBit (virtual field)
 	GetActualLengthInBit() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -75,16 +75,13 @@ func NewBACnetTagPayloadCharacterString(encoding BACnetCharacterEncoding, value 
 }
 
 func CastBACnetTagPayloadCharacterString(structType interface{}) *BACnetTagPayloadCharacterString {
-	castFunc := func(typ interface{}) *BACnetTagPayloadCharacterString {
-		if casted, ok := typ.(BACnetTagPayloadCharacterString); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagPayloadCharacterString); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagPayloadCharacterString); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagPayloadCharacterString); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagPayloadCharacterString) GetTypeName() string {
@@ -192,6 +189,8 @@ func (m *BACnetTagPayloadCharacterString) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

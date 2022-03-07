@@ -34,7 +34,8 @@ type KnxNetRemoteLogging struct {
 
 // The corresponding interface
 type IKnxNetRemoteLogging interface {
-	// GetVersion returns Version
+	IServiceId
+	// GetVersion returns Version (property field)
 	GetVersion() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewKnxNetRemoteLogging(version uint8) *ServiceId {
 }
 
 func CastKnxNetRemoteLogging(structType interface{}) *KnxNetRemoteLogging {
-	castFunc := func(typ interface{}) *KnxNetRemoteLogging {
-		if casted, ok := typ.(KnxNetRemoteLogging); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*KnxNetRemoteLogging); ok {
-			return casted
-		}
-		if casted, ok := typ.(ServiceId); ok {
-			return CastKnxNetRemoteLogging(casted.Child)
-		}
-		if casted, ok := typ.(*ServiceId); ok {
-			return CastKnxNetRemoteLogging(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(KnxNetRemoteLogging); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*KnxNetRemoteLogging); ok {
+		return casted
+	}
+	if casted, ok := structType.(ServiceId); ok {
+		return CastKnxNetRemoteLogging(casted.Child)
+	}
+	if casted, ok := structType.(*ServiceId); ok {
+		return CastKnxNetRemoteLogging(casted.Child)
+	}
+	return nil
 }
 
 func (m *KnxNetRemoteLogging) GetTypeName() string {
@@ -171,6 +169,8 @@ func (m *KnxNetRemoteLogging) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

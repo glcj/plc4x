@@ -36,11 +36,12 @@ type ModbusPDUWriteMultipleCoilsRequest struct {
 
 // The corresponding interface
 type IModbusPDUWriteMultipleCoilsRequest interface {
-	// GetStartingAddress returns StartingAddress
+	IModbusPDU
+	// GetStartingAddress returns StartingAddress (property field)
 	GetStartingAddress() uint16
-	// GetQuantity returns Quantity
+	// GetQuantity returns Quantity (property field)
 	GetQuantity() uint16
-	// GetValue returns Value
+	// GetValue returns Value (property field)
 	GetValue() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -111,22 +112,19 @@ func NewModbusPDUWriteMultipleCoilsRequest(startingAddress uint16, quantity uint
 }
 
 func CastModbusPDUWriteMultipleCoilsRequest(structType interface{}) *ModbusPDUWriteMultipleCoilsRequest {
-	castFunc := func(typ interface{}) *ModbusPDUWriteMultipleCoilsRequest {
-		if casted, ok := typ.(ModbusPDUWriteMultipleCoilsRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUWriteMultipleCoilsRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUWriteMultipleCoilsRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUWriteMultipleCoilsRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUWriteMultipleCoilsRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUWriteMultipleCoilsRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUWriteMultipleCoilsRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUWriteMultipleCoilsRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUWriteMultipleCoilsRequest) GetTypeName() string {
@@ -259,6 +257,8 @@ func (m *ModbusPDUWriteMultipleCoilsRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,15 +35,15 @@ type S7PayloadUserDataItem struct {
 
 // The corresponding interface
 type IS7PayloadUserDataItem interface {
-	// CpuFunctionType returns CpuFunctionType
-	CpuFunctionType() uint8
-	// CpuSubfunction returns CpuSubfunction
-	CpuSubfunction() uint8
-	// DataLength returns DataLength
-	DataLength() uint16
-	// GetReturnCode returns ReturnCode
+	// GetCpuFunctionType returns CpuFunctionType (discriminator field)
+	GetCpuFunctionType() uint8
+	// GetCpuSubfunction returns CpuSubfunction (discriminator field)
+	GetCpuSubfunction() uint8
+	// GetDataLength returns DataLength (discriminator field)
+	GetDataLength() uint16
+	// GetReturnCode returns ReturnCode (property field)
 	GetReturnCode() DataTransportErrorCode
-	// GetTransportSize returns TransportSize
+	// GetTransportSize returns TransportSize (property field)
 	GetTransportSize() DataTransportSize
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -86,16 +86,13 @@ func NewS7PayloadUserDataItem(returnCode DataTransportErrorCode, transportSize D
 }
 
 func CastS7PayloadUserDataItem(structType interface{}) *S7PayloadUserDataItem {
-	castFunc := func(typ interface{}) *S7PayloadUserDataItem {
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *S7PayloadUserDataItem) GetTypeName() string {
@@ -282,6 +279,8 @@ func (m *S7PayloadUserDataItem) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

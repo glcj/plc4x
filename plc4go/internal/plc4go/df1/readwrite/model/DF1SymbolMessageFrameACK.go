@@ -32,6 +32,7 @@ type DF1SymbolMessageFrameACK struct {
 
 // The corresponding interface
 type IDF1SymbolMessageFrameACK interface {
+	IDF1Symbol
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewDF1SymbolMessageFrameACK() *DF1Symbol {
 }
 
 func CastDF1SymbolMessageFrameACK(structType interface{}) *DF1SymbolMessageFrameACK {
-	castFunc := func(typ interface{}) *DF1SymbolMessageFrameACK {
-		if casted, ok := typ.(DF1SymbolMessageFrameACK); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DF1SymbolMessageFrameACK); ok {
-			return casted
-		}
-		if casted, ok := typ.(DF1Symbol); ok {
-			return CastDF1SymbolMessageFrameACK(casted.Child)
-		}
-		if casted, ok := typ.(*DF1Symbol); ok {
-			return CastDF1SymbolMessageFrameACK(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DF1SymbolMessageFrameACK); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DF1SymbolMessageFrameACK); ok {
+		return casted
+	}
+	if casted, ok := structType.(DF1Symbol); ok {
+		return CastDF1SymbolMessageFrameACK(casted.Child)
+	}
+	if casted, ok := structType.(*DF1Symbol); ok {
+		return CastDF1SymbolMessageFrameACK(casted.Child)
+	}
+	return nil
 }
 
 func (m *DF1SymbolMessageFrameACK) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *DF1SymbolMessageFrameACK) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

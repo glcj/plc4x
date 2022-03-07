@@ -32,6 +32,7 @@ type BACnetErrorRemovedAuthenticate struct {
 
 // The corresponding interface
 type IBACnetErrorRemovedAuthenticate interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorRemovedAuthenticate(errorClass *BACnetApplicationTagEnumerate
 }
 
 func CastBACnetErrorRemovedAuthenticate(structType interface{}) *BACnetErrorRemovedAuthenticate {
-	castFunc := func(typ interface{}) *BACnetErrorRemovedAuthenticate {
-		if casted, ok := typ.(BACnetErrorRemovedAuthenticate); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorRemovedAuthenticate); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorRemovedAuthenticate(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorRemovedAuthenticate(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorRemovedAuthenticate); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorRemovedAuthenticate); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorRemovedAuthenticate(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorRemovedAuthenticate(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorRemovedAuthenticate) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorRemovedAuthenticate) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

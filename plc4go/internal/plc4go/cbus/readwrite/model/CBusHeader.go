@@ -35,9 +35,9 @@ type CBusHeader struct {
 
 // The corresponding interface
 type ICBusHeader interface {
-	// GetPriorityClass returns PriorityClass
+	// GetPriorityClass returns PriorityClass (property field)
 	GetPriorityClass() PriorityClass
-	// GetDestinationAddressType returns DestinationAddressType
+	// GetDestinationAddressType returns DestinationAddressType (property field)
 	GetDestinationAddressType() DestinationAddressType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -68,16 +68,13 @@ func NewCBusHeader(priorityClass PriorityClass, destinationAddressType Destinati
 }
 
 func CastCBusHeader(structType interface{}) *CBusHeader {
-	castFunc := func(typ interface{}) *CBusHeader {
-		if casted, ok := typ.(CBusHeader); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusHeader); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CBusHeader); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusHeader); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CBusHeader) GetTypeName() string {
@@ -235,6 +232,8 @@ func (m *CBusHeader) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

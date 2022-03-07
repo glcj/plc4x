@@ -35,6 +35,7 @@ type ApduDataExtReadRouterStatusResponse struct {
 
 // The corresponding interface
 type IApduDataExtReadRouterStatusResponse interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtReadRouterStatusResponse(length uint8) *ApduDataExt {
 }
 
 func CastApduDataExtReadRouterStatusResponse(structType interface{}) *ApduDataExtReadRouterStatusResponse {
-	castFunc := func(typ interface{}) *ApduDataExtReadRouterStatusResponse {
-		if casted, ok := typ.(ApduDataExtReadRouterStatusResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtReadRouterStatusResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtReadRouterStatusResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtReadRouterStatusResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtReadRouterStatusResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtReadRouterStatusResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtReadRouterStatusResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtReadRouterStatusResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtReadRouterStatusResponse) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtReadRouterStatusResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

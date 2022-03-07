@@ -40,9 +40,9 @@ type CALReply struct {
 
 // The corresponding interface
 type ICALReply interface {
-	// GetCalType returns CalType
+	// GetCalType returns CalType (property field)
 	GetCalType() byte
-	// GetCalData returns CalData
+	// GetCalData returns CalData (property field)
 	GetCalData() *CALData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -85,16 +85,13 @@ func NewCALReply(calType byte, calData *CALData) *CALReply {
 }
 
 func CastCALReply(structType interface{}) *CALReply {
-	castFunc := func(typ interface{}) *CALReply {
-		if casted, ok := typ.(CALReply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CALReply); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(CALReply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CALReply); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *CALReply) GetTypeName() string {
@@ -249,6 +246,8 @@ func (m *CALReply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

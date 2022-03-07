@@ -38,15 +38,16 @@ type DF1RequestProtectedTypedLogicalRead struct {
 
 // The corresponding interface
 type IDF1RequestProtectedTypedLogicalRead interface {
-	// GetByteSize returns ByteSize
+	IDF1RequestCommand
+	// GetByteSize returns ByteSize (property field)
 	GetByteSize() uint8
-	// GetFileNumber returns FileNumber
+	// GetFileNumber returns FileNumber (property field)
 	GetFileNumber() uint8
-	// GetFileType returns FileType
+	// GetFileType returns FileType (property field)
 	GetFileType() uint8
-	// GetElementNumber returns ElementNumber
+	// GetElementNumber returns ElementNumber (property field)
 	GetElementNumber() uint8
-	// GetSubElementNumber returns SubElementNumber
+	// GetSubElementNumber returns SubElementNumber (property field)
 	GetSubElementNumber() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -111,22 +112,19 @@ func NewDF1RequestProtectedTypedLogicalRead(byteSize uint8, fileNumber uint8, fi
 }
 
 func CastDF1RequestProtectedTypedLogicalRead(structType interface{}) *DF1RequestProtectedTypedLogicalRead {
-	castFunc := func(typ interface{}) *DF1RequestProtectedTypedLogicalRead {
-		if casted, ok := typ.(DF1RequestProtectedTypedLogicalRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DF1RequestProtectedTypedLogicalRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(DF1RequestCommand); ok {
-			return CastDF1RequestProtectedTypedLogicalRead(casted.Child)
-		}
-		if casted, ok := typ.(*DF1RequestCommand); ok {
-			return CastDF1RequestProtectedTypedLogicalRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DF1RequestProtectedTypedLogicalRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DF1RequestProtectedTypedLogicalRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(DF1RequestCommand); ok {
+		return CastDF1RequestProtectedTypedLogicalRead(casted.Child)
+	}
+	if casted, ok := structType.(*DF1RequestCommand); ok {
+		return CastDF1RequestProtectedTypedLogicalRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *DF1RequestProtectedTypedLogicalRead) GetTypeName() string {
@@ -275,6 +273,8 @@ func (m *DF1RequestProtectedTypedLogicalRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

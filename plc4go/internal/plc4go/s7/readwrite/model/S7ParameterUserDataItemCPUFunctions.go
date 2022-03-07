@@ -41,21 +41,22 @@ type S7ParameterUserDataItemCPUFunctions struct {
 
 // The corresponding interface
 type IS7ParameterUserDataItemCPUFunctions interface {
-	// GetMethod returns Method
+	IS7ParameterUserDataItem
+	// GetMethod returns Method (property field)
 	GetMethod() uint8
-	// GetCpuFunctionType returns CpuFunctionType
+	// GetCpuFunctionType returns CpuFunctionType (property field)
 	GetCpuFunctionType() uint8
-	// GetCpuFunctionGroup returns CpuFunctionGroup
+	// GetCpuFunctionGroup returns CpuFunctionGroup (property field)
 	GetCpuFunctionGroup() uint8
-	// GetCpuSubfunction returns CpuSubfunction
+	// GetCpuSubfunction returns CpuSubfunction (property field)
 	GetCpuSubfunction() uint8
-	// GetSequenceNumber returns SequenceNumber
+	// GetSequenceNumber returns SequenceNumber (property field)
 	GetSequenceNumber() uint8
-	// GetDataUnitReferenceNumber returns DataUnitReferenceNumber
+	// GetDataUnitReferenceNumber returns DataUnitReferenceNumber (property field)
 	GetDataUnitReferenceNumber() *uint8
-	// GetLastDataUnit returns LastDataUnit
+	// GetLastDataUnit returns LastDataUnit (property field)
 	GetLastDataUnit() *uint8
-	// GetErrorCode returns ErrorCode
+	// GetErrorCode returns ErrorCode (property field)
 	GetErrorCode() *uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -135,22 +136,19 @@ func NewS7ParameterUserDataItemCPUFunctions(method uint8, cpuFunctionType uint8,
 }
 
 func CastS7ParameterUserDataItemCPUFunctions(structType interface{}) *S7ParameterUserDataItemCPUFunctions {
-	castFunc := func(typ interface{}) *S7ParameterUserDataItemCPUFunctions {
-		if casted, ok := typ.(S7ParameterUserDataItemCPUFunctions); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7ParameterUserDataItemCPUFunctions); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7ParameterUserDataItem); ok {
-			return CastS7ParameterUserDataItemCPUFunctions(casted.Child)
-		}
-		if casted, ok := typ.(*S7ParameterUserDataItem); ok {
-			return CastS7ParameterUserDataItemCPUFunctions(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7ParameterUserDataItemCPUFunctions); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7ParameterUserDataItemCPUFunctions); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7ParameterUserDataItem); ok {
+		return CastS7ParameterUserDataItemCPUFunctions(casted.Child)
+	}
+	if casted, ok := structType.(*S7ParameterUserDataItem); ok {
+		return CastS7ParameterUserDataItemCPUFunctions(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7ParameterUserDataItemCPUFunctions) GetTypeName() string {
@@ -394,6 +392,8 @@ func (m *S7ParameterUserDataItemCPUFunctions) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

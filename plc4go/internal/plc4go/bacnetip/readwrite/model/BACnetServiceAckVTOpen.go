@@ -32,6 +32,7 @@ type BACnetServiceAckVTOpen struct {
 
 // The corresponding interface
 type IBACnetServiceAckVTOpen interface {
+	IBACnetServiceAck
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewBACnetServiceAckVTOpen() *BACnetServiceAck {
 }
 
 func CastBACnetServiceAckVTOpen(structType interface{}) *BACnetServiceAckVTOpen {
-	castFunc := func(typ interface{}) *BACnetServiceAckVTOpen {
-		if casted, ok := typ.(BACnetServiceAckVTOpen); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAckVTOpen); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetServiceAck); ok {
-			return CastBACnetServiceAckVTOpen(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetServiceAck); ok {
-			return CastBACnetServiceAckVTOpen(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAckVTOpen); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAckVTOpen); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetServiceAck); ok {
+		return CastBACnetServiceAckVTOpen(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetServiceAck); ok {
+		return CastBACnetServiceAckVTOpen(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetServiceAckVTOpen) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *BACnetServiceAckVTOpen) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

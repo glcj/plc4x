@@ -32,6 +32,7 @@ type BACnetErrorAcknowledgeAlarm struct {
 
 // The corresponding interface
 type IBACnetErrorAcknowledgeAlarm interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorAcknowledgeAlarm(errorClass *BACnetApplicationTagEnumerated, 
 }
 
 func CastBACnetErrorAcknowledgeAlarm(structType interface{}) *BACnetErrorAcknowledgeAlarm {
-	castFunc := func(typ interface{}) *BACnetErrorAcknowledgeAlarm {
-		if casted, ok := typ.(BACnetErrorAcknowledgeAlarm); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorAcknowledgeAlarm); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorAcknowledgeAlarm(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorAcknowledgeAlarm(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorAcknowledgeAlarm); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorAcknowledgeAlarm); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorAcknowledgeAlarm(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorAcknowledgeAlarm(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorAcknowledgeAlarm) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorAcknowledgeAlarm) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

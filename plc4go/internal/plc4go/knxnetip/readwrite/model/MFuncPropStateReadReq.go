@@ -35,6 +35,7 @@ type MFuncPropStateReadReq struct {
 
 // The corresponding interface
 type IMFuncPropStateReadReq interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewMFuncPropStateReadReq(size uint16) *CEMI {
 }
 
 func CastMFuncPropStateReadReq(structType interface{}) *MFuncPropStateReadReq {
-	castFunc := func(typ interface{}) *MFuncPropStateReadReq {
-		if casted, ok := typ.(MFuncPropStateReadReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MFuncPropStateReadReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastMFuncPropStateReadReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastMFuncPropStateReadReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MFuncPropStateReadReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MFuncPropStateReadReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastMFuncPropStateReadReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastMFuncPropStateReadReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *MFuncPropStateReadReq) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *MFuncPropStateReadReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

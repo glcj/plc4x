@@ -35,6 +35,7 @@ type ApduDataExtOpenRoutingTableRequest struct {
 
 // The corresponding interface
 type IApduDataExtOpenRoutingTableRequest interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtOpenRoutingTableRequest(length uint8) *ApduDataExt {
 }
 
 func CastApduDataExtOpenRoutingTableRequest(structType interface{}) *ApduDataExtOpenRoutingTableRequest {
-	castFunc := func(typ interface{}) *ApduDataExtOpenRoutingTableRequest {
-		if casted, ok := typ.(ApduDataExtOpenRoutingTableRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtOpenRoutingTableRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtOpenRoutingTableRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtOpenRoutingTableRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtOpenRoutingTableRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtOpenRoutingTableRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtOpenRoutingTableRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtOpenRoutingTableRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtOpenRoutingTableRequest) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtOpenRoutingTableRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

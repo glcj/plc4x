@@ -42,15 +42,15 @@ type AlarmMessageObjectAckType struct {
 
 // The corresponding interface
 type IAlarmMessageObjectAckType interface {
-	// GetSyntaxId returns SyntaxId
+	// GetSyntaxId returns SyntaxId (property field)
 	GetSyntaxId() SyntaxIdType
-	// GetNumberOfValues returns NumberOfValues
+	// GetNumberOfValues returns NumberOfValues (property field)
 	GetNumberOfValues() uint8
-	// GetEventId returns EventId
+	// GetEventId returns EventId (property field)
 	GetEventId() uint32
-	// GetAckStateGoing returns AckStateGoing
+	// GetAckStateGoing returns AckStateGoing (property field)
 	GetAckStateGoing() *State
-	// GetAckStateComing returns AckStateComing
+	// GetAckStateComing returns AckStateComing (property field)
 	GetAckStateComing() *State
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -93,16 +93,13 @@ func NewAlarmMessageObjectAckType(syntaxId SyntaxIdType, numberOfValues uint8, e
 }
 
 func CastAlarmMessageObjectAckType(structType interface{}) *AlarmMessageObjectAckType {
-	castFunc := func(typ interface{}) *AlarmMessageObjectAckType {
-		if casted, ok := typ.(AlarmMessageObjectAckType); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AlarmMessageObjectAckType); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AlarmMessageObjectAckType); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AlarmMessageObjectAckType); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AlarmMessageObjectAckType) GetTypeName() string {
@@ -308,6 +305,8 @@ func (m *AlarmMessageObjectAckType) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

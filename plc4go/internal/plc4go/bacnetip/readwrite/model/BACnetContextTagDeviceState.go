@@ -38,7 +38,8 @@ type BACnetContextTagDeviceState struct {
 
 // The corresponding interface
 type IBACnetContextTagDeviceState interface {
-	// GetState returns State
+	IBACnetContextTag
+	// GetState returns State (property field)
 	GetState() BACnetDeviceState
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -85,22 +86,19 @@ func NewBACnetContextTagDeviceState(state BACnetDeviceState, header *BACnetTagHe
 }
 
 func CastBACnetContextTagDeviceState(structType interface{}) *BACnetContextTagDeviceState {
-	castFunc := func(typ interface{}) *BACnetContextTagDeviceState {
-		if casted, ok := typ.(BACnetContextTagDeviceState); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTagDeviceState); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return CastBACnetContextTagDeviceState(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return CastBACnetContextTagDeviceState(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTagDeviceState); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTagDeviceState); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return CastBACnetContextTagDeviceState(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return CastBACnetContextTagDeviceState(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetContextTagDeviceState) GetTypeName() string {
@@ -193,6 +191,8 @@ func (m *BACnetContextTagDeviceState) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

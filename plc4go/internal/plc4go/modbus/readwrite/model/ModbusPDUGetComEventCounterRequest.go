@@ -32,6 +32,7 @@ type ModbusPDUGetComEventCounterRequest struct {
 
 // The corresponding interface
 type IModbusPDUGetComEventCounterRequest interface {
+	IModbusPDU
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -87,22 +88,19 @@ func NewModbusPDUGetComEventCounterRequest() *ModbusPDU {
 }
 
 func CastModbusPDUGetComEventCounterRequest(structType interface{}) *ModbusPDUGetComEventCounterRequest {
-	castFunc := func(typ interface{}) *ModbusPDUGetComEventCounterRequest {
-		if casted, ok := typ.(ModbusPDUGetComEventCounterRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUGetComEventCounterRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUGetComEventCounterRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUGetComEventCounterRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUGetComEventCounterRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUGetComEventCounterRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUGetComEventCounterRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUGetComEventCounterRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUGetComEventCounterRequest) GetTypeName() string {
@@ -161,6 +159,8 @@ func (m *ModbusPDUGetComEventCounterRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

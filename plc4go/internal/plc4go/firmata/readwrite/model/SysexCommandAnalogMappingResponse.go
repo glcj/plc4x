@@ -32,6 +32,7 @@ type SysexCommandAnalogMappingResponse struct {
 
 // The corresponding interface
 type ISysexCommandAnalogMappingResponse interface {
+	ISysexCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -79,22 +80,19 @@ func NewSysexCommandAnalogMappingResponse() *SysexCommand {
 }
 
 func CastSysexCommandAnalogMappingResponse(structType interface{}) *SysexCommandAnalogMappingResponse {
-	castFunc := func(typ interface{}) *SysexCommandAnalogMappingResponse {
-		if casted, ok := typ.(SysexCommandAnalogMappingResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandAnalogMappingResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandAnalogMappingResponse(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandAnalogMappingResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandAnalogMappingResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandAnalogMappingResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandAnalogMappingResponse(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandAnalogMappingResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandAnalogMappingResponse) GetTypeName() string {
@@ -153,6 +151,8 @@ func (m *SysexCommandAnalogMappingResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

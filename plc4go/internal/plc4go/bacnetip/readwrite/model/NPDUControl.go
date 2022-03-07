@@ -38,15 +38,15 @@ type NPDUControl struct {
 
 // The corresponding interface
 type INPDUControl interface {
-	// GetMessageTypeFieldPresent returns MessageTypeFieldPresent
+	// GetMessageTypeFieldPresent returns MessageTypeFieldPresent (property field)
 	GetMessageTypeFieldPresent() bool
-	// GetDestinationSpecified returns DestinationSpecified
+	// GetDestinationSpecified returns DestinationSpecified (property field)
 	GetDestinationSpecified() bool
-	// GetSourceSpecified returns SourceSpecified
+	// GetSourceSpecified returns SourceSpecified (property field)
 	GetSourceSpecified() bool
-	// GetExpectingReply returns ExpectingReply
+	// GetExpectingReply returns ExpectingReply (property field)
 	GetExpectingReply() bool
-	// GetNetworkPriority returns NetworkPriority
+	// GetNetworkPriority returns NetworkPriority (property field)
 	GetNetworkPriority() NPDUNetworkPriority
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -89,16 +89,13 @@ func NewNPDUControl(messageTypeFieldPresent bool, destinationSpecified bool, sou
 }
 
 func CastNPDUControl(structType interface{}) *NPDUControl {
-	castFunc := func(typ interface{}) *NPDUControl {
-		if casted, ok := typ.(NPDUControl); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NPDUControl); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(NPDUControl); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NPDUControl); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *NPDUControl) GetTypeName() string {
@@ -296,6 +293,8 @@ func (m *NPDUControl) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

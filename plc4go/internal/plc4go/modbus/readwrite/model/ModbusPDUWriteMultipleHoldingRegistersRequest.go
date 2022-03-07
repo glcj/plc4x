@@ -36,11 +36,12 @@ type ModbusPDUWriteMultipleHoldingRegistersRequest struct {
 
 // The corresponding interface
 type IModbusPDUWriteMultipleHoldingRegistersRequest interface {
-	// GetStartingAddress returns StartingAddress
+	IModbusPDU
+	// GetStartingAddress returns StartingAddress (property field)
 	GetStartingAddress() uint16
-	// GetQuantity returns Quantity
+	// GetQuantity returns Quantity (property field)
 	GetQuantity() uint16
-	// GetValue returns Value
+	// GetValue returns Value (property field)
 	GetValue() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -111,22 +112,19 @@ func NewModbusPDUWriteMultipleHoldingRegistersRequest(startingAddress uint16, qu
 }
 
 func CastModbusPDUWriteMultipleHoldingRegistersRequest(structType interface{}) *ModbusPDUWriteMultipleHoldingRegistersRequest {
-	castFunc := func(typ interface{}) *ModbusPDUWriteMultipleHoldingRegistersRequest {
-		if casted, ok := typ.(ModbusPDUWriteMultipleHoldingRegistersRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUWriteMultipleHoldingRegistersRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUWriteMultipleHoldingRegistersRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUWriteMultipleHoldingRegistersRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUWriteMultipleHoldingRegistersRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUWriteMultipleHoldingRegistersRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUWriteMultipleHoldingRegistersRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUWriteMultipleHoldingRegistersRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUWriteMultipleHoldingRegistersRequest) GetTypeName() string {
@@ -259,6 +257,8 @@ func (m *ModbusPDUWriteMultipleHoldingRegistersRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

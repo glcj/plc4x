@@ -41,21 +41,21 @@ type BACnetConstructedDataElement struct {
 
 // The corresponding interface
 type IBACnetConstructedDataElement interface {
-	// GetPeekedTagHeader returns PeekedTagHeader
+	// GetPeekedTagHeader returns PeekedTagHeader (property field)
 	GetPeekedTagHeader() *BACnetTagHeader
-	// GetApplicationTag returns ApplicationTag
+	// GetApplicationTag returns ApplicationTag (property field)
 	GetApplicationTag() *BACnetApplicationTag
-	// GetContextTag returns ContextTag
+	// GetContextTag returns ContextTag (property field)
 	GetContextTag() *BACnetContextTag
-	// GetConstructedData returns ConstructedData
+	// GetConstructedData returns ConstructedData (property field)
 	GetConstructedData() *BACnetConstructedData
-	// GetPeekedTagNumber returns PeekedTagNumber
+	// GetPeekedTagNumber returns PeekedTagNumber (virtual field)
 	GetPeekedTagNumber() uint8
-	// GetIsApplicationTag returns IsApplicationTag
+	// GetIsApplicationTag returns IsApplicationTag (virtual field)
 	GetIsApplicationTag() bool
-	// GetIsConstructedData returns IsConstructedData
+	// GetIsConstructedData returns IsConstructedData (virtual field)
 	GetIsConstructedData() bool
-	// GetIsContextTag returns IsContextTag
+	// GetIsContextTag returns IsContextTag (virtual field)
 	GetIsContextTag() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -133,16 +133,13 @@ func NewBACnetConstructedDataElement(peekedTagHeader *BACnetTagHeader, applicati
 }
 
 func CastBACnetConstructedDataElement(structType interface{}) *BACnetConstructedDataElement {
-	castFunc := func(typ interface{}) *BACnetConstructedDataElement {
-		if casted, ok := typ.(BACnetConstructedDataElement); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConstructedDataElement); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetConstructedDataElement); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConstructedDataElement); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetConstructedDataElement) GetTypeName() string {
@@ -377,6 +374,8 @@ func (m *BACnetConstructedDataElement) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -37,11 +37,11 @@ type BACnetBinaryPV struct {
 
 // The corresponding interface
 type IBACnetBinaryPV interface {
-	// GetRawData returns RawData
+	// GetRawData returns RawData (property field)
 	GetRawData() *BACnetContextTagEnumerated
-	// GetIsInactive returns IsInactive
+	// GetIsInactive returns IsInactive (virtual field)
 	GetIsInactive() bool
-	// GetIsActive returns IsActive
+	// GetIsActive returns IsActive (virtual field)
 	GetIsActive() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,16 +79,13 @@ func NewBACnetBinaryPV(rawData *BACnetContextTagEnumerated, tagNumber uint8) *BA
 }
 
 func CastBACnetBinaryPV(structType interface{}) *BACnetBinaryPV {
-	castFunc := func(typ interface{}) *BACnetBinaryPV {
-		if casted, ok := typ.(BACnetBinaryPV); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetBinaryPV); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetBinaryPV); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetBinaryPV); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetBinaryPV) GetTypeName() string {
@@ -204,6 +201,8 @@ func (m *BACnetBinaryPV) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

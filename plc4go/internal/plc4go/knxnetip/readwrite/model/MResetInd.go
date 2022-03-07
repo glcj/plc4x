@@ -35,6 +35,7 @@ type MResetInd struct {
 
 // The corresponding interface
 type IMResetInd interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewMResetInd(size uint16) *CEMI {
 }
 
 func CastMResetInd(structType interface{}) *MResetInd {
-	castFunc := func(typ interface{}) *MResetInd {
-		if casted, ok := typ.(MResetInd); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MResetInd); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastMResetInd(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastMResetInd(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MResetInd); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MResetInd); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastMResetInd(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastMResetInd(casted.Child)
+	}
+	return nil
 }
 
 func (m *MResetInd) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *MResetInd) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

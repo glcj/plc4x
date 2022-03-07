@@ -35,9 +35,10 @@ type BACnetServiceAckAtomicReadFileStream struct {
 
 // The corresponding interface
 type IBACnetServiceAckAtomicReadFileStream interface {
-	// GetFileStartPosition returns FileStartPosition
+	IBACnetServiceAckAtomicReadFileStreamOrRecord
+	// GetFileStartPosition returns FileStartPosition (property field)
 	GetFileStartPosition() *BACnetApplicationTagSignedInteger
-	// GetFileData returns FileData
+	// GetFileData returns FileData (property field)
 	GetFileData() *BACnetApplicationTagOctetString
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,13 +51,6 @@ type IBACnetServiceAckAtomicReadFileStream interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckAtomicReadFileStream) PeekedTagNumber() uint8 {
-	return 0x0
-}
-
-func (m *BACnetServiceAckAtomicReadFileStream) GetPeekedTagNumber() uint8 {
-	return 0x0
-}
 
 func (m *BACnetServiceAckAtomicReadFileStream) InitializeParent(parent *BACnetServiceAckAtomicReadFileStreamOrRecord, peekedTagHeader *BACnetTagHeader, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
 	m.BACnetServiceAckAtomicReadFileStreamOrRecord.PeekedTagHeader = peekedTagHeader
@@ -91,22 +85,19 @@ func NewBACnetServiceAckAtomicReadFileStream(fileStartPosition *BACnetApplicatio
 }
 
 func CastBACnetServiceAckAtomicReadFileStream(structType interface{}) *BACnetServiceAckAtomicReadFileStream {
-	castFunc := func(typ interface{}) *BACnetServiceAckAtomicReadFileStream {
-		if casted, ok := typ.(BACnetServiceAckAtomicReadFileStream); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetServiceAckAtomicReadFileStream); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetServiceAckAtomicReadFileStreamOrRecord); ok {
-			return CastBACnetServiceAckAtomicReadFileStream(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetServiceAckAtomicReadFileStreamOrRecord); ok {
-			return CastBACnetServiceAckAtomicReadFileStream(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetServiceAckAtomicReadFileStream); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetServiceAckAtomicReadFileStream); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetServiceAckAtomicReadFileStreamOrRecord); ok {
+		return CastBACnetServiceAckAtomicReadFileStream(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetServiceAckAtomicReadFileStreamOrRecord); ok {
+		return CastBACnetServiceAckAtomicReadFileStream(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetServiceAckAtomicReadFileStream) GetTypeName() string {
@@ -223,6 +214,8 @@ func (m *BACnetServiceAckAtomicReadFileStream) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

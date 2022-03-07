@@ -35,11 +35,11 @@ type DeviceConfigurationAckDataBlock struct {
 
 // The corresponding interface
 type IDeviceConfigurationAckDataBlock interface {
-	// GetCommunicationChannelId returns CommunicationChannelId
+	// GetCommunicationChannelId returns CommunicationChannelId (property field)
 	GetCommunicationChannelId() uint8
-	// GetSequenceCounter returns SequenceCounter
+	// GetSequenceCounter returns SequenceCounter (property field)
 	GetSequenceCounter() uint8
-	// GetStatus returns Status
+	// GetStatus returns Status (property field)
 	GetStatus() Status
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewDeviceConfigurationAckDataBlock(communicationChannelId uint8, sequenceCo
 }
 
 func CastDeviceConfigurationAckDataBlock(structType interface{}) *DeviceConfigurationAckDataBlock {
-	castFunc := func(typ interface{}) *DeviceConfigurationAckDataBlock {
-		if casted, ok := typ.(DeviceConfigurationAckDataBlock); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DeviceConfigurationAckDataBlock); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DeviceConfigurationAckDataBlock); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DeviceConfigurationAckDataBlock); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DeviceConfigurationAckDataBlock) GetTypeName() string {
@@ -214,6 +211,8 @@ func (m *DeviceConfigurationAckDataBlock) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

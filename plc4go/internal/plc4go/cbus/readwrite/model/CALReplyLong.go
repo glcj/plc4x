@@ -41,19 +41,20 @@ type CALReplyLong struct {
 
 // The corresponding interface
 type ICALReplyLong interface {
-	// GetTerminatingByte returns TerminatingByte
+	ICALReply
+	// GetTerminatingByte returns TerminatingByte (property field)
 	GetTerminatingByte() uint32
-	// GetUnitAddress returns UnitAddress
+	// GetUnitAddress returns UnitAddress (property field)
 	GetUnitAddress() *UnitAddress
-	// GetBridgeAddress returns BridgeAddress
+	// GetBridgeAddress returns BridgeAddress (property field)
 	GetBridgeAddress() *BridgeAddress
-	// GetSerialInterfaceAddress returns SerialInterfaceAddress
+	// GetSerialInterfaceAddress returns SerialInterfaceAddress (property field)
 	GetSerialInterfaceAddress() *SerialInterfaceAddress
-	// GetReservedByte returns ReservedByte
+	// GetReservedByte returns ReservedByte (property field)
 	GetReservedByte() *byte
-	// GetReplyNetwork returns ReplyNetwork
+	// GetReplyNetwork returns ReplyNetwork (property field)
 	GetReplyNetwork() *ReplyNetwork
-	// GetIsUnitAddress returns IsUnitAddress
+	// GetIsUnitAddress returns IsUnitAddress (virtual field)
 	GetIsUnitAddress() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -130,22 +131,19 @@ func NewCALReplyLong(terminatingByte uint32, unitAddress *UnitAddress, bridgeAdd
 }
 
 func CastCALReplyLong(structType interface{}) *CALReplyLong {
-	castFunc := func(typ interface{}) *CALReplyLong {
-		if casted, ok := typ.(CALReplyLong); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CALReplyLong); ok {
-			return casted
-		}
-		if casted, ok := typ.(CALReply); ok {
-			return CastCALReplyLong(casted.Child)
-		}
-		if casted, ok := typ.(*CALReply); ok {
-			return CastCALReplyLong(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CALReplyLong); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CALReplyLong); ok {
+		return casted
+	}
+	if casted, ok := structType.(CALReply); ok {
+		return CastCALReplyLong(casted.Child)
+	}
+	if casted, ok := structType.(*CALReply); ok {
+		return CastCALReplyLong(casted.Child)
+	}
+	return nil
 }
 
 func (m *CALReplyLong) GetTypeName() string {
@@ -439,6 +437,8 @@ func (m *CALReplyLong) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -32,6 +32,7 @@ type AdsDeviceNotificationResponse struct {
 
 // The corresponding interface
 type IAdsDeviceNotificationResponse interface {
+	IAdsData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -79,22 +80,19 @@ func NewAdsDeviceNotificationResponse() *AdsData {
 }
 
 func CastAdsDeviceNotificationResponse(structType interface{}) *AdsDeviceNotificationResponse {
-	castFunc := func(typ interface{}) *AdsDeviceNotificationResponse {
-		if casted, ok := typ.(AdsDeviceNotificationResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsDeviceNotificationResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsDeviceNotificationResponse(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsDeviceNotificationResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsDeviceNotificationResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsDeviceNotificationResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsDeviceNotificationResponse(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsDeviceNotificationResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsDeviceNotificationResponse) GetTypeName() string {
@@ -153,6 +151,8 @@ func (m *AdsDeviceNotificationResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

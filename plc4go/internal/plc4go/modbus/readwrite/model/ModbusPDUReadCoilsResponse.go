@@ -34,7 +34,8 @@ type ModbusPDUReadCoilsResponse struct {
 
 // The corresponding interface
 type IModbusPDUReadCoilsResponse interface {
-	// GetValue returns Value
+	IModbusPDU
+	// GetValue returns Value (property field)
 	GetValue() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewModbusPDUReadCoilsResponse(value []byte) *ModbusPDU {
 }
 
 func CastModbusPDUReadCoilsResponse(structType interface{}) *ModbusPDUReadCoilsResponse {
-	castFunc := func(typ interface{}) *ModbusPDUReadCoilsResponse {
-		if casted, ok := typ.(ModbusPDUReadCoilsResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadCoilsResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadCoilsResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadCoilsResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadCoilsResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadCoilsResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadCoilsResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadCoilsResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadCoilsResponse) GetTypeName() string {
@@ -207,6 +205,8 @@ func (m *ModbusPDUReadCoilsResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

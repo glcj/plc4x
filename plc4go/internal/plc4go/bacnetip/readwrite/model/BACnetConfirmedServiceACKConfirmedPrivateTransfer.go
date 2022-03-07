@@ -32,6 +32,7 @@ type BACnetConfirmedServiceACKConfirmedPrivateTransfer struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceACKConfirmedPrivateTransfer interface {
+	IBACnetConfirmedServiceACK
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,22 +73,19 @@ func NewBACnetConfirmedServiceACKConfirmedPrivateTransfer() *BACnetConfirmedServ
 }
 
 func CastBACnetConfirmedServiceACKConfirmedPrivateTransfer(structType interface{}) *BACnetConfirmedServiceACKConfirmedPrivateTransfer {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceACKConfirmedPrivateTransfer {
-		if casted, ok := typ.(BACnetConfirmedServiceACKConfirmedPrivateTransfer); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACKConfirmedPrivateTransfer); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKConfirmedPrivateTransfer(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKConfirmedPrivateTransfer(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceACKConfirmedPrivateTransfer); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceACKConfirmedPrivateTransfer); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKConfirmedPrivateTransfer(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKConfirmedPrivateTransfer(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceACKConfirmedPrivateTransfer) GetTypeName() string {
@@ -146,6 +144,8 @@ func (m *BACnetConfirmedServiceACKConfirmedPrivateTransfer) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

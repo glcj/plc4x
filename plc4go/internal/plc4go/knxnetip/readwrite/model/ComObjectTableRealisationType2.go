@@ -36,11 +36,12 @@ type ComObjectTableRealisationType2 struct {
 
 // The corresponding interface
 type IComObjectTableRealisationType2 interface {
-	// GetNumEntries returns NumEntries
+	IComObjectTable
+	// GetNumEntries returns NumEntries (property field)
 	GetNumEntries() uint8
-	// GetRamFlagsTablePointer returns RamFlagsTablePointer
+	// GetRamFlagsTablePointer returns RamFlagsTablePointer (property field)
 	GetRamFlagsTablePointer() uint8
-	// GetComObjectDescriptors returns ComObjectDescriptors
+	// GetComObjectDescriptors returns ComObjectDescriptors (property field)
 	GetComObjectDescriptors() []*GroupObjectDescriptorRealisationType2
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewComObjectTableRealisationType2(numEntries uint8, ramFlagsTablePointer ui
 }
 
 func CastComObjectTableRealisationType2(structType interface{}) *ComObjectTableRealisationType2 {
-	castFunc := func(typ interface{}) *ComObjectTableRealisationType2 {
-		if casted, ok := typ.(ComObjectTableRealisationType2); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ComObjectTableRealisationType2); ok {
-			return casted
-		}
-		if casted, ok := typ.(ComObjectTable); ok {
-			return CastComObjectTableRealisationType2(casted.Child)
-		}
-		if casted, ok := typ.(*ComObjectTable); ok {
-			return CastComObjectTableRealisationType2(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ComObjectTableRealisationType2); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ComObjectTableRealisationType2); ok {
+		return casted
+	}
+	if casted, ok := structType.(ComObjectTable); ok {
+		return CastComObjectTableRealisationType2(casted.Child)
+	}
+	if casted, ok := structType.(*ComObjectTable); ok {
+		return CastComObjectTableRealisationType2(casted.Child)
+	}
+	return nil
 }
 
 func (m *ComObjectTableRealisationType2) GetTypeName() string {
@@ -249,6 +247,8 @@ func (m *ComObjectTableRealisationType2) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

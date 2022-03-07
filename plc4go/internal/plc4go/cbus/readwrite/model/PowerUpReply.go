@@ -34,7 +34,8 @@ type PowerUpReply struct {
 
 // The corresponding interface
 type IPowerUpReply interface {
-	// GetIsA returns IsA
+	IReply
+	// GetIsA returns IsA (property field)
 	GetIsA() *PowerUp
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,22 +75,19 @@ func NewPowerUpReply(isA *PowerUp, magicByte byte) *Reply {
 }
 
 func CastPowerUpReply(structType interface{}) *PowerUpReply {
-	castFunc := func(typ interface{}) *PowerUpReply {
-		if casted, ok := typ.(PowerUpReply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*PowerUpReply); ok {
-			return casted
-		}
-		if casted, ok := typ.(Reply); ok {
-			return CastPowerUpReply(casted.Child)
-		}
-		if casted, ok := typ.(*Reply); ok {
-			return CastPowerUpReply(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(PowerUpReply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*PowerUpReply); ok {
+		return casted
+	}
+	if casted, ok := structType.(Reply); ok {
+		return CastPowerUpReply(casted.Child)
+	}
+	if casted, ok := structType.(*Reply); ok {
+		return CastPowerUpReply(casted.Child)
+	}
+	return nil
 }
 
 func (m *PowerUpReply) GetTypeName() string {
@@ -177,6 +175,8 @@ func (m *PowerUpReply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

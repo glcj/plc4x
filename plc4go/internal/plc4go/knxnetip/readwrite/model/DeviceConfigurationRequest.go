@@ -38,9 +38,10 @@ type DeviceConfigurationRequest struct {
 
 // The corresponding interface
 type IDeviceConfigurationRequest interface {
-	// GetDeviceConfigurationRequestDataBlock returns DeviceConfigurationRequestDataBlock
+	IKnxNetIpMessage
+	// GetDeviceConfigurationRequestDataBlock returns DeviceConfigurationRequestDataBlock (property field)
 	GetDeviceConfigurationRequestDataBlock() *DeviceConfigurationRequestDataBlock
-	// GetCemi returns Cemi
+	// GetCemi returns Cemi (property field)
 	GetCemi() *CEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewDeviceConfigurationRequest(deviceConfigurationRequestDataBlock *DeviceCo
 }
 
 func CastDeviceConfigurationRequest(structType interface{}) *DeviceConfigurationRequest {
-	castFunc := func(typ interface{}) *DeviceConfigurationRequest {
-		if casted, ok := typ.(DeviceConfigurationRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DeviceConfigurationRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastDeviceConfigurationRequest(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastDeviceConfigurationRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DeviceConfigurationRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DeviceConfigurationRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastDeviceConfigurationRequest(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastDeviceConfigurationRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *DeviceConfigurationRequest) GetTypeName() string {
@@ -222,6 +220,8 @@ func (m *DeviceConfigurationRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

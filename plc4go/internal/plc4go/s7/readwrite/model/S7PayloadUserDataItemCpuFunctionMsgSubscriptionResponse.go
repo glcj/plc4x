@@ -32,6 +32,7 @@ type S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse struct {
 
 // The corresponding interface
 type IS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse interface {
+	IS7PayloadUserDataItem
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -90,22 +91,19 @@ func NewS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(returnCode DataT
 }
 
 func CastS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse {
-	castFunc := func(typ interface{}) *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse {
-		if casted, ok := typ.(S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(casted.Child)
-		}
-		if casted, ok := typ.(*S7PayloadUserDataItem); ok {
-			return CastS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(casted.Child)
+	}
+	if casted, ok := structType.(*S7PayloadUserDataItem); ok {
+		return CastS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) GetTypeName() string {
@@ -164,6 +162,8 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) String() strin
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -38,9 +38,10 @@ type NLMRejectRouterToNetwork struct {
 
 // The corresponding interface
 type INLMRejectRouterToNetwork interface {
-	// GetRejectReason returns RejectReason
+	INLM
+	// GetRejectReason returns RejectReason (property field)
 	GetRejectReason() NLMRejectRouterToNetworkRejectReason
-	// GetDestinationNetworkAddress returns DestinationNetworkAddress
+	// GetDestinationNetworkAddress returns DestinationNetworkAddress (property field)
 	GetDestinationNetworkAddress() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -92,22 +93,19 @@ func NewNLMRejectRouterToNetwork(rejectReason NLMRejectRouterToNetworkRejectReas
 }
 
 func CastNLMRejectRouterToNetwork(structType interface{}) *NLMRejectRouterToNetwork {
-	castFunc := func(typ interface{}) *NLMRejectRouterToNetwork {
-		if casted, ok := typ.(NLMRejectRouterToNetwork); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NLMRejectRouterToNetwork); ok {
-			return casted
-		}
-		if casted, ok := typ.(NLM); ok {
-			return CastNLMRejectRouterToNetwork(casted.Child)
-		}
-		if casted, ok := typ.(*NLM); ok {
-			return CastNLMRejectRouterToNetwork(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NLMRejectRouterToNetwork); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NLMRejectRouterToNetwork); ok {
+		return casted
+	}
+	if casted, ok := structType.(NLM); ok {
+		return CastNLMRejectRouterToNetwork(casted.Child)
+	}
+	if casted, ok := structType.(*NLM); ok {
+		return CastNLMRejectRouterToNetwork(casted.Child)
+	}
+	return nil
 }
 
 func (m *NLMRejectRouterToNetwork) GetTypeName() string {
@@ -213,6 +211,8 @@ func (m *NLMRejectRouterToNetwork) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

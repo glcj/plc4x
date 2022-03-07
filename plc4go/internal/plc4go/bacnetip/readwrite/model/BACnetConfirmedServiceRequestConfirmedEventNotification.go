@@ -50,31 +50,32 @@ type BACnetConfirmedServiceRequestConfirmedEventNotification struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestConfirmedEventNotification interface {
-	// GetProcessIdentifier returns ProcessIdentifier
+	IBACnetConfirmedServiceRequest
+	// GetProcessIdentifier returns ProcessIdentifier (property field)
 	GetProcessIdentifier() *BACnetContextTagUnsignedInteger
-	// GetInitiatingDeviceIdentifier returns InitiatingDeviceIdentifier
+	// GetInitiatingDeviceIdentifier returns InitiatingDeviceIdentifier (property field)
 	GetInitiatingDeviceIdentifier() *BACnetContextTagObjectIdentifier
-	// GetEventObjectIdentifier returns EventObjectIdentifier
+	// GetEventObjectIdentifier returns EventObjectIdentifier (property field)
 	GetEventObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetTimestamp returns Timestamp
+	// GetTimestamp returns Timestamp (property field)
 	GetTimestamp() *BACnetTimeStamp
-	// GetNotificationClass returns NotificationClass
+	// GetNotificationClass returns NotificationClass (property field)
 	GetNotificationClass() *BACnetContextTagUnsignedInteger
-	// GetPriority returns Priority
+	// GetPriority returns Priority (property field)
 	GetPriority() *BACnetContextTagUnsignedInteger
-	// GetEventType returns EventType
+	// GetEventType returns EventType (property field)
 	GetEventType() *BACnetContextTagEventType
-	// GetMessageText returns MessageText
+	// GetMessageText returns MessageText (property field)
 	GetMessageText() *BACnetContextTagCharacterString
-	// GetNotifyType returns NotifyType
+	// GetNotifyType returns NotifyType (property field)
 	GetNotifyType() *BACnetContextTagNotifyType
-	// GetAckRequired returns AckRequired
+	// GetAckRequired returns AckRequired (property field)
 	GetAckRequired() *BACnetContextTagBoolean
-	// GetFromState returns FromState
+	// GetFromState returns FromState (property field)
 	GetFromState() *BACnetContextTagEventState
-	// GetToState returns ToState
+	// GetToState returns ToState (property field)
 	GetToState() *BACnetContextTagEventState
-	// GetEventValues returns EventValues
+	// GetEventValues returns EventValues (property field)
 	GetEventValues() *BACnetNotificationParameters
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -180,22 +181,19 @@ func NewBACnetConfirmedServiceRequestConfirmedEventNotification(processIdentifie
 }
 
 func CastBACnetConfirmedServiceRequestConfirmedEventNotification(structType interface{}) *BACnetConfirmedServiceRequestConfirmedEventNotification {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestConfirmedEventNotification {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestConfirmedEventNotification); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestConfirmedEventNotification); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestConfirmedEventNotification(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestConfirmedEventNotification(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestConfirmedEventNotification); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestConfirmedEventNotification); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestConfirmedEventNotification(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestConfirmedEventNotification(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) GetTypeName() string {
@@ -687,6 +685,8 @@ func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) String() strin
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

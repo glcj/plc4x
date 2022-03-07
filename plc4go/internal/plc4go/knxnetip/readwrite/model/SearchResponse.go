@@ -36,11 +36,12 @@ type SearchResponse struct {
 
 // The corresponding interface
 type ISearchResponse interface {
-	// GetHpaiControlEndpoint returns HpaiControlEndpoint
+	IKnxNetIpMessage
+	// GetHpaiControlEndpoint returns HpaiControlEndpoint (property field)
 	GetHpaiControlEndpoint() *HPAIControlEndpoint
-	// GetDibDeviceInfo returns DibDeviceInfo
+	// GetDibDeviceInfo returns DibDeviceInfo (property field)
 	GetDibDeviceInfo() *DIBDeviceInfo
-	// GetDibSuppSvcFamilies returns DibSuppSvcFamilies
+	// GetDibSuppSvcFamilies returns DibSuppSvcFamilies (property field)
 	GetDibSuppSvcFamilies() *DIBSuppSvcFamilies
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewSearchResponse(hpaiControlEndpoint *HPAIControlEndpoint, dibDeviceInfo *
 }
 
 func CastSearchResponse(structType interface{}) *SearchResponse {
-	castFunc := func(typ interface{}) *SearchResponse {
-		if casted, ok := typ.(SearchResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SearchResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxNetIpMessage); ok {
-			return CastSearchResponse(casted.Child)
-		}
-		if casted, ok := typ.(*KnxNetIpMessage); ok {
-			return CastSearchResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SearchResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SearchResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxNetIpMessage); ok {
+		return CastSearchResponse(casted.Child)
+	}
+	if casted, ok := structType.(*KnxNetIpMessage); ok {
+		return CastSearchResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *SearchResponse) GetTypeName() string {
@@ -256,6 +254,8 @@ func (m *SearchResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

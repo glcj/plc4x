@@ -41,13 +41,14 @@ type CipReadResponse struct {
 
 // The corresponding interface
 type ICipReadResponse interface {
-	// GetStatus returns Status
+	ICipService
+	// GetStatus returns Status (property field)
 	GetStatus() uint8
-	// GetExtStatus returns ExtStatus
+	// GetExtStatus returns ExtStatus (property field)
 	GetExtStatus() uint8
-	// GetDataType returns DataType
+	// GetDataType returns DataType (property field)
 	GetDataType() CIPDataTypeCode
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -107,22 +108,19 @@ func NewCipReadResponse(status uint8, extStatus uint8, dataType CIPDataTypeCode,
 }
 
 func CastCipReadResponse(structType interface{}) *CipReadResponse {
-	castFunc := func(typ interface{}) *CipReadResponse {
-		if casted, ok := typ.(CipReadResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CipReadResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(CipService); ok {
-			return CastCipReadResponse(casted.Child)
-		}
-		if casted, ok := typ.(*CipService); ok {
-			return CastCipReadResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CipReadResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CipReadResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(CipService); ok {
+		return CastCipReadResponse(casted.Child)
+	}
+	if casted, ok := structType.(*CipService); ok {
+		return CastCipReadResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *CipReadResponse) GetTypeName() string {
@@ -292,6 +290,8 @@ func (m *CipReadResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

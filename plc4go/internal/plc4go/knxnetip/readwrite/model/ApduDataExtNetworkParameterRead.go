@@ -35,6 +35,7 @@ type ApduDataExtNetworkParameterRead struct {
 
 // The corresponding interface
 type IApduDataExtNetworkParameterRead interface {
+	IApduDataExt
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataExtNetworkParameterRead(length uint8) *ApduDataExt {
 }
 
 func CastApduDataExtNetworkParameterRead(structType interface{}) *ApduDataExtNetworkParameterRead {
-	castFunc := func(typ interface{}) *ApduDataExtNetworkParameterRead {
-		if casted, ok := typ.(ApduDataExtNetworkParameterRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtNetworkParameterRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtNetworkParameterRead(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtNetworkParameterRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtNetworkParameterRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtNetworkParameterRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtNetworkParameterRead(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtNetworkParameterRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtNetworkParameterRead) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataExtNetworkParameterRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

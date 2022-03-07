@@ -35,6 +35,7 @@ type FirmataCommandSystemReset struct {
 
 // The corresponding interface
 type IFirmataCommandSystemReset interface {
+	IFirmataCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewFirmataCommandSystemReset(response bool) *FirmataCommand {
 }
 
 func CastFirmataCommandSystemReset(structType interface{}) *FirmataCommandSystemReset {
-	castFunc := func(typ interface{}) *FirmataCommandSystemReset {
-		if casted, ok := typ.(FirmataCommandSystemReset); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataCommandSystemReset); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataCommand); ok {
-			return CastFirmataCommandSystemReset(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataCommand); ok {
-			return CastFirmataCommandSystemReset(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataCommandSystemReset); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataCommandSystemReset); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataCommand); ok {
+		return CastFirmataCommandSystemReset(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataCommand); ok {
+		return CastFirmataCommandSystemReset(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataCommandSystemReset) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *FirmataCommandSystemReset) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

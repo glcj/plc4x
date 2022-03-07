@@ -46,13 +46,14 @@ type CBusPointToMultiPointCommandStatus struct {
 
 // The corresponding interface
 type ICBusPointToMultiPointCommandStatus interface {
-	// GetStatusRequest returns StatusRequest
+	ICBusPointToMultiPointCommand
+	// GetStatusRequest returns StatusRequest (property field)
 	GetStatusRequest() *StatusRequest
-	// GetCrc returns Crc
+	// GetCrc returns Crc (property field)
 	GetCrc() *Checksum
-	// GetPeekAlpha returns PeekAlpha
+	// GetPeekAlpha returns PeekAlpha (property field)
 	GetPeekAlpha() byte
-	// GetAlpha returns Alpha
+	// GetAlpha returns Alpha (property field)
 	GetAlpha() *Alpha
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -107,22 +108,19 @@ func NewCBusPointToMultiPointCommandStatus(statusRequest *StatusRequest, crc *Ch
 }
 
 func CastCBusPointToMultiPointCommandStatus(structType interface{}) *CBusPointToMultiPointCommandStatus {
-	castFunc := func(typ interface{}) *CBusPointToMultiPointCommandStatus {
-		if casted, ok := typ.(CBusPointToMultiPointCommandStatus); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CBusPointToMultiPointCommandStatus); ok {
-			return casted
-		}
-		if casted, ok := typ.(CBusPointToMultiPointCommand); ok {
-			return CastCBusPointToMultiPointCommandStatus(casted.Child)
-		}
-		if casted, ok := typ.(*CBusPointToMultiPointCommand); ok {
-			return CastCBusPointToMultiPointCommandStatus(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CBusPointToMultiPointCommandStatus); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CBusPointToMultiPointCommandStatus); ok {
+		return casted
+	}
+	if casted, ok := structType.(CBusPointToMultiPointCommand); ok {
+		return CastCBusPointToMultiPointCommandStatus(casted.Child)
+	}
+	if casted, ok := structType.(*CBusPointToMultiPointCommand); ok {
+		return CastCBusPointToMultiPointCommandStatus(casted.Child)
+	}
+	return nil
 }
 
 func (m *CBusPointToMultiPointCommandStatus) GetTypeName() string {
@@ -374,6 +372,8 @@ func (m *CBusPointToMultiPointCommandStatus) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

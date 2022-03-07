@@ -34,7 +34,7 @@ type Reply struct {
 
 // The corresponding interface
 type IReply interface {
-	// GetMagicByte returns MagicByte
+	// GetMagicByte returns MagicByte (property field)
 	GetMagicByte() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -73,16 +73,13 @@ func NewReply(magicByte byte) *Reply {
 }
 
 func CastReply(structType interface{}) *Reply {
-	castFunc := func(typ interface{}) *Reply {
-		if casted, ok := typ.(Reply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*Reply); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(Reply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*Reply); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *Reply) GetTypeName() string {
@@ -181,6 +178,8 @@ func (m *Reply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

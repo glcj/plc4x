@@ -32,6 +32,7 @@ type ModbusPDUReportServerIdRequest struct {
 
 // The corresponding interface
 type IModbusPDUReportServerIdRequest interface {
+	IModbusPDU
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -87,22 +88,19 @@ func NewModbusPDUReportServerIdRequest() *ModbusPDU {
 }
 
 func CastModbusPDUReportServerIdRequest(structType interface{}) *ModbusPDUReportServerIdRequest {
-	castFunc := func(typ interface{}) *ModbusPDUReportServerIdRequest {
-		if casted, ok := typ.(ModbusPDUReportServerIdRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReportServerIdRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReportServerIdRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReportServerIdRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReportServerIdRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReportServerIdRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReportServerIdRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReportServerIdRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReportServerIdRequest) GetTypeName() string {
@@ -161,6 +159,8 @@ func (m *ModbusPDUReportServerIdRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

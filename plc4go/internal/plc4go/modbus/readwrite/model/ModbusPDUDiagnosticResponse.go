@@ -35,9 +35,10 @@ type ModbusPDUDiagnosticResponse struct {
 
 // The corresponding interface
 type IModbusPDUDiagnosticResponse interface {
-	// GetSubFunction returns SubFunction
+	IModbusPDU
+	// GetSubFunction returns SubFunction (property field)
 	GetSubFunction() uint16
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewModbusPDUDiagnosticResponse(subFunction uint16, data uint16) *ModbusPDU 
 }
 
 func CastModbusPDUDiagnosticResponse(structType interface{}) *ModbusPDUDiagnosticResponse {
-	castFunc := func(typ interface{}) *ModbusPDUDiagnosticResponse {
-		if casted, ok := typ.(ModbusPDUDiagnosticResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUDiagnosticResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUDiagnosticResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUDiagnosticResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUDiagnosticResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUDiagnosticResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUDiagnosticResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUDiagnosticResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUDiagnosticResponse) GetTypeName() string {
@@ -213,6 +211,8 @@ func (m *ModbusPDUDiagnosticResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

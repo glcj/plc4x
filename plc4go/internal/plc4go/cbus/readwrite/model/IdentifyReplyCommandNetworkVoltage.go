@@ -40,9 +40,10 @@ type IdentifyReplyCommandNetworkVoltage struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandNetworkVoltage interface {
-	// GetVolts returns Volts
+	IIdentifyReplyCommand
+	// GetVolts returns Volts (property field)
 	GetVolts() string
-	// GetVoltsDecimalPlace returns VoltsDecimalPlace
+	// GetVoltsDecimalPlace returns VoltsDecimalPlace (property field)
 	GetVoltsDecimalPlace() string
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -92,22 +93,19 @@ func NewIdentifyReplyCommandNetworkVoltage(volts string, voltsDecimalPlace strin
 }
 
 func CastIdentifyReplyCommandNetworkVoltage(structType interface{}) *IdentifyReplyCommandNetworkVoltage {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandNetworkVoltage {
-		if casted, ok := typ.(IdentifyReplyCommandNetworkVoltage); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandNetworkVoltage); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandNetworkVoltage(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandNetworkVoltage(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandNetworkVoltage); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandNetworkVoltage); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandNetworkVoltage(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandNetworkVoltage(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandNetworkVoltage) GetTypeName() string {
@@ -238,6 +236,8 @@ func (m *IdentifyReplyCommandNetworkVoltage) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

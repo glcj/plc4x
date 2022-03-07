@@ -34,7 +34,7 @@ type StatusRequest struct {
 
 // The corresponding interface
 type IStatusRequest interface {
-	// GetStatusType returns StatusType
+	// GetStatusType returns StatusType (property field)
 	GetStatusType() byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -73,16 +73,13 @@ func NewStatusRequest(statusType byte) *StatusRequest {
 }
 
 func CastStatusRequest(structType interface{}) *StatusRequest {
-	castFunc := func(typ interface{}) *StatusRequest {
-		if casted, ok := typ.(StatusRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*StatusRequest); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(StatusRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*StatusRequest); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *StatusRequest) GetTypeName() string {
@@ -173,6 +170,8 @@ func (m *StatusRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

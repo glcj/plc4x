@@ -36,8 +36,8 @@ type BACnetUnconfirmedServiceRequest struct {
 
 // The corresponding interface
 type IBACnetUnconfirmedServiceRequest interface {
-	// ServiceChoice returns ServiceChoice
-	ServiceChoice() uint8
+	// GetServiceChoice returns ServiceChoice (discriminator field)
+	GetServiceChoice() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,16 +72,13 @@ func NewBACnetUnconfirmedServiceRequest(len uint16) *BACnetUnconfirmedServiceReq
 }
 
 func CastBACnetUnconfirmedServiceRequest(structType interface{}) *BACnetUnconfirmedServiceRequest {
-	castFunc := func(typ interface{}) *BACnetUnconfirmedServiceRequest {
-		if casted, ok := typ.(BACnetUnconfirmedServiceRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetUnconfirmedServiceRequest); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetUnconfirmedServiceRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetUnconfirmedServiceRequest); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetUnconfirmedServiceRequest) GetTypeName() string {
@@ -178,7 +175,7 @@ func (m *BACnetUnconfirmedServiceRequest) SerializeParent(writeBuffer utils.Writ
 	}
 
 	// Discriminator Field (serviceChoice) (Used as input to a switch field)
-	serviceChoice := uint8(child.ServiceChoice())
+	serviceChoice := uint8(child.GetServiceChoice())
 	_serviceChoiceErr := writeBuffer.WriteUint8("serviceChoice", 8, (serviceChoice))
 
 	if _serviceChoiceErr != nil {
@@ -201,6 +198,8 @@ func (m *BACnetUnconfirmedServiceRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

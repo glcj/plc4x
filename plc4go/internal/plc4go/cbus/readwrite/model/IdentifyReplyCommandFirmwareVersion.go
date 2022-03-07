@@ -34,7 +34,8 @@ type IdentifyReplyCommandFirmwareVersion struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandFirmwareVersion interface {
-	// GetFirmwareVersion returns FirmwareVersion
+	IIdentifyReplyCommand
+	// GetFirmwareVersion returns FirmwareVersion (property field)
 	GetFirmwareVersion() string
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewIdentifyReplyCommandFirmwareVersion(firmwareVersion string) *IdentifyRep
 }
 
 func CastIdentifyReplyCommandFirmwareVersion(structType interface{}) *IdentifyReplyCommandFirmwareVersion {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandFirmwareVersion {
-		if casted, ok := typ.(IdentifyReplyCommandFirmwareVersion); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandFirmwareVersion); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandFirmwareVersion(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandFirmwareVersion(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandFirmwareVersion); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandFirmwareVersion); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandFirmwareVersion(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandFirmwareVersion(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandFirmwareVersion) GetTypeName() string {
@@ -171,6 +169,8 @@ func (m *IdentifyReplyCommandFirmwareVersion) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

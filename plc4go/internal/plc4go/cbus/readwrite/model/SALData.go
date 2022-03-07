@@ -34,11 +34,9 @@ type SALData struct {
 
 // The corresponding interface
 type ISALData interface {
-	// CommandType returns CommandType
-	CommandType() SALCommandType
-	// GetCommandTypeContainer returns CommandTypeContainer
+	// GetCommandTypeContainer returns CommandTypeContainer (property field)
 	GetCommandTypeContainer() SALCommandTypeContainer
-	// GetCommandType returns CommandType
+	// GetCommandType returns CommandType (virtual field)
 	GetCommandType() SALCommandType
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -80,16 +78,13 @@ func NewSALData(commandTypeContainer SALCommandTypeContainer) *SALData {
 }
 
 func CastSALData(structType interface{}) *SALData {
-	castFunc := func(typ interface{}) *SALData {
-		if casted, ok := typ.(SALData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SALData); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(SALData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SALData); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *SALData) GetTypeName() string {
@@ -214,6 +209,8 @@ func (m *SALData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

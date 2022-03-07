@@ -37,11 +37,12 @@ type S7ParameterSetupCommunication struct {
 
 // The corresponding interface
 type IS7ParameterSetupCommunication interface {
-	// GetMaxAmqCaller returns MaxAmqCaller
+	IS7Parameter
+	// GetMaxAmqCaller returns MaxAmqCaller (property field)
 	GetMaxAmqCaller() uint16
-	// GetMaxAmqCallee returns MaxAmqCallee
+	// GetMaxAmqCallee returns MaxAmqCallee (property field)
 	GetMaxAmqCallee() uint16
-	// GetPduLength returns PduLength
+	// GetPduLength returns PduLength (property field)
 	GetPduLength() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -104,22 +105,19 @@ func NewS7ParameterSetupCommunication(maxAmqCaller uint16, maxAmqCallee uint16, 
 }
 
 func CastS7ParameterSetupCommunication(structType interface{}) *S7ParameterSetupCommunication {
-	castFunc := func(typ interface{}) *S7ParameterSetupCommunication {
-		if casted, ok := typ.(S7ParameterSetupCommunication); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7ParameterSetupCommunication); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7Parameter); ok {
-			return CastS7ParameterSetupCommunication(casted.Child)
-		}
-		if casted, ok := typ.(*S7Parameter); ok {
-			return CastS7ParameterSetupCommunication(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7ParameterSetupCommunication); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7ParameterSetupCommunication); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7Parameter); ok {
+		return CastS7ParameterSetupCommunication(casted.Child)
+	}
+	if casted, ok := structType.(*S7Parameter); ok {
+		return CastS7ParameterSetupCommunication(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7ParameterSetupCommunication) GetTypeName() string {
@@ -257,6 +255,8 @@ func (m *S7ParameterSetupCommunication) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

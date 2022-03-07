@@ -34,7 +34,8 @@ type ModbusPDUReadHoldingRegistersResponse struct {
 
 // The corresponding interface
 type IModbusPDUReadHoldingRegistersResponse interface {
-	// GetValue returns Value
+	IModbusPDU
+	// GetValue returns Value (property field)
 	GetValue() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewModbusPDUReadHoldingRegistersResponse(value []byte) *ModbusPDU {
 }
 
 func CastModbusPDUReadHoldingRegistersResponse(structType interface{}) *ModbusPDUReadHoldingRegistersResponse {
-	castFunc := func(typ interface{}) *ModbusPDUReadHoldingRegistersResponse {
-		if casted, ok := typ.(ModbusPDUReadHoldingRegistersResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ModbusPDUReadHoldingRegistersResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ModbusPDU); ok {
-			return CastModbusPDUReadHoldingRegistersResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ModbusPDU); ok {
-			return CastModbusPDUReadHoldingRegistersResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ModbusPDUReadHoldingRegistersResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ModbusPDUReadHoldingRegistersResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ModbusPDU); ok {
+		return CastModbusPDUReadHoldingRegistersResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ModbusPDU); ok {
+		return CastModbusPDUReadHoldingRegistersResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ModbusPDUReadHoldingRegistersResponse) GetTypeName() string {
@@ -207,6 +205,8 @@ func (m *ModbusPDUReadHoldingRegistersResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

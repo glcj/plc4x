@@ -34,7 +34,8 @@ type CALDataRequestIdentify struct {
 
 // The corresponding interface
 type ICALDataRequestIdentify interface {
-	// GetAttribute returns Attribute
+	ICALData
+	// GetAttribute returns Attribute (property field)
 	GetAttribute() Attribute
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -47,13 +48,6 @@ type ICALDataRequestIdentify interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CALDataRequestIdentify) CommandType() CALCommandType {
-	return CALCommandType_IDENTIFY
-}
-
-func (m *CALDataRequestIdentify) GetCommandType() CALCommandType {
-	return CALCommandType_IDENTIFY
-}
 
 func (m *CALDataRequestIdentify) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
@@ -81,22 +75,19 @@ func NewCALDataRequestIdentify(attribute Attribute, commandTypeContainer CALComm
 }
 
 func CastCALDataRequestIdentify(structType interface{}) *CALDataRequestIdentify {
-	castFunc := func(typ interface{}) *CALDataRequestIdentify {
-		if casted, ok := typ.(CALDataRequestIdentify); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CALDataRequestIdentify); ok {
-			return casted
-		}
-		if casted, ok := typ.(CALData); ok {
-			return CastCALDataRequestIdentify(casted.Child)
-		}
-		if casted, ok := typ.(*CALData); ok {
-			return CastCALDataRequestIdentify(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CALDataRequestIdentify); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CALDataRequestIdentify); ok {
+		return casted
+	}
+	if casted, ok := structType.(CALData); ok {
+		return CastCALDataRequestIdentify(casted.Child)
+	}
+	if casted, ok := structType.(*CALData); ok {
+		return CastCALDataRequestIdentify(casted.Child)
+	}
+	return nil
 }
 
 func (m *CALDataRequestIdentify) GetTypeName() string {
@@ -184,6 +175,8 @@ func (m *CALDataRequestIdentify) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

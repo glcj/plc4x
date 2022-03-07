@@ -38,9 +38,10 @@ type ApduDataGroupValueResponse struct {
 
 // The corresponding interface
 type IApduDataGroupValueResponse interface {
-	// GetDataFirstByte returns DataFirstByte
+	IApduData
+	// GetDataFirstByte returns DataFirstByte (property field)
 	GetDataFirstByte() int8
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewApduDataGroupValueResponse(dataFirstByte int8, data []byte, dataLength u
 }
 
 func CastApduDataGroupValueResponse(structType interface{}) *ApduDataGroupValueResponse {
-	castFunc := func(typ interface{}) *ApduDataGroupValueResponse {
-		if casted, ok := typ.(ApduDataGroupValueResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataGroupValueResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduData); ok {
-			return CastApduDataGroupValueResponse(casted.Child)
-		}
-		if casted, ok := typ.(*ApduData); ok {
-			return CastApduDataGroupValueResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataGroupValueResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataGroupValueResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduData); ok {
+		return CastApduDataGroupValueResponse(casted.Child)
+	}
+	if casted, ok := structType.(*ApduData); ok {
+		return CastApduDataGroupValueResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataGroupValueResponse) GetTypeName() string {
@@ -203,6 +201,8 @@ func (m *ApduDataGroupValueResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

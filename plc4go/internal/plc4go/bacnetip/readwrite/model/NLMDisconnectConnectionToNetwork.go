@@ -37,7 +37,8 @@ type NLMDisconnectConnectionToNetwork struct {
 
 // The corresponding interface
 type INLMDisconnectConnectionToNetwork interface {
-	// GetDestinationNetworkAddress returns DestinationNetworkAddress
+	INLM
+	// GetDestinationNetworkAddress returns DestinationNetworkAddress (property field)
 	GetDestinationNetworkAddress() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -84,22 +85,19 @@ func NewNLMDisconnectConnectionToNetwork(destinationNetworkAddress uint16, vendo
 }
 
 func CastNLMDisconnectConnectionToNetwork(structType interface{}) *NLMDisconnectConnectionToNetwork {
-	castFunc := func(typ interface{}) *NLMDisconnectConnectionToNetwork {
-		if casted, ok := typ.(NLMDisconnectConnectionToNetwork); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NLMDisconnectConnectionToNetwork); ok {
-			return casted
-		}
-		if casted, ok := typ.(NLM); ok {
-			return CastNLMDisconnectConnectionToNetwork(casted.Child)
-		}
-		if casted, ok := typ.(*NLM); ok {
-			return CastNLMDisconnectConnectionToNetwork(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NLMDisconnectConnectionToNetwork); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NLMDisconnectConnectionToNetwork); ok {
+		return casted
+	}
+	if casted, ok := structType.(NLM); ok {
+		return CastNLMDisconnectConnectionToNetwork(casted.Child)
+	}
+	if casted, ok := structType.(*NLM); ok {
+		return CastNLMDisconnectConnectionToNetwork(casted.Child)
+	}
+	return nil
 }
 
 func (m *NLMDisconnectConnectionToNetwork) GetTypeName() string {
@@ -176,6 +174,8 @@ func (m *NLMDisconnectConnectionToNetwork) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

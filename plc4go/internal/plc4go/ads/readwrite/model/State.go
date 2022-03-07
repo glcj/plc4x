@@ -42,23 +42,23 @@ type State struct {
 
 // The corresponding interface
 type IState interface {
-	// GetInitCommand returns InitCommand
+	// GetInitCommand returns InitCommand (property field)
 	GetInitCommand() bool
-	// GetUpdCommand returns UpdCommand
+	// GetUpdCommand returns UpdCommand (property field)
 	GetUpdCommand() bool
-	// GetTimestampAdded returns TimestampAdded
+	// GetTimestampAdded returns TimestampAdded (property field)
 	GetTimestampAdded() bool
-	// GetHighPriorityCommand returns HighPriorityCommand
+	// GetHighPriorityCommand returns HighPriorityCommand (property field)
 	GetHighPriorityCommand() bool
-	// GetSystemCommand returns SystemCommand
+	// GetSystemCommand returns SystemCommand (property field)
 	GetSystemCommand() bool
-	// GetAdsCommand returns AdsCommand
+	// GetAdsCommand returns AdsCommand (property field)
 	GetAdsCommand() bool
-	// GetNoReturn returns NoReturn
+	// GetNoReturn returns NoReturn (property field)
 	GetNoReturn() bool
-	// GetResponse returns Response
+	// GetResponse returns Response (property field)
 	GetResponse() bool
-	// GetBroadcast returns Broadcast
+	// GetBroadcast returns Broadcast (property field)
 	GetBroadcast() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -117,16 +117,13 @@ func NewState(initCommand bool, updCommand bool, timestampAdded bool, highPriori
 }
 
 func CastState(structType interface{}) *State {
-	castFunc := func(typ interface{}) *State {
-		if casted, ok := typ.(State); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*State); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(State); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*State); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *State) GetTypeName() string {
@@ -356,6 +353,8 @@ func (m *State) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

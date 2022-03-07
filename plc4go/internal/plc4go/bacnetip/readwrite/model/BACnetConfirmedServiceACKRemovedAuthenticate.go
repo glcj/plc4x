@@ -32,6 +32,7 @@ type BACnetConfirmedServiceACKRemovedAuthenticate struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceACKRemovedAuthenticate interface {
+	IBACnetConfirmedServiceACK
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -72,22 +73,19 @@ func NewBACnetConfirmedServiceACKRemovedAuthenticate() *BACnetConfirmedServiceAC
 }
 
 func CastBACnetConfirmedServiceACKRemovedAuthenticate(structType interface{}) *BACnetConfirmedServiceACKRemovedAuthenticate {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceACKRemovedAuthenticate {
-		if casted, ok := typ.(BACnetConfirmedServiceACKRemovedAuthenticate); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACKRemovedAuthenticate); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKRemovedAuthenticate(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceACK); ok {
-			return CastBACnetConfirmedServiceACKRemovedAuthenticate(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceACKRemovedAuthenticate); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceACKRemovedAuthenticate); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKRemovedAuthenticate(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceACK); ok {
+		return CastBACnetConfirmedServiceACKRemovedAuthenticate(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceACKRemovedAuthenticate) GetTypeName() string {
@@ -146,6 +144,8 @@ func (m *BACnetConfirmedServiceACKRemovedAuthenticate) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

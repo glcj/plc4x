@@ -33,10 +33,10 @@ type AdsData struct {
 
 // The corresponding interface
 type IAdsData interface {
-	// CommandId returns CommandId
-	CommandId() CommandId
-	// Response returns Response
-	Response() bool
+	// GetCommandId returns CommandId (discriminator field)
+	GetCommandId() CommandId
+	// GetResponse returns Response (discriminator field)
+	GetResponse() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,16 +71,13 @@ func NewAdsData() *AdsData {
 }
 
 func CastAdsData(structType interface{}) *AdsData {
-	castFunc := func(typ interface{}) *AdsData {
-		if casted, ok := typ.(AdsData); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(AdsData); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsData); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *AdsData) GetTypeName() string {
@@ -198,6 +195,8 @@ func (m *AdsData) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

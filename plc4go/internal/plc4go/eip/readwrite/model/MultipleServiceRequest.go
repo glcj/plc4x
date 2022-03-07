@@ -42,7 +42,8 @@ type MultipleServiceRequest struct {
 
 // The corresponding interface
 type IMultipleServiceRequest interface {
-	// GetData returns Data
+	ICipService
+	// GetData returns Data (property field)
 	GetData() *Services
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewMultipleServiceRequest(data *Services, serviceLen uint16) *CipService {
 }
 
 func CastMultipleServiceRequest(structType interface{}) *MultipleServiceRequest {
-	castFunc := func(typ interface{}) *MultipleServiceRequest {
-		if casted, ok := typ.(MultipleServiceRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MultipleServiceRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(CipService); ok {
-			return CastMultipleServiceRequest(casted.Child)
-		}
-		if casted, ok := typ.(*CipService); ok {
-			return CastMultipleServiceRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MultipleServiceRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MultipleServiceRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(CipService); ok {
+		return CastMultipleServiceRequest(casted.Child)
+	}
+	if casted, ok := structType.(*CipService); ok {
+		return CastMultipleServiceRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *MultipleServiceRequest) GetTypeName() string {
@@ -226,6 +224,8 @@ func (m *MultipleServiceRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -39,9 +39,10 @@ type APDUSimpleAck struct {
 
 // The corresponding interface
 type IAPDUSimpleAck interface {
-	// GetOriginalInvokeId returns OriginalInvokeId
+	IAPDU
+	// GetOriginalInvokeId returns OriginalInvokeId (property field)
 	GetOriginalInvokeId() uint8
-	// GetServiceChoice returns ServiceChoice
+	// GetServiceChoice returns ServiceChoice (property field)
 	GetServiceChoice() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -91,22 +92,19 @@ func NewAPDUSimpleAck(originalInvokeId uint8, serviceChoice uint8, apduLength ui
 }
 
 func CastAPDUSimpleAck(structType interface{}) *APDUSimpleAck {
-	castFunc := func(typ interface{}) *APDUSimpleAck {
-		if casted, ok := typ.(APDUSimpleAck); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*APDUSimpleAck); ok {
-			return casted
-		}
-		if casted, ok := typ.(APDU); ok {
-			return CastAPDUSimpleAck(casted.Child)
-		}
-		if casted, ok := typ.(*APDU); ok {
-			return CastAPDUSimpleAck(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(APDUSimpleAck); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*APDUSimpleAck); ok {
+		return casted
+	}
+	if casted, ok := structType.(APDU); ok {
+		return CastAPDUSimpleAck(casted.Child)
+	}
+	if casted, ok := structType.(*APDU); ok {
+		return CastAPDUSimpleAck(casted.Child)
+	}
+	return nil
 }
 
 func (m *APDUSimpleAck) GetTypeName() string {
@@ -226,6 +224,8 @@ func (m *APDUSimpleAck) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

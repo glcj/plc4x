@@ -36,11 +36,12 @@ type SysexCommandPinStateResponse struct {
 
 // The corresponding interface
 type ISysexCommandPinStateResponse interface {
-	// GetPin returns Pin
+	ISysexCommand
+	// GetPin returns Pin (property field)
 	GetPin() uint8
-	// GetPinMode returns PinMode
+	// GetPinMode returns PinMode (property field)
 	GetPinMode() uint8
-	// GetPinState returns PinState
+	// GetPinState returns PinState (property field)
 	GetPinState() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewSysexCommandPinStateResponse(pin uint8, pinMode uint8, pinState uint8) *
 }
 
 func CastSysexCommandPinStateResponse(structType interface{}) *SysexCommandPinStateResponse {
-	castFunc := func(typ interface{}) *SysexCommandPinStateResponse {
-		if casted, ok := typ.(SysexCommandPinStateResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandPinStateResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandPinStateResponse(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandPinStateResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandPinStateResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandPinStateResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandPinStateResponse(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandPinStateResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandPinStateResponse) GetTypeName() string {
@@ -231,6 +229,8 @@ func (m *SysexCommandPinStateResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

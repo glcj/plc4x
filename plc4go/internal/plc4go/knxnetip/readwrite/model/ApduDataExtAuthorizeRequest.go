@@ -38,9 +38,10 @@ type ApduDataExtAuthorizeRequest struct {
 
 // The corresponding interface
 type IApduDataExtAuthorizeRequest interface {
-	// GetLevel returns Level
+	IApduDataExt
+	// GetLevel returns Level (property field)
 	GetLevel() uint8
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewApduDataExtAuthorizeRequest(level uint8, data []byte, length uint8) *Apd
 }
 
 func CastApduDataExtAuthorizeRequest(structType interface{}) *ApduDataExtAuthorizeRequest {
-	castFunc := func(typ interface{}) *ApduDataExtAuthorizeRequest {
-		if casted, ok := typ.(ApduDataExtAuthorizeRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataExtAuthorizeRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduDataExt); ok {
-			return CastApduDataExtAuthorizeRequest(casted.Child)
-		}
-		if casted, ok := typ.(*ApduDataExt); ok {
-			return CastApduDataExtAuthorizeRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataExtAuthorizeRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataExtAuthorizeRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduDataExt); ok {
+		return CastApduDataExtAuthorizeRequest(casted.Child)
+	}
+	if casted, ok := structType.(*ApduDataExt); ok {
+		return CastApduDataExtAuthorizeRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataExtAuthorizeRequest) GetTypeName() string {
@@ -203,6 +201,8 @@ func (m *ApduDataExtAuthorizeRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

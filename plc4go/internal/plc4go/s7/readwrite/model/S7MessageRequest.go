@@ -32,6 +32,7 @@ type S7MessageRequest struct {
 
 // The corresponding interface
 type IS7MessageRequest interface {
+	IS7Message
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -75,22 +76,19 @@ func NewS7MessageRequest(tpduReference uint16, parameter *S7Parameter, payload *
 }
 
 func CastS7MessageRequest(structType interface{}) *S7MessageRequest {
-	castFunc := func(typ interface{}) *S7MessageRequest {
-		if casted, ok := typ.(S7MessageRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7MessageRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7Message); ok {
-			return CastS7MessageRequest(casted.Child)
-		}
-		if casted, ok := typ.(*S7Message); ok {
-			return CastS7MessageRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7MessageRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7MessageRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7Message); ok {
+		return CastS7MessageRequest(casted.Child)
+	}
+	if casted, ok := structType.(*S7Message); ok {
+		return CastS7MessageRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7MessageRequest) GetTypeName() string {
@@ -149,6 +147,8 @@ func (m *S7MessageRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

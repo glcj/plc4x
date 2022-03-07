@@ -40,17 +40,18 @@ type S7AddressAny struct {
 
 // The corresponding interface
 type IS7AddressAny interface {
-	// GetTransportSize returns TransportSize
+	IS7Address
+	// GetTransportSize returns TransportSize (property field)
 	GetTransportSize() TransportSize
-	// GetNumberOfElements returns NumberOfElements
+	// GetNumberOfElements returns NumberOfElements (property field)
 	GetNumberOfElements() uint16
-	// GetDbNumber returns DbNumber
+	// GetDbNumber returns DbNumber (property field)
 	GetDbNumber() uint16
-	// GetArea returns Area
+	// GetArea returns Area (property field)
 	GetArea() MemoryArea
-	// GetByteAddress returns ByteAddress
+	// GetByteAddress returns ByteAddress (property field)
 	GetByteAddress() uint16
-	// GetBitAddress returns BitAddress
+	// GetBitAddress returns BitAddress (property field)
 	GetBitAddress() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -120,22 +121,19 @@ func NewS7AddressAny(transportSize TransportSize, numberOfElements uint16, dbNum
 }
 
 func CastS7AddressAny(structType interface{}) *S7AddressAny {
-	castFunc := func(typ interface{}) *S7AddressAny {
-		if casted, ok := typ.(S7AddressAny); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*S7AddressAny); ok {
-			return casted
-		}
-		if casted, ok := typ.(S7Address); ok {
-			return CastS7AddressAny(casted.Child)
-		}
-		if casted, ok := typ.(*S7Address); ok {
-			return CastS7AddressAny(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(S7AddressAny); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*S7AddressAny); ok {
+		return casted
+	}
+	if casted, ok := structType.(S7Address); ok {
+		return CastS7AddressAny(casted.Child)
+	}
+	if casted, ok := structType.(*S7Address); ok {
+		return CastS7AddressAny(casted.Child)
+	}
+	return nil
 }
 
 func (m *S7AddressAny) GetTypeName() string {
@@ -352,6 +350,8 @@ func (m *S7AddressAny) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

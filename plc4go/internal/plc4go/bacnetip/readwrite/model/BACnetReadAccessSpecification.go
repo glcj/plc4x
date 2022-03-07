@@ -36,13 +36,13 @@ type BACnetReadAccessSpecification struct {
 
 // The corresponding interface
 type IBACnetReadAccessSpecification interface {
-	// GetObjectIdentifier returns ObjectIdentifier
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetOpeningTag returns OpeningTag
+	// GetOpeningTag returns OpeningTag (property field)
 	GetOpeningTag() *BACnetOpeningTag
-	// GetListOfPropertyReferences returns ListOfPropertyReferences
+	// GetListOfPropertyReferences returns ListOfPropertyReferences (property field)
 	GetListOfPropertyReferences() []*BACnetPropertyReference
-	// GetClosingTag returns ClosingTag
+	// GetClosingTag returns ClosingTag (property field)
 	GetClosingTag() *BACnetClosingTag
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -81,16 +81,13 @@ func NewBACnetReadAccessSpecification(objectIdentifier *BACnetContextTagObjectId
 }
 
 func CastBACnetReadAccessSpecification(structType interface{}) *BACnetReadAccessSpecification {
-	castFunc := func(typ interface{}) *BACnetReadAccessSpecification {
-		if casted, ok := typ.(BACnetReadAccessSpecification); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetReadAccessSpecification); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetReadAccessSpecification); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetReadAccessSpecification); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetReadAccessSpecification) GetTypeName() string {
@@ -269,6 +266,8 @@ func (m *BACnetReadAccessSpecification) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

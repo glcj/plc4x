@@ -35,7 +35,7 @@ const ExtendedFormatStatusReply_LF byte = 0x0A
 type ExtendedFormatStatusReply struct {
 	StatusHeader *ExtendedStatusHeader
 	Coding       StatusCoding
-	Application  *Application
+	Application  ApplicationIdContainer
 	BlockStart   uint8
 	StatusBytes  []*StatusByte
 	Crc          *Checksum
@@ -43,17 +43,17 @@ type ExtendedFormatStatusReply struct {
 
 // The corresponding interface
 type IExtendedFormatStatusReply interface {
-	// GetStatusHeader returns StatusHeader
+	// GetStatusHeader returns StatusHeader (property field)
 	GetStatusHeader() *ExtendedStatusHeader
-	// GetCoding returns Coding
+	// GetCoding returns Coding (property field)
 	GetCoding() StatusCoding
-	// GetApplication returns Application
-	GetApplication() *Application
-	// GetBlockStart returns BlockStart
+	// GetApplication returns Application (property field)
+	GetApplication() ApplicationIdContainer
+	// GetBlockStart returns BlockStart (property field)
 	GetBlockStart() uint8
-	// GetStatusBytes returns StatusBytes
+	// GetStatusBytes returns StatusBytes (property field)
 	GetStatusBytes() []*StatusByte
-	// GetCrc returns Crc
+	// GetCrc returns Crc (property field)
 	GetCrc() *Checksum
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,7 +74,7 @@ func (m *ExtendedFormatStatusReply) GetCoding() StatusCoding {
 	return m.Coding
 }
 
-func (m *ExtendedFormatStatusReply) GetApplication() *Application {
+func (m *ExtendedFormatStatusReply) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
 
@@ -95,21 +95,18 @@ func (m *ExtendedFormatStatusReply) GetCrc() *Checksum {
 ///////////////////////////////////////////////////////////
 
 // NewExtendedFormatStatusReply factory function for ExtendedFormatStatusReply
-func NewExtendedFormatStatusReply(statusHeader *ExtendedStatusHeader, coding StatusCoding, application *Application, blockStart uint8, statusBytes []*StatusByte, crc *Checksum) *ExtendedFormatStatusReply {
+func NewExtendedFormatStatusReply(statusHeader *ExtendedStatusHeader, coding StatusCoding, application ApplicationIdContainer, blockStart uint8, statusBytes []*StatusByte, crc *Checksum) *ExtendedFormatStatusReply {
 	return &ExtendedFormatStatusReply{StatusHeader: statusHeader, Coding: coding, Application: application, BlockStart: blockStart, StatusBytes: statusBytes, Crc: crc}
 }
 
 func CastExtendedFormatStatusReply(structType interface{}) *ExtendedFormatStatusReply {
-	castFunc := func(typ interface{}) *ExtendedFormatStatusReply {
-		if casted, ok := typ.(ExtendedFormatStatusReply); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ExtendedFormatStatusReply); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ExtendedFormatStatusReply); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ExtendedFormatStatusReply); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ExtendedFormatStatusReply) GetTypeName() string {
@@ -130,7 +127,7 @@ func (m *ExtendedFormatStatusReply) GetLengthInBitsConditional(lastItem bool) ui
 	lengthInBits += 8
 
 	// Simple field (application)
-	lengthInBits += m.Application.GetLengthInBits()
+	lengthInBits += 8
 
 	// Simple field (blockStart)
 	lengthInBits += 8
@@ -196,11 +193,11 @@ func ExtendedFormatStatusReplyParse(readBuffer utils.ReadBuffer) (*ExtendedForma
 	if pullErr := readBuffer.PullContext("application"); pullErr != nil {
 		return nil, pullErr
 	}
-	_application, _applicationErr := ApplicationParse(readBuffer)
+	_application, _applicationErr := ApplicationIdContainerParse(readBuffer)
 	if _applicationErr != nil {
 		return nil, errors.Wrap(_applicationErr, "Error parsing 'application' field")
 	}
-	application := CastApplication(_application)
+	application := _application
 	if closeErr := readBuffer.CloseContext("application"); closeErr != nil {
 		return nil, closeErr
 	}
@@ -369,6 +366,8 @@ func (m *ExtendedFormatStatusReply) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

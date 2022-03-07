@@ -37,7 +37,8 @@ type COTPParameterChecksum struct {
 
 // The corresponding interface
 type ICOTPParameterChecksum interface {
-	// GetCrc returns Crc
+	ICOTPParameter
+	// GetCrc returns Crc (property field)
 	GetCrc() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewCOTPParameterChecksum(crc uint8, rest uint8) *COTPParameter {
 }
 
 func CastCOTPParameterChecksum(structType interface{}) *COTPParameterChecksum {
-	castFunc := func(typ interface{}) *COTPParameterChecksum {
-		if casted, ok := typ.(COTPParameterChecksum); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPParameterChecksum); ok {
-			return casted
-		}
-		if casted, ok := typ.(COTPParameter); ok {
-			return CastCOTPParameterChecksum(casted.Child)
-		}
-		if casted, ok := typ.(*COTPParameter); ok {
-			return CastCOTPParameterChecksum(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(COTPParameterChecksum); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPParameterChecksum); ok {
+		return casted
+	}
+	if casted, ok := structType.(COTPParameter); ok {
+		return CastCOTPParameterChecksum(casted.Child)
+	}
+	if casted, ok := structType.(*COTPParameter); ok {
+		return CastCOTPParameterChecksum(casted.Child)
+	}
+	return nil
 }
 
 func (m *COTPParameterChecksum) GetTypeName() string {
@@ -174,6 +172,8 @@ func (m *COTPParameterChecksum) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -39,11 +39,12 @@ type LDataReq struct {
 
 // The corresponding interface
 type ILDataReq interface {
-	// GetAdditionalInformationLength returns AdditionalInformationLength
+	ICEMI
+	// GetAdditionalInformationLength returns AdditionalInformationLength (property field)
 	GetAdditionalInformationLength() uint8
-	// GetAdditionalInformation returns AdditionalInformation
+	// GetAdditionalInformation returns AdditionalInformation (property field)
 	GetAdditionalInformation() []*CEMIAdditionalInformation
-	// GetDataFrame returns DataFrame
+	// GetDataFrame returns DataFrame (property field)
 	GetDataFrame() *LDataFrame
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -98,22 +99,19 @@ func NewLDataReq(additionalInformationLength uint8, additionalInformation []*CEM
 }
 
 func CastLDataReq(structType interface{}) *LDataReq {
-	castFunc := func(typ interface{}) *LDataReq {
-		if casted, ok := typ.(LDataReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*LDataReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastLDataReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastLDataReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(LDataReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*LDataReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastLDataReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastLDataReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *LDataReq) GetTypeName() string {
@@ -264,6 +262,8 @@ func (m *LDataReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

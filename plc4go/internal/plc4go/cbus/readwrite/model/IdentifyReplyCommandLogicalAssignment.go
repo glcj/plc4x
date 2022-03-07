@@ -32,6 +32,7 @@ type IdentifyReplyCommandLogicalAssignment struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandLogicalAssignment interface {
+	IIdentifyReplyCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -71,22 +72,19 @@ func NewIdentifyReplyCommandLogicalAssignment() *IdentifyReplyCommand {
 }
 
 func CastIdentifyReplyCommandLogicalAssignment(structType interface{}) *IdentifyReplyCommandLogicalAssignment {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandLogicalAssignment {
-		if casted, ok := typ.(IdentifyReplyCommandLogicalAssignment); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandLogicalAssignment); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandLogicalAssignment(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandLogicalAssignment(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandLogicalAssignment); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandLogicalAssignment); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandLogicalAssignment(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandLogicalAssignment(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandLogicalAssignment) GetTypeName() string {
@@ -145,6 +143,8 @@ func (m *IdentifyReplyCommandLogicalAssignment) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

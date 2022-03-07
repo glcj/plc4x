@@ -32,6 +32,7 @@ type NotTransmittedSyncLoss struct {
 
 // The corresponding interface
 type INotTransmittedSyncLoss interface {
+	IConfirmation
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -73,22 +74,19 @@ func NewNotTransmittedSyncLoss(alpha *Alpha) *Confirmation {
 }
 
 func CastNotTransmittedSyncLoss(structType interface{}) *NotTransmittedSyncLoss {
-	castFunc := func(typ interface{}) *NotTransmittedSyncLoss {
-		if casted, ok := typ.(NotTransmittedSyncLoss); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NotTransmittedSyncLoss); ok {
-			return casted
-		}
-		if casted, ok := typ.(Confirmation); ok {
-			return CastNotTransmittedSyncLoss(casted.Child)
-		}
-		if casted, ok := typ.(*Confirmation); ok {
-			return CastNotTransmittedSyncLoss(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(NotTransmittedSyncLoss); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NotTransmittedSyncLoss); ok {
+		return casted
+	}
+	if casted, ok := structType.(Confirmation); ok {
+		return CastNotTransmittedSyncLoss(casted.Child)
+	}
+	if casted, ok := structType.(*Confirmation); ok {
+		return CastNotTransmittedSyncLoss(casted.Child)
+	}
+	return nil
 }
 
 func (m *NotTransmittedSyncLoss) GetTypeName() string {
@@ -147,6 +145,8 @@ func (m *NotTransmittedSyncLoss) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

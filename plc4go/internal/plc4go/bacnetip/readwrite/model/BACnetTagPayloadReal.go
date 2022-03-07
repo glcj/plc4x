@@ -33,7 +33,7 @@ type BACnetTagPayloadReal struct {
 
 // The corresponding interface
 type IBACnetTagPayloadReal interface {
-	// GetValue returns Value
+	// GetValue returns Value (property field)
 	GetValue() float32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewBACnetTagPayloadReal(value float32) *BACnetTagPayloadReal {
 }
 
 func CastBACnetTagPayloadReal(structType interface{}) *BACnetTagPayloadReal {
-	castFunc := func(typ interface{}) *BACnetTagPayloadReal {
-		if casted, ok := typ.(BACnetTagPayloadReal); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagPayloadReal); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagPayloadReal); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagPayloadReal); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagPayloadReal) GetTypeName() string {
@@ -138,6 +135,8 @@ func (m *BACnetTagPayloadReal) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

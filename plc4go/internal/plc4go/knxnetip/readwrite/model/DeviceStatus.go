@@ -34,7 +34,7 @@ type DeviceStatus struct {
 
 // The corresponding interface
 type IDeviceStatus interface {
-	// GetProgramMode returns ProgramMode
+	// GetProgramMode returns ProgramMode (property field)
 	GetProgramMode() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -61,16 +61,13 @@ func NewDeviceStatus(programMode bool) *DeviceStatus {
 }
 
 func CastDeviceStatus(structType interface{}) *DeviceStatus {
-	castFunc := func(typ interface{}) *DeviceStatus {
-		if casted, ok := typ.(DeviceStatus); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DeviceStatus); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(DeviceStatus); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DeviceStatus); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *DeviceStatus) GetTypeName() string {
@@ -164,6 +161,8 @@ func (m *DeviceStatus) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -37,15 +37,15 @@ type EipPacket struct {
 
 // The corresponding interface
 type IEipPacket interface {
-	// Command returns Command
-	Command() uint16
-	// GetSessionHandle returns SessionHandle
+	// GetCommand returns Command (discriminator field)
+	GetCommand() uint16
+	// GetSessionHandle returns SessionHandle (property field)
 	GetSessionHandle() uint32
-	// GetStatus returns Status
+	// GetStatus returns Status (property field)
 	GetStatus() uint32
-	// GetSenderContext returns SenderContext
+	// GetSenderContext returns SenderContext (property field)
 	GetSenderContext() []uint8
-	// GetOptions returns Options
+	// GetOptions returns Options (property field)
 	GetOptions() uint32
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -96,16 +96,13 @@ func NewEipPacket(sessionHandle uint32, status uint32, senderContext []uint8, op
 }
 
 func CastEipPacket(structType interface{}) *EipPacket {
-	castFunc := func(typ interface{}) *EipPacket {
-		if casted, ok := typ.(EipPacket); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*EipPacket); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(EipPacket); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*EipPacket); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *EipPacket) GetTypeName() string {
@@ -246,7 +243,7 @@ func (m *EipPacket) SerializeParent(writeBuffer utils.WriteBuffer, child IEipPac
 	}
 
 	// Discriminator Field (command) (Used as input to a switch field)
-	command := uint16(child.Command())
+	command := uint16(child.GetCommand())
 	_commandErr := writeBuffer.WriteUint16("command", 16, (command))
 
 	if _commandErr != nil {
@@ -313,6 +310,8 @@ func (m *EipPacket) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

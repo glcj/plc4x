@@ -40,11 +40,12 @@ type BACnetConfirmedServiceRequestReadProperty struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestReadProperty interface {
-	// GetObjectIdentifier returns ObjectIdentifier
+	IBACnetConfirmedServiceRequest
+	// GetObjectIdentifier returns ObjectIdentifier (property field)
 	GetObjectIdentifier() *BACnetContextTagObjectIdentifier
-	// GetPropertyIdentifier returns PropertyIdentifier
+	// GetPropertyIdentifier returns PropertyIdentifier (property field)
 	GetPropertyIdentifier() *BACnetContextTagPropertyIdentifier
-	// GetArrayIndex returns ArrayIndex
+	// GetArrayIndex returns ArrayIndex (property field)
 	GetArrayIndex() *BACnetContextTagUnsignedInteger
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -100,22 +101,19 @@ func NewBACnetConfirmedServiceRequestReadProperty(objectIdentifier *BACnetContex
 }
 
 func CastBACnetConfirmedServiceRequestReadProperty(structType interface{}) *BACnetConfirmedServiceRequestReadProperty {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestReadProperty {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestReadProperty); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestReadProperty); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestReadProperty(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestReadProperty(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestReadProperty); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestReadProperty); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestReadProperty(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestReadProperty(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestReadProperty) GetTypeName() string {
@@ -275,6 +273,8 @@ func (m *BACnetConfirmedServiceRequestReadProperty) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

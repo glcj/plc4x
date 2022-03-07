@@ -41,11 +41,12 @@ type DF1SymbolMessageFrame struct {
 
 // The corresponding interface
 type IDF1SymbolMessageFrame interface {
-	// GetDestinationAddress returns DestinationAddress
+	IDF1Symbol
+	// GetDestinationAddress returns DestinationAddress (property field)
 	GetDestinationAddress() uint8
-	// GetSourceAddress returns SourceAddress
+	// GetSourceAddress returns SourceAddress (property field)
 	GetSourceAddress() uint8
-	// GetCommand returns Command
+	// GetCommand returns Command (property field)
 	GetCommand() *DF1Command
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -100,22 +101,19 @@ func NewDF1SymbolMessageFrame(destinationAddress uint8, sourceAddress uint8, com
 }
 
 func CastDF1SymbolMessageFrame(structType interface{}) *DF1SymbolMessageFrame {
-	castFunc := func(typ interface{}) *DF1SymbolMessageFrame {
-		if casted, ok := typ.(DF1SymbolMessageFrame); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*DF1SymbolMessageFrame); ok {
-			return casted
-		}
-		if casted, ok := typ.(DF1Symbol); ok {
-			return CastDF1SymbolMessageFrame(casted.Child)
-		}
-		if casted, ok := typ.(*DF1Symbol); ok {
-			return CastDF1SymbolMessageFrame(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(DF1SymbolMessageFrame); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*DF1SymbolMessageFrame); ok {
+		return casted
+	}
+	if casted, ok := structType.(DF1Symbol); ok {
+		return CastDF1SymbolMessageFrame(casted.Child)
+	}
+	if casted, ok := structType.(*DF1Symbol); ok {
+		return CastDF1SymbolMessageFrame(casted.Child)
+	}
+	return nil
 }
 
 func (m *DF1SymbolMessageFrame) GetTypeName() string {
@@ -212,12 +210,9 @@ func DF1SymbolMessageFrameParse(readBuffer utils.ReadBuffer) (*DF1Symbol, error)
 		if _checksumRefErr != nil {
 			return nil, errors.Wrap(_checksumRefErr, "Error parsing 'checksum' field")
 		}
-		checksum, _checksumErr := CrcCheck(destinationAddress, sourceAddress, command)
-		if _checksumErr != nil {
-			return nil, errors.Wrap(_checksumErr, "Error parsing 'checksum' field")
-		}
+		checksum := CrcCheck(destinationAddress, sourceAddress, command)
 		if checksum != checksumRef {
-			return nil, errors.Errorf("Checksum verification failed. Expected %d but got %d", (checksumRef & 0xFFFF), (checksum & 0xFFFF))
+			return nil, errors.Errorf("Checksum verification failed. Expected %x but got %x", checksumRef, checksum)
 		}
 	}
 
@@ -282,11 +277,8 @@ func (m *DF1SymbolMessageFrame) Serialize(writeBuffer utils.WriteBuffer) error {
 
 		// Checksum Field (checksum) (Calculated)
 		{
-			_checksum, _checksumErr := CrcCheck(m.GetDestinationAddress(), m.GetSourceAddress(), m.GetCommand())
-			if _checksumErr != nil {
-				return errors.Wrap(_checksumErr, "Error serializing 'checksum' field")
-			}
-			_checksumErr = writeBuffer.WriteUint16("checksum", 16, (_checksum))
+			_checksum := CrcCheck(m.GetDestinationAddress(), m.GetSourceAddress(), m.GetCommand())
+			_checksumErr := writeBuffer.WriteUint16("checksum", 16, (_checksum))
 			if _checksumErr != nil {
 				return errors.Wrap(_checksumErr, "Error serializing 'checksum' field")
 			}
@@ -305,6 +297,8 @@ func (m *DF1SymbolMessageFrame) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

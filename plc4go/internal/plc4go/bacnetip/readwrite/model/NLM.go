@@ -37,9 +37,9 @@ type NLM struct {
 
 // The corresponding interface
 type INLM interface {
-	// MessageType returns MessageType
-	MessageType() uint8
-	// GetVendorId returns VendorId
+	// GetMessageType returns MessageType (discriminator field)
+	GetMessageType() uint8
+	// GetVendorId returns VendorId (property field)
 	GetVendorId() *uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -78,16 +78,13 @@ func NewNLM(vendorId *uint16, apduLength uint16) *NLM {
 }
 
 func CastNLM(structType interface{}) *NLM {
-	castFunc := func(typ interface{}) *NLM {
-		if casted, ok := typ.(NLM); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*NLM); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(NLM); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*NLM); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *NLM) GetTypeName() string {
@@ -193,7 +190,7 @@ func (m *NLM) SerializeParent(writeBuffer utils.WriteBuffer, child INLM, seriali
 	}
 
 	// Discriminator Field (messageType) (Used as input to a switch field)
-	messageType := uint8(child.MessageType())
+	messageType := uint8(child.GetMessageType())
 	_messageTypeErr := writeBuffer.WriteUint8("messageType", 8, (messageType))
 
 	if _messageTypeErr != nil {
@@ -226,6 +223,8 @@ func (m *NLM) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

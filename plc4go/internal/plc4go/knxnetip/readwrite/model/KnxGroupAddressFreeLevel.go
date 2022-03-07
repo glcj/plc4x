@@ -34,7 +34,8 @@ type KnxGroupAddressFreeLevel struct {
 
 // The corresponding interface
 type IKnxGroupAddressFreeLevel interface {
-	// GetSubGroup returns SubGroup
+	IKnxGroupAddress
+	// GetSubGroup returns SubGroup (property field)
 	GetSubGroup() uint16
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -79,22 +80,19 @@ func NewKnxGroupAddressFreeLevel(subGroup uint16) *KnxGroupAddress {
 }
 
 func CastKnxGroupAddressFreeLevel(structType interface{}) *KnxGroupAddressFreeLevel {
-	castFunc := func(typ interface{}) *KnxGroupAddressFreeLevel {
-		if casted, ok := typ.(KnxGroupAddressFreeLevel); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*KnxGroupAddressFreeLevel); ok {
-			return casted
-		}
-		if casted, ok := typ.(KnxGroupAddress); ok {
-			return CastKnxGroupAddressFreeLevel(casted.Child)
-		}
-		if casted, ok := typ.(*KnxGroupAddress); ok {
-			return CastKnxGroupAddressFreeLevel(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(KnxGroupAddressFreeLevel); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*KnxGroupAddressFreeLevel); ok {
+		return casted
+	}
+	if casted, ok := structType.(KnxGroupAddress); ok {
+		return CastKnxGroupAddressFreeLevel(casted.Child)
+	}
+	if casted, ok := structType.(*KnxGroupAddress); ok {
+		return CastKnxGroupAddressFreeLevel(casted.Child)
+	}
+	return nil
 }
 
 func (m *KnxGroupAddressFreeLevel) GetTypeName() string {
@@ -171,6 +169,8 @@ func (m *KnxGroupAddressFreeLevel) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

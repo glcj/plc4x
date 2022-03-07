@@ -37,15 +37,15 @@ type BACnetContextTag struct {
 
 // The corresponding interface
 type IBACnetContextTag interface {
-	// DataType returns DataType
-	DataType() BACnetDataType
-	// GetHeader returns Header
+	// GetDataType returns DataType (discriminator field)
+	GetDataType() BACnetDataType
+	// GetHeader returns Header (property field)
 	GetHeader() *BACnetTagHeader
-	// GetTagNumber returns TagNumber
+	// GetTagNumber returns TagNumber (virtual field)
 	GetTagNumber() uint8
-	// GetActualLength returns ActualLength
+	// GetActualLength returns ActualLength (virtual field)
 	GetActualLength() uint32
-	// GetIsNotOpeningOrClosingTag returns IsNotOpeningOrClosingTag
+	// GetIsNotOpeningOrClosingTag returns IsNotOpeningOrClosingTag (virtual field)
 	GetIsNotOpeningOrClosingTag() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,16 +95,13 @@ func NewBACnetContextTag(header *BACnetTagHeader, tagNumberArgument uint8) *BACn
 }
 
 func CastBACnetContextTag(structType interface{}) *BACnetContextTag {
-	castFunc := func(typ interface{}) *BACnetContextTag {
-		if casted, ok := typ.(BACnetContextTag); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetContextTag); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetContextTag); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetContextTag); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetContextTag) GetTypeName() string {
@@ -293,6 +290,8 @@ func (m *BACnetContextTag) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

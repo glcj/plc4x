@@ -36,11 +36,12 @@ type AdsWriteControlRequest struct {
 
 // The corresponding interface
 type IAdsWriteControlRequest interface {
-	// GetAdsState returns AdsState
+	IAdsData
+	// GetAdsState returns AdsState (property field)
 	GetAdsState() uint16
-	// GetDeviceState returns DeviceState
+	// GetDeviceState returns DeviceState (property field)
 	GetDeviceState() uint16
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -103,22 +104,19 @@ func NewAdsWriteControlRequest(adsState uint16, deviceState uint16, data []byte)
 }
 
 func CastAdsWriteControlRequest(structType interface{}) *AdsWriteControlRequest {
-	castFunc := func(typ interface{}) *AdsWriteControlRequest {
-		if casted, ok := typ.(AdsWriteControlRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsWriteControlRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsWriteControlRequest(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsWriteControlRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsWriteControlRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsWriteControlRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsWriteControlRequest(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsWriteControlRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsWriteControlRequest) GetTypeName() string {
@@ -251,6 +249,8 @@ func (m *AdsWriteControlRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

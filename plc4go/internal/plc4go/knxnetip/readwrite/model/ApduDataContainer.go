@@ -37,7 +37,8 @@ type ApduDataContainer struct {
 
 // The corresponding interface
 type IApduDataContainer interface {
-	// GetDataApdu returns DataApdu
+	IApdu
+	// GetDataApdu returns DataApdu (property field)
 	GetDataApdu() *ApduData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -85,22 +86,19 @@ func NewApduDataContainer(dataApdu *ApduData, numbered bool, counter uint8, data
 }
 
 func CastApduDataContainer(structType interface{}) *ApduDataContainer {
-	castFunc := func(typ interface{}) *ApduDataContainer {
-		if casted, ok := typ.(ApduDataContainer); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataContainer); ok {
-			return casted
-		}
-		if casted, ok := typ.(Apdu); ok {
-			return CastApduDataContainer(casted.Child)
-		}
-		if casted, ok := typ.(*Apdu); ok {
-			return CastApduDataContainer(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataContainer); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataContainer); ok {
+		return casted
+	}
+	if casted, ok := structType.(Apdu); ok {
+		return CastApduDataContainer(casted.Child)
+	}
+	if casted, ok := structType.(*Apdu); ok {
+		return CastApduDataContainer(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataContainer) GetTypeName() string {
@@ -188,6 +186,8 @@ func (m *ApduDataContainer) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

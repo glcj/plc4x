@@ -32,6 +32,7 @@ type AdsInvalidResponse struct {
 
 // The corresponding interface
 type IAdsInvalidResponse interface {
+	IAdsData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -79,22 +80,19 @@ func NewAdsInvalidResponse() *AdsData {
 }
 
 func CastAdsInvalidResponse(structType interface{}) *AdsInvalidResponse {
-	castFunc := func(typ interface{}) *AdsInvalidResponse {
-		if casted, ok := typ.(AdsInvalidResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsInvalidResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsInvalidResponse(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsInvalidResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsInvalidResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsInvalidResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsInvalidResponse(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsInvalidResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsInvalidResponse) GetTypeName() string {
@@ -153,6 +151,8 @@ func (m *AdsInvalidResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

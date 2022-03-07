@@ -38,7 +38,8 @@ type BACnetPropertyStatesBinaryValue struct {
 
 // The corresponding interface
 type IBACnetPropertyStatesBinaryValue interface {
-	// GetBinaryValue returns BinaryValue
+	IBACnetPropertyStates
+	// GetBinaryValue returns BinaryValue (property field)
 	GetBinaryValue() *BACnetBinaryPV
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -51,13 +52,6 @@ type IBACnetPropertyStatesBinaryValue interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetPropertyStatesBinaryValue) PeekedTagNumber() uint8 {
-	return uint8(1)
-}
-
-func (m *BACnetPropertyStatesBinaryValue) GetPeekedTagNumber() uint8 {
-	return uint8(1)
-}
 
 func (m *BACnetPropertyStatesBinaryValue) InitializeParent(parent *BACnetPropertyStates, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetPropertyStates.OpeningTag = openingTag
@@ -87,22 +81,19 @@ func NewBACnetPropertyStatesBinaryValue(binaryValue *BACnetBinaryPV, openingTag 
 }
 
 func CastBACnetPropertyStatesBinaryValue(structType interface{}) *BACnetPropertyStatesBinaryValue {
-	castFunc := func(typ interface{}) *BACnetPropertyStatesBinaryValue {
-		if casted, ok := typ.(BACnetPropertyStatesBinaryValue); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetPropertyStatesBinaryValue); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetPropertyStates); ok {
-			return CastBACnetPropertyStatesBinaryValue(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetPropertyStates); ok {
-			return CastBACnetPropertyStatesBinaryValue(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetPropertyStatesBinaryValue); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetPropertyStatesBinaryValue); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetPropertyStates); ok {
+		return CastBACnetPropertyStatesBinaryValue(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetPropertyStates); ok {
+		return CastBACnetPropertyStatesBinaryValue(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetPropertyStatesBinaryValue) GetTypeName() string {
@@ -204,6 +195,8 @@ func (m *BACnetPropertyStatesBinaryValue) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

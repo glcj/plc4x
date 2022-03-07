@@ -33,7 +33,7 @@ type MACAddress struct {
 
 // The corresponding interface
 type IMACAddress interface {
-	// GetAddr returns Addr
+	// GetAddr returns Addr (property field)
 	GetAddr() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -60,16 +60,13 @@ func NewMACAddress(addr []byte) *MACAddress {
 }
 
 func CastMACAddress(structType interface{}) *MACAddress {
-	castFunc := func(typ interface{}) *MACAddress {
-		if casted, ok := typ.(MACAddress); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MACAddress); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(MACAddress); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MACAddress); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *MACAddress) GetTypeName() string {
@@ -141,6 +138,8 @@ func (m *MACAddress) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

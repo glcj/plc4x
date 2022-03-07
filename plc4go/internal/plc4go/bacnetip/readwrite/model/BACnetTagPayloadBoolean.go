@@ -35,11 +35,11 @@ type BACnetTagPayloadBoolean struct {
 
 // The corresponding interface
 type IBACnetTagPayloadBoolean interface {
-	// GetValue returns Value
+	// GetValue returns Value (virtual field)
 	GetValue() bool
-	// GetIsTrue returns IsTrue
+	// GetIsTrue returns IsTrue (virtual field)
 	GetIsTrue() bool
-	// GetIsFalse returns IsFalse
+	// GetIsFalse returns IsFalse (virtual field)
 	GetIsFalse() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewBACnetTagPayloadBoolean(actualLength uint32) *BACnetTagPayloadBoolean {
 }
 
 func CastBACnetTagPayloadBoolean(structType interface{}) *BACnetTagPayloadBoolean {
-	castFunc := func(typ interface{}) *BACnetTagPayloadBoolean {
-		if casted, ok := typ.(BACnetTagPayloadBoolean); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetTagPayloadBoolean); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetTagPayloadBoolean); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetTagPayloadBoolean); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetTagPayloadBoolean) GetTypeName() string {
@@ -168,6 +165,8 @@ func (m *BACnetTagPayloadBoolean) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -38,7 +38,8 @@ type BACnetNotificationParametersComplexEventType struct {
 
 // The corresponding interface
 type IBACnetNotificationParametersComplexEventType interface {
-	// GetListOfValues returns ListOfValues
+	IBACnetNotificationParameters
+	// GetListOfValues returns ListOfValues (property field)
 	GetListOfValues() *BACnetPropertyValues
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -51,13 +52,6 @@ type IBACnetNotificationParametersComplexEventType interface {
 ///////////////////////////////////////////////////////////
 // Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetNotificationParametersComplexEventType) PeekedTagNumber() uint8 {
-	return uint8(6)
-}
-
-func (m *BACnetNotificationParametersComplexEventType) GetPeekedTagNumber() uint8 {
-	return uint8(6)
-}
 
 func (m *BACnetNotificationParametersComplexEventType) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
 	m.BACnetNotificationParameters.OpeningTag = openingTag
@@ -87,22 +81,19 @@ func NewBACnetNotificationParametersComplexEventType(listOfValues *BACnetPropert
 }
 
 func CastBACnetNotificationParametersComplexEventType(structType interface{}) *BACnetNotificationParametersComplexEventType {
-	castFunc := func(typ interface{}) *BACnetNotificationParametersComplexEventType {
-		if casted, ok := typ.(BACnetNotificationParametersComplexEventType); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetNotificationParametersComplexEventType); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersComplexEventType(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetNotificationParameters); ok {
-			return CastBACnetNotificationParametersComplexEventType(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetNotificationParametersComplexEventType); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetNotificationParametersComplexEventType); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersComplexEventType(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetNotificationParameters); ok {
+		return CastBACnetNotificationParametersComplexEventType(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetNotificationParametersComplexEventType) GetTypeName() string {
@@ -190,6 +181,8 @@ func (m *BACnetNotificationParametersComplexEventType) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

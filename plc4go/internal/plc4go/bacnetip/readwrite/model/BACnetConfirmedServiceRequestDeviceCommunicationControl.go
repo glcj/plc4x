@@ -40,11 +40,12 @@ type BACnetConfirmedServiceRequestDeviceCommunicationControl struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestDeviceCommunicationControl interface {
-	// GetTimeDuration returns TimeDuration
+	IBACnetConfirmedServiceRequest
+	// GetTimeDuration returns TimeDuration (property field)
 	GetTimeDuration() *BACnetContextTagUnsignedInteger
-	// GetEnableDisable returns EnableDisable
+	// GetEnableDisable returns EnableDisable (property field)
 	GetEnableDisable() *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable
-	// GetPassword returns Password
+	// GetPassword returns Password (property field)
 	GetPassword() *BACnetContextTagCharacterString
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -100,22 +101,19 @@ func NewBACnetConfirmedServiceRequestDeviceCommunicationControl(timeDuration *BA
 }
 
 func CastBACnetConfirmedServiceRequestDeviceCommunicationControl(structType interface{}) *BACnetConfirmedServiceRequestDeviceCommunicationControl {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestDeviceCommunicationControl {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestDeviceCommunicationControl); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestDeviceCommunicationControl); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestDeviceCommunicationControl(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequest); ok {
-			return CastBACnetConfirmedServiceRequestDeviceCommunicationControl(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestDeviceCommunicationControl); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestDeviceCommunicationControl); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestDeviceCommunicationControl(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConfirmedServiceRequest); ok {
+		return CastBACnetConfirmedServiceRequestDeviceCommunicationControl(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestDeviceCommunicationControl) GetTypeName() string {
@@ -289,6 +287,8 @@ func (m *BACnetConfirmedServiceRequestDeviceCommunicationControl) String() strin
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

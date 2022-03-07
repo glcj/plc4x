@@ -37,7 +37,8 @@ type COTPParameterDisconnectAdditionalInformation struct {
 
 // The corresponding interface
 type ICOTPParameterDisconnectAdditionalInformation interface {
-	// GetData returns Data
+	ICOTPParameter
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -82,22 +83,19 @@ func NewCOTPParameterDisconnectAdditionalInformation(data []byte, rest uint8) *C
 }
 
 func CastCOTPParameterDisconnectAdditionalInformation(structType interface{}) *COTPParameterDisconnectAdditionalInformation {
-	castFunc := func(typ interface{}) *COTPParameterDisconnectAdditionalInformation {
-		if casted, ok := typ.(COTPParameterDisconnectAdditionalInformation); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPParameterDisconnectAdditionalInformation); ok {
-			return casted
-		}
-		if casted, ok := typ.(COTPParameter); ok {
-			return CastCOTPParameterDisconnectAdditionalInformation(casted.Child)
-		}
-		if casted, ok := typ.(*COTPParameter); ok {
-			return CastCOTPParameterDisconnectAdditionalInformation(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(COTPParameterDisconnectAdditionalInformation); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPParameterDisconnectAdditionalInformation); ok {
+		return casted
+	}
+	if casted, ok := structType.(COTPParameter); ok {
+		return CastCOTPParameterDisconnectAdditionalInformation(casted.Child)
+	}
+	if casted, ok := structType.(*COTPParameter); ok {
+		return CastCOTPParameterDisconnectAdditionalInformation(casted.Child)
+	}
+	return nil
 }
 
 func (m *COTPParameterDisconnectAdditionalInformation) GetTypeName() string {
@@ -177,6 +175,8 @@ func (m *COTPParameterDisconnectAdditionalInformation) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -39,9 +39,10 @@ type APDUReject struct {
 
 // The corresponding interface
 type IAPDUReject interface {
-	// GetOriginalInvokeId returns OriginalInvokeId
+	IAPDU
+	// GetOriginalInvokeId returns OriginalInvokeId (property field)
 	GetOriginalInvokeId() uint8
-	// GetRejectReason returns RejectReason
+	// GetRejectReason returns RejectReason (property field)
 	GetRejectReason() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -91,22 +92,19 @@ func NewAPDUReject(originalInvokeId uint8, rejectReason uint8, apduLength uint16
 }
 
 func CastAPDUReject(structType interface{}) *APDUReject {
-	castFunc := func(typ interface{}) *APDUReject {
-		if casted, ok := typ.(APDUReject); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*APDUReject); ok {
-			return casted
-		}
-		if casted, ok := typ.(APDU); ok {
-			return CastAPDUReject(casted.Child)
-		}
-		if casted, ok := typ.(*APDU); ok {
-			return CastAPDUReject(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(APDUReject); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*APDUReject); ok {
+		return casted
+	}
+	if casted, ok := structType.(APDU); ok {
+		return CastAPDUReject(casted.Child)
+	}
+	if casted, ok := structType.(*APDU); ok {
+		return CastAPDUReject(casted.Child)
+	}
+	return nil
 }
 
 func (m *APDUReject) GetTypeName() string {
@@ -226,6 +224,8 @@ func (m *APDUReject) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -35,6 +35,7 @@ type MPropWriteReq struct {
 
 // The corresponding interface
 type IMPropWriteReq interface {
+	ICEMI
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewMPropWriteReq(size uint16) *CEMI {
 }
 
 func CastMPropWriteReq(structType interface{}) *MPropWriteReq {
-	castFunc := func(typ interface{}) *MPropWriteReq {
-		if casted, ok := typ.(MPropWriteReq); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*MPropWriteReq); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMI); ok {
-			return CastMPropWriteReq(casted.Child)
-		}
-		if casted, ok := typ.(*CEMI); ok {
-			return CastMPropWriteReq(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(MPropWriteReq); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*MPropWriteReq); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMI); ok {
+		return CastMPropWriteReq(casted.Child)
+	}
+	if casted, ok := structType.(*CEMI); ok {
+		return CastMPropWriteReq(casted.Child)
+	}
+	return nil
 }
 
 func (m *MPropWriteReq) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *MPropWriteReq) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

@@ -36,11 +36,12 @@ type IdentifyReplyCommandFirmwareSummary struct {
 
 // The corresponding interface
 type IIdentifyReplyCommandFirmwareSummary interface {
-	// GetFirmwareVersion returns FirmwareVersion
+	IIdentifyReplyCommand
+	// GetFirmwareVersion returns FirmwareVersion (property field)
 	GetFirmwareVersion() string
-	// GetUnitServiceType returns UnitServiceType
+	// GetUnitServiceType returns UnitServiceType (property field)
 	GetUnitServiceType() byte
-	// GetVersion returns Version
+	// GetVersion returns Version (property field)
 	GetVersion() string
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewIdentifyReplyCommandFirmwareSummary(firmwareVersion string, unitServiceT
 }
 
 func CastIdentifyReplyCommandFirmwareSummary(structType interface{}) *IdentifyReplyCommandFirmwareSummary {
-	castFunc := func(typ interface{}) *IdentifyReplyCommandFirmwareSummary {
-		if casted, ok := typ.(IdentifyReplyCommandFirmwareSummary); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*IdentifyReplyCommandFirmwareSummary); ok {
-			return casted
-		}
-		if casted, ok := typ.(IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandFirmwareSummary(casted.Child)
-		}
-		if casted, ok := typ.(*IdentifyReplyCommand); ok {
-			return CastIdentifyReplyCommandFirmwareSummary(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(IdentifyReplyCommandFirmwareSummary); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*IdentifyReplyCommandFirmwareSummary); ok {
+		return casted
+	}
+	if casted, ok := structType.(IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandFirmwareSummary(casted.Child)
+	}
+	if casted, ok := structType.(*IdentifyReplyCommand); ok {
+		return CastIdentifyReplyCommandFirmwareSummary(casted.Child)
+	}
+	return nil
 }
 
 func (m *IdentifyReplyCommandFirmwareSummary) GetTypeName() string {
@@ -223,6 +221,8 @@ func (m *IdentifyReplyCommandFirmwareSummary) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

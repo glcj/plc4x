@@ -37,13 +37,13 @@ type BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable struct {
 
 // The corresponding interface
 type IBACnetConfirmedServiceRequestReinitializeDeviceEnableDisable interface {
-	// GetRawData returns RawData
+	// GetRawData returns RawData (property field)
 	GetRawData() *BACnetContextTagEnumerated
-	// GetIsEnable returns IsEnable
+	// GetIsEnable returns IsEnable (virtual field)
 	GetIsEnable() bool
-	// GetIsDisable returns IsDisable
+	// GetIsDisable returns IsDisable (virtual field)
 	GetIsDisable() bool
-	// GetIsDisableInitiation returns IsDisableInitiation
+	// GetIsDisableInitiation returns IsDisableInitiation (virtual field)
 	GetIsDisableInitiation() bool
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,16 +87,13 @@ func NewBACnetConfirmedServiceRequestReinitializeDeviceEnableDisable(rawData *BA
 }
 
 func CastBACnetConfirmedServiceRequestReinitializeDeviceEnableDisable(structType interface{}) *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable {
-	castFunc := func(typ interface{}) *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable {
-		if casted, ok := typ.(BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable) GetTypeName() string {
@@ -223,6 +220,8 @@ func (m *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable) String() 
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

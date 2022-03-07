@@ -32,6 +32,7 @@ type SysexCommandSysexRealtime struct {
 
 // The corresponding interface
 type ISysexCommandSysexRealtime interface {
+	ISysexCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -79,22 +80,19 @@ func NewSysexCommandSysexRealtime() *SysexCommand {
 }
 
 func CastSysexCommandSysexRealtime(structType interface{}) *SysexCommandSysexRealtime {
-	castFunc := func(typ interface{}) *SysexCommandSysexRealtime {
-		if casted, ok := typ.(SysexCommandSysexRealtime); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandSysexRealtime); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandSysexRealtime(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandSysexRealtime(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandSysexRealtime); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandSysexRealtime); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandSysexRealtime(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandSysexRealtime(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandSysexRealtime) GetTypeName() string {
@@ -153,6 +151,8 @@ func (m *SysexCommandSysexRealtime) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

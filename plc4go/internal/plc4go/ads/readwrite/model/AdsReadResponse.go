@@ -35,9 +35,10 @@ type AdsReadResponse struct {
 
 // The corresponding interface
 type IAdsReadResponse interface {
-	// GetResult returns Result
+	IAdsData
+	// GetResult returns Result (property field)
 	GetResult() ReturnCode
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -95,22 +96,19 @@ func NewAdsReadResponse(result ReturnCode, data []byte) *AdsData {
 }
 
 func CastAdsReadResponse(structType interface{}) *AdsReadResponse {
-	castFunc := func(typ interface{}) *AdsReadResponse {
-		if casted, ok := typ.(AdsReadResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*AdsReadResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(AdsData); ok {
-			return CastAdsReadResponse(casted.Child)
-		}
-		if casted, ok := typ.(*AdsData); ok {
-			return CastAdsReadResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(AdsReadResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*AdsReadResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(AdsData); ok {
+		return CastAdsReadResponse(casted.Child)
+	}
+	if casted, ok := structType.(*AdsData); ok {
+		return CastAdsReadResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *AdsReadResponse) GetTypeName() string {
@@ -236,6 +234,8 @@ func (m *AdsReadResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

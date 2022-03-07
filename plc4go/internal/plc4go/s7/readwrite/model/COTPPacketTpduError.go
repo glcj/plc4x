@@ -38,9 +38,10 @@ type COTPPacketTpduError struct {
 
 // The corresponding interface
 type ICOTPPacketTpduError interface {
-	// GetDestinationReference returns DestinationReference
+	ICOTPPacket
+	// GetDestinationReference returns DestinationReference (property field)
 	GetDestinationReference() uint16
-	// GetRejectCause returns RejectCause
+	// GetRejectCause returns RejectCause (property field)
 	GetRejectCause() uint8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -93,22 +94,19 @@ func NewCOTPPacketTpduError(destinationReference uint16, rejectCause uint8, para
 }
 
 func CastCOTPPacketTpduError(structType interface{}) *COTPPacketTpduError {
-	castFunc := func(typ interface{}) *COTPPacketTpduError {
-		if casted, ok := typ.(COTPPacketTpduError); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*COTPPacketTpduError); ok {
-			return casted
-		}
-		if casted, ok := typ.(COTPPacket); ok {
-			return CastCOTPPacketTpduError(casted.Child)
-		}
-		if casted, ok := typ.(*COTPPacket); ok {
-			return CastCOTPPacketTpduError(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(COTPPacketTpduError); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*COTPPacketTpduError); ok {
+		return casted
+	}
+	if casted, ok := structType.(COTPPacket); ok {
+		return CastCOTPPacketTpduError(casted.Child)
+	}
+	if casted, ok := structType.(*COTPPacket); ok {
+		return CastCOTPPacketTpduError(casted.Child)
+	}
+	return nil
 }
 
 func (m *COTPPacketTpduError) GetTypeName() string {
@@ -203,6 +201,8 @@ func (m *COTPPacketTpduError) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

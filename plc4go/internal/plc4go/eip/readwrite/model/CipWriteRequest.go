@@ -41,15 +41,16 @@ type CipWriteRequest struct {
 
 // The corresponding interface
 type ICipWriteRequest interface {
-	// GetRequestPathSize returns RequestPathSize
+	ICipService
+	// GetRequestPathSize returns RequestPathSize (property field)
 	GetRequestPathSize() int8
-	// GetTag returns Tag
+	// GetTag returns Tag (property field)
 	GetTag() []byte
-	// GetDataType returns DataType
+	// GetDataType returns DataType (property field)
 	GetDataType() CIPDataTypeCode
-	// GetElementNb returns ElementNb
+	// GetElementNb returns ElementNb (property field)
 	GetElementNb() uint16
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []byte
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -114,22 +115,19 @@ func NewCipWriteRequest(requestPathSize int8, tag []byte, dataType CIPDataTypeCo
 }
 
 func CastCipWriteRequest(structType interface{}) *CipWriteRequest {
-	castFunc := func(typ interface{}) *CipWriteRequest {
-		if casted, ok := typ.(CipWriteRequest); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CipWriteRequest); ok {
-			return casted
-		}
-		if casted, ok := typ.(CipService); ok {
-			return CastCipWriteRequest(casted.Child)
-		}
-		if casted, ok := typ.(*CipService); ok {
-			return CastCipWriteRequest(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CipWriteRequest); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CipWriteRequest); ok {
+		return casted
+	}
+	if casted, ok := structType.(CipService); ok {
+		return CastCipWriteRequest(casted.Child)
+	}
+	if casted, ok := structType.(*CipService); ok {
+		return CastCipWriteRequest(casted.Child)
+	}
+	return nil
 }
 
 func (m *CipWriteRequest) GetTypeName() string {
@@ -295,6 +293,8 @@ func (m *CipWriteRequest) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

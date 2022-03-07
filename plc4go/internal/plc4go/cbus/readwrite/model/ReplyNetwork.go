@@ -35,11 +35,11 @@ type ReplyNetwork struct {
 
 // The corresponding interface
 type IReplyNetwork interface {
-	// GetRouteType returns RouteType
+	// GetRouteType returns RouteType (property field)
 	GetRouteType() RouteType
-	// GetAdditionalBridgeAddresses returns AdditionalBridgeAddresses
+	// GetAdditionalBridgeAddresses returns AdditionalBridgeAddresses (property field)
 	GetAdditionalBridgeAddresses() []*BridgeAddress
-	// GetUnitAddress returns UnitAddress
+	// GetUnitAddress returns UnitAddress (property field)
 	GetUnitAddress() *UnitAddress
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -74,16 +74,13 @@ func NewReplyNetwork(routeType RouteType, additionalBridgeAddresses []*BridgeAdd
 }
 
 func CastReplyNetwork(structType interface{}) *ReplyNetwork {
-	castFunc := func(typ interface{}) *ReplyNetwork {
-		if casted, ok := typ.(ReplyNetwork); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ReplyNetwork); ok {
-			return casted
-		}
-		return nil
+	if casted, ok := structType.(ReplyNetwork); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ReplyNetwork); ok {
+		return casted
+	}
+	return nil
 }
 
 func (m *ReplyNetwork) GetTypeName() string {
@@ -234,6 +231,8 @@ func (m *ReplyNetwork) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

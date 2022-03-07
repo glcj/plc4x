@@ -38,9 +38,10 @@ type FirmataMessageDigitalIO struct {
 
 // The corresponding interface
 type IFirmataMessageDigitalIO interface {
-	// GetPinBlock returns PinBlock
+	IFirmataMessage
+	// GetPinBlock returns PinBlock (property field)
 	GetPinBlock() uint8
-	// GetData returns Data
+	// GetData returns Data (property field)
 	GetData() []int8
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -90,22 +91,19 @@ func NewFirmataMessageDigitalIO(pinBlock uint8, data []int8, response bool) *Fir
 }
 
 func CastFirmataMessageDigitalIO(structType interface{}) *FirmataMessageDigitalIO {
-	castFunc := func(typ interface{}) *FirmataMessageDigitalIO {
-		if casted, ok := typ.(FirmataMessageDigitalIO); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*FirmataMessageDigitalIO); ok {
-			return casted
-		}
-		if casted, ok := typ.(FirmataMessage); ok {
-			return CastFirmataMessageDigitalIO(casted.Child)
-		}
-		if casted, ok := typ.(*FirmataMessage); ok {
-			return CastFirmataMessageDigitalIO(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(FirmataMessageDigitalIO); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*FirmataMessageDigitalIO); ok {
+		return casted
+	}
+	if casted, ok := structType.(FirmataMessage); ok {
+		return CastFirmataMessageDigitalIO(casted.Child)
+	}
+	if casted, ok := structType.(*FirmataMessage); ok {
+		return CastFirmataMessageDigitalIO(casted.Child)
+	}
+	return nil
 }
 
 func (m *FirmataMessageDigitalIO) GetTypeName() string {
@@ -223,6 +221,8 @@ func (m *FirmataMessageDigitalIO) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

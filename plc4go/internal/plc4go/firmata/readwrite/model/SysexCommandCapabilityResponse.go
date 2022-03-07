@@ -32,6 +32,7 @@ type SysexCommandCapabilityResponse struct {
 
 // The corresponding interface
 type ISysexCommandCapabilityResponse interface {
+	ISysexCommand
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -79,22 +80,19 @@ func NewSysexCommandCapabilityResponse() *SysexCommand {
 }
 
 func CastSysexCommandCapabilityResponse(structType interface{}) *SysexCommandCapabilityResponse {
-	castFunc := func(typ interface{}) *SysexCommandCapabilityResponse {
-		if casted, ok := typ.(SysexCommandCapabilityResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*SysexCommandCapabilityResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(SysexCommand); ok {
-			return CastSysexCommandCapabilityResponse(casted.Child)
-		}
-		if casted, ok := typ.(*SysexCommand); ok {
-			return CastSysexCommandCapabilityResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(SysexCommandCapabilityResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*SysexCommandCapabilityResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(SysexCommand); ok {
+		return CastSysexCommandCapabilityResponse(casted.Child)
+	}
+	if casted, ok := structType.(*SysexCommand); ok {
+		return CastSysexCommandCapabilityResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *SysexCommandCapabilityResponse) GetTypeName() string {
@@ -153,6 +151,8 @@ func (m *SysexCommandCapabilityResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

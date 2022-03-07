@@ -38,7 +38,8 @@ type CEMIAdditionalInformationRelativeTimestamp struct {
 
 // The corresponding interface
 type ICEMIAdditionalInformationRelativeTimestamp interface {
-	// GetRelativeTimestamp returns RelativeTimestamp
+	ICEMIAdditionalInformation
+	// GetRelativeTimestamp returns RelativeTimestamp (property field)
 	GetRelativeTimestamp() *RelativeTimestamp
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -84,22 +85,19 @@ func NewCEMIAdditionalInformationRelativeTimestamp(relativeTimestamp *RelativeTi
 }
 
 func CastCEMIAdditionalInformationRelativeTimestamp(structType interface{}) *CEMIAdditionalInformationRelativeTimestamp {
-	castFunc := func(typ interface{}) *CEMIAdditionalInformationRelativeTimestamp {
-		if casted, ok := typ.(CEMIAdditionalInformationRelativeTimestamp); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CEMIAdditionalInformationRelativeTimestamp); ok {
-			return casted
-		}
-		if casted, ok := typ.(CEMIAdditionalInformation); ok {
-			return CastCEMIAdditionalInformationRelativeTimestamp(casted.Child)
-		}
-		if casted, ok := typ.(*CEMIAdditionalInformation); ok {
-			return CastCEMIAdditionalInformationRelativeTimestamp(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CEMIAdditionalInformationRelativeTimestamp); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CEMIAdditionalInformationRelativeTimestamp); ok {
+		return casted
+	}
+	if casted, ok := structType.(CEMIAdditionalInformation); ok {
+		return CastCEMIAdditionalInformationRelativeTimestamp(casted.Child)
+	}
+	if casted, ok := structType.(*CEMIAdditionalInformation); ok {
+		return CastCEMIAdditionalInformationRelativeTimestamp(casted.Child)
+	}
+	return nil
 }
 
 func (m *CEMIAdditionalInformationRelativeTimestamp) GetTypeName() string {
@@ -205,6 +203,8 @@ func (m *CEMIAdditionalInformationRelativeTimestamp) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

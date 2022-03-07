@@ -32,6 +32,7 @@ type BACnetErrorGetEnrollmentSummary struct {
 
 // The corresponding interface
 type IBACnetErrorGetEnrollmentSummary interface {
+	IBACnetError
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewBACnetErrorGetEnrollmentSummary(errorClass *BACnetApplicationTagEnumerat
 }
 
 func CastBACnetErrorGetEnrollmentSummary(structType interface{}) *BACnetErrorGetEnrollmentSummary {
-	castFunc := func(typ interface{}) *BACnetErrorGetEnrollmentSummary {
-		if casted, ok := typ.(BACnetErrorGetEnrollmentSummary); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetErrorGetEnrollmentSummary); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetError); ok {
-			return CastBACnetErrorGetEnrollmentSummary(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetError); ok {
-			return CastBACnetErrorGetEnrollmentSummary(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetErrorGetEnrollmentSummary); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetErrorGetEnrollmentSummary); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetError); ok {
+		return CastBACnetErrorGetEnrollmentSummary(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetError); ok {
+		return CastBACnetErrorGetEnrollmentSummary(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetErrorGetEnrollmentSummary) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *BACnetErrorGetEnrollmentSummary) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

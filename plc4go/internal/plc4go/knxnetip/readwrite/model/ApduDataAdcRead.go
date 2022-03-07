@@ -35,6 +35,7 @@ type ApduDataAdcRead struct {
 
 // The corresponding interface
 type IApduDataAdcRead interface {
+	IApduData
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
 	// GetLengthInBits returns the length in bits
@@ -74,22 +75,19 @@ func NewApduDataAdcRead(dataLength uint8) *ApduData {
 }
 
 func CastApduDataAdcRead(structType interface{}) *ApduDataAdcRead {
-	castFunc := func(typ interface{}) *ApduDataAdcRead {
-		if casted, ok := typ.(ApduDataAdcRead); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*ApduDataAdcRead); ok {
-			return casted
-		}
-		if casted, ok := typ.(ApduData); ok {
-			return CastApduDataAdcRead(casted.Child)
-		}
-		if casted, ok := typ.(*ApduData); ok {
-			return CastApduDataAdcRead(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(ApduDataAdcRead); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*ApduDataAdcRead); ok {
+		return casted
+	}
+	if casted, ok := structType.(ApduData); ok {
+		return CastApduDataAdcRead(casted.Child)
+	}
+	if casted, ok := structType.(*ApduData); ok {
+		return CastApduDataAdcRead(casted.Child)
+	}
+	return nil
 }
 
 func (m *ApduDataAdcRead) GetTypeName() string {
@@ -148,6 +146,8 @@ func (m *ApduDataAdcRead) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

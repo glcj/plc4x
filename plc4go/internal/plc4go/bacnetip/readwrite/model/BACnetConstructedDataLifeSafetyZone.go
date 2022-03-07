@@ -38,7 +38,8 @@ type BACnetConstructedDataLifeSafetyZone struct {
 
 // The corresponding interface
 type IBACnetConstructedDataLifeSafetyZone interface {
-	// GetZones returns Zones
+	IBACnetConstructedData
+	// GetZones returns Zones (property field)
 	GetZones() []*BACnetContextTagObjectIdentifier
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -57,14 +58,6 @@ func (m *BACnetConstructedDataLifeSafetyZone) ObjectType() BACnetObjectType {
 
 func (m *BACnetConstructedDataLifeSafetyZone) GetObjectType() BACnetObjectType {
 	return BACnetObjectType_LIFE_SAFETY_ZONE
-}
-
-func (m *BACnetConstructedDataLifeSafetyZone) PropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return 0
-}
-
-func (m *BACnetConstructedDataLifeSafetyZone) GetPropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return 0
 }
 
 func (m *BACnetConstructedDataLifeSafetyZone) InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
@@ -94,22 +87,19 @@ func NewBACnetConstructedDataLifeSafetyZone(zones []*BACnetContextTagObjectIdent
 }
 
 func CastBACnetConstructedDataLifeSafetyZone(structType interface{}) *BACnetConstructedDataLifeSafetyZone {
-	castFunc := func(typ interface{}) *BACnetConstructedDataLifeSafetyZone {
-		if casted, ok := typ.(BACnetConstructedDataLifeSafetyZone); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*BACnetConstructedDataLifeSafetyZone); ok {
-			return casted
-		}
-		if casted, ok := typ.(BACnetConstructedData); ok {
-			return CastBACnetConstructedDataLifeSafetyZone(casted.Child)
-		}
-		if casted, ok := typ.(*BACnetConstructedData); ok {
-			return CastBACnetConstructedDataLifeSafetyZone(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(BACnetConstructedDataLifeSafetyZone); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*BACnetConstructedDataLifeSafetyZone); ok {
+		return casted
+	}
+	if casted, ok := structType.(BACnetConstructedData); ok {
+		return CastBACnetConstructedDataLifeSafetyZone(casted.Child)
+	}
+	if casted, ok := structType.(*BACnetConstructedData); ok {
+		return CastBACnetConstructedDataLifeSafetyZone(casted.Child)
+	}
+	return nil
 }
 
 func (m *BACnetConstructedDataLifeSafetyZone) GetTypeName() string {
@@ -212,6 +202,8 @@ func (m *BACnetConstructedDataLifeSafetyZone) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }

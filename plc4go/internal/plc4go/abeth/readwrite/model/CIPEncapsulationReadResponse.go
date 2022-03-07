@@ -37,7 +37,8 @@ type CIPEncapsulationReadResponse struct {
 
 // The corresponding interface
 type ICIPEncapsulationReadResponse interface {
-	// GetResponse returns Response
+	ICIPEncapsulationPacket
+	// GetResponse returns Response (property field)
 	GetResponse() *DF1ResponseMessage
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -87,22 +88,19 @@ func NewCIPEncapsulationReadResponse(response *DF1ResponseMessage, sessionHandle
 }
 
 func CastCIPEncapsulationReadResponse(structType interface{}) *CIPEncapsulationReadResponse {
-	castFunc := func(typ interface{}) *CIPEncapsulationReadResponse {
-		if casted, ok := typ.(CIPEncapsulationReadResponse); ok {
-			return &casted
-		}
-		if casted, ok := typ.(*CIPEncapsulationReadResponse); ok {
-			return casted
-		}
-		if casted, ok := typ.(CIPEncapsulationPacket); ok {
-			return CastCIPEncapsulationReadResponse(casted.Child)
-		}
-		if casted, ok := typ.(*CIPEncapsulationPacket); ok {
-			return CastCIPEncapsulationReadResponse(casted.Child)
-		}
-		return nil
+	if casted, ok := structType.(CIPEncapsulationReadResponse); ok {
+		return &casted
 	}
-	return castFunc(structType)
+	if casted, ok := structType.(*CIPEncapsulationReadResponse); ok {
+		return casted
+	}
+	if casted, ok := structType.(CIPEncapsulationPacket); ok {
+		return CastCIPEncapsulationReadResponse(casted.Child)
+	}
+	if casted, ok := structType.(*CIPEncapsulationPacket); ok {
+		return CastCIPEncapsulationReadResponse(casted.Child)
+	}
+	return nil
 }
 
 func (m *CIPEncapsulationReadResponse) GetTypeName() string {
@@ -190,6 +188,8 @@ func (m *CIPEncapsulationReadResponse) String() string {
 		return "<nil>"
 	}
 	buffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	m.Serialize(buffer)
+	if err := m.Serialize(buffer); err != nil {
+		return err.Error()
+	}
 	return buffer.GetBox().String()
 }
