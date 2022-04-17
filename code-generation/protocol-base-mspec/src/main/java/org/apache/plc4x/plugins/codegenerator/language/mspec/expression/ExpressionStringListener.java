@@ -153,6 +153,7 @@ public class ExpressionStringListener extends ExpressionBaseListener {
                 .getPropertyFieldByName(propertyName)
                 .map(DefaultTypedField.class::cast);
             // Check for other fields
+            /*
             if (propertyFieldByName.isEmpty()) {
                 propertyFieldByName = complexTypeDefinition.getAllFields().stream()
                     .filter(NamedField.class::isInstance)
@@ -161,6 +162,7 @@ public class ExpressionStringListener extends ExpressionBaseListener {
                     .map(DefaultTypedField.class::cast)
                     .findAny();
             }
+*/
             // Check for arguments context
             if (propertyFieldByName.isEmpty() && complexTypeDefinition.getAllParserArguments().isPresent()) {
                 Optional<DefaultArgument> defaultArgument = complexTypeDefinition.getAllParserArguments().orElseThrow().stream()
