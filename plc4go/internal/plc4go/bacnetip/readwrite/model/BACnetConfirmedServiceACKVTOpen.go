@@ -42,33 +42,31 @@ type IBACnetConfirmedServiceACKVTOpen interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKVTOpen) ServiceChoice() uint8 {
-	return 0x15
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKVTOpen) GetServiceChoice() uint8 {
 	return 0x15
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKVTOpen) InitializeParent(parent *BACnetConfirmedServiceACK) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKVTOpen) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKVTOpen factory function for BACnetConfirmedServiceACKVTOpen
-func NewBACnetConfirmedServiceACKVTOpen() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKVTOpen{
+func NewBACnetConfirmedServiceACKVTOpen() *BACnetConfirmedServiceACKVTOpen {
+	_result := &BACnetConfirmedServiceACKVTOpen{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKVTOpen(structType interface{}) *BACnetConfirmedServiceACKVTOpen {
@@ -105,7 +103,7 @@ func (m *BACnetConfirmedServiceACKVTOpen) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKVTOpenParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKVTOpenParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKVTOpen, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKVTOpen"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetConfirmedServiceACKVTOpenParse(readBuffer utils.ReadBuffer) (*BACnetC
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKVTOpen) Serialize(writeBuffer utils.WriteBuffer) error {

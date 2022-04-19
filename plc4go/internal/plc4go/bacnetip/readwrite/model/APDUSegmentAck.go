@@ -62,21 +62,28 @@ type IAPDUSegmentAck interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUSegmentAck) ApduType() uint8 {
-	return 0x4
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUSegmentAck) GetApduType() uint8 {
 	return 0x4
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUSegmentAck) InitializeParent(parent *APDU) {}
 
+func (m *APDUSegmentAck) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUSegmentAck) GetNegativeAck() bool {
 	return m.NegativeAck
 }
@@ -97,13 +104,14 @@ func (m *APDUSegmentAck) GetProposedWindowSize() uint8 {
 	return m.ProposedWindowSize
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUSegmentAck factory function for APDUSegmentAck
-func NewAPDUSegmentAck(negativeAck bool, server bool, originalInvokeId uint8, sequenceNumber uint8, proposedWindowSize uint8, apduLength uint16) *APDU {
-	child := &APDUSegmentAck{
+func NewAPDUSegmentAck(negativeAck bool, server bool, originalInvokeId uint8, sequenceNumber uint8, proposedWindowSize uint8, apduLength uint16) *APDUSegmentAck {
+	_result := &APDUSegmentAck{
 		NegativeAck:        negativeAck,
 		Server:             server,
 		OriginalInvokeId:   originalInvokeId,
@@ -111,8 +119,8 @@ func NewAPDUSegmentAck(negativeAck bool, server bool, originalInvokeId uint8, se
 		ProposedWindowSize: proposedWindowSize,
 		APDU:               NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUSegmentAck(structType interface{}) *APDUSegmentAck {
@@ -167,7 +175,7 @@ func (m *APDUSegmentAck) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDUSegmentAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDUSegmentAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUSegmentAck, error) {
 	if pullErr := readBuffer.PullContext("APDUSegmentAck"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -237,7 +245,7 @@ func APDUSegmentAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU,
 		APDU:               &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUSegmentAck) Serialize(writeBuffer utils.WriteBuffer) error {

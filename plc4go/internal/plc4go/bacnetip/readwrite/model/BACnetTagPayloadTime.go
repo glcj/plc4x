@@ -63,8 +63,9 @@ type IBACnetTagPayloadTime interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetTagPayloadTime) GetHour() uint8 {
 	return m.Hour
 }
@@ -81,28 +82,38 @@ func (m *BACnetTagPayloadTime) GetFractional() uint8 {
 	return m.Fractional
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetTagPayloadTime) GetWildcard() uint8 {
-	return 0xFF
+	return uint8(0xFF)
 }
 
 func (m *BACnetTagPayloadTime) GetHourIsWildcard() bool {
-	return bool((m.GetHour()) == (m.GetWildcard()))
+	return bool(bool((m.GetHour()) == (m.GetWildcard())))
 }
 
 func (m *BACnetTagPayloadTime) GetMinuteIsWildcard() bool {
-	return bool((m.GetMinute()) == (m.GetWildcard()))
+	return bool(bool((m.GetMinute()) == (m.GetWildcard())))
 }
 
 func (m *BACnetTagPayloadTime) GetSecondIsWildcard() bool {
-	return bool((m.GetSecond()) == (m.GetWildcard()))
+	return bool(bool((m.GetSecond()) == (m.GetWildcard())))
 }
 
 func (m *BACnetTagPayloadTime) GetFractionalIsWildcard() bool {
-	return bool((m.GetFractional()) == (m.GetWildcard()))
+	return bool(bool((m.GetFractional()) == (m.GetWildcard())))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetTagPayloadTime factory function for BACnetTagPayloadTime
 func NewBACnetTagPayloadTime(hour uint8, minute uint8, second uint8, fractional uint8) *BACnetTagPayloadTime {

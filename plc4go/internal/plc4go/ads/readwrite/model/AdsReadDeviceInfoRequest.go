@@ -42,41 +42,35 @@ type IAdsReadDeviceInfoRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsReadDeviceInfoRequest) CommandId() CommandId {
-	return CommandId_ADS_READ_DEVICE_INFO
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsReadDeviceInfoRequest) GetCommandId() CommandId {
 	return CommandId_ADS_READ_DEVICE_INFO
-}
-
-func (m *AdsReadDeviceInfoRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *AdsReadDeviceInfoRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsReadDeviceInfoRequest) InitializeParent(parent *AdsData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *AdsReadDeviceInfoRequest) GetParent() *AdsData {
+	return m.AdsData
+}
 
 // NewAdsReadDeviceInfoRequest factory function for AdsReadDeviceInfoRequest
-func NewAdsReadDeviceInfoRequest() *AdsData {
-	child := &AdsReadDeviceInfoRequest{
+func NewAdsReadDeviceInfoRequest() *AdsReadDeviceInfoRequest {
+	_result := &AdsReadDeviceInfoRequest{
 		AdsData: NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsReadDeviceInfoRequest(structType interface{}) *AdsReadDeviceInfoRequest {
@@ -113,7 +107,7 @@ func (m *AdsReadDeviceInfoRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsReadDeviceInfoRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsReadDeviceInfoRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsReadDeviceInfoRequest, error) {
 	if pullErr := readBuffer.PullContext("AdsReadDeviceInfoRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func AdsReadDeviceInfoRequestParse(readBuffer utils.ReadBuffer, commandId Comman
 		AdsData: &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsReadDeviceInfoRequest) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -45,33 +45,31 @@ type IApduDataIndividualAddressWrite interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataIndividualAddressWrite) ApciType() uint8 {
-	return 0x3
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataIndividualAddressWrite) GetApciType() uint8 {
 	return 0x3
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataIndividualAddressWrite) InitializeParent(parent *ApduData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataIndividualAddressWrite) GetParent() *ApduData {
+	return m.ApduData
+}
 
 // NewApduDataIndividualAddressWrite factory function for ApduDataIndividualAddressWrite
-func NewApduDataIndividualAddressWrite(dataLength uint8) *ApduData {
-	child := &ApduDataIndividualAddressWrite{
+func NewApduDataIndividualAddressWrite(dataLength uint8) *ApduDataIndividualAddressWrite {
+	_result := &ApduDataIndividualAddressWrite{
 		ApduData: NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataIndividualAddressWrite(structType interface{}) *ApduDataIndividualAddressWrite {
@@ -108,7 +106,7 @@ func (m *ApduDataIndividualAddressWrite) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataIndividualAddressWriteParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataIndividualAddressWriteParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataIndividualAddressWrite, error) {
 	if pullErr := readBuffer.PullContext("ApduDataIndividualAddressWrite"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataIndividualAddressWriteParse(readBuffer utils.ReadBuffer, dataLength
 		ApduData: &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataIndividualAddressWrite) Serialize(writeBuffer utils.WriteBuffer) error {

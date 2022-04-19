@@ -49,38 +49,46 @@ type IBACnetUnconfirmedServiceRequestUnconfirmedUnknown interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetUnconfirmedServiceRequestUnconfirmedUnknown) ServiceChoice() uint8 {
-	return 0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetUnconfirmedServiceRequestUnconfirmedUnknown) GetServiceChoice() uint8 {
 	return 0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetUnconfirmedServiceRequestUnconfirmedUnknown) InitializeParent(parent *BACnetUnconfirmedServiceRequest) {
 }
 
+func (m *BACnetUnconfirmedServiceRequestUnconfirmedUnknown) GetParent() *BACnetUnconfirmedServiceRequest {
+	return m.BACnetUnconfirmedServiceRequest
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetUnconfirmedServiceRequestUnconfirmedUnknown) GetUnknownBytes() []byte {
 	return m.UnknownBytes
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetUnconfirmedServiceRequestUnconfirmedUnknown factory function for BACnetUnconfirmedServiceRequestUnconfirmedUnknown
-func NewBACnetUnconfirmedServiceRequestUnconfirmedUnknown(unknownBytes []byte, len uint16) *BACnetUnconfirmedServiceRequest {
-	child := &BACnetUnconfirmedServiceRequestUnconfirmedUnknown{
+func NewBACnetUnconfirmedServiceRequestUnconfirmedUnknown(unknownBytes []byte, len uint16) *BACnetUnconfirmedServiceRequestUnconfirmedUnknown {
+	_result := &BACnetUnconfirmedServiceRequestUnconfirmedUnknown{
 		UnknownBytes:                    unknownBytes,
 		BACnetUnconfirmedServiceRequest: NewBACnetUnconfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetUnconfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetUnconfirmedServiceRequestUnconfirmedUnknown(structType interface{}) *BACnetUnconfirmedServiceRequestUnconfirmedUnknown {
@@ -122,7 +130,7 @@ func (m *BACnetUnconfirmedServiceRequestUnconfirmedUnknown) GetLengthInBytes() u
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetUnconfirmedServiceRequestUnconfirmedUnknownParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetUnconfirmedServiceRequest, error) {
+func BACnetUnconfirmedServiceRequestUnconfirmedUnknownParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetUnconfirmedServiceRequestUnconfirmedUnknown, error) {
 	if pullErr := readBuffer.PullContext("BACnetUnconfirmedServiceRequestUnconfirmedUnknown"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -145,7 +153,7 @@ func BACnetUnconfirmedServiceRequestUnconfirmedUnknownParse(readBuffer utils.Rea
 		BACnetUnconfirmedServiceRequest: &BACnetUnconfirmedServiceRequest{},
 	}
 	_child.BACnetUnconfirmedServiceRequest.Child = _child
-	return _child.BACnetUnconfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetUnconfirmedServiceRequestUnconfirmedUnknown) Serialize(writeBuffer utils.WriteBuffer) error {

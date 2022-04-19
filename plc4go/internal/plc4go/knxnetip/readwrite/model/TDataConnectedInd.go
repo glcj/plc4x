@@ -45,33 +45,31 @@ type ITDataConnectedInd interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *TDataConnectedInd) MessageCode() uint8 {
-	return 0x89
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *TDataConnectedInd) GetMessageCode() uint8 {
 	return 0x89
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *TDataConnectedInd) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *TDataConnectedInd) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewTDataConnectedInd factory function for TDataConnectedInd
-func NewTDataConnectedInd(size uint16) *CEMI {
-	child := &TDataConnectedInd{
+func NewTDataConnectedInd(size uint16) *TDataConnectedInd {
+	_result := &TDataConnectedInd{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastTDataConnectedInd(structType interface{}) *TDataConnectedInd {
@@ -108,7 +106,7 @@ func (m *TDataConnectedInd) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func TDataConnectedIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func TDataConnectedIndParse(readBuffer utils.ReadBuffer, size uint16) (*TDataConnectedInd, error) {
 	if pullErr := readBuffer.PullContext("TDataConnectedInd"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func TDataConnectedIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, er
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *TDataConnectedInd) Serialize(writeBuffer utils.WriteBuffer) error {

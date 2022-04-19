@@ -46,37 +46,45 @@ type IKnxNetIpDeviceManagement interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxNetIpDeviceManagement) ServiceType() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxNetIpDeviceManagement) GetServiceType() uint8 {
 	return 0x03
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxNetIpDeviceManagement) InitializeParent(parent *ServiceId) {}
 
+func (m *KnxNetIpDeviceManagement) GetParent() *ServiceId {
+	return m.ServiceId
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxNetIpDeviceManagement) GetVersion() uint8 {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxNetIpDeviceManagement factory function for KnxNetIpDeviceManagement
-func NewKnxNetIpDeviceManagement(version uint8) *ServiceId {
-	child := &KnxNetIpDeviceManagement{
+func NewKnxNetIpDeviceManagement(version uint8) *KnxNetIpDeviceManagement {
+	_result := &KnxNetIpDeviceManagement{
 		Version:   version,
 		ServiceId: NewServiceId(),
 	}
-	child.Child = child
-	return child.ServiceId
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxNetIpDeviceManagement(structType interface{}) *KnxNetIpDeviceManagement {
@@ -116,7 +124,7 @@ func (m *KnxNetIpDeviceManagement) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxNetIpDeviceManagementParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
+func KnxNetIpDeviceManagementParse(readBuffer utils.ReadBuffer) (*KnxNetIpDeviceManagement, error) {
 	if pullErr := readBuffer.PullContext("KnxNetIpDeviceManagement"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func KnxNetIpDeviceManagementParse(readBuffer utils.ReadBuffer) (*ServiceId, err
 		ServiceId: &ServiceId{},
 	}
 	_child.ServiceId.Child = _child
-	return _child.ServiceId, nil
+	return _child, nil
 }
 
 func (m *KnxNetIpDeviceManagement) Serialize(writeBuffer utils.WriteBuffer) error {

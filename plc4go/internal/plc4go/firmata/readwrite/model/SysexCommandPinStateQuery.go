@@ -46,45 +46,49 @@ type ISysexCommandPinStateQuery interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandPinStateQuery) CommandType() uint8 {
-	return 0x6D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandPinStateQuery) GetCommandType() uint8 {
 	return 0x6D
-}
-
-func (m *SysexCommandPinStateQuery) Response() bool {
-	return false
 }
 
 func (m *SysexCommandPinStateQuery) GetResponse() bool {
 	return false
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandPinStateQuery) InitializeParent(parent *SysexCommand) {}
 
+func (m *SysexCommandPinStateQuery) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *SysexCommandPinStateQuery) GetPin() uint8 {
 	return m.Pin
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewSysexCommandPinStateQuery factory function for SysexCommandPinStateQuery
-func NewSysexCommandPinStateQuery(pin uint8) *SysexCommand {
-	child := &SysexCommandPinStateQuery{
+func NewSysexCommandPinStateQuery(pin uint8) *SysexCommandPinStateQuery {
+	_result := &SysexCommandPinStateQuery{
 		Pin:          pin,
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandPinStateQuery(structType interface{}) *SysexCommandPinStateQuery {
@@ -124,7 +128,7 @@ func (m *SysexCommandPinStateQuery) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandPinStateQueryParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandPinStateQueryParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandPinStateQuery, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandPinStateQuery"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -148,7 +152,7 @@ func SysexCommandPinStateQueryParse(readBuffer utils.ReadBuffer, response bool) 
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandPinStateQuery) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -48,35 +48,55 @@ type IBACnetApplicationTagCharacterString interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagCharacterString) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagCharacterString) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagCharacterString) GetPayload() *BACnetTagPayloadCharacterString {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagCharacterString) GetValue() string {
-	return m.GetPayload().GetValue()
+	return string(m.GetPayload().GetValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagCharacterString factory function for BACnetApplicationTagCharacterString
-func NewBACnetApplicationTagCharacterString(payload *BACnetTagPayloadCharacterString, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagCharacterString{
+func NewBACnetApplicationTagCharacterString(payload *BACnetTagPayloadCharacterString, header *BACnetTagHeader) *BACnetApplicationTagCharacterString {
+	_result := &BACnetApplicationTagCharacterString{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagCharacterString(structType interface{}) *BACnetApplicationTagCharacterString {
@@ -118,7 +138,7 @@ func (m *BACnetApplicationTagCharacterString) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagCharacterStringParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagCharacterStringParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTagCharacterString, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagCharacterString"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -153,7 +173,7 @@ func BACnetApplicationTagCharacterStringParse(readBuffer utils.ReadBuffer, heade
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagCharacterString) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -61,22 +61,29 @@ type IBACnetConfirmedServiceRequestConfirmedCOVNotification interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) ServiceChoice() uint8 {
-	return 0x01
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) GetServiceChoice() uint8 {
 	return 0x01
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
+func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) GetSubscriberProcessIdentifier() *BACnetContextTagUnsignedInteger {
 	return m.SubscriberProcessIdentifier
 }
@@ -97,13 +104,14 @@ func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) GetListOfValues(
 	return m.ListOfValues
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConfirmedServiceRequestConfirmedCOVNotification factory function for BACnetConfirmedServiceRequestConfirmedCOVNotification
-func NewBACnetConfirmedServiceRequestConfirmedCOVNotification(subscriberProcessIdentifier *BACnetContextTagUnsignedInteger, initiatingDeviceIdentifier *BACnetContextTagObjectIdentifier, monitoredObjectIdentifier *BACnetContextTagObjectIdentifier, lifetimeInSeconds *BACnetContextTagUnsignedInteger, listOfValues *BACnetPropertyValues, len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestConfirmedCOVNotification{
+func NewBACnetConfirmedServiceRequestConfirmedCOVNotification(subscriberProcessIdentifier *BACnetContextTagUnsignedInteger, initiatingDeviceIdentifier *BACnetContextTagObjectIdentifier, monitoredObjectIdentifier *BACnetContextTagObjectIdentifier, lifetimeInSeconds *BACnetContextTagUnsignedInteger, listOfValues *BACnetPropertyValues, len uint16) *BACnetConfirmedServiceRequestConfirmedCOVNotification {
+	_result := &BACnetConfirmedServiceRequestConfirmedCOVNotification{
 		SubscriberProcessIdentifier:   subscriberProcessIdentifier,
 		InitiatingDeviceIdentifier:    initiatingDeviceIdentifier,
 		MonitoredObjectIdentifier:     monitoredObjectIdentifier,
@@ -111,8 +119,8 @@ func NewBACnetConfirmedServiceRequestConfirmedCOVNotification(subscriberProcessI
 		ListOfValues:                  listOfValues,
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestConfirmedCOVNotification(structType interface{}) *BACnetConfirmedServiceRequestConfirmedCOVNotification {
@@ -164,7 +172,7 @@ func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) GetLengthInBytes
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestConfirmedCOVNotificationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestConfirmedCOVNotificationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestConfirmedCOVNotification, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestConfirmedCOVNotification"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -250,7 +258,7 @@ func BACnetConfirmedServiceRequestConfirmedCOVNotificationParse(readBuffer utils
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotification) Serialize(writeBuffer utils.WriteBuffer) error {

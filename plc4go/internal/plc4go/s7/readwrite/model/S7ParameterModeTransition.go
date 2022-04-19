@@ -59,29 +59,32 @@ type IS7ParameterModeTransition interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7ParameterModeTransition) ParameterType() uint8 {
-	return 0x01
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7ParameterModeTransition) GetParameterType() uint8 {
 	return 0x01
-}
-
-func (m *S7ParameterModeTransition) MessageType() uint8 {
-	return 0x07
 }
 
 func (m *S7ParameterModeTransition) GetMessageType() uint8 {
 	return 0x07
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7ParameterModeTransition) InitializeParent(parent *S7Parameter) {}
 
+func (m *S7ParameterModeTransition) GetParent() *S7Parameter {
+	return m.S7Parameter
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7ParameterModeTransition) GetMethod() uint8 {
 	return m.Method
 }
@@ -102,13 +105,14 @@ func (m *S7ParameterModeTransition) GetSequenceNumber() uint8 {
 	return m.SequenceNumber
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7ParameterModeTransition factory function for S7ParameterModeTransition
-func NewS7ParameterModeTransition(method uint8, cpuFunctionType uint8, cpuFunctionGroup uint8, currentMode uint8, sequenceNumber uint8) *S7Parameter {
-	child := &S7ParameterModeTransition{
+func NewS7ParameterModeTransition(method uint8, cpuFunctionType uint8, cpuFunctionGroup uint8, currentMode uint8, sequenceNumber uint8) *S7ParameterModeTransition {
+	_result := &S7ParameterModeTransition{
 		Method:           method,
 		CpuFunctionType:  cpuFunctionType,
 		CpuFunctionGroup: cpuFunctionGroup,
@@ -116,8 +120,8 @@ func NewS7ParameterModeTransition(method uint8, cpuFunctionType uint8, cpuFuncti
 		SequenceNumber:   sequenceNumber,
 		S7Parameter:      NewS7Parameter(),
 	}
-	child.Child = child
-	return child.S7Parameter
+	_result.Child = _result
+	return _result
 }
 
 func CastS7ParameterModeTransition(structType interface{}) *S7ParameterModeTransition {
@@ -175,7 +179,7 @@ func (m *S7ParameterModeTransition) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7ParameterModeTransitionParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7Parameter, error) {
+func S7ParameterModeTransitionParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7ParameterModeTransition, error) {
 	if pullErr := readBuffer.PullContext("S7ParameterModeTransition"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -252,7 +256,7 @@ func S7ParameterModeTransitionParse(readBuffer utils.ReadBuffer, messageType uin
 		S7Parameter:      &S7Parameter{},
 	}
 	_child.S7Parameter.Child = _child
-	return _child.S7Parameter, nil
+	return _child, nil
 }
 
 func (m *S7ParameterModeTransition) Serialize(writeBuffer utils.WriteBuffer) error {

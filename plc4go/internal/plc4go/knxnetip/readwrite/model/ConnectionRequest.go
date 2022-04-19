@@ -52,21 +52,28 @@ type IConnectionRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ConnectionRequest) MsgType() uint16 {
-	return 0x0205
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ConnectionRequest) GetMsgType() uint16 {
 	return 0x0205
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ConnectionRequest) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *ConnectionRequest) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ConnectionRequest) GetHpaiDiscoveryEndpoint() *HPAIDiscoveryEndpoint {
 	return m.HpaiDiscoveryEndpoint
 }
@@ -79,20 +86,21 @@ func (m *ConnectionRequest) GetConnectionRequestInformation() *ConnectionRequest
 	return m.ConnectionRequestInformation
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewConnectionRequest factory function for ConnectionRequest
-func NewConnectionRequest(hpaiDiscoveryEndpoint *HPAIDiscoveryEndpoint, hpaiDataEndpoint *HPAIDataEndpoint, connectionRequestInformation *ConnectionRequestInformation) *KnxNetIpMessage {
-	child := &ConnectionRequest{
+func NewConnectionRequest(hpaiDiscoveryEndpoint *HPAIDiscoveryEndpoint, hpaiDataEndpoint *HPAIDataEndpoint, connectionRequestInformation *ConnectionRequestInformation) *ConnectionRequest {
+	_result := &ConnectionRequest{
 		HpaiDiscoveryEndpoint:        hpaiDiscoveryEndpoint,
 		HpaiDataEndpoint:             hpaiDataEndpoint,
 		ConnectionRequestInformation: connectionRequestInformation,
 		KnxNetIpMessage:              NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastConnectionRequest(structType interface{}) *ConnectionRequest {
@@ -138,7 +146,7 @@ func (m *ConnectionRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ConnectionRequestParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+func ConnectionRequestParse(readBuffer utils.ReadBuffer) (*ConnectionRequest, error) {
 	if pullErr := readBuffer.PullContext("ConnectionRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -196,7 +204,7 @@ func ConnectionRequestParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, erro
 		KnxNetIpMessage:              &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *ConnectionRequest) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,34 +42,32 @@ type IBACnetConfirmedServiceACKGetAlarmSummary interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKGetAlarmSummary) ServiceChoice() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKGetAlarmSummary) GetServiceChoice() uint8 {
 	return 0x03
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKGetAlarmSummary) InitializeParent(parent *BACnetConfirmedServiceACK) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKGetAlarmSummary) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKGetAlarmSummary factory function for BACnetConfirmedServiceACKGetAlarmSummary
-func NewBACnetConfirmedServiceACKGetAlarmSummary() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKGetAlarmSummary{
+func NewBACnetConfirmedServiceACKGetAlarmSummary() *BACnetConfirmedServiceACKGetAlarmSummary {
+	_result := &BACnetConfirmedServiceACKGetAlarmSummary{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKGetAlarmSummary(structType interface{}) *BACnetConfirmedServiceACKGetAlarmSummary {
@@ -106,7 +104,7 @@ func (m *BACnetConfirmedServiceACKGetAlarmSummary) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKGetAlarmSummary, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKGetAlarmSummary"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -122,7 +120,7 @@ func BACnetConfirmedServiceACKGetAlarmSummaryParse(readBuffer utils.ReadBuffer) 
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKGetAlarmSummary) Serialize(writeBuffer utils.WriteBuffer) error {

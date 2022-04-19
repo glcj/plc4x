@@ -42,36 +42,34 @@ type IBACnetErrorPasswordFailure interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorPasswordFailure) ServiceChoice() uint8 {
-	return 0x14
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorPasswordFailure) GetServiceChoice() uint8 {
 	return 0x14
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorPasswordFailure) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorPasswordFailure) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorPasswordFailure factory function for BACnetErrorPasswordFailure
-func NewBACnetErrorPasswordFailure(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorPasswordFailure{
+func NewBACnetErrorPasswordFailure(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorPasswordFailure {
+	_result := &BACnetErrorPasswordFailure{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorPasswordFailure(structType interface{}) *BACnetErrorPasswordFailure {
@@ -108,7 +106,7 @@ func (m *BACnetErrorPasswordFailure) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorPasswordFailureParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorPasswordFailureParse(readBuffer utils.ReadBuffer) (*BACnetErrorPasswordFailure, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorPasswordFailure"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorPasswordFailureParse(readBuffer utils.ReadBuffer) (*BACnetError,
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorPasswordFailure) Serialize(writeBuffer utils.WriteBuffer) error {

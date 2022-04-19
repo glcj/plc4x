@@ -42,33 +42,31 @@ type IBACnetServiceAckCreateObject interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckCreateObject) ServiceChoice() uint8 {
-	return 0x0A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckCreateObject) GetServiceChoice() uint8 {
 	return 0x0A
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckCreateObject) InitializeParent(parent *BACnetServiceAck) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetServiceAckCreateObject) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
 
 // NewBACnetServiceAckCreateObject factory function for BACnetServiceAckCreateObject
-func NewBACnetServiceAckCreateObject() *BACnetServiceAck {
-	child := &BACnetServiceAckCreateObject{
+func NewBACnetServiceAckCreateObject() *BACnetServiceAckCreateObject {
+	_result := &BACnetServiceAckCreateObject{
 		BACnetServiceAck: NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckCreateObject(structType interface{}) *BACnetServiceAckCreateObject {
@@ -105,7 +103,7 @@ func (m *BACnetServiceAckCreateObject) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckCreateObject, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckCreateObject"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetServiceAckCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetServ
 		BACnetServiceAck: &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckCreateObject) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,28 +42,29 @@ type ICALDataRequestReset interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALDataRequestReset) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *CALDataRequestReset) GetParent() *CALData {
+	return m.CALData
+}
 
 // NewCALDataRequestReset factory function for CALDataRequestReset
-func NewCALDataRequestReset(commandTypeContainer CALCommandTypeContainer) *CALData {
-	child := &CALDataRequestReset{
+func NewCALDataRequestReset(commandTypeContainer CALCommandTypeContainer) *CALDataRequestReset {
+	_result := &CALDataRequestReset{
 		CALData: NewCALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.CALData
+	_result.Child = _result
+	return _result
 }
 
 func CastCALDataRequestReset(structType interface{}) *CALDataRequestReset {
@@ -100,7 +101,7 @@ func (m *CALDataRequestReset) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALDataRequestResetParse(readBuffer utils.ReadBuffer) (*CALData, error) {
+func CALDataRequestResetParse(readBuffer utils.ReadBuffer) (*CALDataRequestReset, error) {
 	if pullErr := readBuffer.PullContext("CALDataRequestReset"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -116,7 +117,7 @@ func CALDataRequestResetParse(readBuffer utils.ReadBuffer) (*CALData, error) {
 		CALData: &CALData{},
 	}
 	_child.CALData.Child = _child
-	return _child.CALData, nil
+	return _child, nil
 }
 
 func (m *CALDataRequestReset) Serialize(writeBuffer utils.WriteBuffer) error {

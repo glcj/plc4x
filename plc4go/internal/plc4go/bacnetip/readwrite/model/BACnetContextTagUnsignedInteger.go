@@ -52,42 +52,59 @@ type IBACnetContextTagUnsignedInteger interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagUnsignedInteger) DataType() BACnetDataType {
-	return BACnetDataType_UNSIGNED_INTEGER
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagUnsignedInteger) GetDataType() BACnetDataType {
 	return BACnetDataType_UNSIGNED_INTEGER
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagUnsignedInteger) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagUnsignedInteger) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagUnsignedInteger) GetPayload() *BACnetTagPayloadUnsignedInteger {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetContextTagUnsignedInteger) GetActualValue() uint64 {
-	return m.GetPayload().GetActualValue()
+	return uint64(m.GetPayload().GetActualValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetContextTagUnsignedInteger factory function for BACnetContextTagUnsignedInteger
-func NewBACnetContextTagUnsignedInteger(payload *BACnetTagPayloadUnsignedInteger, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTag {
-	child := &BACnetContextTagUnsignedInteger{
+func NewBACnetContextTagUnsignedInteger(payload *BACnetTagPayloadUnsignedInteger, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTagUnsignedInteger {
+	_result := &BACnetContextTagUnsignedInteger{
 		Payload:          payload,
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagUnsignedInteger(structType interface{}) *BACnetContextTagUnsignedInteger {
@@ -129,7 +146,7 @@ func (m *BACnetContextTagUnsignedInteger) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, header *BACnetTagHeader) (*BACnetContextTag, error) {
+func BACnetContextTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, header *BACnetTagHeader) (*BACnetContextTagUnsignedInteger, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagUnsignedInteger"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -169,7 +186,7 @@ func BACnetContextTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, tagNumber
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagUnsignedInteger) Serialize(writeBuffer utils.WriteBuffer) error {

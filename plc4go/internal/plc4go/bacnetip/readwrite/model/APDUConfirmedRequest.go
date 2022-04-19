@@ -74,21 +74,28 @@ type IAPDUConfirmedRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUConfirmedRequest) ApduType() uint8 {
-	return 0x0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUConfirmedRequest) GetApduType() uint8 {
 	return 0x0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUConfirmedRequest) InitializeParent(parent *APDU) {}
 
+func (m *APDUConfirmedRequest) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUConfirmedRequest) GetSegmentedMessage() bool {
 	return m.SegmentedMessage
 }
@@ -125,13 +132,14 @@ func (m *APDUConfirmedRequest) GetServiceRequest() *BACnetConfirmedServiceReques
 	return m.ServiceRequest
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUConfirmedRequest factory function for APDUConfirmedRequest
-func NewAPDUConfirmedRequest(segmentedMessage bool, moreFollows bool, segmentedResponseAccepted bool, maxSegmentsAccepted uint8, maxApduLengthAccepted uint8, invokeId uint8, sequenceNumber *uint8, proposedWindowSize *uint8, serviceRequest *BACnetConfirmedServiceRequest, apduLength uint16) *APDU {
-	child := &APDUConfirmedRequest{
+func NewAPDUConfirmedRequest(segmentedMessage bool, moreFollows bool, segmentedResponseAccepted bool, maxSegmentsAccepted uint8, maxApduLengthAccepted uint8, invokeId uint8, sequenceNumber *uint8, proposedWindowSize *uint8, serviceRequest *BACnetConfirmedServiceRequest, apduLength uint16) *APDUConfirmedRequest {
+	_result := &APDUConfirmedRequest{
 		SegmentedMessage:          segmentedMessage,
 		MoreFollows:               moreFollows,
 		SegmentedResponseAccepted: segmentedResponseAccepted,
@@ -143,8 +151,8 @@ func NewAPDUConfirmedRequest(segmentedMessage bool, moreFollows bool, segmentedR
 		ServiceRequest:            serviceRequest,
 		APDU:                      NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUConfirmedRequest(structType interface{}) *APDUConfirmedRequest {
@@ -215,7 +223,7 @@ func (m *APDUConfirmedRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDUConfirmedRequestParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDUConfirmedRequestParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUConfirmedRequest, error) {
 	if pullErr := readBuffer.PullContext("APDUConfirmedRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -329,7 +337,7 @@ func APDUConfirmedRequestParse(readBuffer utils.ReadBuffer, apduLength uint16) (
 		APDU:                      &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUConfirmedRequest) Serialize(writeBuffer utils.WriteBuffer) error {

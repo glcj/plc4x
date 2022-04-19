@@ -61,23 +61,48 @@ type ICBusCommandParent interface {
 type ICBusCommandChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *CBusCommand, header *CBusHeader)
+	GetParent() *CBusCommand
+
 	GetTypeName() string
 	ICBusCommand
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusCommand) GetHeader() *CBusHeader {
 	return m.Header
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *CBusCommand) GetDestinationAddressType() DestinationAddressType {
-	return m.GetHeader().GetDestinationAddressType()
+	return DestinationAddressType(m.GetHeader().GetDestinationAddressType())
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CBusCommand) GetInitiator() byte {
+	return CBusCommand_INITIATOR
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewCBusCommand factory function for CBusCommand
 func NewCBusCommand(header *CBusHeader, srchk bool) *CBusCommand {
@@ -90,6 +115,9 @@ func CastCBusCommand(structType interface{}) *CBusCommand {
 	}
 	if casted, ok := structType.(*CBusCommand); ok {
 		return casted
+	}
+	if casted, ok := structType.(ICBusCommandChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -159,15 +187,19 @@ func CBusCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommand, er
 	_ = destinationAddressType
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *CBusCommand
+	type CBusCommandChild interface {
+		InitializeParent(*CBusCommand, *CBusHeader)
+		GetParent() *CBusCommand
+	}
+	var _child CBusCommandChild
 	var typeSwitchError error
 	switch {
 	case destinationAddressType == DestinationAddressType_PointToPointToMultiPoint: // CBusCommandPointToPointToMultiPoint
-		_parent, typeSwitchError = CBusCommandPointToPointToMultiPointParse(readBuffer, srchk)
+		_child, typeSwitchError = CBusCommandPointToPointToMultiPointParse(readBuffer, srchk)
 	case destinationAddressType == DestinationAddressType_PointToMultiPoint: // CBusCommandPointToMultiPoint
-		_parent, typeSwitchError = CBusCommandPointToMultiPointParse(readBuffer, srchk)
+		_child, typeSwitchError = CBusCommandPointToMultiPointParse(readBuffer, srchk)
 	case destinationAddressType == DestinationAddressType_PointToPoint: // CBusCommandPointToPoint
-		_parent, typeSwitchError = CBusCommandPointToPointParse(readBuffer, srchk)
+		_child, typeSwitchError = CBusCommandPointToPointParse(readBuffer, srchk)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -181,8 +213,8 @@ func CBusCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommand, er
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, header)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), header)
+	return _child.GetParent(), nil
 }
 
 func (m *CBusCommand) Serialize(writeBuffer utils.WriteBuffer) error {

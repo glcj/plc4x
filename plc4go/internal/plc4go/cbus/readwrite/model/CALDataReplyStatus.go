@@ -52,16 +52,26 @@ type ICALDataReplyStatus interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALDataReplyStatus) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *CALDataReplyStatus) GetParent() *CALData {
+	return m.CALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALDataReplyStatus) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
@@ -74,20 +84,21 @@ func (m *CALDataReplyStatus) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCALDataReplyStatus factory function for CALDataReplyStatus
-func NewCALDataReplyStatus(application ApplicationIdContainer, blockStart uint8, data []byte, commandTypeContainer CALCommandTypeContainer) *CALData {
-	child := &CALDataReplyStatus{
+func NewCALDataReplyStatus(application ApplicationIdContainer, blockStart uint8, data []byte, commandTypeContainer CALCommandTypeContainer) *CALDataReplyStatus {
+	_result := &CALDataReplyStatus{
 		Application: application,
 		BlockStart:  blockStart,
 		Data:        data,
 		CALData:     NewCALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.CALData
+	_result.Child = _result
+	return _result
 }
 
 func CastCALDataReplyStatus(structType interface{}) *CALDataReplyStatus {
@@ -135,7 +146,7 @@ func (m *CALDataReplyStatus) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALDataReplyStatusParse(readBuffer utils.ReadBuffer, commandTypeContainer CALCommandTypeContainer) (*CALData, error) {
+func CALDataReplyStatusParse(readBuffer utils.ReadBuffer, commandTypeContainer CALCommandTypeContainer) (*CALDataReplyStatus, error) {
 	if pullErr := readBuffer.PullContext("CALDataReplyStatus"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -180,7 +191,7 @@ func CALDataReplyStatusParse(readBuffer utils.ReadBuffer, commandTypeContainer C
 		CALData:     &CALData{},
 	}
 	_child.CALData.Child = _child
-	return _child.CALData, nil
+	return _child, nil
 }
 
 func (m *CALDataReplyStatus) Serialize(writeBuffer utils.WriteBuffer) error {

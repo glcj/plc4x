@@ -45,34 +45,32 @@ type IBACnetConfirmedServiceRequestGetEnrollmentSummary interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) ServiceChoice() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) GetServiceChoice() uint8 {
 	return 0x04
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
 
 // NewBACnetConfirmedServiceRequestGetEnrollmentSummary factory function for BACnetConfirmedServiceRequestGetEnrollmentSummary
-func NewBACnetConfirmedServiceRequestGetEnrollmentSummary(len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestGetEnrollmentSummary{
+func NewBACnetConfirmedServiceRequestGetEnrollmentSummary(len uint16) *BACnetConfirmedServiceRequestGetEnrollmentSummary {
+	_result := &BACnetConfirmedServiceRequestGetEnrollmentSummary{
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestGetEnrollmentSummary(structType interface{}) *BACnetConfirmedServiceRequestGetEnrollmentSummary {
@@ -109,7 +107,7 @@ func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) GetLengthInBytes() u
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestGetEnrollmentSummaryParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestGetEnrollmentSummaryParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestGetEnrollmentSummary, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestGetEnrollmentSummary"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func BACnetConfirmedServiceRequestGetEnrollmentSummaryParse(readBuffer utils.Rea
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestGetEnrollmentSummary) Serialize(writeBuffer utils.WriteBuffer) error {

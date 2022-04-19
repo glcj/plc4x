@@ -49,37 +49,45 @@ type IUnknownMessage interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *UnknownMessage) MsgType() uint16 {
-	return 0x020B
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *UnknownMessage) GetMsgType() uint16 {
 	return 0x020B
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *UnknownMessage) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *UnknownMessage) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *UnknownMessage) GetUnknownData() []byte {
 	return m.UnknownData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewUnknownMessage factory function for UnknownMessage
-func NewUnknownMessage(unknownData []byte, totalLength uint16) *KnxNetIpMessage {
-	child := &UnknownMessage{
+func NewUnknownMessage(unknownData []byte, totalLength uint16) *UnknownMessage {
+	_result := &UnknownMessage{
 		UnknownData:     unknownData,
 		KnxNetIpMessage: NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastUnknownMessage(structType interface{}) *UnknownMessage {
@@ -121,7 +129,7 @@ func (m *UnknownMessage) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func UnknownMessageParse(readBuffer utils.ReadBuffer, totalLength uint16) (*KnxNetIpMessage, error) {
+func UnknownMessageParse(readBuffer utils.ReadBuffer, totalLength uint16) (*UnknownMessage, error) {
 	if pullErr := readBuffer.PullContext("UnknownMessage"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -144,7 +152,7 @@ func UnknownMessageParse(readBuffer utils.ReadBuffer, totalLength uint16) (*KnxN
 		KnxNetIpMessage: &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *UnknownMessage) Serialize(writeBuffer utils.WriteBuffer) error {

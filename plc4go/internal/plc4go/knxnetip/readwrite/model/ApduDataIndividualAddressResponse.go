@@ -45,33 +45,31 @@ type IApduDataIndividualAddressResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataIndividualAddressResponse) ApciType() uint8 {
-	return 0x5
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataIndividualAddressResponse) GetApciType() uint8 {
 	return 0x5
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataIndividualAddressResponse) InitializeParent(parent *ApduData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataIndividualAddressResponse) GetParent() *ApduData {
+	return m.ApduData
+}
 
 // NewApduDataIndividualAddressResponse factory function for ApduDataIndividualAddressResponse
-func NewApduDataIndividualAddressResponse(dataLength uint8) *ApduData {
-	child := &ApduDataIndividualAddressResponse{
+func NewApduDataIndividualAddressResponse(dataLength uint8) *ApduDataIndividualAddressResponse {
+	_result := &ApduDataIndividualAddressResponse{
 		ApduData: NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataIndividualAddressResponse(structType interface{}) *ApduDataIndividualAddressResponse {
@@ -108,7 +106,7 @@ func (m *ApduDataIndividualAddressResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataIndividualAddressResponseParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataIndividualAddressResponseParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataIndividualAddressResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataIndividualAddressResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataIndividualAddressResponseParse(readBuffer utils.ReadBuffer, dataLen
 		ApduData: &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataIndividualAddressResponse) Serialize(writeBuffer utils.WriteBuffer) error {

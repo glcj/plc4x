@@ -45,33 +45,31 @@ type IApduDataExtLinkResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtLinkResponse) ExtApciType() uint8 {
-	return 0x26
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtLinkResponse) GetExtApciType() uint8 {
 	return 0x26
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtLinkResponse) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtLinkResponse) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtLinkResponse factory function for ApduDataExtLinkResponse
-func NewApduDataExtLinkResponse(length uint8) *ApduDataExt {
-	child := &ApduDataExtLinkResponse{
+func NewApduDataExtLinkResponse(length uint8) *ApduDataExtLinkResponse {
+	_result := &ApduDataExtLinkResponse{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtLinkResponse(structType interface{}) *ApduDataExtLinkResponse {
@@ -108,7 +106,7 @@ func (m *ApduDataExtLinkResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtLinkResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtLinkResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtLinkResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtLinkResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtLinkResponseParse(readBuffer utils.ReadBuffer, length uint8) (*A
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtLinkResponse) Serialize(writeBuffer utils.WriteBuffer) error {

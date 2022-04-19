@@ -51,17 +51,11 @@ type IDF1RequestCommandParent interface {
 type IDF1RequestCommandChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *DF1RequestCommand)
+	GetParent() *DF1RequestCommand
+
 	GetTypeName() string
 	IDF1RequestCommand
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewDF1RequestCommand factory function for DF1RequestCommand
 func NewDF1RequestCommand() *DF1RequestCommand {
@@ -74,6 +68,9 @@ func CastDF1RequestCommand(structType interface{}) *DF1RequestCommand {
 	}
 	if casted, ok := structType.(*DF1RequestCommand); ok {
 		return casted
+	}
+	if casted, ok := structType.(IDF1RequestCommandChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -116,11 +113,15 @@ func DF1RequestCommandParse(readBuffer utils.ReadBuffer) (*DF1RequestCommand, er
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *DF1RequestCommand
+	type DF1RequestCommandChild interface {
+		InitializeParent(*DF1RequestCommand)
+		GetParent() *DF1RequestCommand
+	}
+	var _child DF1RequestCommandChild
 	var typeSwitchError error
 	switch {
 	case functionCode == 0xA2: // DF1RequestProtectedTypedLogicalRead
-		_parent, typeSwitchError = DF1RequestProtectedTypedLogicalReadParse(readBuffer)
+		_child, typeSwitchError = DF1RequestProtectedTypedLogicalReadParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -134,8 +135,8 @@ func DF1RequestCommandParse(readBuffer utils.ReadBuffer) (*DF1RequestCommand, er
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *DF1RequestCommand) Serialize(writeBuffer utils.WriteBuffer) error {

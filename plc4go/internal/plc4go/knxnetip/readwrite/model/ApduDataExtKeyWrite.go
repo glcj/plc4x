@@ -45,33 +45,31 @@ type IApduDataExtKeyWrite interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtKeyWrite) ExtApciType() uint8 {
-	return 0x13
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtKeyWrite) GetExtApciType() uint8 {
 	return 0x13
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtKeyWrite) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtKeyWrite) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtKeyWrite factory function for ApduDataExtKeyWrite
-func NewApduDataExtKeyWrite(length uint8) *ApduDataExt {
-	child := &ApduDataExtKeyWrite{
+func NewApduDataExtKeyWrite(length uint8) *ApduDataExtKeyWrite {
+	_result := &ApduDataExtKeyWrite{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtKeyWrite(structType interface{}) *ApduDataExtKeyWrite {
@@ -108,7 +106,7 @@ func (m *ApduDataExtKeyWrite) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtKeyWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtKeyWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtKeyWrite, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtKeyWrite"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtKeyWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduD
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtKeyWrite) Serialize(writeBuffer utils.WriteBuffer) error {

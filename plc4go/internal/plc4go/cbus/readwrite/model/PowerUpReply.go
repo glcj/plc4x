@@ -46,32 +46,43 @@ type IPowerUpReply interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *PowerUpReply) InitializeParent(parent *Reply, magicByte byte) {
 	m.Reply.MagicByte = magicByte
 }
 
+func (m *PowerUpReply) GetParent() *Reply {
+	return m.Reply
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *PowerUpReply) GetIsA() *PowerUp {
 	return m.IsA
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewPowerUpReply factory function for PowerUpReply
-func NewPowerUpReply(isA *PowerUp, magicByte byte) *Reply {
-	child := &PowerUpReply{
+func NewPowerUpReply(isA *PowerUp, magicByte byte) *PowerUpReply {
+	_result := &PowerUpReply{
 		IsA:   isA,
 		Reply: NewReply(magicByte),
 	}
-	child.Child = child
-	return child.Reply
+	_result.Child = _result
+	return _result
 }
 
 func CastPowerUpReply(structType interface{}) *PowerUpReply {
@@ -111,7 +122,7 @@ func (m *PowerUpReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func PowerUpReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
+func PowerUpReplyParse(readBuffer utils.ReadBuffer) (*PowerUpReply, error) {
 	if pullErr := readBuffer.PullContext("PowerUpReply"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func PowerUpReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 		Reply: &Reply{},
 	}
 	_child.Reply.Child = _child
-	return _child.Reply, nil
+	return _child, nil
 }
 
 func (m *PowerUpReply) Serialize(writeBuffer utils.WriteBuffer) error {

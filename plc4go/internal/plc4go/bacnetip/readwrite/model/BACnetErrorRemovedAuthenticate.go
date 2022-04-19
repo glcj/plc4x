@@ -42,36 +42,34 @@ type IBACnetErrorRemovedAuthenticate interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorRemovedAuthenticate) ServiceChoice() uint8 {
-	return 0x18
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorRemovedAuthenticate) GetServiceChoice() uint8 {
 	return 0x18
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorRemovedAuthenticate) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorRemovedAuthenticate) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorRemovedAuthenticate factory function for BACnetErrorRemovedAuthenticate
-func NewBACnetErrorRemovedAuthenticate(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorRemovedAuthenticate{
+func NewBACnetErrorRemovedAuthenticate(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorRemovedAuthenticate {
+	_result := &BACnetErrorRemovedAuthenticate{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorRemovedAuthenticate(structType interface{}) *BACnetErrorRemovedAuthenticate {
@@ -108,7 +106,7 @@ func (m *BACnetErrorRemovedAuthenticate) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorRemovedAuthenticateParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorRemovedAuthenticateParse(readBuffer utils.ReadBuffer) (*BACnetErrorRemovedAuthenticate, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorRemovedAuthenticate"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorRemovedAuthenticateParse(readBuffer utils.ReadBuffer) (*BACnetEr
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorRemovedAuthenticate) Serialize(writeBuffer utils.WriteBuffer) error {

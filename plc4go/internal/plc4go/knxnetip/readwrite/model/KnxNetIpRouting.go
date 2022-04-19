@@ -46,37 +46,45 @@ type IKnxNetIpRouting interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxNetIpRouting) ServiceType() uint8 {
-	return 0x05
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxNetIpRouting) GetServiceType() uint8 {
 	return 0x05
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxNetIpRouting) InitializeParent(parent *ServiceId) {}
 
+func (m *KnxNetIpRouting) GetParent() *ServiceId {
+	return m.ServiceId
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxNetIpRouting) GetVersion() uint8 {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxNetIpRouting factory function for KnxNetIpRouting
-func NewKnxNetIpRouting(version uint8) *ServiceId {
-	child := &KnxNetIpRouting{
+func NewKnxNetIpRouting(version uint8) *KnxNetIpRouting {
+	_result := &KnxNetIpRouting{
 		Version:   version,
 		ServiceId: NewServiceId(),
 	}
-	child.Child = child
-	return child.ServiceId
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxNetIpRouting(structType interface{}) *KnxNetIpRouting {
@@ -116,7 +124,7 @@ func (m *KnxNetIpRouting) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxNetIpRoutingParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
+func KnxNetIpRoutingParse(readBuffer utils.ReadBuffer) (*KnxNetIpRouting, error) {
 	if pullErr := readBuffer.PullContext("KnxNetIpRouting"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func KnxNetIpRoutingParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
 		ServiceId: &ServiceId{},
 	}
 	_child.ServiceId.Child = _child
-	return _child.ServiceId, nil
+	return _child, nil
 }
 
 func (m *KnxNetIpRouting) Serialize(writeBuffer utils.WriteBuffer) error {

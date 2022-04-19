@@ -49,37 +49,45 @@ type IApduDataOther interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataOther) ApciType() uint8 {
-	return 0xF
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataOther) GetApciType() uint8 {
 	return 0xF
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataOther) InitializeParent(parent *ApduData) {}
 
+func (m *ApduDataOther) GetParent() *ApduData {
+	return m.ApduData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ApduDataOther) GetExtendedApdu() *ApduDataExt {
 	return m.ExtendedApdu
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewApduDataOther factory function for ApduDataOther
-func NewApduDataOther(extendedApdu *ApduDataExt, dataLength uint8) *ApduData {
-	child := &ApduDataOther{
+func NewApduDataOther(extendedApdu *ApduDataExt, dataLength uint8) *ApduDataOther {
+	_result := &ApduDataOther{
 		ExtendedApdu: extendedApdu,
 		ApduData:     NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataOther(structType interface{}) *ApduDataOther {
@@ -119,7 +127,7 @@ func (m *ApduDataOther) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataOtherParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataOtherParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataOther, error) {
 	if pullErr := readBuffer.PullContext("ApduDataOther"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -149,7 +157,7 @@ func ApduDataOtherParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDat
 		ApduData:     &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataOther) Serialize(writeBuffer utils.WriteBuffer) error {

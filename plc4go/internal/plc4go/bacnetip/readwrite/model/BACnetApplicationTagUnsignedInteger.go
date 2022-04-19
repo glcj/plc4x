@@ -48,35 +48,55 @@ type IBACnetApplicationTagUnsignedInteger interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagUnsignedInteger) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagUnsignedInteger) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagUnsignedInteger) GetPayload() *BACnetTagPayloadUnsignedInteger {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagUnsignedInteger) GetActualValue() uint64 {
-	return m.GetPayload().GetActualValue()
+	return uint64(m.GetPayload().GetActualValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagUnsignedInteger factory function for BACnetApplicationTagUnsignedInteger
-func NewBACnetApplicationTagUnsignedInteger(payload *BACnetTagPayloadUnsignedInteger, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagUnsignedInteger{
+func NewBACnetApplicationTagUnsignedInteger(payload *BACnetTagPayloadUnsignedInteger, header *BACnetTagHeader) *BACnetApplicationTagUnsignedInteger {
+	_result := &BACnetApplicationTagUnsignedInteger{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagUnsignedInteger(structType interface{}) *BACnetApplicationTagUnsignedInteger {
@@ -118,7 +138,7 @@ func (m *BACnetApplicationTagUnsignedInteger) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTagUnsignedInteger, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagUnsignedInteger"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -153,7 +173,7 @@ func BACnetApplicationTagUnsignedIntegerParse(readBuffer utils.ReadBuffer, heade
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagUnsignedInteger) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -59,24 +59,31 @@ type IBACnetConstructedDataUnspecified interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConstructedDataUnspecified) ObjectType() BACnetObjectType {
-	return 0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConstructedDataUnspecified) GetObjectType() BACnetObjectType {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetConstructedDataUnspecified) InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
 	m.BACnetConstructedData.OpeningTag = openingTag
 	m.BACnetConstructedData.ClosingTag = closingTag
 }
 
+func (m *BACnetConstructedDataUnspecified) GetParent() *BACnetConstructedData {
+	return m.BACnetConstructedData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConstructedDataUnspecified) GetData() []*BACnetConstructedDataElement {
 	return m.Data
 }
@@ -89,27 +96,37 @@ func (m *BACnetConstructedDataUnspecified) GetContent() *BACnetApplicationTag {
 	return m.Content
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetConstructedDataUnspecified) GetHasData() bool {
 	propertyIdentifier := m.PropertyIdentifier
 	_ = propertyIdentifier
 	content := m.Content
 	_ = content
-	return bool((len(m.GetData())) == (0))
+	return bool(bool((len(m.GetData())) == (0)))
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetConstructedDataUnspecified factory function for BACnetConstructedDataUnspecified
-func NewBACnetConstructedDataUnspecified(data []*BACnetConstructedDataElement, propertyIdentifier *BACnetContextTagPropertyIdentifier, content *BACnetApplicationTag, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedData {
-	child := &BACnetConstructedDataUnspecified{
+func NewBACnetConstructedDataUnspecified(data []*BACnetConstructedDataElement, propertyIdentifier *BACnetContextTagPropertyIdentifier, content *BACnetApplicationTag, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedDataUnspecified {
+	_result := &BACnetConstructedDataUnspecified{
 		Data:                  data,
 		PropertyIdentifier:    propertyIdentifier,
 		Content:               content,
 		BACnetConstructedData: NewBACnetConstructedData(openingTag, closingTag, tagNumber, propertyIdentifierArgument),
 	}
-	child.Child = child
-	return child.BACnetConstructedData
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConstructedDataUnspecified(structType interface{}) *BACnetConstructedDataUnspecified {
@@ -165,7 +182,7 @@ func (m *BACnetConstructedDataUnspecified) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConstructedDataUnspecifiedParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedData, error) {
+func BACnetConstructedDataUnspecifiedParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedDataUnspecified, error) {
 	if pullErr := readBuffer.PullContext("BACnetConstructedDataUnspecified"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -251,7 +268,7 @@ func BACnetConstructedDataUnspecifiedParse(readBuffer utils.ReadBuffer, tagNumbe
 		BACnetConstructedData: &BACnetConstructedData{},
 	}
 	_child.BACnetConstructedData.Child = _child
-	return _child.BACnetConstructedData, nil
+	return _child, nil
 }
 
 func (m *BACnetConstructedDataUnspecified) Serialize(writeBuffer utils.WriteBuffer) error {

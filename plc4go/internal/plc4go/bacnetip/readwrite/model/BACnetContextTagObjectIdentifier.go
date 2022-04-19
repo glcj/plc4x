@@ -54,46 +54,63 @@ type IBACnetContextTagObjectIdentifier interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagObjectIdentifier) DataType() BACnetDataType {
-	return BACnetDataType_BACNET_OBJECT_IDENTIFIER
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagObjectIdentifier) GetDataType() BACnetDataType {
 	return BACnetDataType_BACNET_OBJECT_IDENTIFIER
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagObjectIdentifier) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagObjectIdentifier) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagObjectIdentifier) GetPayload() *BACnetTagPayloadObjectIdentifier {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetContextTagObjectIdentifier) GetObjectType() BACnetObjectType {
-	return m.GetPayload().GetObjectType()
+	return BACnetObjectType(m.GetPayload().GetObjectType())
 }
 
 func (m *BACnetContextTagObjectIdentifier) GetInstanceNumber() uint32 {
-	return m.GetPayload().GetInstanceNumber()
+	return uint32(m.GetPayload().GetInstanceNumber())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetContextTagObjectIdentifier factory function for BACnetContextTagObjectIdentifier
-func NewBACnetContextTagObjectIdentifier(payload *BACnetTagPayloadObjectIdentifier, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTag {
-	child := &BACnetContextTagObjectIdentifier{
+func NewBACnetContextTagObjectIdentifier(payload *BACnetTagPayloadObjectIdentifier, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTagObjectIdentifier {
+	_result := &BACnetContextTagObjectIdentifier{
 		Payload:          payload,
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagObjectIdentifier(structType interface{}) *BACnetContextTagObjectIdentifier {
@@ -137,7 +154,7 @@ func (m *BACnetContextTagObjectIdentifier) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagObjectIdentifierParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool) (*BACnetContextTag, error) {
+func BACnetContextTagObjectIdentifierParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool) (*BACnetContextTagObjectIdentifier, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagObjectIdentifier"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -182,7 +199,7 @@ func BACnetContextTagObjectIdentifierParse(readBuffer utils.ReadBuffer, tagNumbe
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagObjectIdentifier) Serialize(writeBuffer utils.WriteBuffer) error {

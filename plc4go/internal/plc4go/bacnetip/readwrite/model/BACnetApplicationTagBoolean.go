@@ -48,35 +48,55 @@ type IBACnetApplicationTagBoolean interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagBoolean) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagBoolean) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagBoolean) GetPayload() *BACnetTagPayloadBoolean {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagBoolean) GetActualValue() bool {
-	return m.GetPayload().GetValue()
+	return bool(m.GetPayload().GetValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagBoolean factory function for BACnetApplicationTagBoolean
-func NewBACnetApplicationTagBoolean(payload *BACnetTagPayloadBoolean, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagBoolean{
+func NewBACnetApplicationTagBoolean(payload *BACnetTagPayloadBoolean, header *BACnetTagHeader) *BACnetApplicationTagBoolean {
+	_result := &BACnetApplicationTagBoolean{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagBoolean(structType interface{}) *BACnetApplicationTagBoolean {
@@ -118,7 +138,7 @@ func (m *BACnetApplicationTagBoolean) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagBooleanParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagBooleanParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTagBoolean, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagBoolean"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -153,7 +173,7 @@ func BACnetApplicationTagBooleanParse(readBuffer utils.ReadBuffer, header *BACne
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagBoolean) Serialize(writeBuffer utils.WriteBuffer) error {

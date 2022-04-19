@@ -49,40 +49,39 @@ type IS7PayloadUserDataItemCpuFunctionAlarmAck interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) CpuFunctionType() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) GetCpuFunctionType() uint8 {
 	return 0x04
-}
-
-func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) CpuSubfunction() uint8 {
-	return 0x0b
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) GetCpuSubfunction() uint8 {
 	return 0x0b
 }
 
-func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) DataLength() uint16 {
-	return 0
-}
-
 func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) GetDataLength() uint16 {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
 	m.S7PayloadUserDataItem.ReturnCode = returnCode
 	m.S7PayloadUserDataItem.TransportSize = transportSize
 }
 
+func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) GetParent() *S7PayloadUserDataItem {
+	return m.S7PayloadUserDataItem
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) GetFunctionId() uint8 {
 	return m.FunctionId
 }
@@ -91,19 +90,20 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) GetMessageObjects() []*AlarmM
 	return m.MessageObjects
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7PayloadUserDataItemCpuFunctionAlarmAck factory function for S7PayloadUserDataItemCpuFunctionAlarmAck
-func NewS7PayloadUserDataItemCpuFunctionAlarmAck(functionId uint8, messageObjects []*AlarmMessageObjectAckType, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
-	child := &S7PayloadUserDataItemCpuFunctionAlarmAck{
+func NewS7PayloadUserDataItemCpuFunctionAlarmAck(functionId uint8, messageObjects []*AlarmMessageObjectAckType, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItemCpuFunctionAlarmAck {
+	_result := &S7PayloadUserDataItemCpuFunctionAlarmAck{
 		FunctionId:            functionId,
 		MessageObjects:        messageObjects,
 		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Child = child
-	return child.S7PayloadUserDataItem
+	_result.Child = _result
+	return _result
 }
 
 func CastS7PayloadUserDataItemCpuFunctionAlarmAck(structType interface{}) *S7PayloadUserDataItemCpuFunctionAlarmAck {
@@ -154,7 +154,7 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7PayloadUserDataItemCpuFunctionAlarmAckParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItem, error) {
+func S7PayloadUserDataItemCpuFunctionAlarmAckParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItemCpuFunctionAlarmAck, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadUserDataItemCpuFunctionAlarmAck"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -205,7 +205,7 @@ func S7PayloadUserDataItemCpuFunctionAlarmAckParse(readBuffer utils.ReadBuffer, 
 		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
 	_child.S7PayloadUserDataItem.Child = _child
-	return _child.S7PayloadUserDataItem, nil
+	return _child, nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmAck) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,15 +42,17 @@ type IS7MessageUserData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7MessageUserData) MessageType() uint8 {
-	return 0x07
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7MessageUserData) GetMessageType() uint8 {
 	return 0x07
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7MessageUserData) InitializeParent(parent *S7Message, tpduReference uint16, parameter *S7Parameter, payload *S7Payload) {
 	m.S7Message.TpduReference = tpduReference
@@ -58,21 +60,17 @@ func (m *S7MessageUserData) InitializeParent(parent *S7Message, tpduReference ui
 	m.S7Message.Payload = payload
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *S7MessageUserData) GetParent() *S7Message {
+	return m.S7Message
+}
 
 // NewS7MessageUserData factory function for S7MessageUserData
-func NewS7MessageUserData(tpduReference uint16, parameter *S7Parameter, payload *S7Payload) *S7Message {
-	child := &S7MessageUserData{
+func NewS7MessageUserData(tpduReference uint16, parameter *S7Parameter, payload *S7Payload) *S7MessageUserData {
+	_result := &S7MessageUserData{
 		S7Message: NewS7Message(tpduReference, parameter, payload),
 	}
-	child.Child = child
-	return child.S7Message
+	_result.Child = _result
+	return _result
 }
 
 func CastS7MessageUserData(structType interface{}) *S7MessageUserData {
@@ -109,7 +107,7 @@ func (m *S7MessageUserData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7MessageUserDataParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
+func S7MessageUserDataParse(readBuffer utils.ReadBuffer) (*S7MessageUserData, error) {
 	if pullErr := readBuffer.PullContext("S7MessageUserData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func S7MessageUserDataParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
 		S7Message: &S7Message{},
 	}
 	_child.S7Message.Child = _child
-	return _child.S7Message, nil
+	return _child, nil
 }
 
 func (m *S7MessageUserData) Serialize(writeBuffer utils.WriteBuffer) error {

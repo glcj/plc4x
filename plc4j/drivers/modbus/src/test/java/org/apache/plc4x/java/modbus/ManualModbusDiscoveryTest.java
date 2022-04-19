@@ -21,12 +21,14 @@ package org.apache.plc4x.java.modbus;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcDriver;
 import org.apache.plc4x.java.api.messages.PlcDiscoveryResponse;
+import org.junit.jupiter.api.Disabled;
 
+@Disabled("Manual Test")
 public class ManualModbusDiscoveryTest {
 
     public static void main(String[] args) throws Exception {
-        final PlcDriver profinetDriver = new PlcDriverManager().getDriver("modbus");
-        final PlcDiscoveryResponse plcDiscoveryResponse = profinetDriver.discoveryRequestBuilder().build().execute().get();
+        final PlcDriver modbusDriver = new PlcDriverManager().getDriver("modbus-tcp");
+        final PlcDiscoveryResponse plcDiscoveryResponse = modbusDriver.discoveryRequestBuilder().build().execute().get();
         System.out.println(plcDiscoveryResponse);
     }
 

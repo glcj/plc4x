@@ -50,39 +50,47 @@ type IBACnetContextTagCharacterString interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagCharacterString) DataType() BACnetDataType {
-	return BACnetDataType_CHARACTER_STRING
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagCharacterString) GetDataType() BACnetDataType {
 	return BACnetDataType_CHARACTER_STRING
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagCharacterString) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagCharacterString) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagCharacterString) GetPayload() *BACnetTagPayloadCharacterString {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetContextTagCharacterString factory function for BACnetContextTagCharacterString
-func NewBACnetContextTagCharacterString(payload *BACnetTagPayloadCharacterString, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTag {
-	child := &BACnetContextTagCharacterString{
+func NewBACnetContextTagCharacterString(payload *BACnetTagPayloadCharacterString, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTagCharacterString {
+	_result := &BACnetContextTagCharacterString{
 		Payload:          payload,
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagCharacterString(structType interface{}) *BACnetContextTagCharacterString {
@@ -122,7 +130,7 @@ func (m *BACnetContextTagCharacterString) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagCharacterStringParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, header *BACnetTagHeader) (*BACnetContextTag, error) {
+func BACnetContextTagCharacterStringParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, header *BACnetTagHeader) (*BACnetContextTagCharacterString, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagCharacterString"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -157,7 +165,7 @@ func BACnetContextTagCharacterStringParse(readBuffer utils.ReadBuffer, tagNumber
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagCharacterString) Serialize(writeBuffer utils.WriteBuffer) error {

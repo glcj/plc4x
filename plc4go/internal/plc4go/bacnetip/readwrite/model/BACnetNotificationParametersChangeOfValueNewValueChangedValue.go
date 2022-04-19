@@ -49,7 +49,12 @@ type IBACnetNotificationParametersChangeOfValueNewValueChangedValue interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetNotificationParametersChangeOfValueNewValueChangedValue) InitializeParent(parent *BACnetNotificationParametersChangeOfValueNewValue, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
@@ -58,25 +63,31 @@ func (m *BACnetNotificationParametersChangeOfValueNewValueChangedValue) Initiali
 	m.BACnetNotificationParametersChangeOfValueNewValue.ClosingTag = closingTag
 }
 
+func (m *BACnetNotificationParametersChangeOfValueNewValueChangedValue) GetParent() *BACnetNotificationParametersChangeOfValueNewValue {
+	return m.BACnetNotificationParametersChangeOfValueNewValue
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetNotificationParametersChangeOfValueNewValueChangedValue) GetChangedValue() *BACnetContextTagReal {
 	return m.ChangedValue
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetNotificationParametersChangeOfValueNewValueChangedValue factory function for BACnetNotificationParametersChangeOfValueNewValueChangedValue
-func NewBACnetNotificationParametersChangeOfValueNewValueChangedValue(changedValue *BACnetContextTagReal, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetNotificationParametersChangeOfValueNewValue {
-	child := &BACnetNotificationParametersChangeOfValueNewValueChangedValue{
+func NewBACnetNotificationParametersChangeOfValueNewValueChangedValue(changedValue *BACnetContextTagReal, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetNotificationParametersChangeOfValueNewValueChangedValue {
+	_result := &BACnetNotificationParametersChangeOfValueNewValueChangedValue{
 		ChangedValue: changedValue,
 		BACnetNotificationParametersChangeOfValueNewValue: NewBACnetNotificationParametersChangeOfValueNewValue(openingTag, peekedTagHeader, closingTag, tagNumber),
 	}
-	child.Child = child
-	return child.BACnetNotificationParametersChangeOfValueNewValue
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetNotificationParametersChangeOfValueNewValueChangedValue(structType interface{}) *BACnetNotificationParametersChangeOfValueNewValueChangedValue {
@@ -116,7 +127,7 @@ func (m *BACnetNotificationParametersChangeOfValueNewValueChangedValue) GetLengt
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetNotificationParametersChangeOfValueNewValueChangedValueParse(readBuffer utils.ReadBuffer, tagNumber uint8, peekedTagNumber uint8) (*BACnetNotificationParametersChangeOfValueNewValue, error) {
+func BACnetNotificationParametersChangeOfValueNewValueChangedValueParse(readBuffer utils.ReadBuffer, tagNumber uint8, peekedTagNumber uint8) (*BACnetNotificationParametersChangeOfValueNewValueChangedValue, error) {
 	if pullErr := readBuffer.PullContext("BACnetNotificationParametersChangeOfValueNewValueChangedValue"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -146,7 +157,7 @@ func BACnetNotificationParametersChangeOfValueNewValueChangedValueParse(readBuff
 		BACnetNotificationParametersChangeOfValueNewValue: &BACnetNotificationParametersChangeOfValueNewValue{},
 	}
 	_child.BACnetNotificationParametersChangeOfValueNewValue.Child = _child
-	return _child.BACnetNotificationParametersChangeOfValueNewValue, nil
+	return _child, nil
 }
 
 func (m *BACnetNotificationParametersChangeOfValueNewValueChangedValue) Serialize(writeBuffer utils.WriteBuffer) error {

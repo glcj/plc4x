@@ -49,7 +49,12 @@ type IBACnetTimeStampSequence interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetTimeStampSequence) InitializeParent(parent *BACnetTimeStamp, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
@@ -58,25 +63,31 @@ func (m *BACnetTimeStampSequence) InitializeParent(parent *BACnetTimeStamp, open
 	m.BACnetTimeStamp.ClosingTag = closingTag
 }
 
+func (m *BACnetTimeStampSequence) GetParent() *BACnetTimeStamp {
+	return m.BACnetTimeStamp
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetTimeStampSequence) GetSequenceNumber() *BACnetContextTagUnsignedInteger {
 	return m.SequenceNumber
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetTimeStampSequence factory function for BACnetTimeStampSequence
-func NewBACnetTimeStampSequence(sequenceNumber *BACnetContextTagUnsignedInteger, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetTimeStamp {
-	child := &BACnetTimeStampSequence{
+func NewBACnetTimeStampSequence(sequenceNumber *BACnetContextTagUnsignedInteger, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetTimeStampSequence {
+	_result := &BACnetTimeStampSequence{
 		SequenceNumber:  sequenceNumber,
 		BACnetTimeStamp: NewBACnetTimeStamp(openingTag, peekedTagHeader, closingTag, tagNumber),
 	}
-	child.Child = child
-	return child.BACnetTimeStamp
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetTimeStampSequence(structType interface{}) *BACnetTimeStampSequence {
@@ -116,7 +127,7 @@ func (m *BACnetTimeStampSequence) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetTimeStampSequenceParse(readBuffer utils.ReadBuffer, tagNumber uint8) (*BACnetTimeStamp, error) {
+func BACnetTimeStampSequenceParse(readBuffer utils.ReadBuffer, tagNumber uint8) (*BACnetTimeStampSequence, error) {
 	if pullErr := readBuffer.PullContext("BACnetTimeStampSequence"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -146,7 +157,7 @@ func BACnetTimeStampSequenceParse(readBuffer utils.ReadBuffer, tagNumber uint8) 
 		BACnetTimeStamp: &BACnetTimeStamp{},
 	}
 	_child.BACnetTimeStamp.Child = _child
-	return _child.BACnetTimeStamp, nil
+	return _child, nil
 }
 
 func (m *BACnetTimeStampSequence) Serialize(writeBuffer utils.WriteBuffer) error {

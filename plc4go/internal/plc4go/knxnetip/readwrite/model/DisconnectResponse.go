@@ -49,21 +49,28 @@ type IDisconnectResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DisconnectResponse) MsgType() uint16 {
-	return 0x020A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DisconnectResponse) GetMsgType() uint16 {
 	return 0x020A
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *DisconnectResponse) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *DisconnectResponse) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *DisconnectResponse) GetCommunicationChannelId() uint8 {
 	return m.CommunicationChannelId
 }
@@ -72,19 +79,20 @@ func (m *DisconnectResponse) GetStatus() Status {
 	return m.Status
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDisconnectResponse factory function for DisconnectResponse
-func NewDisconnectResponse(communicationChannelId uint8, status Status) *KnxNetIpMessage {
-	child := &DisconnectResponse{
+func NewDisconnectResponse(communicationChannelId uint8, status Status) *DisconnectResponse {
+	_result := &DisconnectResponse{
 		CommunicationChannelId: communicationChannelId,
 		Status:                 status,
 		KnxNetIpMessage:        NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastDisconnectResponse(structType interface{}) *DisconnectResponse {
@@ -127,7 +135,7 @@ func (m *DisconnectResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func DisconnectResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+func DisconnectResponseParse(readBuffer utils.ReadBuffer) (*DisconnectResponse, error) {
 	if pullErr := readBuffer.PullContext("DisconnectResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -165,7 +173,7 @@ func DisconnectResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, err
 		KnxNetIpMessage:        &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *DisconnectResponse) Serialize(writeBuffer utils.WriteBuffer) error {

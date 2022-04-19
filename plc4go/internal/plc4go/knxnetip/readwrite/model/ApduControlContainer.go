@@ -49,40 +49,48 @@ type IApduControlContainer interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduControlContainer) Control() uint8 {
-	return uint8(1)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduControlContainer) GetControl() uint8 {
 	return uint8(1)
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *ApduControlContainer) InitializeParent(parent *Apdu, numbered bool, counter uint8) {
 	m.Apdu.Numbered = numbered
 	m.Apdu.Counter = counter
 }
 
+func (m *ApduControlContainer) GetParent() *Apdu {
+	return m.Apdu
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ApduControlContainer) GetControlApdu() *ApduControl {
 	return m.ControlApdu
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewApduControlContainer factory function for ApduControlContainer
-func NewApduControlContainer(controlApdu *ApduControl, numbered bool, counter uint8, dataLength uint8) *Apdu {
-	child := &ApduControlContainer{
+func NewApduControlContainer(controlApdu *ApduControl, numbered bool, counter uint8, dataLength uint8) *ApduControlContainer {
+	_result := &ApduControlContainer{
 		ControlApdu: controlApdu,
 		Apdu:        NewApdu(numbered, counter, dataLength),
 	}
-	child.Child = child
-	return child.Apdu
+	_result.Child = _result
+	return _result
 }
 
 func CastApduControlContainer(structType interface{}) *ApduControlContainer {
@@ -122,7 +130,7 @@ func (m *ApduControlContainer) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduControlContainerParse(readBuffer utils.ReadBuffer, dataLength uint8) (*Apdu, error) {
+func ApduControlContainerParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduControlContainer, error) {
 	if pullErr := readBuffer.PullContext("ApduControlContainer"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -152,7 +160,7 @@ func ApduControlContainerParse(readBuffer utils.ReadBuffer, dataLength uint8) (*
 		Apdu:        &Apdu{},
 	}
 	_child.Apdu.Child = _child
-	return _child.Apdu, nil
+	return _child, nil
 }
 
 func (m *ApduControlContainer) Serialize(writeBuffer utils.WriteBuffer) error {

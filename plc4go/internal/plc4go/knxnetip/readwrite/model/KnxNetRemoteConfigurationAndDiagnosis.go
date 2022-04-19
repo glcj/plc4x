@@ -46,37 +46,45 @@ type IKnxNetRemoteConfigurationAndDiagnosis interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxNetRemoteConfigurationAndDiagnosis) ServiceType() uint8 {
-	return 0x07
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxNetRemoteConfigurationAndDiagnosis) GetServiceType() uint8 {
 	return 0x07
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxNetRemoteConfigurationAndDiagnosis) InitializeParent(parent *ServiceId) {}
 
+func (m *KnxNetRemoteConfigurationAndDiagnosis) GetParent() *ServiceId {
+	return m.ServiceId
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxNetRemoteConfigurationAndDiagnosis) GetVersion() uint8 {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxNetRemoteConfigurationAndDiagnosis factory function for KnxNetRemoteConfigurationAndDiagnosis
-func NewKnxNetRemoteConfigurationAndDiagnosis(version uint8) *ServiceId {
-	child := &KnxNetRemoteConfigurationAndDiagnosis{
+func NewKnxNetRemoteConfigurationAndDiagnosis(version uint8) *KnxNetRemoteConfigurationAndDiagnosis {
+	_result := &KnxNetRemoteConfigurationAndDiagnosis{
 		Version:   version,
 		ServiceId: NewServiceId(),
 	}
-	child.Child = child
-	return child.ServiceId
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxNetRemoteConfigurationAndDiagnosis(structType interface{}) *KnxNetRemoteConfigurationAndDiagnosis {
@@ -116,7 +124,7 @@ func (m *KnxNetRemoteConfigurationAndDiagnosis) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxNetRemoteConfigurationAndDiagnosisParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
+func KnxNetRemoteConfigurationAndDiagnosisParse(readBuffer utils.ReadBuffer) (*KnxNetRemoteConfigurationAndDiagnosis, error) {
 	if pullErr := readBuffer.PullContext("KnxNetRemoteConfigurationAndDiagnosis"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func KnxNetRemoteConfigurationAndDiagnosisParse(readBuffer utils.ReadBuffer) (*S
 		ServiceId: &ServiceId{},
 	}
 	_child.ServiceId.Child = _child
-	return _child.ServiceId, nil
+	return _child, nil
 }
 
 func (m *KnxNetRemoteConfigurationAndDiagnosis) Serialize(writeBuffer utils.WriteBuffer) error {

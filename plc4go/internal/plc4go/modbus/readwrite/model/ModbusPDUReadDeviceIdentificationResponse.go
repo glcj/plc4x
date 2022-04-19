@@ -65,37 +65,36 @@ type IModbusPDUReadDeviceIdentificationResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUReadDeviceIdentificationResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUReadDeviceIdentificationResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUReadDeviceIdentificationResponse) FunctionFlag() uint8 {
-	return 0x2B
 }
 
 func (m *ModbusPDUReadDeviceIdentificationResponse) GetFunctionFlag() uint8 {
 	return 0x2B
 }
 
-func (m *ModbusPDUReadDeviceIdentificationResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUReadDeviceIdentificationResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUReadDeviceIdentificationResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUReadDeviceIdentificationResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUReadDeviceIdentificationResponse) GetLevel() ModbusDeviceInformationLevel {
 	return m.Level
 }
@@ -120,13 +119,26 @@ func (m *ModbusPDUReadDeviceIdentificationResponse) GetObjects() []*ModbusDevice
 	return m.Objects
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *ModbusPDUReadDeviceIdentificationResponse) GetMeiType() uint8 {
+	return ModbusPDUReadDeviceIdentificationResponse_MEITYPE
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUReadDeviceIdentificationResponse factory function for ModbusPDUReadDeviceIdentificationResponse
-func NewModbusPDUReadDeviceIdentificationResponse(level ModbusDeviceInformationLevel, individualAccess bool, conformityLevel ModbusDeviceInformationConformityLevel, moreFollows ModbusDeviceInformationMoreFollows, nextObjectId uint8, objects []*ModbusDeviceInformationObject) *ModbusPDU {
-	child := &ModbusPDUReadDeviceIdentificationResponse{
+func NewModbusPDUReadDeviceIdentificationResponse(level ModbusDeviceInformationLevel, individualAccess bool, conformityLevel ModbusDeviceInformationConformityLevel, moreFollows ModbusDeviceInformationMoreFollows, nextObjectId uint8, objects []*ModbusDeviceInformationObject) *ModbusPDUReadDeviceIdentificationResponse {
+	_result := &ModbusPDUReadDeviceIdentificationResponse{
 		Level:            level,
 		IndividualAccess: individualAccess,
 		ConformityLevel:  conformityLevel,
@@ -135,8 +147,8 @@ func NewModbusPDUReadDeviceIdentificationResponse(level ModbusDeviceInformationL
 		Objects:          objects,
 		ModbusPDU:        NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUReadDeviceIdentificationResponse(structType interface{}) *ModbusPDUReadDeviceIdentificationResponse {
@@ -202,7 +214,7 @@ func (m *ModbusPDUReadDeviceIdentificationResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUReadDeviceIdentificationResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUReadDeviceIdentificationResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUReadDeviceIdentificationResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUReadDeviceIdentificationResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -312,7 +324,7 @@ func ModbusPDUReadDeviceIdentificationResponseParse(readBuffer utils.ReadBuffer,
 		ModbusPDU:        &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUReadDeviceIdentificationResponse) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -54,17 +54,11 @@ type IFirmataCommandParent interface {
 type IFirmataCommandChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *FirmataCommand)
+	GetParent() *FirmataCommand
+
 	GetTypeName() string
 	IFirmataCommand
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewFirmataCommand factory function for FirmataCommand
 func NewFirmataCommand(response bool) *FirmataCommand {
@@ -77,6 +71,9 @@ func CastFirmataCommand(structType interface{}) *FirmataCommand {
 	}
 	if casted, ok := structType.(*FirmataCommand); ok {
 		return casted
+	}
+	if casted, ok := structType.(IFirmataCommandChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -119,19 +116,23 @@ func FirmataCommandParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCo
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *FirmataCommand
+	type FirmataCommandChild interface {
+		InitializeParent(*FirmataCommand)
+		GetParent() *FirmataCommand
+	}
+	var _child FirmataCommandChild
 	var typeSwitchError error
 	switch {
 	case commandCode == 0x0: // FirmataCommandSysex
-		_parent, typeSwitchError = FirmataCommandSysexParse(readBuffer, response)
+		_child, typeSwitchError = FirmataCommandSysexParse(readBuffer, response)
 	case commandCode == 0x4: // FirmataCommandSetPinMode
-		_parent, typeSwitchError = FirmataCommandSetPinModeParse(readBuffer, response)
+		_child, typeSwitchError = FirmataCommandSetPinModeParse(readBuffer, response)
 	case commandCode == 0x5: // FirmataCommandSetDigitalPinValue
-		_parent, typeSwitchError = FirmataCommandSetDigitalPinValueParse(readBuffer, response)
+		_child, typeSwitchError = FirmataCommandSetDigitalPinValueParse(readBuffer, response)
 	case commandCode == 0x9: // FirmataCommandProtocolVersion
-		_parent, typeSwitchError = FirmataCommandProtocolVersionParse(readBuffer, response)
+		_child, typeSwitchError = FirmataCommandProtocolVersionParse(readBuffer, response)
 	case commandCode == 0xF: // FirmataCommandSystemReset
-		_parent, typeSwitchError = FirmataCommandSystemResetParse(readBuffer, response)
+		_child, typeSwitchError = FirmataCommandSystemResetParse(readBuffer, response)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -145,8 +146,8 @@ func FirmataCommandParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCo
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *FirmataCommand) Serialize(writeBuffer utils.WriteBuffer) error {

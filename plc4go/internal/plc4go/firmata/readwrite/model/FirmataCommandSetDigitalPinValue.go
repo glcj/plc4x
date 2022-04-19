@@ -53,21 +53,28 @@ type IFirmataCommandSetDigitalPinValue interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *FirmataCommandSetDigitalPinValue) CommandCode() uint8 {
-	return 0x5
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *FirmataCommandSetDigitalPinValue) GetCommandCode() uint8 {
 	return 0x5
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *FirmataCommandSetDigitalPinValue) InitializeParent(parent *FirmataCommand) {}
 
+func (m *FirmataCommandSetDigitalPinValue) GetParent() *FirmataCommand {
+	return m.FirmataCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *FirmataCommandSetDigitalPinValue) GetPin() uint8 {
 	return m.Pin
 }
@@ -76,19 +83,20 @@ func (m *FirmataCommandSetDigitalPinValue) GetOn() bool {
 	return m.On
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewFirmataCommandSetDigitalPinValue factory function for FirmataCommandSetDigitalPinValue
-func NewFirmataCommandSetDigitalPinValue(pin uint8, on bool, response bool) *FirmataCommand {
-	child := &FirmataCommandSetDigitalPinValue{
+func NewFirmataCommandSetDigitalPinValue(pin uint8, on bool, response bool) *FirmataCommandSetDigitalPinValue {
+	_result := &FirmataCommandSetDigitalPinValue{
 		Pin:            pin,
 		On:             on,
 		FirmataCommand: NewFirmataCommand(response),
 	}
-	child.Child = child
-	return child.FirmataCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastFirmataCommandSetDigitalPinValue(structType interface{}) *FirmataCommandSetDigitalPinValue {
@@ -134,7 +142,7 @@ func (m *FirmataCommandSetDigitalPinValue) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func FirmataCommandSetDigitalPinValueParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommand, error) {
+func FirmataCommandSetDigitalPinValueParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommandSetDigitalPinValue, error) {
 	if pullErr := readBuffer.PullContext("FirmataCommandSetDigitalPinValue"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -180,7 +188,7 @@ func FirmataCommandSetDigitalPinValueParse(readBuffer utils.ReadBuffer, response
 		FirmataCommand: &FirmataCommand{},
 	}
 	_child.FirmataCommand.Child = _child
-	return _child.FirmataCommand, nil
+	return _child, nil
 }
 
 func (m *FirmataCommandSetDigitalPinValue) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,33 +42,31 @@ type IBVLCReadBroadcastDistributionTableAck interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BVLCReadBroadcastDistributionTableAck) BvlcFunction() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BVLCReadBroadcastDistributionTableAck) GetBvlcFunction() uint8 {
 	return 0x03
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BVLCReadBroadcastDistributionTableAck) InitializeParent(parent *BVLC) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BVLCReadBroadcastDistributionTableAck) GetParent() *BVLC {
+	return m.BVLC
+}
 
 // NewBVLCReadBroadcastDistributionTableAck factory function for BVLCReadBroadcastDistributionTableAck
-func NewBVLCReadBroadcastDistributionTableAck() *BVLC {
-	child := &BVLCReadBroadcastDistributionTableAck{
+func NewBVLCReadBroadcastDistributionTableAck() *BVLCReadBroadcastDistributionTableAck {
+	_result := &BVLCReadBroadcastDistributionTableAck{
 		BVLC: NewBVLC(),
 	}
-	child.Child = child
-	return child.BVLC
+	_result.Child = _result
+	return _result
 }
 
 func CastBVLCReadBroadcastDistributionTableAck(structType interface{}) *BVLCReadBroadcastDistributionTableAck {
@@ -105,7 +103,7 @@ func (m *BVLCReadBroadcastDistributionTableAck) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BVLCReadBroadcastDistributionTableAckParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
+func BVLCReadBroadcastDistributionTableAckParse(readBuffer utils.ReadBuffer) (*BVLCReadBroadcastDistributionTableAck, error) {
 	if pullErr := readBuffer.PullContext("BVLCReadBroadcastDistributionTableAck"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BVLCReadBroadcastDistributionTableAckParse(readBuffer utils.ReadBuffer) (*B
 		BVLC: &BVLC{},
 	}
 	_child.BVLC.Child = _child
-	return _child.BVLC, nil
+	return _child, nil
 }
 
 func (m *BVLCReadBroadcastDistributionTableAck) Serialize(writeBuffer utils.WriteBuffer) error {

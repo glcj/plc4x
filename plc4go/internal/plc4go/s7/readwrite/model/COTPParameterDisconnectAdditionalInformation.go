@@ -49,37 +49,45 @@ type ICOTPParameterDisconnectAdditionalInformation interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *COTPParameterDisconnectAdditionalInformation) ParameterType() uint8 {
-	return 0xE0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *COTPParameterDisconnectAdditionalInformation) GetParameterType() uint8 {
 	return 0xE0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *COTPParameterDisconnectAdditionalInformation) InitializeParent(parent *COTPParameter) {}
 
+func (m *COTPParameterDisconnectAdditionalInformation) GetParent() *COTPParameter {
+	return m.COTPParameter
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *COTPParameterDisconnectAdditionalInformation) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCOTPParameterDisconnectAdditionalInformation factory function for COTPParameterDisconnectAdditionalInformation
-func NewCOTPParameterDisconnectAdditionalInformation(data []byte, rest uint8) *COTPParameter {
-	child := &COTPParameterDisconnectAdditionalInformation{
+func NewCOTPParameterDisconnectAdditionalInformation(data []byte, rest uint8) *COTPParameterDisconnectAdditionalInformation {
+	_result := &COTPParameterDisconnectAdditionalInformation{
 		Data:          data,
 		COTPParameter: NewCOTPParameter(rest),
 	}
-	child.Child = child
-	return child.COTPParameter
+	_result.Child = _result
+	return _result
 }
 
 func CastCOTPParameterDisconnectAdditionalInformation(structType interface{}) *COTPParameterDisconnectAdditionalInformation {
@@ -121,7 +129,7 @@ func (m *COTPParameterDisconnectAdditionalInformation) GetLengthInBytes() uint16
 	return m.GetLengthInBits() / 8
 }
 
-func COTPParameterDisconnectAdditionalInformationParse(readBuffer utils.ReadBuffer, rest uint8) (*COTPParameter, error) {
+func COTPParameterDisconnectAdditionalInformationParse(readBuffer utils.ReadBuffer, rest uint8) (*COTPParameterDisconnectAdditionalInformation, error) {
 	if pullErr := readBuffer.PullContext("COTPParameterDisconnectAdditionalInformation"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -144,7 +152,7 @@ func COTPParameterDisconnectAdditionalInformationParse(readBuffer utils.ReadBuff
 		COTPParameter: &COTPParameter{},
 	}
 	_child.COTPParameter.Child = _child
-	return _child.COTPParameter, nil
+	return _child, nil
 }
 
 func (m *COTPParameterDisconnectAdditionalInformation) Serialize(writeBuffer utils.WriteBuffer) error {

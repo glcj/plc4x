@@ -45,33 +45,31 @@ type IApduDataAdcRead interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataAdcRead) ApciType() uint8 {
-	return 0x6
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataAdcRead) GetApciType() uint8 {
 	return 0x6
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataAdcRead) InitializeParent(parent *ApduData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataAdcRead) GetParent() *ApduData {
+	return m.ApduData
+}
 
 // NewApduDataAdcRead factory function for ApduDataAdcRead
-func NewApduDataAdcRead(dataLength uint8) *ApduData {
-	child := &ApduDataAdcRead{
+func NewApduDataAdcRead(dataLength uint8) *ApduDataAdcRead {
+	_result := &ApduDataAdcRead{
 		ApduData: NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataAdcRead(structType interface{}) *ApduDataAdcRead {
@@ -108,7 +106,7 @@ func (m *ApduDataAdcRead) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataAdcReadParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataAdcReadParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataAdcRead, error) {
 	if pullErr := readBuffer.PullContext("ApduDataAdcRead"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataAdcReadParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduD
 		ApduData: &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataAdcRead) Serialize(writeBuffer utils.WriteBuffer) error {

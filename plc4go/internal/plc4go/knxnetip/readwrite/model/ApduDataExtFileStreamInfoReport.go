@@ -45,33 +45,31 @@ type IApduDataExtFileStreamInfoReport interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtFileStreamInfoReport) ExtApciType() uint8 {
-	return 0x30
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtFileStreamInfoReport) GetExtApciType() uint8 {
 	return 0x30
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtFileStreamInfoReport) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtFileStreamInfoReport) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtFileStreamInfoReport factory function for ApduDataExtFileStreamInfoReport
-func NewApduDataExtFileStreamInfoReport(length uint8) *ApduDataExt {
-	child := &ApduDataExtFileStreamInfoReport{
+func NewApduDataExtFileStreamInfoReport(length uint8) *ApduDataExtFileStreamInfoReport {
+	_result := &ApduDataExtFileStreamInfoReport{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtFileStreamInfoReport(structType interface{}) *ApduDataExtFileStreamInfoReport {
@@ -108,7 +106,7 @@ func (m *ApduDataExtFileStreamInfoReport) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtFileStreamInfoReportParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtFileStreamInfoReportParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtFileStreamInfoReport, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtFileStreamInfoReport"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtFileStreamInfoReportParse(readBuffer utils.ReadBuffer, length ui
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtFileStreamInfoReport) Serialize(writeBuffer utils.WriteBuffer) error {

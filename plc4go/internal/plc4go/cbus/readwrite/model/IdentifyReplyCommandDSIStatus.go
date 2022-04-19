@@ -73,21 +73,28 @@ type IIdentifyReplyCommandDSIStatus interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandDSIStatus) Attribute() Attribute {
-	return Attribute_DSIStatus
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandDSIStatus) GetAttribute() Attribute {
 	return Attribute_DSIStatus
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandDSIStatus) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandDSIStatus) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandDSIStatus) GetChannelStatus1() ChannelStatus {
 	return m.ChannelStatus1
 }
@@ -128,13 +135,14 @@ func (m *IdentifyReplyCommandDSIStatus) GetDimmingUCRevisionNumber() byte {
 	return m.DimmingUCRevisionNumber
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandDSIStatus factory function for IdentifyReplyCommandDSIStatus
-func NewIdentifyReplyCommandDSIStatus(channelStatus1 ChannelStatus, channelStatus2 ChannelStatus, channelStatus3 ChannelStatus, channelStatus4 ChannelStatus, channelStatus5 ChannelStatus, channelStatus6 ChannelStatus, channelStatus7 ChannelStatus, channelStatus8 ChannelStatus, unitStatus UnitStatus, dimmingUCRevisionNumber byte) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandDSIStatus{
+func NewIdentifyReplyCommandDSIStatus(channelStatus1 ChannelStatus, channelStatus2 ChannelStatus, channelStatus3 ChannelStatus, channelStatus4 ChannelStatus, channelStatus5 ChannelStatus, channelStatus6 ChannelStatus, channelStatus7 ChannelStatus, channelStatus8 ChannelStatus, unitStatus UnitStatus, dimmingUCRevisionNumber byte) *IdentifyReplyCommandDSIStatus {
+	_result := &IdentifyReplyCommandDSIStatus{
 		ChannelStatus1:          channelStatus1,
 		ChannelStatus2:          channelStatus2,
 		ChannelStatus3:          channelStatus3,
@@ -147,8 +155,8 @@ func NewIdentifyReplyCommandDSIStatus(channelStatus1 ChannelStatus, channelStatu
 		DimmingUCRevisionNumber: dimmingUCRevisionNumber,
 		IdentifyReplyCommand:    NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandDSIStatus(structType interface{}) *IdentifyReplyCommandDSIStatus {
@@ -215,7 +223,7 @@ func (m *IdentifyReplyCommandDSIStatus) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandDSIStatus, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandDSIStatus"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -365,7 +373,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 		IdentifyReplyCommand:    &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandDSIStatus) Serialize(writeBuffer utils.WriteBuffer) error {

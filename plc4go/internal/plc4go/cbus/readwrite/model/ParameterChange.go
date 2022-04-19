@@ -48,11 +48,28 @@ type IParameterChange interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *ParameterChange) GetSpecialChar1() byte {
+	return ParameterChange_SPECIALCHAR1
+}
 
+func (m *ParameterChange) GetSpecialChar2() byte {
+	return ParameterChange_SPECIALCHAR2
+}
+
+func (m *ParameterChange) GetCr() byte {
+	return ParameterChange_CR
+}
+
+func (m *ParameterChange) GetLf() byte {
+	return ParameterChange_LF
+}
+
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewParameterChange factory function for ParameterChange

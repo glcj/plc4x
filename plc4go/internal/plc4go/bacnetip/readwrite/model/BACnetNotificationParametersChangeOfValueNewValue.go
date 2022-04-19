@@ -63,13 +63,16 @@ type IBACnetNotificationParametersChangeOfValueNewValueParent interface {
 type IBACnetNotificationParametersChangeOfValueNewValueChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *BACnetNotificationParametersChangeOfValueNewValue, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag)
+	GetParent() *BACnetNotificationParametersChangeOfValueNewValue
+
 	GetTypeName() string
 	IBACnetNotificationParametersChangeOfValueNewValue
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetNotificationParametersChangeOfValueNewValue) GetOpeningTag() *BACnetOpeningTag {
 	return m.OpeningTag
 }
@@ -82,12 +85,22 @@ func (m *BACnetNotificationParametersChangeOfValueNewValue) GetClosingTag() *BAC
 	return m.ClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetNotificationParametersChangeOfValueNewValue) GetPeekedTagNumber() uint8 {
-	return m.GetPeekedTagHeader().GetActualTagNumber()
+	return uint8(m.GetPeekedTagHeader().GetActualTagNumber())
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetNotificationParametersChangeOfValueNewValue factory function for BACnetNotificationParametersChangeOfValueNewValue
 func NewBACnetNotificationParametersChangeOfValueNewValue(openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetNotificationParametersChangeOfValueNewValue {
@@ -100,6 +113,9 @@ func CastBACnetNotificationParametersChangeOfValueNewValue(structType interface{
 	}
 	if casted, ok := structType.(*BACnetNotificationParametersChangeOfValueNewValue); ok {
 		return casted
+	}
+	if casted, ok := structType.(IBACnetNotificationParametersChangeOfValueNewValueChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -168,13 +184,17 @@ func BACnetNotificationParametersChangeOfValueNewValueParse(readBuffer utils.Rea
 	_ = peekedTagNumber
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *BACnetNotificationParametersChangeOfValueNewValue
+	type BACnetNotificationParametersChangeOfValueNewValueChild interface {
+		InitializeParent(*BACnetNotificationParametersChangeOfValueNewValue, *BACnetOpeningTag, *BACnetTagHeader, *BACnetClosingTag)
+		GetParent() *BACnetNotificationParametersChangeOfValueNewValue
+	}
+	var _child BACnetNotificationParametersChangeOfValueNewValueChild
 	var typeSwitchError error
 	switch {
 	case peekedTagNumber == uint8(0): // BACnetNotificationParametersChangeOfValueNewValueChangedBits
-		_parent, typeSwitchError = BACnetNotificationParametersChangeOfValueNewValueChangedBitsParse(readBuffer, tagNumber, peekedTagNumber)
+		_child, typeSwitchError = BACnetNotificationParametersChangeOfValueNewValueChangedBitsParse(readBuffer, tagNumber, peekedTagNumber)
 	case peekedTagNumber == uint8(1): // BACnetNotificationParametersChangeOfValueNewValueChangedValue
-		_parent, typeSwitchError = BACnetNotificationParametersChangeOfValueNewValueChangedValueParse(readBuffer, tagNumber, peekedTagNumber)
+		_child, typeSwitchError = BACnetNotificationParametersChangeOfValueNewValueChangedValueParse(readBuffer, tagNumber, peekedTagNumber)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -201,8 +221,8 @@ func BACnetNotificationParametersChangeOfValueNewValueParse(readBuffer utils.Rea
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, openingTag, peekedTagHeader, closingTag)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), openingTag, peekedTagHeader, closingTag)
+	return _child.GetParent(), nil
 }
 
 func (m *BACnetNotificationParametersChangeOfValueNewValue) Serialize(writeBuffer utils.WriteBuffer) error {

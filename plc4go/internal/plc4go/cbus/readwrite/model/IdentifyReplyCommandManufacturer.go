@@ -46,37 +46,45 @@ type IIdentifyReplyCommandManufacturer interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandManufacturer) Attribute() Attribute {
-	return Attribute_Manufacturer
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandManufacturer) GetAttribute() Attribute {
 	return Attribute_Manufacturer
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandManufacturer) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandManufacturer) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandManufacturer) GetManufacturerName() string {
 	return m.ManufacturerName
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandManufacturer factory function for IdentifyReplyCommandManufacturer
-func NewIdentifyReplyCommandManufacturer(manufacturerName string) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandManufacturer{
+func NewIdentifyReplyCommandManufacturer(manufacturerName string) *IdentifyReplyCommandManufacturer {
+	_result := &IdentifyReplyCommandManufacturer{
 		ManufacturerName:     manufacturerName,
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandManufacturer(structType interface{}) *IdentifyReplyCommandManufacturer {
@@ -116,7 +124,7 @@ func (m *IdentifyReplyCommandManufacturer) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandManufacturerParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandManufacturerParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandManufacturer, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandManufacturer"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func IdentifyReplyCommandManufacturerParse(readBuffer utils.ReadBuffer, attribut
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandManufacturer) Serialize(writeBuffer utils.WriteBuffer) error {

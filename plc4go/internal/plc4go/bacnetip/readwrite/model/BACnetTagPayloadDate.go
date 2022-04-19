@@ -75,8 +75,9 @@ type IBACnetTagPayloadDate interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetTagPayloadDate) GetYearMinus1900() uint8 {
 	return m.YearMinus1900
 }
@@ -93,52 +94,62 @@ func (m *BACnetTagPayloadDate) GetDayOfWeek() uint8 {
 	return m.DayOfWeek
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetTagPayloadDate) GetWildcard() uint8 {
-	return 0xFF
+	return uint8(0xFF)
 }
 
 func (m *BACnetTagPayloadDate) GetYearIsWildcard() bool {
-	return bool((m.GetYearMinus1900()) == (m.GetWildcard()))
+	return bool(bool((m.GetYearMinus1900()) == (m.GetWildcard())))
 }
 
 func (m *BACnetTagPayloadDate) GetYear() uint16 {
-	return uint16(m.GetYearMinus1900()) + uint16(uint16(1900))
+	return uint16(uint16(m.GetYearMinus1900()) + uint16(uint16(1900)))
 }
 
 func (m *BACnetTagPayloadDate) GetMonthIsWildcard() bool {
-	return bool((m.GetMonth()) == (m.GetWildcard()))
+	return bool(bool((m.GetMonth()) == (m.GetWildcard())))
 }
 
 func (m *BACnetTagPayloadDate) GetOddMonthWildcard() bool {
-	return bool((m.GetMonth()) == (13))
+	return bool(bool((m.GetMonth()) == (13)))
 }
 
 func (m *BACnetTagPayloadDate) GetEvenMonthWildcard() bool {
-	return bool((m.GetMonth()) == (14))
+	return bool(bool((m.GetMonth()) == (14)))
 }
 
 func (m *BACnetTagPayloadDate) GetDayOfMonthIsWildcard() bool {
-	return bool((m.GetDayOfMonth()) == (m.GetWildcard()))
+	return bool(bool((m.GetDayOfMonth()) == (m.GetWildcard())))
 }
 
 func (m *BACnetTagPayloadDate) GetLastDayOfMonthWildcard() bool {
-	return bool((m.GetDayOfMonth()) == (32))
+	return bool(bool((m.GetDayOfMonth()) == (32)))
 }
 
 func (m *BACnetTagPayloadDate) GetOddDayOfMonthWildcard() bool {
-	return bool((m.GetDayOfMonth()) == (33))
+	return bool(bool((m.GetDayOfMonth()) == (33)))
 }
 
 func (m *BACnetTagPayloadDate) GetEvenDayOfMonthWildcard() bool {
-	return bool((m.GetDayOfMonth()) == (34))
+	return bool(bool((m.GetDayOfMonth()) == (34)))
 }
 
 func (m *BACnetTagPayloadDate) GetDayOfWeekIsWildcard() bool {
-	return bool((m.GetDayOfWeek()) == (m.GetWildcard()))
+	return bool(bool((m.GetDayOfWeek()) == (m.GetWildcard())))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetTagPayloadDate factory function for BACnetTagPayloadDate
 func NewBACnetTagPayloadDate(yearMinus1900 uint8, month uint8, dayOfMonth uint8, dayOfWeek uint8) *BACnetTagPayloadDate {

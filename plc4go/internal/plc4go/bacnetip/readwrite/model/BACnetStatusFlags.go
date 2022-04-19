@@ -55,30 +55,41 @@ type IBACnetStatusFlags interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetStatusFlags) GetRawBits() *BACnetContextTagBitString {
 	return m.RawBits
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetStatusFlags) GetInAlarm() bool {
-	return m.GetRawBits().GetPayload().GetData()[0]
+	return bool(m.GetRawBits().GetPayload().GetData()[0])
 }
 
 func (m *BACnetStatusFlags) GetFault() bool {
-	return m.GetRawBits().GetPayload().GetData()[1]
+	return bool(m.GetRawBits().GetPayload().GetData()[1])
 }
 
 func (m *BACnetStatusFlags) GetOverriden() bool {
-	return m.GetRawBits().GetPayload().GetData()[2]
+	return bool(m.GetRawBits().GetPayload().GetData()[2])
 }
 
 func (m *BACnetStatusFlags) GetOutOfService() bool {
-	return m.GetRawBits().GetPayload().GetData()[3]
+	return bool(m.GetRawBits().GetPayload().GetData()[3])
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetStatusFlags factory function for BACnetStatusFlags
 func NewBACnetStatusFlags(rawBits *BACnetContextTagBitString, tagNumber uint8) *BACnetStatusFlags {

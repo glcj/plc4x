@@ -49,39 +49,47 @@ type INLMRouterAvailableToNetwork interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NLMRouterAvailableToNetwork) MessageType() uint8 {
-	return 0x05
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NLMRouterAvailableToNetwork) GetMessageType() uint8 {
 	return 0x05
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NLMRouterAvailableToNetwork) InitializeParent(parent *NLM, vendorId *uint16) {
 	m.NLM.VendorId = vendorId
 }
 
+func (m *NLMRouterAvailableToNetwork) GetParent() *NLM {
+	return m.NLM
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *NLMRouterAvailableToNetwork) GetDestinationNetworkAddress() []uint16 {
 	return m.DestinationNetworkAddress
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewNLMRouterAvailableToNetwork factory function for NLMRouterAvailableToNetwork
-func NewNLMRouterAvailableToNetwork(destinationNetworkAddress []uint16, vendorId *uint16, apduLength uint16) *NLM {
-	child := &NLMRouterAvailableToNetwork{
+func NewNLMRouterAvailableToNetwork(destinationNetworkAddress []uint16, vendorId *uint16, apduLength uint16) *NLMRouterAvailableToNetwork {
+	_result := &NLMRouterAvailableToNetwork{
 		DestinationNetworkAddress: destinationNetworkAddress,
 		NLM:                       NewNLM(vendorId, apduLength),
 	}
-	child.Child = child
-	return child.NLM
+	_result.Child = _result
+	return _result
 }
 
 func CastNLMRouterAvailableToNetwork(structType interface{}) *NLMRouterAvailableToNetwork {
@@ -123,7 +131,7 @@ func (m *NLMRouterAvailableToNetwork) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NLMRouterAvailableToNetworkParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLM, error) {
+func NLMRouterAvailableToNetworkParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLMRouterAvailableToNetwork, error) {
 	if pullErr := readBuffer.PullContext("NLMRouterAvailableToNetwork"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -161,7 +169,7 @@ func NLMRouterAvailableToNetworkParse(readBuffer utils.ReadBuffer, apduLength ui
 		NLM:                       &NLM{},
 	}
 	_child.NLM.Child = _child
-	return _child.NLM, nil
+	return _child, nil
 }
 
 func (m *NLMRouterAvailableToNetwork) Serialize(writeBuffer utils.WriteBuffer) error {

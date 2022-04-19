@@ -55,24 +55,31 @@ type ICOTPPacketConnectionRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *COTPPacketConnectionRequest) TpduCode() uint8 {
-	return 0xE0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *COTPPacketConnectionRequest) GetTpduCode() uint8 {
 	return 0xE0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *COTPPacketConnectionRequest) InitializeParent(parent *COTPPacket, parameters []*COTPParameter, payload *S7Message) {
 	m.COTPPacket.Parameters = parameters
 	m.COTPPacket.Payload = payload
 }
 
+func (m *COTPPacketConnectionRequest) GetParent() *COTPPacket {
+	return m.COTPPacket
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *COTPPacketConnectionRequest) GetDestinationReference() uint16 {
 	return m.DestinationReference
 }
@@ -85,20 +92,21 @@ func (m *COTPPacketConnectionRequest) GetProtocolClass() COTPProtocolClass {
 	return m.ProtocolClass
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCOTPPacketConnectionRequest factory function for COTPPacketConnectionRequest
-func NewCOTPPacketConnectionRequest(destinationReference uint16, sourceReference uint16, protocolClass COTPProtocolClass, parameters []*COTPParameter, payload *S7Message, cotpLen uint16) *COTPPacket {
-	child := &COTPPacketConnectionRequest{
+func NewCOTPPacketConnectionRequest(destinationReference uint16, sourceReference uint16, protocolClass COTPProtocolClass, parameters []*COTPParameter, payload *S7Message, cotpLen uint16) *COTPPacketConnectionRequest {
+	_result := &COTPPacketConnectionRequest{
 		DestinationReference: destinationReference,
 		SourceReference:      sourceReference,
 		ProtocolClass:        protocolClass,
 		COTPPacket:           NewCOTPPacket(parameters, payload, cotpLen),
 	}
-	child.Child = child
-	return child.COTPPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastCOTPPacketConnectionRequest(structType interface{}) *COTPPacketConnectionRequest {
@@ -144,7 +152,7 @@ func (m *COTPPacketConnectionRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func COTPPacketConnectionRequestParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacket, error) {
+func COTPPacketConnectionRequestParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacketConnectionRequest, error) {
 	if pullErr := readBuffer.PullContext("COTPPacketConnectionRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -190,7 +198,7 @@ func COTPPacketConnectionRequestParse(readBuffer utils.ReadBuffer, cotpLen uint1
 		COTPPacket:           &COTPPacket{},
 	}
 	_child.COTPPacket.Child = _child
-	return _child.COTPPacket, nil
+	return _child, nil
 }
 
 func (m *COTPPacketConnectionRequest) Serialize(writeBuffer utils.WriteBuffer) error {

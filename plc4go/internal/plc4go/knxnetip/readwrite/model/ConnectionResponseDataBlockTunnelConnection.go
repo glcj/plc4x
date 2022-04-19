@@ -46,38 +46,46 @@ type IConnectionResponseDataBlockTunnelConnection interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ConnectionResponseDataBlockTunnelConnection) ConnectionType() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ConnectionResponseDataBlockTunnelConnection) GetConnectionType() uint8 {
 	return 0x04
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ConnectionResponseDataBlockTunnelConnection) InitializeParent(parent *ConnectionResponseDataBlock) {
 }
 
+func (m *ConnectionResponseDataBlockTunnelConnection) GetParent() *ConnectionResponseDataBlock {
+	return m.ConnectionResponseDataBlock
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ConnectionResponseDataBlockTunnelConnection) GetKnxAddress() *KnxAddress {
 	return m.KnxAddress
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewConnectionResponseDataBlockTunnelConnection factory function for ConnectionResponseDataBlockTunnelConnection
-func NewConnectionResponseDataBlockTunnelConnection(knxAddress *KnxAddress) *ConnectionResponseDataBlock {
-	child := &ConnectionResponseDataBlockTunnelConnection{
+func NewConnectionResponseDataBlockTunnelConnection(knxAddress *KnxAddress) *ConnectionResponseDataBlockTunnelConnection {
+	_result := &ConnectionResponseDataBlockTunnelConnection{
 		KnxAddress:                  knxAddress,
 		ConnectionResponseDataBlock: NewConnectionResponseDataBlock(),
 	}
-	child.Child = child
-	return child.ConnectionResponseDataBlock
+	_result.Child = _result
+	return _result
 }
 
 func CastConnectionResponseDataBlockTunnelConnection(structType interface{}) *ConnectionResponseDataBlockTunnelConnection {
@@ -117,7 +125,7 @@ func (m *ConnectionResponseDataBlockTunnelConnection) GetLengthInBytes() uint16 
 	return m.GetLengthInBits() / 8
 }
 
-func ConnectionResponseDataBlockTunnelConnectionParse(readBuffer utils.ReadBuffer) (*ConnectionResponseDataBlock, error) {
+func ConnectionResponseDataBlockTunnelConnectionParse(readBuffer utils.ReadBuffer) (*ConnectionResponseDataBlockTunnelConnection, error) {
 	if pullErr := readBuffer.PullContext("ConnectionResponseDataBlockTunnelConnection"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -147,7 +155,7 @@ func ConnectionResponseDataBlockTunnelConnectionParse(readBuffer utils.ReadBuffe
 		ConnectionResponseDataBlock: &ConnectionResponseDataBlock{},
 	}
 	_child.ConnectionResponseDataBlock.Child = _child
-	return _child.ConnectionResponseDataBlock, nil
+	return _child, nil
 }
 
 func (m *ConnectionResponseDataBlockTunnelConnection) Serialize(writeBuffer utils.WriteBuffer) error {

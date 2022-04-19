@@ -56,23 +56,30 @@ type IBACnetContextTagEventState interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagEventState) DataType() BACnetDataType {
-	return BACnetDataType_EVENT_STATE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagEventState) GetDataType() BACnetDataType {
 	return BACnetDataType_EVENT_STATE
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagEventState) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagEventState) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagEventState) GetEventState() BACnetEventState {
 	return m.EventState
 }
@@ -81,22 +88,32 @@ func (m *BACnetContextTagEventState) GetProprietaryValue() uint32 {
 	return m.ProprietaryValue
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetContextTagEventState) GetIsProprietary() bool {
-	return bool((m.GetEventState()) == (BACnetEventState_VENDOR_PROPRIETARY_VALUE))
+	return bool(bool((m.GetEventState()) == (BACnetEventState_VENDOR_PROPRIETARY_VALUE)))
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetContextTagEventState factory function for BACnetContextTagEventState
-func NewBACnetContextTagEventState(eventState BACnetEventState, proprietaryValue uint32, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool, actualLength uint32) *BACnetContextTag {
-	child := &BACnetContextTagEventState{
+func NewBACnetContextTagEventState(eventState BACnetEventState, proprietaryValue uint32, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool, actualLength uint32) *BACnetContextTagEventState {
+	_result := &BACnetContextTagEventState{
 		EventState:       eventState,
 		ProprietaryValue: proprietaryValue,
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagEventState(structType interface{}) *BACnetContextTagEventState {
@@ -141,7 +158,7 @@ func (m *BACnetContextTagEventState) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagEventStateParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, actualLength uint32) (*BACnetContextTag, error) {
+func BACnetContextTagEventStateParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, actualLength uint32) (*BACnetContextTagEventState, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagEventState"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -181,7 +198,7 @@ func BACnetContextTagEventStateParse(readBuffer utils.ReadBuffer, tagNumberArgum
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagEventState) Serialize(writeBuffer utils.WriteBuffer) error {

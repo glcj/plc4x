@@ -42,36 +42,34 @@ type IBACnetErrorGetAlarmSummary interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorGetAlarmSummary) ServiceChoice() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorGetAlarmSummary) GetServiceChoice() uint8 {
 	return 0x03
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorGetAlarmSummary) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorGetAlarmSummary) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorGetAlarmSummary factory function for BACnetErrorGetAlarmSummary
-func NewBACnetErrorGetAlarmSummary(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorGetAlarmSummary{
+func NewBACnetErrorGetAlarmSummary(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorGetAlarmSummary {
+	_result := &BACnetErrorGetAlarmSummary{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorGetAlarmSummary(structType interface{}) *BACnetErrorGetAlarmSummary {
@@ -108,7 +106,7 @@ func (m *BACnetErrorGetAlarmSummary) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetErrorGetAlarmSummary, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorGetAlarmSummary"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetError,
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorGetAlarmSummary) Serialize(writeBuffer utils.WriteBuffer) error {

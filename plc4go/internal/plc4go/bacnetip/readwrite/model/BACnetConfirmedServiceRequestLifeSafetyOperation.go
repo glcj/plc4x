@@ -45,34 +45,32 @@ type IBACnetConfirmedServiceRequestLifeSafetyOperation interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestLifeSafetyOperation) ServiceChoice() uint8 {
-	return 0x1B
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestLifeSafetyOperation) GetServiceChoice() uint8 {
 	return 0x1B
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestLifeSafetyOperation) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceRequestLifeSafetyOperation) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
 
 // NewBACnetConfirmedServiceRequestLifeSafetyOperation factory function for BACnetConfirmedServiceRequestLifeSafetyOperation
-func NewBACnetConfirmedServiceRequestLifeSafetyOperation(len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestLifeSafetyOperation{
+func NewBACnetConfirmedServiceRequestLifeSafetyOperation(len uint16) *BACnetConfirmedServiceRequestLifeSafetyOperation {
+	_result := &BACnetConfirmedServiceRequestLifeSafetyOperation{
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestLifeSafetyOperation(structType interface{}) *BACnetConfirmedServiceRequestLifeSafetyOperation {
@@ -109,7 +107,7 @@ func (m *BACnetConfirmedServiceRequestLifeSafetyOperation) GetLengthInBytes() ui
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestLifeSafetyOperationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestLifeSafetyOperationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestLifeSafetyOperation, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestLifeSafetyOperation"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func BACnetConfirmedServiceRequestLifeSafetyOperationParse(readBuffer utils.Read
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestLifeSafetyOperation) Serialize(writeBuffer utils.WriteBuffer) error {

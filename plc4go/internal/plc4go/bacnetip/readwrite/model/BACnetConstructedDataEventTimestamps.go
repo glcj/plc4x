@@ -56,24 +56,31 @@ type IBACnetConstructedDataEventTimestamps interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConstructedDataEventTimestamps) ObjectType() BACnetObjectType {
-	return 0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConstructedDataEventTimestamps) GetObjectType() BACnetObjectType {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetConstructedDataEventTimestamps) InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
 	m.BACnetConstructedData.OpeningTag = openingTag
 	m.BACnetConstructedData.ClosingTag = closingTag
 }
 
+func (m *BACnetConstructedDataEventTimestamps) GetParent() *BACnetConstructedData {
+	return m.BACnetConstructedData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConstructedDataEventTimestamps) GetToOffnormal() *BACnetContextTagTime {
 	return m.ToOffnormal
 }
@@ -86,20 +93,21 @@ func (m *BACnetConstructedDataEventTimestamps) GetToNormal() *BACnetDateTime {
 	return m.ToNormal
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConstructedDataEventTimestamps factory function for BACnetConstructedDataEventTimestamps
-func NewBACnetConstructedDataEventTimestamps(toOffnormal *BACnetContextTagTime, toFault *BACnetContextTagUnsignedInteger, toNormal *BACnetDateTime, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedData {
-	child := &BACnetConstructedDataEventTimestamps{
+func NewBACnetConstructedDataEventTimestamps(toOffnormal *BACnetContextTagTime, toFault *BACnetContextTagUnsignedInteger, toNormal *BACnetDateTime, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedDataEventTimestamps {
+	_result := &BACnetConstructedDataEventTimestamps{
 		ToOffnormal:           toOffnormal,
 		ToFault:               toFault,
 		ToNormal:              toNormal,
 		BACnetConstructedData: NewBACnetConstructedData(openingTag, closingTag, tagNumber, propertyIdentifierArgument),
 	}
-	child.Child = child
-	return child.BACnetConstructedData
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConstructedDataEventTimestamps(structType interface{}) *BACnetConstructedDataEventTimestamps {
@@ -145,7 +153,7 @@ func (m *BACnetConstructedDataEventTimestamps) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConstructedDataEventTimestampsParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedData, error) {
+func BACnetConstructedDataEventTimestampsParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedDataEventTimestamps, error) {
 	if pullErr := readBuffer.PullContext("BACnetConstructedDataEventTimestamps"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -203,7 +211,7 @@ func BACnetConstructedDataEventTimestampsParse(readBuffer utils.ReadBuffer, tagN
 		BACnetConstructedData: &BACnetConstructedData{},
 	}
 	_child.BACnetConstructedData.Child = _child
-	return _child.BACnetConstructedData, nil
+	return _child, nil
 }
 
 func (m *BACnetConstructedDataEventTimestamps) Serialize(writeBuffer utils.WriteBuffer) error {

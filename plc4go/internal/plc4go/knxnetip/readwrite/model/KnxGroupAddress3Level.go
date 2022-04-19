@@ -52,21 +52,28 @@ type IKnxGroupAddress3Level interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxGroupAddress3Level) NumLevels() uint8 {
-	return uint8(3)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxGroupAddress3Level) GetNumLevels() uint8 {
 	return uint8(3)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxGroupAddress3Level) InitializeParent(parent *KnxGroupAddress) {}
 
+func (m *KnxGroupAddress3Level) GetParent() *KnxGroupAddress {
+	return m.KnxGroupAddress
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxGroupAddress3Level) GetMainGroup() uint8 {
 	return m.MainGroup
 }
@@ -79,20 +86,21 @@ func (m *KnxGroupAddress3Level) GetSubGroup() uint8 {
 	return m.SubGroup
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxGroupAddress3Level factory function for KnxGroupAddress3Level
-func NewKnxGroupAddress3Level(mainGroup uint8, middleGroup uint8, subGroup uint8) *KnxGroupAddress {
-	child := &KnxGroupAddress3Level{
+func NewKnxGroupAddress3Level(mainGroup uint8, middleGroup uint8, subGroup uint8) *KnxGroupAddress3Level {
+	_result := &KnxGroupAddress3Level{
 		MainGroup:       mainGroup,
 		MiddleGroup:     middleGroup,
 		SubGroup:        subGroup,
 		KnxGroupAddress: NewKnxGroupAddress(),
 	}
-	child.Child = child
-	return child.KnxGroupAddress
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxGroupAddress3Level(structType interface{}) *KnxGroupAddress3Level {
@@ -138,7 +146,7 @@ func (m *KnxGroupAddress3Level) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxGroupAddress3LevelParse(readBuffer utils.ReadBuffer, numLevels uint8) (*KnxGroupAddress, error) {
+func KnxGroupAddress3LevelParse(readBuffer utils.ReadBuffer, numLevels uint8) (*KnxGroupAddress3Level, error) {
 	if pullErr := readBuffer.PullContext("KnxGroupAddress3Level"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -178,7 +186,7 @@ func KnxGroupAddress3LevelParse(readBuffer utils.ReadBuffer, numLevels uint8) (*
 		KnxGroupAddress: &KnxGroupAddress{},
 	}
 	_child.KnxGroupAddress.Child = _child
-	return _child.KnxGroupAddress, nil
+	return _child, nil
 }
 
 func (m *KnxGroupAddress3Level) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -52,42 +52,59 @@ type IBACnetContextTagDouble interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagDouble) DataType() BACnetDataType {
-	return BACnetDataType_DOUBLE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagDouble) GetDataType() BACnetDataType {
 	return BACnetDataType_DOUBLE
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagDouble) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagDouble) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagDouble) GetPayload() *BACnetTagPayloadDouble {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetContextTagDouble) GetActualValue() float64 {
-	return m.GetPayload().GetValue()
+	return float64(m.GetPayload().GetValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetContextTagDouble factory function for BACnetContextTagDouble
-func NewBACnetContextTagDouble(payload *BACnetTagPayloadDouble, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTag {
-	child := &BACnetContextTagDouble{
+func NewBACnetContextTagDouble(payload *BACnetTagPayloadDouble, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTagDouble {
+	_result := &BACnetContextTagDouble{
 		Payload:          payload,
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagDouble(structType interface{}) *BACnetContextTagDouble {
@@ -129,7 +146,7 @@ func (m *BACnetContextTagDouble) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagDoubleParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool) (*BACnetContextTag, error) {
+func BACnetContextTagDoubleParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool) (*BACnetContextTagDouble, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagDouble"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -169,7 +186,7 @@ func BACnetContextTagDoubleParse(readBuffer utils.ReadBuffer, tagNumberArgument 
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagDouble) Serialize(writeBuffer utils.WriteBuffer) error {

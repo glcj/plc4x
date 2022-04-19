@@ -48,15 +48,17 @@ type IEipConnectionRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *EipConnectionRequest) Command() uint16 {
-	return 0x0065
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *EipConnectionRequest) GetCommand() uint16 {
 	return 0x0065
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *EipConnectionRequest) InitializeParent(parent *EipPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
 	m.EipPacket.SessionHandle = sessionHandle
@@ -65,21 +67,34 @@ func (m *EipConnectionRequest) InitializeParent(parent *EipPacket, sessionHandle
 	m.EipPacket.Options = options
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
+func (m *EipConnectionRequest) GetParent() *EipPacket {
+	return m.EipPacket
+}
 
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *EipConnectionRequest) GetProtocolVersion() uint16 {
+	return EipConnectionRequest_PROTOCOLVERSION
+}
+
+func (m *EipConnectionRequest) GetFlags() uint16 {
+	return EipConnectionRequest_FLAGS
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewEipConnectionRequest factory function for EipConnectionRequest
-func NewEipConnectionRequest(sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *EipPacket {
-	child := &EipConnectionRequest{
+func NewEipConnectionRequest(sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *EipConnectionRequest {
+	_result := &EipConnectionRequest{
 		EipPacket: NewEipPacket(sessionHandle, status, senderContext, options),
 	}
-	child.Child = child
-	return child.EipPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastEipConnectionRequest(structType interface{}) *EipConnectionRequest {
@@ -122,7 +137,7 @@ func (m *EipConnectionRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func EipConnectionRequestParse(readBuffer utils.ReadBuffer) (*EipPacket, error) {
+func EipConnectionRequestParse(readBuffer utils.ReadBuffer) (*EipConnectionRequest, error) {
 	if pullErr := readBuffer.PullContext("EipConnectionRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -156,7 +171,7 @@ func EipConnectionRequestParse(readBuffer utils.ReadBuffer) (*EipPacket, error) 
 		EipPacket: &EipPacket{},
 	}
 	_child.EipPacket.Child = _child
-	return _child.EipPacket, nil
+	return _child, nil
 }
 
 func (m *EipConnectionRequest) Serialize(writeBuffer utils.WriteBuffer) error {

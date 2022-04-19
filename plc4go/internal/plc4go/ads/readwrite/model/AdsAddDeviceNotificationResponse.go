@@ -49,29 +49,32 @@ type IAdsAddDeviceNotificationResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsAddDeviceNotificationResponse) CommandId() CommandId {
-	return CommandId_ADS_ADD_DEVICE_NOTIFICATION
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsAddDeviceNotificationResponse) GetCommandId() CommandId {
 	return CommandId_ADS_ADD_DEVICE_NOTIFICATION
-}
-
-func (m *AdsAddDeviceNotificationResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *AdsAddDeviceNotificationResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsAddDeviceNotificationResponse) InitializeParent(parent *AdsData) {}
 
+func (m *AdsAddDeviceNotificationResponse) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsAddDeviceNotificationResponse) GetResult() ReturnCode {
 	return m.Result
 }
@@ -80,19 +83,20 @@ func (m *AdsAddDeviceNotificationResponse) GetNotificationHandle() uint32 {
 	return m.NotificationHandle
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsAddDeviceNotificationResponse factory function for AdsAddDeviceNotificationResponse
-func NewAdsAddDeviceNotificationResponse(result ReturnCode, notificationHandle uint32) *AdsData {
-	child := &AdsAddDeviceNotificationResponse{
+func NewAdsAddDeviceNotificationResponse(result ReturnCode, notificationHandle uint32) *AdsAddDeviceNotificationResponse {
+	_result := &AdsAddDeviceNotificationResponse{
 		Result:             result,
 		NotificationHandle: notificationHandle,
 		AdsData:            NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsAddDeviceNotificationResponse(structType interface{}) *AdsAddDeviceNotificationResponse {
@@ -135,7 +139,7 @@ func (m *AdsAddDeviceNotificationResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsAddDeviceNotificationResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsAddDeviceNotificationResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsAddDeviceNotificationResponse, error) {
 	if pullErr := readBuffer.PullContext("AdsAddDeviceNotificationResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -173,7 +177,7 @@ func AdsAddDeviceNotificationResponseParse(readBuffer utils.ReadBuffer, commandI
 		AdsData:            &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsAddDeviceNotificationResponse) Serialize(writeBuffer utils.WriteBuffer) error {

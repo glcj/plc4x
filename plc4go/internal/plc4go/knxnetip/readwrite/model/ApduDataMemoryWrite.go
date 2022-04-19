@@ -45,33 +45,31 @@ type IApduDataMemoryWrite interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataMemoryWrite) ApciType() uint8 {
-	return 0xA
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataMemoryWrite) GetApciType() uint8 {
 	return 0xA
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataMemoryWrite) InitializeParent(parent *ApduData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataMemoryWrite) GetParent() *ApduData {
+	return m.ApduData
+}
 
 // NewApduDataMemoryWrite factory function for ApduDataMemoryWrite
-func NewApduDataMemoryWrite(dataLength uint8) *ApduData {
-	child := &ApduDataMemoryWrite{
+func NewApduDataMemoryWrite(dataLength uint8) *ApduDataMemoryWrite {
+	_result := &ApduDataMemoryWrite{
 		ApduData: NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataMemoryWrite(structType interface{}) *ApduDataMemoryWrite {
@@ -108,7 +106,7 @@ func (m *ApduDataMemoryWrite) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataMemoryWriteParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataMemoryWriteParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataMemoryWrite, error) {
 	if pullErr := readBuffer.PullContext("ApduDataMemoryWrite"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataMemoryWriteParse(readBuffer utils.ReadBuffer, dataLength uint8) (*A
 		ApduData: &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataMemoryWrite) Serialize(writeBuffer utils.WriteBuffer) error {

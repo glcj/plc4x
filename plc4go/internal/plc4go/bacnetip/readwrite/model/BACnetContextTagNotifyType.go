@@ -51,39 +51,47 @@ type IBACnetContextTagNotifyType interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagNotifyType) DataType() BACnetDataType {
-	return BACnetDataType_NOTIFY_TYPE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagNotifyType) GetDataType() BACnetDataType {
 	return BACnetDataType_NOTIFY_TYPE
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagNotifyType) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagNotifyType) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagNotifyType) GetValue() BACnetNotifyType {
 	return m.Value
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetContextTagNotifyType factory function for BACnetContextTagNotifyType
-func NewBACnetContextTagNotifyType(value BACnetNotifyType, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool, actualLength uint32) *BACnetContextTag {
-	child := &BACnetContextTagNotifyType{
+func NewBACnetContextTagNotifyType(value BACnetNotifyType, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool, actualLength uint32) *BACnetContextTagNotifyType {
+	_result := &BACnetContextTagNotifyType{
 		Value:            value,
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagNotifyType(structType interface{}) *BACnetContextTagNotifyType {
@@ -123,7 +131,7 @@ func (m *BACnetContextTagNotifyType) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagNotifyTypeParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, actualLength uint32) (*BACnetContextTag, error) {
+func BACnetContextTagNotifyTypeParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, actualLength uint32) (*BACnetContextTagNotifyType, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagNotifyType"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -158,7 +166,7 @@ func BACnetContextTagNotifyTypeParse(readBuffer utils.ReadBuffer, tagNumberArgum
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagNotifyType) Serialize(writeBuffer utils.WriteBuffer) error {

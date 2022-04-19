@@ -45,33 +45,31 @@ type IApduDataExtReadRoutingTableResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtReadRoutingTableResponse) ExtApciType() uint8 {
-	return 0x02
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtReadRoutingTableResponse) GetExtApciType() uint8 {
 	return 0x02
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtReadRoutingTableResponse) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtReadRoutingTableResponse) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtReadRoutingTableResponse factory function for ApduDataExtReadRoutingTableResponse
-func NewApduDataExtReadRoutingTableResponse(length uint8) *ApduDataExt {
-	child := &ApduDataExtReadRoutingTableResponse{
+func NewApduDataExtReadRoutingTableResponse(length uint8) *ApduDataExtReadRoutingTableResponse {
+	_result := &ApduDataExtReadRoutingTableResponse{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtReadRoutingTableResponse(structType interface{}) *ApduDataExtReadRoutingTableResponse {
@@ -108,7 +106,7 @@ func (m *ApduDataExtReadRoutingTableResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtReadRoutingTableResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtReadRoutingTableResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtReadRoutingTableResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtReadRoutingTableResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtReadRoutingTableResponseParse(readBuffer utils.ReadBuffer, lengt
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtReadRoutingTableResponse) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -65,7 +65,12 @@ type IBACnetNotificationParametersOutOfRange interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetNotificationParametersOutOfRange) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
@@ -74,9 +79,14 @@ func (m *BACnetNotificationParametersOutOfRange) InitializeParent(parent *BACnet
 	m.BACnetNotificationParameters.ClosingTag = closingTag
 }
 
+func (m *BACnetNotificationParametersOutOfRange) GetParent() *BACnetNotificationParameters {
+	return m.BACnetNotificationParameters
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetNotificationParametersOutOfRange) GetInnerOpeningTag() *BACnetOpeningTag {
 	return m.InnerOpeningTag
 }
@@ -101,13 +111,14 @@ func (m *BACnetNotificationParametersOutOfRange) GetInnerClosingTag() *BACnetClo
 	return m.InnerClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetNotificationParametersOutOfRange factory function for BACnetNotificationParametersOutOfRange
-func NewBACnetNotificationParametersOutOfRange(innerOpeningTag *BACnetOpeningTag, exceedingValue *BACnetContextTagReal, statusFlags *BACnetStatusFlags, deadband *BACnetContextTagReal, exceededLimit *BACnetContextTagReal, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8, objectType BACnetObjectType) *BACnetNotificationParameters {
-	child := &BACnetNotificationParametersOutOfRange{
+func NewBACnetNotificationParametersOutOfRange(innerOpeningTag *BACnetOpeningTag, exceedingValue *BACnetContextTagReal, statusFlags *BACnetStatusFlags, deadband *BACnetContextTagReal, exceededLimit *BACnetContextTagReal, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8, objectType BACnetObjectType) *BACnetNotificationParametersOutOfRange {
+	_result := &BACnetNotificationParametersOutOfRange{
 		InnerOpeningTag:              innerOpeningTag,
 		ExceedingValue:               exceedingValue,
 		StatusFlags:                  statusFlags,
@@ -116,8 +127,8 @@ func NewBACnetNotificationParametersOutOfRange(innerOpeningTag *BACnetOpeningTag
 		InnerClosingTag:              innerClosingTag,
 		BACnetNotificationParameters: NewBACnetNotificationParameters(openingTag, peekedTagHeader, closingTag, tagNumber, objectType),
 	}
-	child.Child = child
-	return child.BACnetNotificationParameters
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetNotificationParametersOutOfRange(structType interface{}) *BACnetNotificationParametersOutOfRange {
@@ -172,7 +183,7 @@ func (m *BACnetNotificationParametersOutOfRange) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetNotificationParametersOutOfRangeParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, peekedTagNumber uint8) (*BACnetNotificationParameters, error) {
+func BACnetNotificationParametersOutOfRangeParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, peekedTagNumber uint8) (*BACnetNotificationParametersOutOfRange, error) {
 	if pullErr := readBuffer.PullContext("BACnetNotificationParametersOutOfRange"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -272,7 +283,7 @@ func BACnetNotificationParametersOutOfRangeParse(readBuffer utils.ReadBuffer, ta
 		BACnetNotificationParameters: &BACnetNotificationParameters{},
 	}
 	_child.BACnetNotificationParameters.Child = _child
-	return _child.BACnetNotificationParameters, nil
+	return _child, nil
 }
 
 func (m *BACnetNotificationParametersOutOfRange) Serialize(writeBuffer utils.WriteBuffer) error {

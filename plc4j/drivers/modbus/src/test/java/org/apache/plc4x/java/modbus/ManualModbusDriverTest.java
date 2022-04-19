@@ -19,9 +19,11 @@
 package org.apache.plc4x.java.modbus;
 
 import org.apache.plc4x.test.manual.ManualTest;
+import org.junit.jupiter.api.Disabled;
 
 import java.util.Arrays;
 
+@Disabled("Manual Test")
 public class ManualModbusDriverTest extends ManualTest {
 
     /*
@@ -68,7 +70,7 @@ public class ManualModbusDriverTest extends ManualTest {
     }
 
     public static void main(String[] args) throws Exception {
-        ManualModbusDriverTest test = new ManualModbusDriverTest("modbus:tcp://192.168.23.30");
+        ManualModbusDriverTest test = new ManualModbusDriverTest("modbus-tcp://192.168.23.30");
         test.addTestCase("holding-register:1:BOOL", true); // 0001
         test.addTestCase("holding-register:2:BYTE", Arrays.asList(false, false, true, false, true, false, true, false)); // 002A
         test.addTestCase("holding-register:3:WORD", Arrays.asList(true, false, true, false, false, true, false, true, true, false, true, true, true, false, false, false)); // A5B8

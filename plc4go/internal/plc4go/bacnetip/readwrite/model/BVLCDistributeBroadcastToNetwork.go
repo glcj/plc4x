@@ -49,37 +49,45 @@ type IBVLCDistributeBroadcastToNetwork interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BVLCDistributeBroadcastToNetwork) BvlcFunction() uint8 {
-	return 0x09
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BVLCDistributeBroadcastToNetwork) GetBvlcFunction() uint8 {
 	return 0x09
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BVLCDistributeBroadcastToNetwork) InitializeParent(parent *BVLC) {}
 
+func (m *BVLCDistributeBroadcastToNetwork) GetParent() *BVLC {
+	return m.BVLC
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BVLCDistributeBroadcastToNetwork) GetNpdu() *NPDU {
 	return m.Npdu
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBVLCDistributeBroadcastToNetwork factory function for BVLCDistributeBroadcastToNetwork
-func NewBVLCDistributeBroadcastToNetwork(npdu *NPDU, bvlcPayloadLength uint16) *BVLC {
-	child := &BVLCDistributeBroadcastToNetwork{
+func NewBVLCDistributeBroadcastToNetwork(npdu *NPDU, bvlcPayloadLength uint16) *BVLCDistributeBroadcastToNetwork {
+	_result := &BVLCDistributeBroadcastToNetwork{
 		Npdu: npdu,
 		BVLC: NewBVLC(),
 	}
-	child.Child = child
-	return child.BVLC
+	_result.Child = _result
+	return _result
 }
 
 func CastBVLCDistributeBroadcastToNetwork(structType interface{}) *BVLCDistributeBroadcastToNetwork {
@@ -119,7 +127,7 @@ func (m *BVLCDistributeBroadcastToNetwork) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BVLCDistributeBroadcastToNetworkParse(readBuffer utils.ReadBuffer, bvlcPayloadLength uint16) (*BVLC, error) {
+func BVLCDistributeBroadcastToNetworkParse(readBuffer utils.ReadBuffer, bvlcPayloadLength uint16) (*BVLCDistributeBroadcastToNetwork, error) {
 	if pullErr := readBuffer.PullContext("BVLCDistributeBroadcastToNetwork"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -149,7 +157,7 @@ func BVLCDistributeBroadcastToNetworkParse(readBuffer utils.ReadBuffer, bvlcPayl
 		BVLC: &BVLC{},
 	}
 	_child.BVLC.Child = _child
-	return _child.BVLC, nil
+	return _child, nil
 }
 
 func (m *BVLCDistributeBroadcastToNetwork) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -71,4 +71,20 @@ public class StaticHelper {
     public static void serializeString(WriteBuffer io, String data) {
     }
 
+    public static short readManualField(ReadBuffer io, short simpleField) {
+        return 0;
+    }
+
+    public static void writeManualField(WriteBuffer io, short simpleFlied) {
+
+    }
+
+    public static short crcInt8(int num) {
+        return (byte) num;
+    }
+
+    public static short crcUint8(int num) {
+        return (short) num;
+    }
+
 }

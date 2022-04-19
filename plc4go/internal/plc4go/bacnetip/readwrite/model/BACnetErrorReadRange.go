@@ -42,36 +42,34 @@ type IBACnetErrorReadRange interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorReadRange) ServiceChoice() uint8 {
-	return 0x1A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorReadRange) GetServiceChoice() uint8 {
 	return 0x1A
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorReadRange) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorReadRange) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorReadRange factory function for BACnetErrorReadRange
-func NewBACnetErrorReadRange(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorReadRange{
+func NewBACnetErrorReadRange(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorReadRange {
+	_result := &BACnetErrorReadRange{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorReadRange(structType interface{}) *BACnetErrorReadRange {
@@ -108,7 +106,7 @@ func (m *BACnetErrorReadRange) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorReadRangeParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorReadRangeParse(readBuffer utils.ReadBuffer) (*BACnetErrorReadRange, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorReadRange"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorReadRangeParse(readBuffer utils.ReadBuffer) (*BACnetError, error
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorReadRange) Serialize(writeBuffer utils.WriteBuffer) error {

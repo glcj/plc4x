@@ -46,32 +46,43 @@ type ICALReplyReply interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALReplyReply) InitializeParent(parent *Reply, magicByte byte) {
 	m.Reply.MagicByte = magicByte
 }
 
+func (m *CALReplyReply) GetParent() *Reply {
+	return m.Reply
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALReplyReply) GetIsA() *CALReply {
 	return m.IsA
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCALReplyReply factory function for CALReplyReply
-func NewCALReplyReply(isA *CALReply, magicByte byte) *Reply {
-	child := &CALReplyReply{
+func NewCALReplyReply(isA *CALReply, magicByte byte) *CALReplyReply {
+	_result := &CALReplyReply{
 		IsA:   isA,
 		Reply: NewReply(magicByte),
 	}
-	child.Child = child
-	return child.Reply
+	_result.Child = _result
+	return _result
 }
 
 func CastCALReplyReply(structType interface{}) *CALReplyReply {
@@ -111,7 +122,7 @@ func (m *CALReplyReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALReplyReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
+func CALReplyReplyParse(readBuffer utils.ReadBuffer) (*CALReplyReply, error) {
 	if pullErr := readBuffer.PullContext("CALReplyReply"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func CALReplyReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 		Reply: &Reply{},
 	}
 	_child.Reply.Child = _child
-	return _child.Reply, nil
+	return _child, nil
 }
 
 func (m *CALReplyReply) Serialize(writeBuffer utils.WriteBuffer) error {

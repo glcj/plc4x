@@ -42,33 +42,31 @@ type IBVLCSecureBVLL interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BVLCSecureBVLL) BvlcFunction() uint8 {
-	return 0x0C
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BVLCSecureBVLL) GetBvlcFunction() uint8 {
 	return 0x0C
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BVLCSecureBVLL) InitializeParent(parent *BVLC) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BVLCSecureBVLL) GetParent() *BVLC {
+	return m.BVLC
+}
 
 // NewBVLCSecureBVLL factory function for BVLCSecureBVLL
-func NewBVLCSecureBVLL() *BVLC {
-	child := &BVLCSecureBVLL{
+func NewBVLCSecureBVLL() *BVLCSecureBVLL {
+	_result := &BVLCSecureBVLL{
 		BVLC: NewBVLC(),
 	}
-	child.Child = child
-	return child.BVLC
+	_result.Child = _result
+	return _result
 }
 
 func CastBVLCSecureBVLL(structType interface{}) *BVLCSecureBVLL {
@@ -105,7 +103,7 @@ func (m *BVLCSecureBVLL) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BVLCSecureBVLLParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
+func BVLCSecureBVLLParse(readBuffer utils.ReadBuffer) (*BVLCSecureBVLL, error) {
 	if pullErr := readBuffer.PullContext("BVLCSecureBVLL"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BVLCSecureBVLLParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
 		BVLC: &BVLC{},
 	}
 	_child.BVLC.Child = _child
-	return _child.BVLC, nil
+	return _child, nil
 }
 
 func (m *BVLCSecureBVLL) Serialize(writeBuffer utils.WriteBuffer) error {

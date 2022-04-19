@@ -47,38 +47,46 @@ type IConnectionRequestInformationTunnelConnection interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ConnectionRequestInformationTunnelConnection) ConnectionType() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ConnectionRequestInformationTunnelConnection) GetConnectionType() uint8 {
 	return 0x04
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ConnectionRequestInformationTunnelConnection) InitializeParent(parent *ConnectionRequestInformation) {
 }
 
+func (m *ConnectionRequestInformationTunnelConnection) GetParent() *ConnectionRequestInformation {
+	return m.ConnectionRequestInformation
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ConnectionRequestInformationTunnelConnection) GetKnxLayer() KnxLayer {
 	return m.KnxLayer
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewConnectionRequestInformationTunnelConnection factory function for ConnectionRequestInformationTunnelConnection
-func NewConnectionRequestInformationTunnelConnection(knxLayer KnxLayer) *ConnectionRequestInformation {
-	child := &ConnectionRequestInformationTunnelConnection{
+func NewConnectionRequestInformationTunnelConnection(knxLayer KnxLayer) *ConnectionRequestInformationTunnelConnection {
+	_result := &ConnectionRequestInformationTunnelConnection{
 		KnxLayer:                     knxLayer,
 		ConnectionRequestInformation: NewConnectionRequestInformation(),
 	}
-	child.Child = child
-	return child.ConnectionRequestInformation
+	_result.Child = _result
+	return _result
 }
 
 func CastConnectionRequestInformationTunnelConnection(structType interface{}) *ConnectionRequestInformationTunnelConnection {
@@ -121,7 +129,7 @@ func (m *ConnectionRequestInformationTunnelConnection) GetLengthInBytes() uint16
 	return m.GetLengthInBits() / 8
 }
 
-func ConnectionRequestInformationTunnelConnectionParse(readBuffer utils.ReadBuffer) (*ConnectionRequestInformation, error) {
+func ConnectionRequestInformationTunnelConnectionParse(readBuffer utils.ReadBuffer) (*ConnectionRequestInformationTunnelConnection, error) {
 	if pullErr := readBuffer.PullContext("ConnectionRequestInformationTunnelConnection"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -165,7 +173,7 @@ func ConnectionRequestInformationTunnelConnectionParse(readBuffer utils.ReadBuff
 		ConnectionRequestInformation: &ConnectionRequestInformation{},
 	}
 	_child.ConnectionRequestInformation.Child = _child
-	return _child.ConnectionRequestInformation, nil
+	return _child, nil
 }
 
 func (m *ConnectionRequestInformationTunnelConnection) Serialize(writeBuffer utils.WriteBuffer) error {

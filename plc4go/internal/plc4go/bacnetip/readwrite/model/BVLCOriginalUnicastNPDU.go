@@ -49,37 +49,45 @@ type IBVLCOriginalUnicastNPDU interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BVLCOriginalUnicastNPDU) BvlcFunction() uint8 {
-	return 0x0A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BVLCOriginalUnicastNPDU) GetBvlcFunction() uint8 {
 	return 0x0A
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BVLCOriginalUnicastNPDU) InitializeParent(parent *BVLC) {}
 
+func (m *BVLCOriginalUnicastNPDU) GetParent() *BVLC {
+	return m.BVLC
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BVLCOriginalUnicastNPDU) GetNpdu() *NPDU {
 	return m.Npdu
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBVLCOriginalUnicastNPDU factory function for BVLCOriginalUnicastNPDU
-func NewBVLCOriginalUnicastNPDU(npdu *NPDU, bvlcPayloadLength uint16) *BVLC {
-	child := &BVLCOriginalUnicastNPDU{
+func NewBVLCOriginalUnicastNPDU(npdu *NPDU, bvlcPayloadLength uint16) *BVLCOriginalUnicastNPDU {
+	_result := &BVLCOriginalUnicastNPDU{
 		Npdu: npdu,
 		BVLC: NewBVLC(),
 	}
-	child.Child = child
-	return child.BVLC
+	_result.Child = _result
+	return _result
 }
 
 func CastBVLCOriginalUnicastNPDU(structType interface{}) *BVLCOriginalUnicastNPDU {
@@ -119,7 +127,7 @@ func (m *BVLCOriginalUnicastNPDU) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BVLCOriginalUnicastNPDUParse(readBuffer utils.ReadBuffer, bvlcPayloadLength uint16) (*BVLC, error) {
+func BVLCOriginalUnicastNPDUParse(readBuffer utils.ReadBuffer, bvlcPayloadLength uint16) (*BVLCOriginalUnicastNPDU, error) {
 	if pullErr := readBuffer.PullContext("BVLCOriginalUnicastNPDU"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -149,7 +157,7 @@ func BVLCOriginalUnicastNPDUParse(readBuffer utils.ReadBuffer, bvlcPayloadLength
 		BVLC: &BVLC{},
 	}
 	_child.BVLC.Child = _child
-	return _child.BVLC, nil
+	return _child, nil
 }
 
 func (m *BVLCOriginalUnicastNPDU) Serialize(writeBuffer utils.WriteBuffer) error {

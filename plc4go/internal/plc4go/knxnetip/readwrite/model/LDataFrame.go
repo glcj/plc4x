@@ -68,13 +68,16 @@ type ILDataFrameParent interface {
 type ILDataFrameChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *LDataFrame, frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool)
+	GetParent() *LDataFrame
+
 	GetTypeName() string
 	ILDataFrame
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *LDataFrame) GetFrameType() bool {
 	return m.FrameType
 }
@@ -95,8 +98,9 @@ func (m *LDataFrame) GetErrorFlag() bool {
 	return m.ErrorFlag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewLDataFrame factory function for LDataFrame
@@ -110,6 +114,9 @@ func CastLDataFrame(structType interface{}) *LDataFrame {
 	}
 	if casted, ok := structType.(*LDataFrame); ok {
 		return casted
+	}
+	if casted, ok := structType.(ILDataFrameChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -216,15 +223,19 @@ func LDataFrameParse(readBuffer utils.ReadBuffer) (*LDataFrame, error) {
 	errorFlag := _errorFlag
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *LDataFrame
+	type LDataFrameChild interface {
+		InitializeParent(*LDataFrame, bool, bool, CEMIPriority, bool, bool)
+		GetParent() *LDataFrame
+	}
+	var _child LDataFrameChild
 	var typeSwitchError error
 	switch {
 	case notAckFrame == bool(true) && polling == bool(false): // LDataExtended
-		_parent, typeSwitchError = LDataExtendedParse(readBuffer)
+		_child, typeSwitchError = LDataExtendedParse(readBuffer)
 	case notAckFrame == bool(true) && polling == bool(true): // LPollData
-		_parent, typeSwitchError = LPollDataParse(readBuffer)
+		_child, typeSwitchError = LPollDataParse(readBuffer)
 	case notAckFrame == bool(false): // LDataFrameACK
-		_parent, typeSwitchError = LDataFrameACKParse(readBuffer)
+		_child, typeSwitchError = LDataFrameACKParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -238,8 +249,8 @@ func LDataFrameParse(readBuffer utils.ReadBuffer) (*LDataFrame, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, frameType, notRepeated, priority, acknowledgeRequested, errorFlag)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), frameType, notRepeated, priority, acknowledgeRequested, errorFlag)
+	return _child.GetParent(), nil
 }
 
 func (m *LDataFrame) Serialize(writeBuffer utils.WriteBuffer) error {

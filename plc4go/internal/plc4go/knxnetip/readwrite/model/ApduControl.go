@@ -51,17 +51,11 @@ type IApduControlParent interface {
 type IApduControlChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *ApduControl)
+	GetParent() *ApduControl
+
 	GetTypeName() string
 	IApduControl
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewApduControl factory function for ApduControl
 func NewApduControl() *ApduControl {
@@ -74,6 +68,9 @@ func CastApduControl(structType interface{}) *ApduControl {
 	}
 	if casted, ok := structType.(*ApduControl); ok {
 		return casted
+	}
+	if casted, ok := structType.(IApduControlChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -116,17 +113,21 @@ func ApduControlParse(readBuffer utils.ReadBuffer) (*ApduControl, error) {
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *ApduControl
+	type ApduControlChild interface {
+		InitializeParent(*ApduControl)
+		GetParent() *ApduControl
+	}
+	var _child ApduControlChild
 	var typeSwitchError error
 	switch {
 	case controlType == 0x0: // ApduControlConnect
-		_parent, typeSwitchError = ApduControlConnectParse(readBuffer)
+		_child, typeSwitchError = ApduControlConnectParse(readBuffer)
 	case controlType == 0x1: // ApduControlDisconnect
-		_parent, typeSwitchError = ApduControlDisconnectParse(readBuffer)
+		_child, typeSwitchError = ApduControlDisconnectParse(readBuffer)
 	case controlType == 0x2: // ApduControlAck
-		_parent, typeSwitchError = ApduControlAckParse(readBuffer)
+		_child, typeSwitchError = ApduControlAckParse(readBuffer)
 	case controlType == 0x3: // ApduControlNack
-		_parent, typeSwitchError = ApduControlNackParse(readBuffer)
+		_child, typeSwitchError = ApduControlNackParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -140,8 +141,8 @@ func ApduControlParse(readBuffer utils.ReadBuffer) (*ApduControl, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *ApduControl) Serialize(writeBuffer utils.WriteBuffer) error {

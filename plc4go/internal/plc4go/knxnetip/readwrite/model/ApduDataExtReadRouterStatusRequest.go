@@ -45,33 +45,31 @@ type IApduDataExtReadRouterStatusRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtReadRouterStatusRequest) ExtApciType() uint8 {
-	return 0x0D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtReadRouterStatusRequest) GetExtApciType() uint8 {
 	return 0x0D
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtReadRouterStatusRequest) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtReadRouterStatusRequest) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtReadRouterStatusRequest factory function for ApduDataExtReadRouterStatusRequest
-func NewApduDataExtReadRouterStatusRequest(length uint8) *ApduDataExt {
-	child := &ApduDataExtReadRouterStatusRequest{
+func NewApduDataExtReadRouterStatusRequest(length uint8) *ApduDataExtReadRouterStatusRequest {
+	_result := &ApduDataExtReadRouterStatusRequest{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtReadRouterStatusRequest(structType interface{}) *ApduDataExtReadRouterStatusRequest {
@@ -108,7 +106,7 @@ func (m *ApduDataExtReadRouterStatusRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtReadRouterStatusRequestParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtReadRouterStatusRequestParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtReadRouterStatusRequest, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtReadRouterStatusRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtReadRouterStatusRequestParse(readBuffer utils.ReadBuffer, length
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtReadRouterStatusRequest) Serialize(writeBuffer utils.WriteBuffer) error {

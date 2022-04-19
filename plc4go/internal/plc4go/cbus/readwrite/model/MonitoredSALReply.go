@@ -46,32 +46,43 @@ type IMonitoredSALReply interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *MonitoredSALReply) InitializeParent(parent *Reply, magicByte byte) {
 	m.Reply.MagicByte = magicByte
 }
 
+func (m *MonitoredSALReply) GetParent() *Reply {
+	return m.Reply
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *MonitoredSALReply) GetIsA() *MonitoredSAL {
 	return m.IsA
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewMonitoredSALReply factory function for MonitoredSALReply
-func NewMonitoredSALReply(isA *MonitoredSAL, magicByte byte) *Reply {
-	child := &MonitoredSALReply{
+func NewMonitoredSALReply(isA *MonitoredSAL, magicByte byte) *MonitoredSALReply {
+	_result := &MonitoredSALReply{
 		IsA:   isA,
 		Reply: NewReply(magicByte),
 	}
-	child.Child = child
-	return child.Reply
+	_result.Child = _result
+	return _result
 }
 
 func CastMonitoredSALReply(structType interface{}) *MonitoredSALReply {
@@ -111,7 +122,7 @@ func (m *MonitoredSALReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MonitoredSALReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
+func MonitoredSALReplyParse(readBuffer utils.ReadBuffer) (*MonitoredSALReply, error) {
 	if pullErr := readBuffer.PullContext("MonitoredSALReply"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func MonitoredSALReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 		Reply: &Reply{},
 	}
 	_child.Reply.Child = _child
-	return _child.Reply, nil
+	return _child, nil
 }
 
 func (m *MonitoredSALReply) Serialize(writeBuffer utils.WriteBuffer) error {

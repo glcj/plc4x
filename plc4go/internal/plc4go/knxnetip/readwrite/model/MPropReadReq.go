@@ -61,21 +61,28 @@ type IMPropReadReq interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *MPropReadReq) MessageCode() uint8 {
-	return 0xFC
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *MPropReadReq) GetMessageCode() uint8 {
 	return 0xFC
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *MPropReadReq) InitializeParent(parent *CEMI) {}
 
+func (m *MPropReadReq) GetParent() *CEMI {
+	return m.CEMI
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *MPropReadReq) GetInterfaceObjectType() uint16 {
 	return m.InterfaceObjectType
 }
@@ -96,13 +103,14 @@ func (m *MPropReadReq) GetStartIndex() uint16 {
 	return m.StartIndex
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewMPropReadReq factory function for MPropReadReq
-func NewMPropReadReq(interfaceObjectType uint16, objectInstance uint8, propertyId uint8, numberOfElements uint8, startIndex uint16, size uint16) *CEMI {
-	child := &MPropReadReq{
+func NewMPropReadReq(interfaceObjectType uint16, objectInstance uint8, propertyId uint8, numberOfElements uint8, startIndex uint16, size uint16) *MPropReadReq {
+	_result := &MPropReadReq{
 		InterfaceObjectType: interfaceObjectType,
 		ObjectInstance:      objectInstance,
 		PropertyId:          propertyId,
@@ -110,8 +118,8 @@ func NewMPropReadReq(interfaceObjectType uint16, objectInstance uint8, propertyI
 		StartIndex:          startIndex,
 		CEMI:                NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastMPropReadReq(structType interface{}) *MPropReadReq {
@@ -163,7 +171,7 @@ func (m *MPropReadReq) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MPropReadReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func MPropReadReqParse(readBuffer utils.ReadBuffer, size uint16) (*MPropReadReq, error) {
 	if pullErr := readBuffer.PullContext("MPropReadReq"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -219,7 +227,7 @@ func MPropReadReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) 
 		CEMI:                &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *MPropReadReq) Serialize(writeBuffer utils.WriteBuffer) error {

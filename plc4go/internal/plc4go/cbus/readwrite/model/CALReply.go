@@ -60,13 +60,16 @@ type ICALReplyParent interface {
 type ICALReplyChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *CALReply, calType byte, calData *CALData)
+	GetParent() *CALReply
+
 	GetTypeName() string
 	ICALReply
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALReply) GetCalType() byte {
 	return m.CalType
 }
@@ -75,8 +78,25 @@ func (m *CALReply) GetCalData() *CALData {
 	return m.CalData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CALReply) GetCr() byte {
+	return CALReply_CR
+}
+
+func (m *CALReply) GetLf() byte {
+	return CALReply_LF
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewCALReply factory function for CALReply
@@ -90,6 +110,9 @@ func CastCALReply(structType interface{}) *CALReply {
 	}
 	if casted, ok := structType.(*CALReply); ok {
 		return casted
+	}
+	if casted, ok := structType.(ICALReplyChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -142,13 +165,17 @@ func CALReplyParse(readBuffer utils.ReadBuffer) (*CALReply, error) {
 	readBuffer.Reset(currentPos)
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *CALReply
+	type CALReplyChild interface {
+		InitializeParent(*CALReply, byte, *CALData)
+		GetParent() *CALReply
+	}
+	var _child CALReplyChild
 	var typeSwitchError error
 	switch {
 	case calType == 0x86: // CALReplyLong
-		_parent, typeSwitchError = CALReplyLongParse(readBuffer)
+		_child, typeSwitchError = CALReplyLongParse(readBuffer)
 	case true: // CALReplyShort
-		_parent, typeSwitchError = CALReplyShortParse(readBuffer)
+		_child, typeSwitchError = CALReplyShortParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -193,8 +220,8 @@ func CALReplyParse(readBuffer utils.ReadBuffer) (*CALReply, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, calType, calData)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), calType, calData)
+	return _child.GetParent(), nil
 }
 
 func (m *CALReply) Serialize(writeBuffer utils.WriteBuffer) error {

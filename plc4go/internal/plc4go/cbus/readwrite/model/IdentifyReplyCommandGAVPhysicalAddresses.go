@@ -46,37 +46,45 @@ type IIdentifyReplyCommandGAVPhysicalAddresses interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandGAVPhysicalAddresses) Attribute() Attribute {
-	return Attribute_GAVPhysicalAddresses
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandGAVPhysicalAddresses) GetAttribute() Attribute {
 	return Attribute_GAVPhysicalAddresses
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandGAVPhysicalAddresses) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandGAVPhysicalAddresses) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandGAVPhysicalAddresses) GetValues() []byte {
 	return m.Values
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandGAVPhysicalAddresses factory function for IdentifyReplyCommandGAVPhysicalAddresses
-func NewIdentifyReplyCommandGAVPhysicalAddresses(values []byte) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandGAVPhysicalAddresses{
+func NewIdentifyReplyCommandGAVPhysicalAddresses(values []byte) *IdentifyReplyCommandGAVPhysicalAddresses {
+	_result := &IdentifyReplyCommandGAVPhysicalAddresses{
 		Values:               values,
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandGAVPhysicalAddresses(structType interface{}) *IdentifyReplyCommandGAVPhysicalAddresses {
@@ -118,7 +126,7 @@ func (m *IdentifyReplyCommandGAVPhysicalAddresses) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandGAVPhysicalAddressesParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandGAVPhysicalAddressesParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandGAVPhysicalAddresses, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandGAVPhysicalAddresses"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +149,7 @@ func IdentifyReplyCommandGAVPhysicalAddressesParse(readBuffer utils.ReadBuffer, 
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandGAVPhysicalAddresses) Serialize(writeBuffer utils.WriteBuffer) error {

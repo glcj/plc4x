@@ -46,45 +46,49 @@ type IS7ParameterWriteVarRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7ParameterWriteVarRequest) ParameterType() uint8 {
-	return 0x05
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7ParameterWriteVarRequest) GetParameterType() uint8 {
 	return 0x05
-}
-
-func (m *S7ParameterWriteVarRequest) MessageType() uint8 {
-	return 0x01
 }
 
 func (m *S7ParameterWriteVarRequest) GetMessageType() uint8 {
 	return 0x01
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7ParameterWriteVarRequest) InitializeParent(parent *S7Parameter) {}
 
+func (m *S7ParameterWriteVarRequest) GetParent() *S7Parameter {
+	return m.S7Parameter
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7ParameterWriteVarRequest) GetItems() []*S7VarRequestParameterItem {
 	return m.Items
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7ParameterWriteVarRequest factory function for S7ParameterWriteVarRequest
-func NewS7ParameterWriteVarRequest(items []*S7VarRequestParameterItem) *S7Parameter {
-	child := &S7ParameterWriteVarRequest{
+func NewS7ParameterWriteVarRequest(items []*S7VarRequestParameterItem) *S7ParameterWriteVarRequest {
+	_result := &S7ParameterWriteVarRequest{
 		Items:       items,
 		S7Parameter: NewS7Parameter(),
 	}
-	child.Child = child
-	return child.S7Parameter
+	_result.Child = _result
+	return _result
 }
 
 func CastS7ParameterWriteVarRequest(structType interface{}) *S7ParameterWriteVarRequest {
@@ -132,7 +136,7 @@ func (m *S7ParameterWriteVarRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7ParameterWriteVarRequestParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7Parameter, error) {
+func S7ParameterWriteVarRequestParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7ParameterWriteVarRequest, error) {
 	if pullErr := readBuffer.PullContext("S7ParameterWriteVarRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -175,7 +179,7 @@ func S7ParameterWriteVarRequestParse(readBuffer utils.ReadBuffer, messageType ui
 		S7Parameter: &S7Parameter{},
 	}
 	_child.S7Parameter.Child = _child
-	return _child.S7Parameter, nil
+	return _child, nil
 }
 
 func (m *S7ParameterWriteVarRequest) Serialize(writeBuffer utils.WriteBuffer) error {

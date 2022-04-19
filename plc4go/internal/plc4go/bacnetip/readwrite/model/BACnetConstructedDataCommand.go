@@ -56,24 +56,31 @@ type IBACnetConstructedDataCommand interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConstructedDataCommand) ObjectType() BACnetObjectType {
-	return BACnetObjectType_COMMAND
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConstructedDataCommand) GetObjectType() BACnetObjectType {
 	return BACnetObjectType_COMMAND
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetConstructedDataCommand) InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
 	m.BACnetConstructedData.OpeningTag = openingTag
 	m.BACnetConstructedData.ClosingTag = closingTag
 }
 
+func (m *BACnetConstructedDataCommand) GetParent() *BACnetConstructedData {
+	return m.BACnetConstructedData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConstructedDataCommand) GetInnerOpeningTag() *BACnetOpeningTag {
 	return m.InnerOpeningTag
 }
@@ -86,20 +93,21 @@ func (m *BACnetConstructedDataCommand) GetInnerClosingTag() *BACnetClosingTag {
 	return m.InnerClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConstructedDataCommand factory function for BACnetConstructedDataCommand
-func NewBACnetConstructedDataCommand(innerOpeningTag *BACnetOpeningTag, action []*BACnetActionCommand, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedData {
-	child := &BACnetConstructedDataCommand{
+func NewBACnetConstructedDataCommand(innerOpeningTag *BACnetOpeningTag, action []*BACnetActionCommand, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedDataCommand {
+	_result := &BACnetConstructedDataCommand{
 		InnerOpeningTag:       innerOpeningTag,
 		Action:                action,
 		InnerClosingTag:       innerClosingTag,
 		BACnetConstructedData: NewBACnetConstructedData(openingTag, closingTag, tagNumber, propertyIdentifierArgument),
 	}
-	child.Child = child
-	return child.BACnetConstructedData
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConstructedDataCommand(structType interface{}) *BACnetConstructedDataCommand {
@@ -149,7 +157,7 @@ func (m *BACnetConstructedDataCommand) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConstructedDataCommandParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedData, error) {
+func BACnetConstructedDataCommandParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedDataCommand, error) {
 	if pullErr := readBuffer.PullContext("BACnetConstructedDataCommand"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -214,7 +222,7 @@ func BACnetConstructedDataCommandParse(readBuffer utils.ReadBuffer, tagNumber ui
 		BACnetConstructedData: &BACnetConstructedData{},
 	}
 	_child.BACnetConstructedData.Child = _child
-	return _child.BACnetConstructedData, nil
+	return _child, nil
 }
 
 func (m *BACnetConstructedDataCommand) Serialize(writeBuffer utils.WriteBuffer) error {

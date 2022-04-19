@@ -49,32 +49,43 @@ type ICBusCommandPointToPoint interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CBusCommandPointToPoint) InitializeParent(parent *CBusCommand, header *CBusHeader) {
 	m.CBusCommand.Header = header
 }
 
+func (m *CBusCommandPointToPoint) GetParent() *CBusCommand {
+	return m.CBusCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusCommandPointToPoint) GetCommand() *CBusPointToPointCommand {
 	return m.Command
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCBusCommandPointToPoint factory function for CBusCommandPointToPoint
-func NewCBusCommandPointToPoint(command *CBusPointToPointCommand, header *CBusHeader, srchk bool) *CBusCommand {
-	child := &CBusCommandPointToPoint{
+func NewCBusCommandPointToPoint(command *CBusPointToPointCommand, header *CBusHeader, srchk bool) *CBusCommandPointToPoint {
+	_result := &CBusCommandPointToPoint{
 		Command:     command,
 		CBusCommand: NewCBusCommand(header, srchk),
 	}
-	child.Child = child
-	return child.CBusCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastCBusCommandPointToPoint(structType interface{}) *CBusCommandPointToPoint {
@@ -114,7 +125,7 @@ func (m *CBusCommandPointToPoint) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusCommandPointToPointParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommand, error) {
+func CBusCommandPointToPointParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommandPointToPoint, error) {
 	if pullErr := readBuffer.PullContext("CBusCommandPointToPoint"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -144,7 +155,7 @@ func CBusCommandPointToPointParse(readBuffer utils.ReadBuffer, srchk bool) (*CBu
 		CBusCommand: &CBusCommand{},
 	}
 	_child.CBusCommand.Child = _child
-	return _child.CBusCommand, nil
+	return _child, nil
 }
 
 func (m *CBusCommandPointToPoint) Serialize(writeBuffer utils.WriteBuffer) error {

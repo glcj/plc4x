@@ -45,33 +45,31 @@ type IApduDataExtMemoryBitWrite interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtMemoryBitWrite) ExtApciType() uint8 {
-	return 0x10
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtMemoryBitWrite) GetExtApciType() uint8 {
 	return 0x10
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtMemoryBitWrite) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtMemoryBitWrite) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtMemoryBitWrite factory function for ApduDataExtMemoryBitWrite
-func NewApduDataExtMemoryBitWrite(length uint8) *ApduDataExt {
-	child := &ApduDataExtMemoryBitWrite{
+func NewApduDataExtMemoryBitWrite(length uint8) *ApduDataExtMemoryBitWrite {
+	_result := &ApduDataExtMemoryBitWrite{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtMemoryBitWrite(structType interface{}) *ApduDataExtMemoryBitWrite {
@@ -108,7 +106,7 @@ func (m *ApduDataExtMemoryBitWrite) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtMemoryBitWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtMemoryBitWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtMemoryBitWrite, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtMemoryBitWrite"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtMemoryBitWriteParse(readBuffer utils.ReadBuffer, length uint8) (
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtMemoryBitWrite) Serialize(writeBuffer utils.WriteBuffer) error {

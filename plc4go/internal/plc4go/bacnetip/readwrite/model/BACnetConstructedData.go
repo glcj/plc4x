@@ -63,13 +63,16 @@ type IBACnetConstructedDataParent interface {
 type IBACnetConstructedDataChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag)
+	GetParent() *BACnetConstructedData
+
 	GetTypeName() string
 	IBACnetConstructedData
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConstructedData) GetOpeningTag() *BACnetOpeningTag {
 	return m.OpeningTag
 }
@@ -78,12 +81,22 @@ func (m *BACnetConstructedData) GetClosingTag() *BACnetClosingTag {
 	return m.ClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetConstructedData) GetPropertyIdentifierEnum() BACnetPropertyIdentifier {
-	return m.PropertyIdentifierArgument.GetPropertyIdentifier()
+	return BACnetPropertyIdentifier(m.PropertyIdentifierArgument.GetPropertyIdentifier())
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetConstructedData factory function for BACnetConstructedData
 func NewBACnetConstructedData(openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedData {
@@ -96,6 +109,9 @@ func CastBACnetConstructedData(structType interface{}) *BACnetConstructedData {
 	}
 	if casted, ok := structType.(*BACnetConstructedData); ok {
 		return casted
+	}
+	if casted, ok := structType.(IBACnetConstructedDataChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -156,17 +172,21 @@ func BACnetConstructedDataParse(readBuffer utils.ReadBuffer, tagNumber uint8, ob
 	_ = propertyIdentifierEnum
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *BACnetConstructedData
+	type BACnetConstructedDataChild interface {
+		InitializeParent(*BACnetConstructedData, *BACnetOpeningTag, *BACnetClosingTag)
+		GetParent() *BACnetConstructedData
+	}
+	var _child BACnetConstructedDataChild
 	var typeSwitchError error
 	switch {
 	case objectType == BACnetObjectType_COMMAND: // BACnetConstructedDataCommand
-		_parent, typeSwitchError = BACnetConstructedDataCommandParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
+		_child, typeSwitchError = BACnetConstructedDataCommandParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
 	case objectType == BACnetObjectType_LIFE_SAFETY_ZONE: // BACnetConstructedDataLifeSafetyZone
-		_parent, typeSwitchError = BACnetConstructedDataLifeSafetyZoneParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
+		_child, typeSwitchError = BACnetConstructedDataLifeSafetyZoneParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
 	case true && propertyIdentifierEnum == BACnetPropertyIdentifier_EVENT_TIME_STAMPS: // BACnetConstructedDataEventTimestamps
-		_parent, typeSwitchError = BACnetConstructedDataEventTimestampsParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
+		_child, typeSwitchError = BACnetConstructedDataEventTimestampsParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
 	case true: // BACnetConstructedDataUnspecified
-		_parent, typeSwitchError = BACnetConstructedDataUnspecifiedParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
+		_child, typeSwitchError = BACnetConstructedDataUnspecifiedParse(readBuffer, tagNumber, objectType, propertyIdentifierArgument)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -193,8 +213,8 @@ func BACnetConstructedDataParse(readBuffer utils.ReadBuffer, tagNumber uint8, ob
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, openingTag, closingTag)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), openingTag, closingTag)
+	return _child.GetParent(), nil
 }
 
 func (m *BACnetConstructedData) Serialize(writeBuffer utils.WriteBuffer) error {

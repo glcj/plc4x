@@ -42,41 +42,35 @@ type ISysexCommandAnalogMappingQueryRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandAnalogMappingQueryRequest) CommandType() uint8 {
-	return 0x69
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandAnalogMappingQueryRequest) GetCommandType() uint8 {
 	return 0x69
-}
-
-func (m *SysexCommandAnalogMappingQueryRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *SysexCommandAnalogMappingQueryRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandAnalogMappingQueryRequest) InitializeParent(parent *SysexCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *SysexCommandAnalogMappingQueryRequest) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
 
 // NewSysexCommandAnalogMappingQueryRequest factory function for SysexCommandAnalogMappingQueryRequest
-func NewSysexCommandAnalogMappingQueryRequest() *SysexCommand {
-	child := &SysexCommandAnalogMappingQueryRequest{
+func NewSysexCommandAnalogMappingQueryRequest() *SysexCommandAnalogMappingQueryRequest {
+	_result := &SysexCommandAnalogMappingQueryRequest{
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandAnalogMappingQueryRequest(structType interface{}) *SysexCommandAnalogMappingQueryRequest {
@@ -113,7 +107,7 @@ func (m *SysexCommandAnalogMappingQueryRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandAnalogMappingQueryRequestParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandAnalogMappingQueryRequestParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandAnalogMappingQueryRequest, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandAnalogMappingQueryRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func SysexCommandAnalogMappingQueryRequestParse(readBuffer utils.ReadBuffer, res
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandAnalogMappingQueryRequest) Serialize(writeBuffer utils.WriteBuffer) error {

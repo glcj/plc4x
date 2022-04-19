@@ -42,41 +42,35 @@ type ISysexCommandExtendedAnalog interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandExtendedAnalog) CommandType() uint8 {
-	return 0x6F
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandExtendedAnalog) GetCommandType() uint8 {
 	return 0x6F
-}
-
-func (m *SysexCommandExtendedAnalog) Response() bool {
-	return false
 }
 
 func (m *SysexCommandExtendedAnalog) GetResponse() bool {
 	return false
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandExtendedAnalog) InitializeParent(parent *SysexCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *SysexCommandExtendedAnalog) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
 
 // NewSysexCommandExtendedAnalog factory function for SysexCommandExtendedAnalog
-func NewSysexCommandExtendedAnalog() *SysexCommand {
-	child := &SysexCommandExtendedAnalog{
+func NewSysexCommandExtendedAnalog() *SysexCommandExtendedAnalog {
+	_result := &SysexCommandExtendedAnalog{
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandExtendedAnalog(structType interface{}) *SysexCommandExtendedAnalog {
@@ -113,7 +107,7 @@ func (m *SysexCommandExtendedAnalog) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandExtendedAnalogParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandExtendedAnalogParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandExtendedAnalog, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandExtendedAnalog"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func SysexCommandExtendedAnalogParse(readBuffer utils.ReadBuffer, response bool)
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandExtendedAnalog) Serialize(writeBuffer utils.WriteBuffer) error {

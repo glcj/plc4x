@@ -49,15 +49,17 @@ type IS7MessageResponseData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7MessageResponseData) MessageType() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7MessageResponseData) GetMessageType() uint8 {
 	return 0x03
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7MessageResponseData) InitializeParent(parent *S7Message, tpduReference uint16, parameter *S7Parameter, payload *S7Payload) {
 	m.S7Message.TpduReference = tpduReference
@@ -65,9 +67,14 @@ func (m *S7MessageResponseData) InitializeParent(parent *S7Message, tpduReferenc
 	m.S7Message.Payload = payload
 }
 
+func (m *S7MessageResponseData) GetParent() *S7Message {
+	return m.S7Message
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7MessageResponseData) GetErrorClass() uint8 {
 	return m.ErrorClass
 }
@@ -76,19 +83,20 @@ func (m *S7MessageResponseData) GetErrorCode() uint8 {
 	return m.ErrorCode
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7MessageResponseData factory function for S7MessageResponseData
-func NewS7MessageResponseData(errorClass uint8, errorCode uint8, tpduReference uint16, parameter *S7Parameter, payload *S7Payload) *S7Message {
-	child := &S7MessageResponseData{
+func NewS7MessageResponseData(errorClass uint8, errorCode uint8, tpduReference uint16, parameter *S7Parameter, payload *S7Payload) *S7MessageResponseData {
+	_result := &S7MessageResponseData{
 		ErrorClass: errorClass,
 		ErrorCode:  errorCode,
 		S7Message:  NewS7Message(tpduReference, parameter, payload),
 	}
-	child.Child = child
-	return child.S7Message
+	_result.Child = _result
+	return _result
 }
 
 func CastS7MessageResponseData(structType interface{}) *S7MessageResponseData {
@@ -131,7 +139,7 @@ func (m *S7MessageResponseData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7MessageResponseDataParse(readBuffer utils.ReadBuffer) (*S7Message, error) {
+func S7MessageResponseDataParse(readBuffer utils.ReadBuffer) (*S7MessageResponseData, error) {
 	if pullErr := readBuffer.PullContext("S7MessageResponseData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -163,7 +171,7 @@ func S7MessageResponseDataParse(readBuffer utils.ReadBuffer) (*S7Message, error)
 		S7Message:  &S7Message{},
 	}
 	_child.S7Message.Child = _child
-	return _child.S7Message, nil
+	return _child, nil
 }
 
 func (m *S7MessageResponseData) Serialize(writeBuffer utils.WriteBuffer) error {

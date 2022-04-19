@@ -51,17 +51,11 @@ type IConnectionRequestInformationParent interface {
 type IConnectionRequestInformationChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *ConnectionRequestInformation)
+	GetParent() *ConnectionRequestInformation
+
 	GetTypeName() string
 	IConnectionRequestInformation
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewConnectionRequestInformation factory function for ConnectionRequestInformation
 func NewConnectionRequestInformation() *ConnectionRequestInformation {
@@ -74,6 +68,9 @@ func CastConnectionRequestInformation(structType interface{}) *ConnectionRequest
 	}
 	if casted, ok := structType.(*ConnectionRequestInformation); ok {
 		return casted
+	}
+	if casted, ok := structType.(IConnectionRequestInformationChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -126,13 +123,17 @@ func ConnectionRequestInformationParse(readBuffer utils.ReadBuffer) (*Connection
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *ConnectionRequestInformation
+	type ConnectionRequestInformationChild interface {
+		InitializeParent(*ConnectionRequestInformation)
+		GetParent() *ConnectionRequestInformation
+	}
+	var _child ConnectionRequestInformationChild
 	var typeSwitchError error
 	switch {
 	case connectionType == 0x03: // ConnectionRequestInformationDeviceManagement
-		_parent, typeSwitchError = ConnectionRequestInformationDeviceManagementParse(readBuffer)
+		_child, typeSwitchError = ConnectionRequestInformationDeviceManagementParse(readBuffer)
 	case connectionType == 0x04: // ConnectionRequestInformationTunnelConnection
-		_parent, typeSwitchError = ConnectionRequestInformationTunnelConnectionParse(readBuffer)
+		_child, typeSwitchError = ConnectionRequestInformationTunnelConnectionParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -146,8 +147,8 @@ func ConnectionRequestInformationParse(readBuffer utils.ReadBuffer) (*Connection
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *ConnectionRequestInformation) Serialize(writeBuffer utils.WriteBuffer) error {

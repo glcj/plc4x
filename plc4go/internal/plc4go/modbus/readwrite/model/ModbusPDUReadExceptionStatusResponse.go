@@ -46,53 +46,53 @@ type IModbusPDUReadExceptionStatusResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUReadExceptionStatusResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUReadExceptionStatusResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUReadExceptionStatusResponse) FunctionFlag() uint8 {
-	return 0x07
 }
 
 func (m *ModbusPDUReadExceptionStatusResponse) GetFunctionFlag() uint8 {
 	return 0x07
 }
 
-func (m *ModbusPDUReadExceptionStatusResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUReadExceptionStatusResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUReadExceptionStatusResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUReadExceptionStatusResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUReadExceptionStatusResponse) GetValue() uint8 {
 	return m.Value
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUReadExceptionStatusResponse factory function for ModbusPDUReadExceptionStatusResponse
-func NewModbusPDUReadExceptionStatusResponse(value uint8) *ModbusPDU {
-	child := &ModbusPDUReadExceptionStatusResponse{
+func NewModbusPDUReadExceptionStatusResponse(value uint8) *ModbusPDUReadExceptionStatusResponse {
+	_result := &ModbusPDUReadExceptionStatusResponse{
 		Value:     value,
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUReadExceptionStatusResponse(structType interface{}) *ModbusPDUReadExceptionStatusResponse {
@@ -132,7 +132,7 @@ func (m *ModbusPDUReadExceptionStatusResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUReadExceptionStatusResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUReadExceptionStatusResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUReadExceptionStatusResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUReadExceptionStatusResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -156,7 +156,7 @@ func ModbusPDUReadExceptionStatusResponseParse(readBuffer utils.ReadBuffer, resp
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUReadExceptionStatusResponse) Serialize(writeBuffer utils.WriteBuffer) error {

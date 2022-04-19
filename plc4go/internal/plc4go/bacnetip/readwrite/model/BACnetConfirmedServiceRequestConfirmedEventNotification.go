@@ -86,22 +86,29 @@ type IBACnetConfirmedServiceRequestConfirmedEventNotification interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) ServiceChoice() uint8 {
-	return 0x02
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) GetServiceChoice() uint8 {
 	return 0x02
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
+func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) GetProcessIdentifier() *BACnetContextTagUnsignedInteger {
 	return m.ProcessIdentifier
 }
@@ -154,13 +161,14 @@ func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) GetEventValues
 	return m.EventValues
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConfirmedServiceRequestConfirmedEventNotification factory function for BACnetConfirmedServiceRequestConfirmedEventNotification
-func NewBACnetConfirmedServiceRequestConfirmedEventNotification(processIdentifier *BACnetContextTagUnsignedInteger, initiatingDeviceIdentifier *BACnetContextTagObjectIdentifier, eventObjectIdentifier *BACnetContextTagObjectIdentifier, timestamp *BACnetTimeStamp, notificationClass *BACnetContextTagUnsignedInteger, priority *BACnetContextTagUnsignedInteger, eventType *BACnetContextTagEventType, messageText *BACnetContextTagCharacterString, notifyType *BACnetContextTagNotifyType, ackRequired *BACnetContextTagBoolean, fromState *BACnetContextTagEventState, toState *BACnetContextTagEventState, eventValues *BACnetNotificationParameters, len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestConfirmedEventNotification{
+func NewBACnetConfirmedServiceRequestConfirmedEventNotification(processIdentifier *BACnetContextTagUnsignedInteger, initiatingDeviceIdentifier *BACnetContextTagObjectIdentifier, eventObjectIdentifier *BACnetContextTagObjectIdentifier, timestamp *BACnetTimeStamp, notificationClass *BACnetContextTagUnsignedInteger, priority *BACnetContextTagUnsignedInteger, eventType *BACnetContextTagEventType, messageText *BACnetContextTagCharacterString, notifyType *BACnetContextTagNotifyType, ackRequired *BACnetContextTagBoolean, fromState *BACnetContextTagEventState, toState *BACnetContextTagEventState, eventValues *BACnetNotificationParameters, len uint16) *BACnetConfirmedServiceRequestConfirmedEventNotification {
+	_result := &BACnetConfirmedServiceRequestConfirmedEventNotification{
 		ProcessIdentifier:             processIdentifier,
 		InitiatingDeviceIdentifier:    initiatingDeviceIdentifier,
 		EventObjectIdentifier:         eventObjectIdentifier,
@@ -176,8 +184,8 @@ func NewBACnetConfirmedServiceRequestConfirmedEventNotification(processIdentifie
 		EventValues:                   eventValues,
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestConfirmedEventNotification(structType interface{}) *BACnetConfirmedServiceRequestConfirmedEventNotification {
@@ -261,7 +269,7 @@ func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) GetLengthInByt
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestConfirmedEventNotificationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestConfirmedEventNotificationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestConfirmedEventNotification, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestConfirmedEventNotification"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -491,7 +499,7 @@ func BACnetConfirmedServiceRequestConfirmedEventNotificationParse(readBuffer uti
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestConfirmedEventNotification) Serialize(writeBuffer utils.WriteBuffer) error {

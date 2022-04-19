@@ -46,37 +46,45 @@ type IIdentifyReplyCommandFirmwareVersion interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandFirmwareVersion) Attribute() Attribute {
-	return Attribute_FirmwareVersion
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandFirmwareVersion) GetAttribute() Attribute {
 	return Attribute_FirmwareVersion
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandFirmwareVersion) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandFirmwareVersion) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandFirmwareVersion) GetFirmwareVersion() string {
 	return m.FirmwareVersion
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandFirmwareVersion factory function for IdentifyReplyCommandFirmwareVersion
-func NewIdentifyReplyCommandFirmwareVersion(firmwareVersion string) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandFirmwareVersion{
+func NewIdentifyReplyCommandFirmwareVersion(firmwareVersion string) *IdentifyReplyCommandFirmwareVersion {
+	_result := &IdentifyReplyCommandFirmwareVersion{
 		FirmwareVersion:      firmwareVersion,
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandFirmwareVersion(structType interface{}) *IdentifyReplyCommandFirmwareVersion {
@@ -116,7 +124,7 @@ func (m *IdentifyReplyCommandFirmwareVersion) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandFirmwareVersionParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandFirmwareVersionParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandFirmwareVersion, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandFirmwareVersion"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func IdentifyReplyCommandFirmwareVersionParse(readBuffer utils.ReadBuffer, attri
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandFirmwareVersion) Serialize(writeBuffer utils.WriteBuffer) error {

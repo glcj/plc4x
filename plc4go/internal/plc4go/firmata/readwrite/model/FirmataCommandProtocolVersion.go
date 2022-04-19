@@ -52,21 +52,28 @@ type IFirmataCommandProtocolVersion interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *FirmataCommandProtocolVersion) CommandCode() uint8 {
-	return 0x9
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *FirmataCommandProtocolVersion) GetCommandCode() uint8 {
 	return 0x9
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *FirmataCommandProtocolVersion) InitializeParent(parent *FirmataCommand) {}
 
+func (m *FirmataCommandProtocolVersion) GetParent() *FirmataCommand {
+	return m.FirmataCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *FirmataCommandProtocolVersion) GetMajorVersion() uint8 {
 	return m.MajorVersion
 }
@@ -75,19 +82,20 @@ func (m *FirmataCommandProtocolVersion) GetMinorVersion() uint8 {
 	return m.MinorVersion
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewFirmataCommandProtocolVersion factory function for FirmataCommandProtocolVersion
-func NewFirmataCommandProtocolVersion(majorVersion uint8, minorVersion uint8, response bool) *FirmataCommand {
-	child := &FirmataCommandProtocolVersion{
+func NewFirmataCommandProtocolVersion(majorVersion uint8, minorVersion uint8, response bool) *FirmataCommandProtocolVersion {
+	_result := &FirmataCommandProtocolVersion{
 		MajorVersion:   majorVersion,
 		MinorVersion:   minorVersion,
 		FirmataCommand: NewFirmataCommand(response),
 	}
-	child.Child = child
-	return child.FirmataCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastFirmataCommandProtocolVersion(structType interface{}) *FirmataCommandProtocolVersion {
@@ -130,7 +138,7 @@ func (m *FirmataCommandProtocolVersion) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func FirmataCommandProtocolVersionParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommand, error) {
+func FirmataCommandProtocolVersionParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommandProtocolVersion, error) {
 	if pullErr := readBuffer.PullContext("FirmataCommandProtocolVersion"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -162,7 +170,7 @@ func FirmataCommandProtocolVersionParse(readBuffer utils.ReadBuffer, response bo
 		FirmataCommand: &FirmataCommand{},
 	}
 	_child.FirmataCommand.Child = _child
-	return _child.FirmataCommand, nil
+	return _child, nil
 }
 
 func (m *FirmataCommandProtocolVersion) Serialize(writeBuffer utils.WriteBuffer) error {

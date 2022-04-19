@@ -46,15 +46,17 @@ type ICIPEncapsulationReadRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CIPEncapsulationReadRequest) CommandType() uint16 {
-	return 0x0107
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CIPEncapsulationReadRequest) GetCommandType() uint16 {
 	return 0x0107
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *CIPEncapsulationReadRequest) InitializeParent(parent *CIPEncapsulationPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
 	m.CIPEncapsulationPacket.SessionHandle = sessionHandle
@@ -63,25 +65,31 @@ func (m *CIPEncapsulationReadRequest) InitializeParent(parent *CIPEncapsulationP
 	m.CIPEncapsulationPacket.Options = options
 }
 
+func (m *CIPEncapsulationReadRequest) GetParent() *CIPEncapsulationPacket {
+	return m.CIPEncapsulationPacket
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CIPEncapsulationReadRequest) GetRequest() *DF1RequestMessage {
 	return m.Request
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCIPEncapsulationReadRequest factory function for CIPEncapsulationReadRequest
-func NewCIPEncapsulationReadRequest(request *DF1RequestMessage, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *CIPEncapsulationPacket {
-	child := &CIPEncapsulationReadRequest{
+func NewCIPEncapsulationReadRequest(request *DF1RequestMessage, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *CIPEncapsulationReadRequest {
+	_result := &CIPEncapsulationReadRequest{
 		Request:                request,
 		CIPEncapsulationPacket: NewCIPEncapsulationPacket(sessionHandle, status, senderContext, options),
 	}
-	child.Child = child
-	return child.CIPEncapsulationPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastCIPEncapsulationReadRequest(structType interface{}) *CIPEncapsulationReadRequest {
@@ -121,7 +129,7 @@ func (m *CIPEncapsulationReadRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CIPEncapsulationReadRequestParse(readBuffer utils.ReadBuffer) (*CIPEncapsulationPacket, error) {
+func CIPEncapsulationReadRequestParse(readBuffer utils.ReadBuffer) (*CIPEncapsulationReadRequest, error) {
 	if pullErr := readBuffer.PullContext("CIPEncapsulationReadRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -151,7 +159,7 @@ func CIPEncapsulationReadRequestParse(readBuffer utils.ReadBuffer) (*CIPEncapsul
 		CIPEncapsulationPacket: &CIPEncapsulationPacket{},
 	}
 	_child.CIPEncapsulationPacket.Child = _child
-	return _child.CIPEncapsulationPacket, nil
+	return _child, nil
 }
 
 func (m *CIPEncapsulationReadRequest) Serialize(writeBuffer utils.WriteBuffer) error {

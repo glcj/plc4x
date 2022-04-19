@@ -50,21 +50,28 @@ type IConnectionStateRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ConnectionStateRequest) MsgType() uint16 {
-	return 0x0207
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ConnectionStateRequest) GetMsgType() uint16 {
 	return 0x0207
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ConnectionStateRequest) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *ConnectionStateRequest) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ConnectionStateRequest) GetCommunicationChannelId() uint8 {
 	return m.CommunicationChannelId
 }
@@ -73,19 +80,20 @@ func (m *ConnectionStateRequest) GetHpaiControlEndpoint() *HPAIControlEndpoint {
 	return m.HpaiControlEndpoint
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewConnectionStateRequest factory function for ConnectionStateRequest
-func NewConnectionStateRequest(communicationChannelId uint8, hpaiControlEndpoint *HPAIControlEndpoint) *KnxNetIpMessage {
-	child := &ConnectionStateRequest{
+func NewConnectionStateRequest(communicationChannelId uint8, hpaiControlEndpoint *HPAIControlEndpoint) *ConnectionStateRequest {
+	_result := &ConnectionStateRequest{
 		CommunicationChannelId: communicationChannelId,
 		HpaiControlEndpoint:    hpaiControlEndpoint,
 		KnxNetIpMessage:        NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastConnectionStateRequest(structType interface{}) *ConnectionStateRequest {
@@ -131,7 +139,7 @@ func (m *ConnectionStateRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ConnectionStateRequestParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+func ConnectionStateRequestParse(readBuffer utils.ReadBuffer) (*ConnectionStateRequest, error) {
 	if pullErr := readBuffer.PullContext("ConnectionStateRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -183,7 +191,7 @@ func ConnectionStateRequestParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage,
 		KnxNetIpMessage:        &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *ConnectionStateRequest) Serialize(writeBuffer utils.WriteBuffer) error {

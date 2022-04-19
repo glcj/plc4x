@@ -62,29 +62,32 @@ type IAdsAddDeviceNotificationRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsAddDeviceNotificationRequest) CommandId() CommandId {
-	return CommandId_ADS_ADD_DEVICE_NOTIFICATION
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsAddDeviceNotificationRequest) GetCommandId() CommandId {
 	return CommandId_ADS_ADD_DEVICE_NOTIFICATION
-}
-
-func (m *AdsAddDeviceNotificationRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *AdsAddDeviceNotificationRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsAddDeviceNotificationRequest) InitializeParent(parent *AdsData) {}
 
+func (m *AdsAddDeviceNotificationRequest) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsAddDeviceNotificationRequest) GetIndexGroup() uint32 {
 	return m.IndexGroup
 }
@@ -109,13 +112,14 @@ func (m *AdsAddDeviceNotificationRequest) GetCycleTime() uint32 {
 	return m.CycleTime
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsAddDeviceNotificationRequest factory function for AdsAddDeviceNotificationRequest
-func NewAdsAddDeviceNotificationRequest(indexGroup uint32, indexOffset uint32, length uint32, transmissionMode uint32, maxDelay uint32, cycleTime uint32) *AdsData {
-	child := &AdsAddDeviceNotificationRequest{
+func NewAdsAddDeviceNotificationRequest(indexGroup uint32, indexOffset uint32, length uint32, transmissionMode uint32, maxDelay uint32, cycleTime uint32) *AdsAddDeviceNotificationRequest {
+	_result := &AdsAddDeviceNotificationRequest{
 		IndexGroup:       indexGroup,
 		IndexOffset:      indexOffset,
 		Length:           length,
@@ -124,8 +128,8 @@ func NewAdsAddDeviceNotificationRequest(indexGroup uint32, indexOffset uint32, l
 		CycleTime:        cycleTime,
 		AdsData:          NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsAddDeviceNotificationRequest(structType interface{}) *AdsAddDeviceNotificationRequest {
@@ -186,7 +190,7 @@ func (m *AdsAddDeviceNotificationRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsAddDeviceNotificationRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsAddDeviceNotificationRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsAddDeviceNotificationRequest, error) {
 	if pullErr := readBuffer.PullContext("AdsAddDeviceNotificationRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -278,7 +282,7 @@ func AdsAddDeviceNotificationRequestParse(readBuffer utils.ReadBuffer, commandId
 		AdsData:          &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsAddDeviceNotificationRequest) Serialize(writeBuffer utils.WriteBuffer) error {

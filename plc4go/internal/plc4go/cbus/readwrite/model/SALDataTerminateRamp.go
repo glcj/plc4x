@@ -46,32 +46,43 @@ type ISALDataTerminateRamp interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *SALDataTerminateRamp) InitializeParent(parent *SALData, commandTypeContainer SALCommandTypeContainer) {
 	m.SALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *SALDataTerminateRamp) GetParent() *SALData {
+	return m.SALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *SALDataTerminateRamp) GetGroup() byte {
 	return m.Group
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewSALDataTerminateRamp factory function for SALDataTerminateRamp
-func NewSALDataTerminateRamp(group byte, commandTypeContainer SALCommandTypeContainer) *SALData {
-	child := &SALDataTerminateRamp{
+func NewSALDataTerminateRamp(group byte, commandTypeContainer SALCommandTypeContainer) *SALDataTerminateRamp {
+	_result := &SALDataTerminateRamp{
 		Group:   group,
 		SALData: NewSALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.SALData
+	_result.Child = _result
+	return _result
 }
 
 func CastSALDataTerminateRamp(structType interface{}) *SALDataTerminateRamp {
@@ -111,7 +122,7 @@ func (m *SALDataTerminateRamp) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SALDataTerminateRampParse(readBuffer utils.ReadBuffer) (*SALData, error) {
+func SALDataTerminateRampParse(readBuffer utils.ReadBuffer) (*SALDataTerminateRamp, error) {
 	if pullErr := readBuffer.PullContext("SALDataTerminateRamp"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -135,7 +146,7 @@ func SALDataTerminateRampParse(readBuffer utils.ReadBuffer) (*SALData, error) {
 		SALData: &SALData{},
 	}
 	_child.SALData.Child = _child
-	return _child.SALData, nil
+	return _child, nil
 }
 
 func (m *SALDataTerminateRamp) Serialize(writeBuffer utils.WriteBuffer) error {

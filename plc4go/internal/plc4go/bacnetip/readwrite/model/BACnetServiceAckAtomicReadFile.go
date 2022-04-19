@@ -49,21 +49,28 @@ type IBACnetServiceAckAtomicReadFile interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckAtomicReadFile) ServiceChoice() uint8 {
-	return 0x06
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckAtomicReadFile) GetServiceChoice() uint8 {
 	return 0x06
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckAtomicReadFile) InitializeParent(parent *BACnetServiceAck) {}
 
+func (m *BACnetServiceAckAtomicReadFile) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetServiceAckAtomicReadFile) GetEndOfFile() *BACnetApplicationTagBoolean {
 	return m.EndOfFile
 }
@@ -72,19 +79,20 @@ func (m *BACnetServiceAckAtomicReadFile) GetAccessMethod() *BACnetServiceAckAtom
 	return m.AccessMethod
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetServiceAckAtomicReadFile factory function for BACnetServiceAckAtomicReadFile
-func NewBACnetServiceAckAtomicReadFile(endOfFile *BACnetApplicationTagBoolean, accessMethod *BACnetServiceAckAtomicReadFileStreamOrRecord) *BACnetServiceAck {
-	child := &BACnetServiceAckAtomicReadFile{
+func NewBACnetServiceAckAtomicReadFile(endOfFile *BACnetApplicationTagBoolean, accessMethod *BACnetServiceAckAtomicReadFileStreamOrRecord) *BACnetServiceAckAtomicReadFile {
+	_result := &BACnetServiceAckAtomicReadFile{
 		EndOfFile:        endOfFile,
 		AccessMethod:     accessMethod,
 		BACnetServiceAck: NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckAtomicReadFile(structType interface{}) *BACnetServiceAckAtomicReadFile {
@@ -127,7 +135,7 @@ func (m *BACnetServiceAckAtomicReadFile) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckAtomicReadFileParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckAtomicReadFileParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckAtomicReadFile, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckAtomicReadFile"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -171,7 +179,7 @@ func BACnetServiceAckAtomicReadFileParse(readBuffer utils.ReadBuffer) (*BACnetSe
 		BACnetServiceAck: &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckAtomicReadFile) Serialize(writeBuffer utils.WriteBuffer) error {

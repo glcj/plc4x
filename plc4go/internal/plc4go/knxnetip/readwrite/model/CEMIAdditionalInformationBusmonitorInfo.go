@@ -65,22 +65,29 @@ type ICEMIAdditionalInformationBusmonitorInfo interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CEMIAdditionalInformationBusmonitorInfo) AdditionalInformationType() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CEMIAdditionalInformationBusmonitorInfo) GetAdditionalInformationType() uint8 {
 	return 0x03
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *CEMIAdditionalInformationBusmonitorInfo) InitializeParent(parent *CEMIAdditionalInformation) {
 }
 
+func (m *CEMIAdditionalInformationBusmonitorInfo) GetParent() *CEMIAdditionalInformation {
+	return m.CEMIAdditionalInformation
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CEMIAdditionalInformationBusmonitorInfo) GetFrameErrorFlag() bool {
 	return m.FrameErrorFlag
 }
@@ -105,13 +112,26 @@ func (m *CEMIAdditionalInformationBusmonitorInfo) GetSequenceNumber() uint8 {
 	return m.SequenceNumber
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CEMIAdditionalInformationBusmonitorInfo) GetLen() uint8 {
+	return CEMIAdditionalInformationBusmonitorInfo_LEN
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewCEMIAdditionalInformationBusmonitorInfo factory function for CEMIAdditionalInformationBusmonitorInfo
-func NewCEMIAdditionalInformationBusmonitorInfo(frameErrorFlag bool, bitErrorFlag bool, parityErrorFlag bool, unknownFlag bool, lostFlag bool, sequenceNumber uint8) *CEMIAdditionalInformation {
-	child := &CEMIAdditionalInformationBusmonitorInfo{
+func NewCEMIAdditionalInformationBusmonitorInfo(frameErrorFlag bool, bitErrorFlag bool, parityErrorFlag bool, unknownFlag bool, lostFlag bool, sequenceNumber uint8) *CEMIAdditionalInformationBusmonitorInfo {
+	_result := &CEMIAdditionalInformationBusmonitorInfo{
 		FrameErrorFlag:            frameErrorFlag,
 		BitErrorFlag:              bitErrorFlag,
 		ParityErrorFlag:           parityErrorFlag,
@@ -120,8 +140,8 @@ func NewCEMIAdditionalInformationBusmonitorInfo(frameErrorFlag bool, bitErrorFla
 		SequenceNumber:            sequenceNumber,
 		CEMIAdditionalInformation: NewCEMIAdditionalInformation(),
 	}
-	child.Child = child
-	return child.CEMIAdditionalInformation
+	_result.Child = _result
+	return _result
 }
 
 func CastCEMIAdditionalInformationBusmonitorInfo(structType interface{}) *CEMIAdditionalInformationBusmonitorInfo {
@@ -179,7 +199,7 @@ func (m *CEMIAdditionalInformationBusmonitorInfo) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CEMIAdditionalInformationBusmonitorInfoParse(readBuffer utils.ReadBuffer) (*CEMIAdditionalInformation, error) {
+func CEMIAdditionalInformationBusmonitorInfoParse(readBuffer utils.ReadBuffer) (*CEMIAdditionalInformationBusmonitorInfo, error) {
 	if pullErr := readBuffer.PullContext("CEMIAdditionalInformationBusmonitorInfo"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -252,7 +272,7 @@ func CEMIAdditionalInformationBusmonitorInfoParse(readBuffer utils.ReadBuffer) (
 		CEMIAdditionalInformation: &CEMIAdditionalInformation{},
 	}
 	_child.CEMIAdditionalInformation.Child = _child
-	return _child.CEMIAdditionalInformation, nil
+	return _child, nil
 }
 
 func (m *CEMIAdditionalInformationBusmonitorInfo) Serialize(writeBuffer utils.WriteBuffer) error {

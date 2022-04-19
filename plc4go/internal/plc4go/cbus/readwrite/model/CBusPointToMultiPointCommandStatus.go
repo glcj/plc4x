@@ -64,16 +64,26 @@ type ICBusPointToMultiPointCommandStatus interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CBusPointToMultiPointCommandStatus) InitializeParent(parent *CBusPointToMultiPointCommand, peekedApplication byte) {
 	m.CBusPointToMultiPointCommand.PeekedApplication = peekedApplication
 }
 
+func (m *CBusPointToMultiPointCommandStatus) GetParent() *CBusPointToMultiPointCommand {
+	return m.CBusPointToMultiPointCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusPointToMultiPointCommandStatus) GetStatusRequest() *StatusRequest {
 	return m.StatusRequest
 }
@@ -90,21 +100,34 @@ func (m *CBusPointToMultiPointCommandStatus) GetAlpha() *Alpha {
 	return m.Alpha
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CBusPointToMultiPointCommandStatus) GetCr() byte {
+	return CBusPointToMultiPointCommandStatus_CR
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewCBusPointToMultiPointCommandStatus factory function for CBusPointToMultiPointCommandStatus
-func NewCBusPointToMultiPointCommandStatus(statusRequest *StatusRequest, crc *Checksum, peekAlpha byte, alpha *Alpha, peekedApplication byte, srchk bool) *CBusPointToMultiPointCommand {
-	child := &CBusPointToMultiPointCommandStatus{
+func NewCBusPointToMultiPointCommandStatus(statusRequest *StatusRequest, crc *Checksum, peekAlpha byte, alpha *Alpha, peekedApplication byte, srchk bool) *CBusPointToMultiPointCommandStatus {
+	_result := &CBusPointToMultiPointCommandStatus{
 		StatusRequest:                statusRequest,
 		Crc:                          crc,
 		PeekAlpha:                    peekAlpha,
 		Alpha:                        alpha,
 		CBusPointToMultiPointCommand: NewCBusPointToMultiPointCommand(peekedApplication, srchk),
 	}
-	child.Child = child
-	return child.CBusPointToMultiPointCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastCBusPointToMultiPointCommandStatus(structType interface{}) *CBusPointToMultiPointCommandStatus {
@@ -163,7 +186,7 @@ func (m *CBusPointToMultiPointCommandStatus) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToMultiPointCommand, error) {
+func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToMultiPointCommandStatus, error) {
 	if pullErr := readBuffer.PullContext("CBusPointToMultiPointCommandStatus"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -284,7 +307,7 @@ func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk 
 		CBusPointToMultiPointCommand: &CBusPointToMultiPointCommand{},
 	}
 	_child.CBusPointToMultiPointCommand.Child = _child
-	return _child.CBusPointToMultiPointCommand, nil
+	return _child, nil
 }
 
 func (m *CBusPointToMultiPointCommandStatus) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -58,21 +58,28 @@ type ILBusmonInd interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *LBusmonInd) MessageCode() uint8 {
-	return 0x2B
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *LBusmonInd) GetMessageCode() uint8 {
 	return 0x2B
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *LBusmonInd) InitializeParent(parent *CEMI) {}
 
+func (m *LBusmonInd) GetParent() *CEMI {
+	return m.CEMI
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *LBusmonInd) GetAdditionalInformationLength() uint8 {
 	return m.AdditionalInformationLength
 }
@@ -89,21 +96,22 @@ func (m *LBusmonInd) GetCrc() *uint8 {
 	return m.Crc
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewLBusmonInd factory function for LBusmonInd
-func NewLBusmonInd(additionalInformationLength uint8, additionalInformation []*CEMIAdditionalInformation, dataFrame *LDataFrame, crc *uint8, size uint16) *CEMI {
-	child := &LBusmonInd{
+func NewLBusmonInd(additionalInformationLength uint8, additionalInformation []*CEMIAdditionalInformation, dataFrame *LDataFrame, crc *uint8, size uint16) *LBusmonInd {
+	_result := &LBusmonInd{
 		AdditionalInformationLength: additionalInformationLength,
 		AdditionalInformation:       additionalInformation,
 		DataFrame:                   dataFrame,
 		Crc:                         crc,
 		CEMI:                        NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastLBusmonInd(structType interface{}) *LBusmonInd {
@@ -158,7 +166,7 @@ func (m *LBusmonInd) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func LBusmonIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func LBusmonIndParse(readBuffer utils.ReadBuffer, size uint16) (*LBusmonInd, error) {
 	if pullErr := readBuffer.PullContext("LBusmonInd"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -229,7 +237,7 @@ func LBusmonIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
 		CEMI:                        &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *LBusmonInd) Serialize(writeBuffer utils.WriteBuffer) error {

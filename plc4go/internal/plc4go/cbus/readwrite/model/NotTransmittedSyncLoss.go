@@ -42,35 +42,33 @@ type INotTransmittedSyncLoss interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NotTransmittedSyncLoss) ConfirmationType() byte {
-	return 0x25
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NotTransmittedSyncLoss) GetConfirmationType() byte {
 	return 0x25
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NotTransmittedSyncLoss) InitializeParent(parent *Confirmation, alpha *Alpha) {
 	m.Confirmation.Alpha = alpha
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *NotTransmittedSyncLoss) GetParent() *Confirmation {
+	return m.Confirmation
+}
 
 // NewNotTransmittedSyncLoss factory function for NotTransmittedSyncLoss
-func NewNotTransmittedSyncLoss(alpha *Alpha) *Confirmation {
-	child := &NotTransmittedSyncLoss{
+func NewNotTransmittedSyncLoss(alpha *Alpha) *NotTransmittedSyncLoss {
+	_result := &NotTransmittedSyncLoss{
 		Confirmation: NewConfirmation(alpha),
 	}
-	child.Child = child
-	return child.Confirmation
+	_result.Child = _result
+	return _result
 }
 
 func CastNotTransmittedSyncLoss(structType interface{}) *NotTransmittedSyncLoss {
@@ -107,7 +105,7 @@ func (m *NotTransmittedSyncLoss) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NotTransmittedSyncLossParse(readBuffer utils.ReadBuffer) (*Confirmation, error) {
+func NotTransmittedSyncLossParse(readBuffer utils.ReadBuffer) (*NotTransmittedSyncLoss, error) {
 	if pullErr := readBuffer.PullContext("NotTransmittedSyncLoss"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -123,7 +121,7 @@ func NotTransmittedSyncLossParse(readBuffer utils.ReadBuffer) (*Confirmation, er
 		Confirmation: &Confirmation{},
 	}
 	_child.Confirmation.Child = _child
-	return _child.Confirmation, nil
+	return _child, nil
 }
 
 func (m *NotTransmittedSyncLoss) Serialize(writeBuffer utils.WriteBuffer) error {

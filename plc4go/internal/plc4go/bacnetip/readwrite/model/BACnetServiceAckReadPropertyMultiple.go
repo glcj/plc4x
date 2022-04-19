@@ -42,33 +42,31 @@ type IBACnetServiceAckReadPropertyMultiple interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckReadPropertyMultiple) ServiceChoice() uint8 {
-	return 0x0E
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckReadPropertyMultiple) GetServiceChoice() uint8 {
 	return 0x0E
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckReadPropertyMultiple) InitializeParent(parent *BACnetServiceAck) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetServiceAckReadPropertyMultiple) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
 
 // NewBACnetServiceAckReadPropertyMultiple factory function for BACnetServiceAckReadPropertyMultiple
-func NewBACnetServiceAckReadPropertyMultiple() *BACnetServiceAck {
-	child := &BACnetServiceAckReadPropertyMultiple{
+func NewBACnetServiceAckReadPropertyMultiple() *BACnetServiceAckReadPropertyMultiple {
+	_result := &BACnetServiceAckReadPropertyMultiple{
 		BACnetServiceAck: NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckReadPropertyMultiple(structType interface{}) *BACnetServiceAckReadPropertyMultiple {
@@ -105,7 +103,7 @@ func (m *BACnetServiceAckReadPropertyMultiple) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckReadPropertyMultipleParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckReadPropertyMultipleParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckReadPropertyMultiple, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckReadPropertyMultiple"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetServiceAckReadPropertyMultipleParse(readBuffer utils.ReadBuffer) (*BA
 		BACnetServiceAck: &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckReadPropertyMultiple) Serialize(writeBuffer utils.WriteBuffer) error {

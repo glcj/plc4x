@@ -50,23 +50,25 @@ type IBACnetTagPayloadBoolean interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetTagPayloadBoolean) GetValue() bool {
-	return bool((m.ActualLength) == (1))
+	return bool(bool((m.ActualLength) == (1)))
 }
 
 func (m *BACnetTagPayloadBoolean) GetIsTrue() bool {
-	return m.GetValue()
+	return bool(m.GetValue())
 }
 
 func (m *BACnetTagPayloadBoolean) GetIsFalse() bool {
-	return !(m.GetValue())
+	return bool(!(m.GetValue()))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetTagPayloadBoolean factory function for BACnetTagPayloadBoolean
 func NewBACnetTagPayloadBoolean(actualLength uint32) *BACnetTagPayloadBoolean {

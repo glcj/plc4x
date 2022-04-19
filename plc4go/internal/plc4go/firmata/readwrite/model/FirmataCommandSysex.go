@@ -50,37 +50,45 @@ type IFirmataCommandSysex interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *FirmataCommandSysex) CommandCode() uint8 {
-	return 0x0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *FirmataCommandSysex) GetCommandCode() uint8 {
 	return 0x0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *FirmataCommandSysex) InitializeParent(parent *FirmataCommand) {}
 
+func (m *FirmataCommandSysex) GetParent() *FirmataCommand {
+	return m.FirmataCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *FirmataCommandSysex) GetCommand() *SysexCommand {
 	return m.Command
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewFirmataCommandSysex factory function for FirmataCommandSysex
-func NewFirmataCommandSysex(command *SysexCommand, response bool) *FirmataCommand {
-	child := &FirmataCommandSysex{
+func NewFirmataCommandSysex(command *SysexCommand, response bool) *FirmataCommandSysex {
+	_result := &FirmataCommandSysex{
 		Command:        command,
 		FirmataCommand: NewFirmataCommand(response),
 	}
-	child.Child = child
-	return child.FirmataCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastFirmataCommandSysex(structType interface{}) *FirmataCommandSysex {
@@ -123,7 +131,7 @@ func (m *FirmataCommandSysex) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func FirmataCommandSysexParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommand, error) {
+func FirmataCommandSysexParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommandSysex, error) {
 	if pullErr := readBuffer.PullContext("FirmataCommandSysex"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -167,7 +175,7 @@ func FirmataCommandSysexParse(readBuffer utils.ReadBuffer, response bool) (*Firm
 		FirmataCommand: &FirmataCommand{},
 	}
 	_child.FirmataCommand.Child = _child
-	return _child.FirmataCommand, nil
+	return _child, nil
 }
 
 func (m *FirmataCommandSysex) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -59,21 +59,28 @@ type ICipReadResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CipReadResponse) Service() uint8 {
-	return 0xCC
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CipReadResponse) GetService() uint8 {
 	return 0xCC
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *CipReadResponse) InitializeParent(parent *CipService) {}
 
+func (m *CipReadResponse) GetParent() *CipService {
+	return m.CipService
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CipReadResponse) GetStatus() uint8 {
 	return m.Status
 }
@@ -90,21 +97,22 @@ func (m *CipReadResponse) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCipReadResponse factory function for CipReadResponse
-func NewCipReadResponse(status uint8, extStatus uint8, dataType CIPDataTypeCode, data []byte, serviceLen uint16) *CipService {
-	child := &CipReadResponse{
+func NewCipReadResponse(status uint8, extStatus uint8, dataType CIPDataTypeCode, data []byte, serviceLen uint16) *CipReadResponse {
+	_result := &CipReadResponse{
 		Status:     status,
 		ExtStatus:  extStatus,
 		DataType:   dataType,
 		Data:       data,
 		CipService: NewCipService(serviceLen),
 	}
-	child.Child = child
-	return child.CipService
+	_result.Child = _result
+	return _result
 }
 
 func CastCipReadResponse(structType interface{}) *CipReadResponse {
@@ -158,7 +166,7 @@ func (m *CipReadResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CipReadResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipService, error) {
+func CipReadResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipReadResponse, error) {
 	if pullErr := readBuffer.PullContext("CipReadResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -225,7 +233,7 @@ func CipReadResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipS
 		CipService: &CipService{},
 	}
 	_child.CipService.Child = _child
-	return _child.CipService, nil
+	return _child, nil
 }
 
 func (m *CipReadResponse) Serialize(writeBuffer utils.WriteBuffer) error {

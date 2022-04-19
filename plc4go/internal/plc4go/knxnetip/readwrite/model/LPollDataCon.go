@@ -45,33 +45,31 @@ type ILPollDataCon interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *LPollDataCon) MessageCode() uint8 {
-	return 0x25
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *LPollDataCon) GetMessageCode() uint8 {
 	return 0x25
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *LPollDataCon) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *LPollDataCon) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewLPollDataCon factory function for LPollDataCon
-func NewLPollDataCon(size uint16) *CEMI {
-	child := &LPollDataCon{
+func NewLPollDataCon(size uint16) *LPollDataCon {
+	_result := &LPollDataCon{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastLPollDataCon(structType interface{}) *LPollDataCon {
@@ -108,7 +106,7 @@ func (m *LPollDataCon) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func LPollDataConParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func LPollDataConParse(readBuffer utils.ReadBuffer, size uint16) (*LPollDataCon, error) {
 	if pullErr := readBuffer.PullContext("LPollDataCon"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func LPollDataConParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) 
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *LPollDataCon) Serialize(writeBuffer utils.WriteBuffer) error {

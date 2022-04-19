@@ -42,41 +42,35 @@ type ISysexCommandSysexNonRealtime interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandSysexNonRealtime) CommandType() uint8 {
-	return 0x7E
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandSysexNonRealtime) GetCommandType() uint8 {
 	return 0x7E
-}
-
-func (m *SysexCommandSysexNonRealtime) Response() bool {
-	return false
 }
 
 func (m *SysexCommandSysexNonRealtime) GetResponse() bool {
 	return false
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandSysexNonRealtime) InitializeParent(parent *SysexCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *SysexCommandSysexNonRealtime) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
 
 // NewSysexCommandSysexNonRealtime factory function for SysexCommandSysexNonRealtime
-func NewSysexCommandSysexNonRealtime() *SysexCommand {
-	child := &SysexCommandSysexNonRealtime{
+func NewSysexCommandSysexNonRealtime() *SysexCommandSysexNonRealtime {
+	_result := &SysexCommandSysexNonRealtime{
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandSysexNonRealtime(structType interface{}) *SysexCommandSysexNonRealtime {
@@ -113,7 +107,7 @@ func (m *SysexCommandSysexNonRealtime) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandSysexNonRealtimeParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandSysexNonRealtimeParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandSysexNonRealtime, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandSysexNonRealtime"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func SysexCommandSysexNonRealtimeParse(readBuffer utils.ReadBuffer, response boo
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandSysexNonRealtime) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -45,33 +45,31 @@ type IApduDataExtNetworkParameterWrite interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtNetworkParameterWrite) ExtApciType() uint8 {
-	return 0x24
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtNetworkParameterWrite) GetExtApciType() uint8 {
 	return 0x24
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtNetworkParameterWrite) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtNetworkParameterWrite) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtNetworkParameterWrite factory function for ApduDataExtNetworkParameterWrite
-func NewApduDataExtNetworkParameterWrite(length uint8) *ApduDataExt {
-	child := &ApduDataExtNetworkParameterWrite{
+func NewApduDataExtNetworkParameterWrite(length uint8) *ApduDataExtNetworkParameterWrite {
+	_result := &ApduDataExtNetworkParameterWrite{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtNetworkParameterWrite(structType interface{}) *ApduDataExtNetworkParameterWrite {
@@ -108,7 +106,7 @@ func (m *ApduDataExtNetworkParameterWrite) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtNetworkParameterWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtNetworkParameterWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtNetworkParameterWrite, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtNetworkParameterWrite"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtNetworkParameterWriteParse(readBuffer utils.ReadBuffer, length u
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtNetworkParameterWrite) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -45,34 +45,32 @@ type IBACnetConfirmedServiceRequestSubscribeCOVProperty interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestSubscribeCOVProperty) ServiceChoice() uint8 {
-	return 0x1C
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestSubscribeCOVProperty) GetServiceChoice() uint8 {
 	return 0x1C
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestSubscribeCOVProperty) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceRequestSubscribeCOVProperty) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
 
 // NewBACnetConfirmedServiceRequestSubscribeCOVProperty factory function for BACnetConfirmedServiceRequestSubscribeCOVProperty
-func NewBACnetConfirmedServiceRequestSubscribeCOVProperty(len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestSubscribeCOVProperty{
+func NewBACnetConfirmedServiceRequestSubscribeCOVProperty(len uint16) *BACnetConfirmedServiceRequestSubscribeCOVProperty {
+	_result := &BACnetConfirmedServiceRequestSubscribeCOVProperty{
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestSubscribeCOVProperty(structType interface{}) *BACnetConfirmedServiceRequestSubscribeCOVProperty {
@@ -109,7 +107,7 @@ func (m *BACnetConfirmedServiceRequestSubscribeCOVProperty) GetLengthInBytes() u
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestSubscribeCOVPropertyParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestSubscribeCOVPropertyParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestSubscribeCOVProperty, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestSubscribeCOVProperty"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func BACnetConfirmedServiceRequestSubscribeCOVPropertyParse(readBuffer utils.Rea
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestSubscribeCOVProperty) Serialize(writeBuffer utils.WriteBuffer) error {

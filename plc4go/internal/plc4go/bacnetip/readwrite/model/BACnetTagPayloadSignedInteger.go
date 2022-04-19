@@ -86,8 +86,9 @@ type IBACnetTagPayloadSignedInteger interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetTagPayloadSignedInteger) GetValueInt8() *int8 {
 	return m.ValueInt8
 }
@@ -120,9 +121,14 @@ func (m *BACnetTagPayloadSignedInteger) GetValueInt64() *int64 {
 	return m.ValueInt64
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetTagPayloadSignedInteger) GetIsInt8() bool {
 	valueInt8 := m.ValueInt8
 	_ = valueInt8
@@ -140,7 +146,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt8() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (1))
+	return bool(bool((m.ActualLength) == (1)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetIsInt16() bool {
@@ -160,7 +166,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt16() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (2))
+	return bool(bool((m.ActualLength) == (2)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetIsInt24() bool {
@@ -180,7 +186,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt24() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (3))
+	return bool(bool((m.ActualLength) == (3)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetIsInt32() bool {
@@ -200,7 +206,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt32() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (4))
+	return bool(bool((m.ActualLength) == (4)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetIsInt40() bool {
@@ -220,7 +226,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt40() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (5))
+	return bool(bool((m.ActualLength) == (5)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetIsInt48() bool {
@@ -240,7 +246,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt48() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (6))
+	return bool(bool((m.ActualLength) == (6)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetIsInt56() bool {
@@ -260,7 +266,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt56() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (7))
+	return bool(bool((m.ActualLength) == (7)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetIsInt64() bool {
@@ -280,7 +286,7 @@ func (m *BACnetTagPayloadSignedInteger) GetIsInt64() bool {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return bool((m.ActualLength) == (8))
+	return bool(bool((m.ActualLength) == (8)))
 }
 
 func (m *BACnetTagPayloadSignedInteger) GetActualValue() uint64 {
@@ -300,7 +306,7 @@ func (m *BACnetTagPayloadSignedInteger) GetActualValue() uint64 {
 	_ = valueInt56
 	valueInt64 := m.ValueInt64
 	_ = valueInt64
-	return utils.InlineIf(m.GetIsInt8(), func() interface{} { return uint64((*m.GetValueInt8())) }, func() interface{} {
+	return uint64(utils.InlineIf(m.GetIsInt8(), func() interface{} { return uint64((*m.GetValueInt8())) }, func() interface{} {
 		return uint64(uint64(utils.InlineIf(m.GetIsInt16(), func() interface{} { return uint64((*m.GetValueInt16())) }, func() interface{} {
 			return uint64(uint64(utils.InlineIf(m.GetIsInt24(), func() interface{} { return uint64((*m.GetValueInt24())) }, func() interface{} {
 				return uint64(uint64(utils.InlineIf(m.GetIsInt32(), func() interface{} { return uint64((*m.GetValueInt32())) }, func() interface{} {
@@ -312,8 +318,13 @@ func (m *BACnetTagPayloadSignedInteger) GetActualValue() uint64 {
 				}).(uint64)))
 			}).(uint64)))
 		}).(uint64)))
-	}).(uint64)
+	}).(uint64))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetTagPayloadSignedInteger factory function for BACnetTagPayloadSignedInteger
 func NewBACnetTagPayloadSignedInteger(valueInt8 *int8, valueInt16 *int16, valueInt24 *int32, valueInt32 *int32, valueInt40 *int64, valueInt48 *int64, valueInt56 *int64, valueInt64 *int64, actualLength uint32) *BACnetTagPayloadSignedInteger {

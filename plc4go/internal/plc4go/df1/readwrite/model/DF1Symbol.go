@@ -55,16 +55,23 @@ type IDF1SymbolParent interface {
 type IDF1SymbolChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *DF1Symbol)
+	GetParent() *DF1Symbol
+
 	GetTypeName() string
 	IDF1Symbol
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *DF1Symbol) GetMessageStart() uint8 {
+	return DF1Symbol_MESSAGESTART
+}
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDF1Symbol factory function for DF1Symbol
@@ -78,6 +85,9 @@ func CastDF1Symbol(structType interface{}) *DF1Symbol {
 	}
 	if casted, ok := structType.(*DF1Symbol); ok {
 		return casted
+	}
+	if casted, ok := structType.(IDF1SymbolChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -132,15 +142,19 @@ func DF1SymbolParse(readBuffer utils.ReadBuffer) (*DF1Symbol, error) {
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *DF1Symbol
+	type DF1SymbolChild interface {
+		InitializeParent(*DF1Symbol)
+		GetParent() *DF1Symbol
+	}
+	var _child DF1SymbolChild
 	var typeSwitchError error
 	switch {
 	case symbolType == 0x02: // DF1SymbolMessageFrame
-		_parent, typeSwitchError = DF1SymbolMessageFrameParse(readBuffer)
+		_child, typeSwitchError = DF1SymbolMessageFrameParse(readBuffer)
 	case symbolType == 0x06: // DF1SymbolMessageFrameACK
-		_parent, typeSwitchError = DF1SymbolMessageFrameACKParse(readBuffer)
+		_child, typeSwitchError = DF1SymbolMessageFrameACKParse(readBuffer)
 	case symbolType == 0x15: // DF1SymbolMessageFrameNAK
-		_parent, typeSwitchError = DF1SymbolMessageFrameNAKParse(readBuffer)
+		_child, typeSwitchError = DF1SymbolMessageFrameNAKParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -154,8 +168,8 @@ func DF1SymbolParse(readBuffer utils.ReadBuffer) (*DF1Symbol, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *DF1Symbol) Serialize(writeBuffer utils.WriteBuffer) error {

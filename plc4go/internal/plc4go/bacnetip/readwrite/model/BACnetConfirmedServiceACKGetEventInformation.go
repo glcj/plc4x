@@ -42,34 +42,32 @@ type IBACnetConfirmedServiceACKGetEventInformation interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKGetEventInformation) ServiceChoice() uint8 {
-	return 0x1D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKGetEventInformation) GetServiceChoice() uint8 {
 	return 0x1D
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKGetEventInformation) InitializeParent(parent *BACnetConfirmedServiceACK) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKGetEventInformation) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKGetEventInformation factory function for BACnetConfirmedServiceACKGetEventInformation
-func NewBACnetConfirmedServiceACKGetEventInformation() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKGetEventInformation{
+func NewBACnetConfirmedServiceACKGetEventInformation() *BACnetConfirmedServiceACKGetEventInformation {
+	_result := &BACnetConfirmedServiceACKGetEventInformation{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKGetEventInformation(structType interface{}) *BACnetConfirmedServiceACKGetEventInformation {
@@ -106,7 +104,7 @@ func (m *BACnetConfirmedServiceACKGetEventInformation) GetLengthInBytes() uint16
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKGetEventInformation, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKGetEventInformation"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -122,7 +120,7 @@ func BACnetConfirmedServiceACKGetEventInformationParse(readBuffer utils.ReadBuff
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKGetEventInformation) Serialize(writeBuffer utils.WriteBuffer) error {

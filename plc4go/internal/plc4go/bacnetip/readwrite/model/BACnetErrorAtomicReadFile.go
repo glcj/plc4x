@@ -42,36 +42,34 @@ type IBACnetErrorAtomicReadFile interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorAtomicReadFile) ServiceChoice() uint8 {
-	return 0x06
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorAtomicReadFile) GetServiceChoice() uint8 {
 	return 0x06
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorAtomicReadFile) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorAtomicReadFile) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorAtomicReadFile factory function for BACnetErrorAtomicReadFile
-func NewBACnetErrorAtomicReadFile(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorAtomicReadFile{
+func NewBACnetErrorAtomicReadFile(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorAtomicReadFile {
+	_result := &BACnetErrorAtomicReadFile{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorAtomicReadFile(structType interface{}) *BACnetErrorAtomicReadFile {
@@ -108,7 +106,7 @@ func (m *BACnetErrorAtomicReadFile) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorAtomicReadFileParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorAtomicReadFileParse(readBuffer utils.ReadBuffer) (*BACnetErrorAtomicReadFile, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorAtomicReadFile"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorAtomicReadFileParse(readBuffer utils.ReadBuffer) (*BACnetError, 
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorAtomicReadFile) Serialize(writeBuffer utils.WriteBuffer) error {

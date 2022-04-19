@@ -42,33 +42,31 @@ type IBACnetServiceAckGetAlarmSummary interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckGetAlarmSummary) ServiceChoice() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckGetAlarmSummary) GetServiceChoice() uint8 {
 	return 0x03
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckGetAlarmSummary) InitializeParent(parent *BACnetServiceAck) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetServiceAckGetAlarmSummary) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
 
 // NewBACnetServiceAckGetAlarmSummary factory function for BACnetServiceAckGetAlarmSummary
-func NewBACnetServiceAckGetAlarmSummary() *BACnetServiceAck {
-	child := &BACnetServiceAckGetAlarmSummary{
+func NewBACnetServiceAckGetAlarmSummary() *BACnetServiceAckGetAlarmSummary {
+	_result := &BACnetServiceAckGetAlarmSummary{
 		BACnetServiceAck: NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckGetAlarmSummary(structType interface{}) *BACnetServiceAckGetAlarmSummary {
@@ -105,7 +103,7 @@ func (m *BACnetServiceAckGetAlarmSummary) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckGetAlarmSummary, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckGetAlarmSummary"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetServiceAckGetAlarmSummaryParse(readBuffer utils.ReadBuffer) (*BACnetS
 		BACnetServiceAck: &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckGetAlarmSummary) Serialize(writeBuffer utils.WriteBuffer) error {

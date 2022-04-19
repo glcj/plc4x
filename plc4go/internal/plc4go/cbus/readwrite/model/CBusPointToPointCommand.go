@@ -74,13 +74,16 @@ type ICBusPointToPointCommandParent interface {
 type ICBusPointToPointCommandChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *CBusPointToPointCommand, bridgeAddressCountPeek uint16, calData *CALData, crc *Checksum, peekAlpha byte, alpha *Alpha)
+	GetParent() *CBusPointToPointCommand
+
 	GetTypeName() string
 	ICBusPointToPointCommand
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusPointToPointCommand) GetBridgeAddressCountPeek() uint16 {
 	return m.BridgeAddressCountPeek
 }
@@ -101,16 +104,38 @@ func (m *CBusPointToPointCommand) GetAlpha() *Alpha {
 	return m.Alpha
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *CBusPointToPointCommand) GetIsDirect() bool {
 	crc := m.Crc
 	_ = crc
 	alpha := m.Alpha
 	_ = alpha
-	return bool(((m.GetBridgeAddressCountPeek()) & (0x00FF)) == (0x0000))
+	return bool(bool(((m.GetBridgeAddressCountPeek()) & (0x00FF)) == (0x0000)))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CBusPointToPointCommand) GetCr() byte {
+	return CBusPointToPointCommand_CR
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewCBusPointToPointCommand factory function for CBusPointToPointCommand
 func NewCBusPointToPointCommand(bridgeAddressCountPeek uint16, calData *CALData, crc *Checksum, peekAlpha byte, alpha *Alpha, srchk bool) *CBusPointToPointCommand {
@@ -123,6 +148,9 @@ func CastCBusPointToPointCommand(structType interface{}) *CBusPointToPointComman
 	}
 	if casted, ok := structType.(*CBusPointToPointCommand); ok {
 		return casted
+	}
+	if casted, ok := structType.(ICBusPointToPointCommandChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -189,13 +217,17 @@ func CBusPointToPointCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBu
 	_ = isDirect
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *CBusPointToPointCommand
+	type CBusPointToPointCommandChild interface {
+		InitializeParent(*CBusPointToPointCommand, uint16, *CALData, *Checksum, byte, *Alpha)
+		GetParent() *CBusPointToPointCommand
+	}
+	var _child CBusPointToPointCommandChild
 	var typeSwitchError error
 	switch {
 	case isDirect == bool(true): // CBusPointToPointCommandDirect
-		_parent, typeSwitchError = CBusPointToPointCommandDirectParse(readBuffer, srchk)
+		_child, typeSwitchError = CBusPointToPointCommandDirectParse(readBuffer, srchk)
 	case isDirect == bool(false): // CBusPointToPointCommandIndirect
-		_parent, typeSwitchError = CBusPointToPointCommandIndirectParse(readBuffer, srchk)
+		_child, typeSwitchError = CBusPointToPointCommandIndirectParse(readBuffer, srchk)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -282,8 +314,8 @@ func CBusPointToPointCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBu
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, bridgeAddressCountPeek, calData, crc, peekAlpha, alpha)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), bridgeAddressCountPeek, calData, crc, peekAlpha, alpha)
+	return _child.GetParent(), nil
 }
 
 func (m *CBusPointToPointCommand) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,33 +42,31 @@ type IRoutingIndication interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *RoutingIndication) MsgType() uint16 {
-	return 0x0530
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *RoutingIndication) GetMsgType() uint16 {
 	return 0x0530
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *RoutingIndication) InitializeParent(parent *KnxNetIpMessage) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *RoutingIndication) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
 
 // NewRoutingIndication factory function for RoutingIndication
-func NewRoutingIndication() *KnxNetIpMessage {
-	child := &RoutingIndication{
+func NewRoutingIndication() *RoutingIndication {
+	_result := &RoutingIndication{
 		KnxNetIpMessage: NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastRoutingIndication(structType interface{}) *RoutingIndication {
@@ -105,7 +103,7 @@ func (m *RoutingIndication) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func RoutingIndicationParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+func RoutingIndicationParse(readBuffer utils.ReadBuffer) (*RoutingIndication, error) {
 	if pullErr := readBuffer.PullContext("RoutingIndication"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func RoutingIndicationParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, erro
 		KnxNetIpMessage: &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *RoutingIndication) Serialize(writeBuffer utils.WriteBuffer) error {

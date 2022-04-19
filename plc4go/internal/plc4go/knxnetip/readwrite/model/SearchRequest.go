@@ -46,37 +46,45 @@ type ISearchRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SearchRequest) MsgType() uint16 {
-	return 0x0201
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SearchRequest) GetMsgType() uint16 {
 	return 0x0201
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SearchRequest) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *SearchRequest) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *SearchRequest) GetHpaiIDiscoveryEndpoint() *HPAIDiscoveryEndpoint {
 	return m.HpaiIDiscoveryEndpoint
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewSearchRequest factory function for SearchRequest
-func NewSearchRequest(hpaiIDiscoveryEndpoint *HPAIDiscoveryEndpoint) *KnxNetIpMessage {
-	child := &SearchRequest{
+func NewSearchRequest(hpaiIDiscoveryEndpoint *HPAIDiscoveryEndpoint) *SearchRequest {
+	_result := &SearchRequest{
 		HpaiIDiscoveryEndpoint: hpaiIDiscoveryEndpoint,
 		KnxNetIpMessage:        NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastSearchRequest(structType interface{}) *SearchRequest {
@@ -116,7 +124,7 @@ func (m *SearchRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SearchRequestParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+func SearchRequestParse(readBuffer utils.ReadBuffer) (*SearchRequest, error) {
 	if pullErr := readBuffer.PullContext("SearchRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -146,7 +154,7 @@ func SearchRequestParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
 		KnxNetIpMessage:        &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *SearchRequest) Serialize(writeBuffer utils.WriteBuffer) error {

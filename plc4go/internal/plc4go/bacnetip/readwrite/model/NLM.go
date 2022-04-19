@@ -57,19 +57,23 @@ type INLMParent interface {
 type INLMChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *NLM, vendorId *uint16)
+	GetParent() *NLM
+
 	GetTypeName() string
 	INLM
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *NLM) GetVendorId() *uint16 {
 	return m.VendorId
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewNLM factory function for NLM
@@ -83,6 +87,9 @@ func CastNLM(structType interface{}) *NLM {
 	}
 	if casted, ok := structType.(*NLM); ok {
 		return casted
+	}
+	if casted, ok := structType.(INLMChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -140,29 +147,33 @@ func NLMParse(readBuffer utils.ReadBuffer, apduLength uint16) (*NLM, error) {
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *NLM
+	type NLMChild interface {
+		InitializeParent(*NLM, *uint16)
+		GetParent() *NLM
+	}
+	var _child NLMChild
 	var typeSwitchError error
 	switch {
 	case messageType == 0x00: // NLMWhoIsRouterToNetwork
-		_parent, typeSwitchError = NLMWhoIsRouterToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMWhoIsRouterToNetworkParse(readBuffer, apduLength, messageType)
 	case messageType == 0x01: // NLMIAmRouterToNetwork
-		_parent, typeSwitchError = NLMIAmRouterToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMIAmRouterToNetworkParse(readBuffer, apduLength, messageType)
 	case messageType == 0x02: // NLMICouldBeRouterToNetwork
-		_parent, typeSwitchError = NLMICouldBeRouterToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMICouldBeRouterToNetworkParse(readBuffer, apduLength, messageType)
 	case messageType == 0x03: // NLMRejectRouterToNetwork
-		_parent, typeSwitchError = NLMRejectRouterToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMRejectRouterToNetworkParse(readBuffer, apduLength, messageType)
 	case messageType == 0x04: // NLMRouterBusyToNetwork
-		_parent, typeSwitchError = NLMRouterBusyToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMRouterBusyToNetworkParse(readBuffer, apduLength, messageType)
 	case messageType == 0x05: // NLMRouterAvailableToNetwork
-		_parent, typeSwitchError = NLMRouterAvailableToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMRouterAvailableToNetworkParse(readBuffer, apduLength, messageType)
 	case messageType == 0x06: // NLMInitalizeRoutingTable
-		_parent, typeSwitchError = NLMInitalizeRoutingTableParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMInitalizeRoutingTableParse(readBuffer, apduLength, messageType)
 	case messageType == 0x07: // NLMInitalizeRoutingTableAck
-		_parent, typeSwitchError = NLMInitalizeRoutingTableAckParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMInitalizeRoutingTableAckParse(readBuffer, apduLength, messageType)
 	case messageType == 0x08: // NLMEstablishConnectionToNetwork
-		_parent, typeSwitchError = NLMEstablishConnectionToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMEstablishConnectionToNetworkParse(readBuffer, apduLength, messageType)
 	case messageType == 0x09: // NLMDisconnectConnectionToNetwork
-		_parent, typeSwitchError = NLMDisconnectConnectionToNetworkParse(readBuffer, apduLength, messageType)
+		_child, typeSwitchError = NLMDisconnectConnectionToNetworkParse(readBuffer, apduLength, messageType)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -176,8 +187,8 @@ func NLMParse(readBuffer utils.ReadBuffer, apduLength uint16) (*NLM, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, vendorId)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), vendorId)
+	return _child.GetParent(), nil
 }
 
 func (m *NLM) Serialize(writeBuffer utils.WriteBuffer) error {

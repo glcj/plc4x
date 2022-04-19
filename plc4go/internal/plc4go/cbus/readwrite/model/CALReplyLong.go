@@ -65,7 +65,12 @@ type ICALReplyLong interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALReplyLong) InitializeParent(parent *CALReply, calType byte, calData *CALData) {
@@ -73,9 +78,14 @@ func (m *CALReplyLong) InitializeParent(parent *CALReply, calType byte, calData 
 	m.CALReply.CalData = calData
 }
 
+func (m *CALReplyLong) GetParent() *CALReply {
+	return m.CALReply
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALReplyLong) GetTerminatingByte() uint32 {
 	return m.TerminatingByte
 }
@@ -100,9 +110,14 @@ func (m *CALReplyLong) GetReplyNetwork() *ReplyNetwork {
 	return m.ReplyNetwork
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *CALReplyLong) GetIsUnitAddress() bool {
 	unitAddress := m.UnitAddress
 	_ = unitAddress
@@ -112,12 +127,17 @@ func (m *CALReplyLong) GetIsUnitAddress() bool {
 	_ = reservedByte
 	replyNetwork := m.ReplyNetwork
 	_ = replyNetwork
-	return bool(((m.GetTerminatingByte()) & (0xff)) == (0x00))
+	return bool(bool(((m.GetTerminatingByte()) & (0xff)) == (0x00)))
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewCALReplyLong factory function for CALReplyLong
-func NewCALReplyLong(terminatingByte uint32, unitAddress *UnitAddress, bridgeAddress *BridgeAddress, serialInterfaceAddress *SerialInterfaceAddress, reservedByte *byte, replyNetwork *ReplyNetwork, calType byte, calData *CALData) *CALReply {
-	child := &CALReplyLong{
+func NewCALReplyLong(terminatingByte uint32, unitAddress *UnitAddress, bridgeAddress *BridgeAddress, serialInterfaceAddress *SerialInterfaceAddress, reservedByte *byte, replyNetwork *ReplyNetwork, calType byte, calData *CALData) *CALReplyLong {
+	_result := &CALReplyLong{
 		TerminatingByte:        terminatingByte,
 		UnitAddress:            unitAddress,
 		BridgeAddress:          bridgeAddress,
@@ -126,8 +146,8 @@ func NewCALReplyLong(terminatingByte uint32, unitAddress *UnitAddress, bridgeAdd
 		ReplyNetwork:           replyNetwork,
 		CALReply:               NewCALReply(calType, calData),
 	}
-	child.Child = child
-	return child.CALReply
+	_result.Child = _result
+	return _result
 }
 
 func CastCALReplyLong(structType interface{}) *CALReplyLong {
@@ -192,7 +212,7 @@ func (m *CALReplyLong) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALReplyLongParse(readBuffer utils.ReadBuffer) (*CALReply, error) {
+func CALReplyLongParse(readBuffer utils.ReadBuffer) (*CALReplyLong, error) {
 	if pullErr := readBuffer.PullContext("CALReplyLong"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -333,7 +353,7 @@ func CALReplyLongParse(readBuffer utils.ReadBuffer) (*CALReply, error) {
 		CALReply:               &CALReply{},
 	}
 	_child.CALReply.Child = _child
-	return _child.CALReply, nil
+	return _child, nil
 }
 
 func (m *CALReplyLong) Serialize(writeBuffer utils.WriteBuffer) error {

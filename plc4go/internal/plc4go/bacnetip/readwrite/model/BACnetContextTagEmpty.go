@@ -45,35 +45,33 @@ type IBACnetContextTagEmpty interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagEmpty) DataType() BACnetDataType {
-	return 0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagEmpty) GetDataType() BACnetDataType {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagEmpty) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetContextTagEmpty) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
 
 // NewBACnetContextTagEmpty factory function for BACnetContextTagEmpty
-func NewBACnetContextTagEmpty(header *BACnetTagHeader, tagNumberArgument uint8) *BACnetContextTag {
-	child := &BACnetContextTagEmpty{
+func NewBACnetContextTagEmpty(header *BACnetTagHeader, tagNumberArgument uint8) *BACnetContextTagEmpty {
+	_result := &BACnetContextTagEmpty{
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagEmpty(structType interface{}) *BACnetContextTagEmpty {
@@ -110,7 +108,7 @@ func (m *BACnetContextTagEmpty) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagEmptyParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType) (*BACnetContextTag, error) {
+func BACnetContextTagEmptyParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType) (*BACnetContextTagEmpty, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagEmpty"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -126,7 +124,7 @@ func BACnetContextTagEmptyParse(readBuffer utils.ReadBuffer, tagNumberArgument u
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagEmpty) Serialize(writeBuffer utils.WriteBuffer) error {

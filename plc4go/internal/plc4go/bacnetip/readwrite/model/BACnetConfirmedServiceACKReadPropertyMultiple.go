@@ -42,34 +42,32 @@ type IBACnetConfirmedServiceACKReadPropertyMultiple interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKReadPropertyMultiple) ServiceChoice() uint8 {
-	return 0x0E
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKReadPropertyMultiple) GetServiceChoice() uint8 {
 	return 0x0E
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKReadPropertyMultiple) InitializeParent(parent *BACnetConfirmedServiceACK) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKReadPropertyMultiple) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKReadPropertyMultiple factory function for BACnetConfirmedServiceACKReadPropertyMultiple
-func NewBACnetConfirmedServiceACKReadPropertyMultiple() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKReadPropertyMultiple{
+func NewBACnetConfirmedServiceACKReadPropertyMultiple() *BACnetConfirmedServiceACKReadPropertyMultiple {
+	_result := &BACnetConfirmedServiceACKReadPropertyMultiple{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKReadPropertyMultiple(structType interface{}) *BACnetConfirmedServiceACKReadPropertyMultiple {
@@ -106,7 +104,7 @@ func (m *BACnetConfirmedServiceACKReadPropertyMultiple) GetLengthInBytes() uint1
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKReadPropertyMultipleParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKReadPropertyMultipleParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKReadPropertyMultiple, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKReadPropertyMultiple"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -122,7 +120,7 @@ func BACnetConfirmedServiceACKReadPropertyMultipleParse(readBuffer utils.ReadBuf
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKReadPropertyMultiple) Serialize(writeBuffer utils.WriteBuffer) error {

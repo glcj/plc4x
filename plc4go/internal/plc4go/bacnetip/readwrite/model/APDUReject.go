@@ -53,21 +53,28 @@ type IAPDUReject interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUReject) ApduType() uint8 {
-	return 0x6
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUReject) GetApduType() uint8 {
 	return 0x6
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUReject) InitializeParent(parent *APDU) {}
 
+func (m *APDUReject) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUReject) GetOriginalInvokeId() uint8 {
 	return m.OriginalInvokeId
 }
@@ -76,19 +83,20 @@ func (m *APDUReject) GetRejectReason() uint8 {
 	return m.RejectReason
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUReject factory function for APDUReject
-func NewAPDUReject(originalInvokeId uint8, rejectReason uint8, apduLength uint16) *APDU {
-	child := &APDUReject{
+func NewAPDUReject(originalInvokeId uint8, rejectReason uint8, apduLength uint16) *APDUReject {
+	_result := &APDUReject{
 		OriginalInvokeId: originalInvokeId,
 		RejectReason:     rejectReason,
 		APDU:             NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUReject(structType interface{}) *APDUReject {
@@ -134,7 +142,7 @@ func (m *APDUReject) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDURejectParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDURejectParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUReject, error) {
 	if pullErr := readBuffer.PullContext("APDUReject"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -180,7 +188,7 @@ func APDURejectParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, err
 		APDU:             &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUReject) Serialize(writeBuffer utils.WriteBuffer) error {

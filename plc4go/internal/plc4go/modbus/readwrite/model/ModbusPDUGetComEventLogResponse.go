@@ -55,37 +55,36 @@ type IModbusPDUGetComEventLogResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUGetComEventLogResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUGetComEventLogResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUGetComEventLogResponse) FunctionFlag() uint8 {
-	return 0x0C
 }
 
 func (m *ModbusPDUGetComEventLogResponse) GetFunctionFlag() uint8 {
 	return 0x0C
 }
 
-func (m *ModbusPDUGetComEventLogResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUGetComEventLogResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUGetComEventLogResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUGetComEventLogResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUGetComEventLogResponse) GetStatus() uint16 {
 	return m.Status
 }
@@ -102,21 +101,22 @@ func (m *ModbusPDUGetComEventLogResponse) GetEvents() []byte {
 	return m.Events
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUGetComEventLogResponse factory function for ModbusPDUGetComEventLogResponse
-func NewModbusPDUGetComEventLogResponse(status uint16, eventCount uint16, messageCount uint16, events []byte) *ModbusPDU {
-	child := &ModbusPDUGetComEventLogResponse{
+func NewModbusPDUGetComEventLogResponse(status uint16, eventCount uint16, messageCount uint16, events []byte) *ModbusPDUGetComEventLogResponse {
+	_result := &ModbusPDUGetComEventLogResponse{
 		Status:       status,
 		EventCount:   eventCount,
 		MessageCount: messageCount,
 		Events:       events,
 		ModbusPDU:    NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUGetComEventLogResponse(structType interface{}) *ModbusPDUGetComEventLogResponse {
@@ -170,7 +170,7 @@ func (m *ModbusPDUGetComEventLogResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUGetComEventLogResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUGetComEventLogResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUGetComEventLogResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUGetComEventLogResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -224,7 +224,7 @@ func ModbusPDUGetComEventLogResponseParse(readBuffer utils.ReadBuffer, response 
 		ModbusPDU:    &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUGetComEventLogResponse) Serialize(writeBuffer utils.WriteBuffer) error {

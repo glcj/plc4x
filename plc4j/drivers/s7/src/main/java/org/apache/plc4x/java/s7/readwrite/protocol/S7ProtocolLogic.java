@@ -144,6 +144,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
      * them should be expected when starting the connection.
      * (Examples of this are PCS7 and Braumat).
      * Alarm filtering, ack, etc. must be performed by the client application.
+
     */
     private final BlockingQueue eventqueue = new ArrayBlockingQueue<>(1024);
     
@@ -164,7 +165,6 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     */
     private HashMap<Object,MutablePair<RequestTransactionManager.RequestTransaction, Object>> active_requests = new HashMap<>();
     
-
     private S7DriverContext s7DriverContext;
     private RequestTransactionManager tm;
  
@@ -563,7 +563,6 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             for (String fieldName : request.getFieldNames()) {
                 final DefaultPlcSubscriptionField sf = (DefaultPlcSubscriptionField) request.getField(fieldName);
                 final S7SubscriptionField  field =  (S7SubscriptionField) sf.getPlcField();
-
                 final int tpduId = tpduGenerator.getAndIncrement();
                 // If we've reached the max value for a 16 bit transaction identifier, reset back to 1
                 if(tpduGenerator.get() == 0xFFFF) {
@@ -775,6 +774,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     default:;
                 };
 
+
                 try {
                     valuesResponse.put(fieldName, decodeEventSubcriptionRequest(fieldName, subscriptionRequest, futures.get(fieldName).get()));
                 } catch (Exception ex) {
@@ -862,7 +862,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
         parameterItems.add(parameter);
 
 
-        S7PayloadUserDataItemCpuFunctionMsgSubscription payload = null;
+        S7PayloadUserDataItemCpuFunctionMsgSubscription payload;
 
         if (subsevent > 0) {
             payload = new S7PayloadUserDataItemCpuFunctionMsgSubscription(
@@ -1119,7 +1119,6 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     }
   
     
-
     private void encodeCycledUnSubscriptionRequest(PlcSubscriptionField  plcfield,
                                                 List<S7ParameterUserDataItem> parameterItems,
                                                  List<S7PayloadUserDataItem> payloadItems){
@@ -1162,6 +1161,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                                 ) throws PlcProtocolException
     {
         //logger.info("decodeEventSubcriptionRequest: " + responseMessage);
+
         Map<String, ResponseItem<PlcSubscriptionHandle>> values = new HashMap<>();
         short errorClass = 0;
         short errorCode = 0;
@@ -1171,6 +1171,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             //errorClass = payload.getItems()[0].
            // errorCode = messageUserData.getParameter().
         } else if(responseMessage instanceof S7MessageResponse) {
+
             S7MessageResponse messageResponse = (S7MessageResponse) responseMessage;
             errorClass = messageResponse.getErrorClass();
             errorCode = messageResponse.getErrorCode();
@@ -1265,6 +1266,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                      values.put(Integer.toHexString(s), new ResponseItem(PlcResponseCode.NOT_FOUND, null));
                 }
             }
+
            return new DefaultPlcSubscriptionResponse(plcSubscriptionRequest,values);    
            
         }   else if (payloadItems.get(0)  instanceof S7PayloadUserDataItemCpuFunctionAlarmAckErrorResponse) {
@@ -1423,6 +1425,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
      */
     @Override
     protected void decode(ConversationContext<TPKTPacket> context, TPKTPacket msg) throws Exception {
+
         //logger.info(msg.toString());
         S7Message s7msg = msg.getPayload().getPayload();
         S7Parameter parameter = s7msg.getParameter();
@@ -1430,6 +1433,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
             eventqueue.add(parameter);
         } else
         if (parameter instanceof S7ParameterUserData) {
+
             S7ParameterUserData parameterud = (S7ParameterUserData) parameter;
             List<S7ParameterUserDataItem> parameterudis = parameterud.getItems();
             for (S7ParameterUserDataItem parameterudi:parameterudis){
@@ -1455,6 +1459,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                                (myparameter.getCpuSubfunction() == 0x16))) {
                         S7PayloadUserData payload = (S7PayloadUserData) s7msg.getPayload();
                         List<S7PayloadUserDataItem> items = payload.getItems();
+
                         for (Object item:items){
                             eventqueue.add(item);
                         }
@@ -1925,9 +1930,9 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 DataItem.staticSerialize(writeBuffer, plcValue.getIndex(i), field.getDataType().getDataProtocolId(), stringLength);                
                 // Allocate enough space for all items.
                 if (byteBuffer == null) {
-                    byteBuffer = ByteBuffer.allocate(writeBuffer.getData().length * field.getNumberOfElements());
+                    byteBuffer = ByteBuffer.allocate(writeBuffer.getBytes().length * field.getNumberOfElements());
                 }
-                byteBuffer.put(writeBuffer.getData());
+                byteBuffer.put(writeBuffer.getBytes());
             }
             if(byteBuffer != null) {
                 byte[] data = byteBuffer.array();

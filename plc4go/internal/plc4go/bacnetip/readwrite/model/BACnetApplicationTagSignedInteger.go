@@ -48,35 +48,55 @@ type IBACnetApplicationTagSignedInteger interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagSignedInteger) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagSignedInteger) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagSignedInteger) GetPayload() *BACnetTagPayloadSignedInteger {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagSignedInteger) GetActualValue() uint64 {
-	return m.GetPayload().GetActualValue()
+	return uint64(m.GetPayload().GetActualValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagSignedInteger factory function for BACnetApplicationTagSignedInteger
-func NewBACnetApplicationTagSignedInteger(payload *BACnetTagPayloadSignedInteger, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagSignedInteger{
+func NewBACnetApplicationTagSignedInteger(payload *BACnetTagPayloadSignedInteger, header *BACnetTagHeader) *BACnetApplicationTagSignedInteger {
+	_result := &BACnetApplicationTagSignedInteger{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagSignedInteger(structType interface{}) *BACnetApplicationTagSignedInteger {
@@ -118,7 +138,7 @@ func (m *BACnetApplicationTagSignedInteger) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagSignedIntegerParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagSignedIntegerParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTagSignedInteger, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagSignedInteger"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -153,7 +173,7 @@ func BACnetApplicationTagSignedIntegerParse(readBuffer utils.ReadBuffer, header 
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagSignedInteger) Serialize(writeBuffer utils.WriteBuffer) error {

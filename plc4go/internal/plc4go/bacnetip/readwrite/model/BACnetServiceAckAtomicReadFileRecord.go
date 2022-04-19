@@ -52,7 +52,12 @@ type IBACnetServiceAckAtomicReadFileRecord interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetServiceAckAtomicReadFileRecord) InitializeParent(parent *BACnetServiceAckAtomicReadFileStreamOrRecord, peekedTagHeader *BACnetTagHeader, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
@@ -61,9 +66,14 @@ func (m *BACnetServiceAckAtomicReadFileRecord) InitializeParent(parent *BACnetSe
 	m.BACnetServiceAckAtomicReadFileStreamOrRecord.ClosingTag = closingTag
 }
 
+func (m *BACnetServiceAckAtomicReadFileRecord) GetParent() *BACnetServiceAckAtomicReadFileStreamOrRecord {
+	return m.BACnetServiceAckAtomicReadFileStreamOrRecord
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetServiceAckAtomicReadFileRecord) GetFileStartRecord() *BACnetApplicationTagSignedInteger {
 	return m.FileStartRecord
 }
@@ -76,20 +86,21 @@ func (m *BACnetServiceAckAtomicReadFileRecord) GetFileRecordData() []*BACnetAppl
 	return m.FileRecordData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetServiceAckAtomicReadFileRecord factory function for BACnetServiceAckAtomicReadFileRecord
-func NewBACnetServiceAckAtomicReadFileRecord(fileStartRecord *BACnetApplicationTagSignedInteger, returnedRecordCount *BACnetApplicationTagUnsignedInteger, fileRecordData []*BACnetApplicationTagOctetString, peekedTagHeader *BACnetTagHeader, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) *BACnetServiceAckAtomicReadFileStreamOrRecord {
-	child := &BACnetServiceAckAtomicReadFileRecord{
+func NewBACnetServiceAckAtomicReadFileRecord(fileStartRecord *BACnetApplicationTagSignedInteger, returnedRecordCount *BACnetApplicationTagUnsignedInteger, fileRecordData []*BACnetApplicationTagOctetString, peekedTagHeader *BACnetTagHeader, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) *BACnetServiceAckAtomicReadFileRecord {
+	_result := &BACnetServiceAckAtomicReadFileRecord{
 		FileStartRecord:     fileStartRecord,
 		ReturnedRecordCount: returnedRecordCount,
 		FileRecordData:      fileRecordData,
 		BACnetServiceAckAtomicReadFileStreamOrRecord: NewBACnetServiceAckAtomicReadFileStreamOrRecord(peekedTagHeader, openingTag, closingTag),
 	}
-	child.Child = child
-	return child.BACnetServiceAckAtomicReadFileStreamOrRecord
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckAtomicReadFileRecord(structType interface{}) *BACnetServiceAckAtomicReadFileRecord {
@@ -140,7 +151,7 @@ func (m *BACnetServiceAckAtomicReadFileRecord) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckAtomicReadFileRecordParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckAtomicReadFileStreamOrRecord, error) {
+func BACnetServiceAckAtomicReadFileRecordParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckAtomicReadFileRecord, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckAtomicReadFileRecord"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -204,7 +215,7 @@ func BACnetServiceAckAtomicReadFileRecordParse(readBuffer utils.ReadBuffer) (*BA
 		BACnetServiceAckAtomicReadFileStreamOrRecord: &BACnetServiceAckAtomicReadFileStreamOrRecord{},
 	}
 	_child.BACnetServiceAckAtomicReadFileStreamOrRecord.Child = _child
-	return _child.BACnetServiceAckAtomicReadFileStreamOrRecord, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckAtomicReadFileRecord) Serialize(writeBuffer utils.WriteBuffer) error {

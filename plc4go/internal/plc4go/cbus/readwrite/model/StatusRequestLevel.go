@@ -50,16 +50,26 @@ type IStatusRequestLevel interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *StatusRequestLevel) InitializeParent(parent *StatusRequest, statusType byte) {
 	m.StatusRequest.StatusType = statusType
 }
 
+func (m *StatusRequestLevel) GetParent() *StatusRequest {
+	return m.StatusRequest
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *StatusRequestLevel) GetApplication() byte {
 	return m.Application
 }
@@ -68,19 +78,20 @@ func (m *StatusRequestLevel) GetStartingGroupAddressLabel() byte {
 	return m.StartingGroupAddressLabel
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewStatusRequestLevel factory function for StatusRequestLevel
-func NewStatusRequestLevel(application byte, startingGroupAddressLabel byte, statusType byte) *StatusRequest {
-	child := &StatusRequestLevel{
+func NewStatusRequestLevel(application byte, startingGroupAddressLabel byte, statusType byte) *StatusRequestLevel {
+	_result := &StatusRequestLevel{
 		Application:               application,
 		StartingGroupAddressLabel: startingGroupAddressLabel,
 		StatusRequest:             NewStatusRequest(statusType),
 	}
-	child.Child = child
-	return child.StatusRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastStatusRequestLevel(structType interface{}) *StatusRequestLevel {
@@ -129,7 +140,7 @@ func (m *StatusRequestLevel) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func StatusRequestLevelParse(readBuffer utils.ReadBuffer) (*StatusRequest, error) {
+func StatusRequestLevelParse(readBuffer utils.ReadBuffer) (*StatusRequestLevel, error) {
 	if pullErr := readBuffer.PullContext("StatusRequestLevel"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -194,7 +205,7 @@ func StatusRequestLevelParse(readBuffer utils.ReadBuffer) (*StatusRequest, error
 		StatusRequest:             &StatusRequest{},
 	}
 	_child.StatusRequest.Child = _child
-	return _child.StatusRequest, nil
+	return _child, nil
 }
 
 func (m *StatusRequestLevel) Serialize(writeBuffer utils.WriteBuffer) error {

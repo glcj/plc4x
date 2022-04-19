@@ -42,33 +42,31 @@ type IBACnetServiceAckReadRange interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckReadRange) ServiceChoice() uint8 {
-	return 0x1A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckReadRange) GetServiceChoice() uint8 {
 	return 0x1A
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckReadRange) InitializeParent(parent *BACnetServiceAck) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetServiceAckReadRange) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
 
 // NewBACnetServiceAckReadRange factory function for BACnetServiceAckReadRange
-func NewBACnetServiceAckReadRange() *BACnetServiceAck {
-	child := &BACnetServiceAckReadRange{
+func NewBACnetServiceAckReadRange() *BACnetServiceAckReadRange {
+	_result := &BACnetServiceAckReadRange{
 		BACnetServiceAck: NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckReadRange(structType interface{}) *BACnetServiceAckReadRange {
@@ -105,7 +103,7 @@ func (m *BACnetServiceAckReadRange) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckReadRangeParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckReadRangeParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckReadRange, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckReadRange"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetServiceAckReadRangeParse(readBuffer utils.ReadBuffer) (*BACnetService
 		BACnetServiceAck: &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckReadRange) Serialize(writeBuffer utils.WriteBuffer) error {

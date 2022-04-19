@@ -47,33 +47,31 @@ type IApduDataGroupValueRead interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataGroupValueRead) ApciType() uint8 {
-	return 0x0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataGroupValueRead) GetApciType() uint8 {
 	return 0x0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataGroupValueRead) InitializeParent(parent *ApduData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataGroupValueRead) GetParent() *ApduData {
+	return m.ApduData
+}
 
 // NewApduDataGroupValueRead factory function for ApduDataGroupValueRead
-func NewApduDataGroupValueRead(dataLength uint8) *ApduData {
-	child := &ApduDataGroupValueRead{
+func NewApduDataGroupValueRead(dataLength uint8) *ApduDataGroupValueRead {
+	_result := &ApduDataGroupValueRead{
 		ApduData: NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataGroupValueRead(structType interface{}) *ApduDataGroupValueRead {
@@ -113,7 +111,7 @@ func (m *ApduDataGroupValueRead) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataGroupValueReadParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataGroupValueReadParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataGroupValueRead, error) {
 	if pullErr := readBuffer.PullContext("ApduDataGroupValueRead"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -143,7 +141,7 @@ func ApduDataGroupValueReadParse(readBuffer utils.ReadBuffer, dataLength uint8) 
 		ApduData: &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataGroupValueRead) Serialize(writeBuffer utils.WriteBuffer) error {

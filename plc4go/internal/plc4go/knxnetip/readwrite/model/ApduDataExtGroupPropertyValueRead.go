@@ -45,33 +45,31 @@ type IApduDataExtGroupPropertyValueRead interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtGroupPropertyValueRead) ExtApciType() uint8 {
-	return 0x28
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtGroupPropertyValueRead) GetExtApciType() uint8 {
 	return 0x28
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtGroupPropertyValueRead) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtGroupPropertyValueRead) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtGroupPropertyValueRead factory function for ApduDataExtGroupPropertyValueRead
-func NewApduDataExtGroupPropertyValueRead(length uint8) *ApduDataExt {
-	child := &ApduDataExtGroupPropertyValueRead{
+func NewApduDataExtGroupPropertyValueRead(length uint8) *ApduDataExtGroupPropertyValueRead {
+	_result := &ApduDataExtGroupPropertyValueRead{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtGroupPropertyValueRead(structType interface{}) *ApduDataExtGroupPropertyValueRead {
@@ -108,7 +106,7 @@ func (m *ApduDataExtGroupPropertyValueRead) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtGroupPropertyValueReadParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtGroupPropertyValueReadParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtGroupPropertyValueRead, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtGroupPropertyValueRead"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtGroupPropertyValueReadParse(readBuffer utils.ReadBuffer, length 
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtGroupPropertyValueRead) Serialize(writeBuffer utils.WriteBuffer) error {

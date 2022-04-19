@@ -52,29 +52,32 @@ type IAdsReadRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsReadRequest) CommandId() CommandId {
-	return CommandId_ADS_READ
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsReadRequest) GetCommandId() CommandId {
 	return CommandId_ADS_READ
-}
-
-func (m *AdsReadRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *AdsReadRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsReadRequest) InitializeParent(parent *AdsData) {}
 
+func (m *AdsReadRequest) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsReadRequest) GetIndexGroup() uint32 {
 	return m.IndexGroup
 }
@@ -87,20 +90,21 @@ func (m *AdsReadRequest) GetLength() uint32 {
 	return m.Length
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsReadRequest factory function for AdsReadRequest
-func NewAdsReadRequest(indexGroup uint32, indexOffset uint32, length uint32) *AdsData {
-	child := &AdsReadRequest{
+func NewAdsReadRequest(indexGroup uint32, indexOffset uint32, length uint32) *AdsReadRequest {
+	_result := &AdsReadRequest{
 		IndexGroup:  indexGroup,
 		IndexOffset: indexOffset,
 		Length:      length,
 		AdsData:     NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsReadRequest(structType interface{}) *AdsReadRequest {
@@ -146,7 +150,7 @@ func (m *AdsReadRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsReadRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsReadRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsReadRequest, error) {
 	if pullErr := readBuffer.PullContext("AdsReadRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -186,7 +190,7 @@ func AdsReadRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, respo
 		AdsData:     &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsReadRequest) Serialize(writeBuffer utils.WriteBuffer) error {

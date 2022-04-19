@@ -53,29 +53,32 @@ type IS7ParameterSetupCommunication interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7ParameterSetupCommunication) ParameterType() uint8 {
-	return 0xF0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7ParameterSetupCommunication) GetParameterType() uint8 {
 	return 0xF0
-}
-
-func (m *S7ParameterSetupCommunication) MessageType() uint8 {
-	return 0
 }
 
 func (m *S7ParameterSetupCommunication) GetMessageType() uint8 {
 	return 0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7ParameterSetupCommunication) InitializeParent(parent *S7Parameter) {}
 
+func (m *S7ParameterSetupCommunication) GetParent() *S7Parameter {
+	return m.S7Parameter
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7ParameterSetupCommunication) GetMaxAmqCaller() uint16 {
 	return m.MaxAmqCaller
 }
@@ -88,20 +91,21 @@ func (m *S7ParameterSetupCommunication) GetPduLength() uint16 {
 	return m.PduLength
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7ParameterSetupCommunication factory function for S7ParameterSetupCommunication
-func NewS7ParameterSetupCommunication(maxAmqCaller uint16, maxAmqCallee uint16, pduLength uint16) *S7Parameter {
-	child := &S7ParameterSetupCommunication{
+func NewS7ParameterSetupCommunication(maxAmqCaller uint16, maxAmqCallee uint16, pduLength uint16) *S7ParameterSetupCommunication {
+	_result := &S7ParameterSetupCommunication{
 		MaxAmqCaller: maxAmqCaller,
 		MaxAmqCallee: maxAmqCallee,
 		PduLength:    pduLength,
 		S7Parameter:  NewS7Parameter(),
 	}
-	child.Child = child
-	return child.S7Parameter
+	_result.Child = _result
+	return _result
 }
 
 func CastS7ParameterSetupCommunication(structType interface{}) *S7ParameterSetupCommunication {
@@ -150,7 +154,7 @@ func (m *S7ParameterSetupCommunication) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7ParameterSetupCommunicationParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7Parameter, error) {
+func S7ParameterSetupCommunicationParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7ParameterSetupCommunication, error) {
 	if pullErr := readBuffer.PullContext("S7ParameterSetupCommunication"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -204,7 +208,7 @@ func S7ParameterSetupCommunicationParse(readBuffer utils.ReadBuffer, messageType
 		S7Parameter:  &S7Parameter{},
 	}
 	_child.S7Parameter.Child = _child
-	return _child.S7Parameter, nil
+	return _child, nil
 }
 
 func (m *S7ParameterSetupCommunication) Serialize(writeBuffer utils.WriteBuffer) error {

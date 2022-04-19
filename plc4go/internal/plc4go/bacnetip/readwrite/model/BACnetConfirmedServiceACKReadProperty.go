@@ -42,33 +42,31 @@ type IBACnetConfirmedServiceACKReadProperty interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKReadProperty) ServiceChoice() uint8 {
-	return 0x0C
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKReadProperty) GetServiceChoice() uint8 {
 	return 0x0C
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKReadProperty) InitializeParent(parent *BACnetConfirmedServiceACK) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKReadProperty) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKReadProperty factory function for BACnetConfirmedServiceACKReadProperty
-func NewBACnetConfirmedServiceACKReadProperty() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKReadProperty{
+func NewBACnetConfirmedServiceACKReadProperty() *BACnetConfirmedServiceACKReadProperty {
+	_result := &BACnetConfirmedServiceACKReadProperty{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKReadProperty(structType interface{}) *BACnetConfirmedServiceACKReadProperty {
@@ -105,7 +103,7 @@ func (m *BACnetConfirmedServiceACKReadProperty) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKReadPropertyParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKReadPropertyParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKReadProperty, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKReadProperty"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetConfirmedServiceACKReadPropertyParse(readBuffer utils.ReadBuffer) (*B
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKReadProperty) Serialize(writeBuffer utils.WriteBuffer) error {

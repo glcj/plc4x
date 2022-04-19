@@ -46,32 +46,43 @@ type IConfirmationReply interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *ConfirmationReply) InitializeParent(parent *Reply, magicByte byte) {
 	m.Reply.MagicByte = magicByte
 }
 
+func (m *ConfirmationReply) GetParent() *Reply {
+	return m.Reply
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ConfirmationReply) GetIsA() *Confirmation {
 	return m.IsA
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewConfirmationReply factory function for ConfirmationReply
-func NewConfirmationReply(isA *Confirmation, magicByte byte) *Reply {
-	child := &ConfirmationReply{
+func NewConfirmationReply(isA *Confirmation, magicByte byte) *ConfirmationReply {
+	_result := &ConfirmationReply{
 		IsA:   isA,
 		Reply: NewReply(magicByte),
 	}
-	child.Child = child
-	return child.Reply
+	_result.Child = _result
+	return _result
 }
 
 func CastConfirmationReply(structType interface{}) *ConfirmationReply {
@@ -111,7 +122,7 @@ func (m *ConfirmationReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ConfirmationReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
+func ConfirmationReplyParse(readBuffer utils.ReadBuffer) (*ConfirmationReply, error) {
 	if pullErr := readBuffer.PullContext("ConfirmationReply"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func ConfirmationReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 		Reply: &Reply{},
 	}
 	_child.Reply.Child = _child
-	return _child.Reply, nil
+	return _child, nil
 }
 
 func (m *ConfirmationReply) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,33 +42,31 @@ type IBACnetConfirmedServiceACKCreateObject interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKCreateObject) ServiceChoice() uint8 {
-	return 0x0A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKCreateObject) GetServiceChoice() uint8 {
 	return 0x0A
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKCreateObject) InitializeParent(parent *BACnetConfirmedServiceACK) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKCreateObject) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKCreateObject factory function for BACnetConfirmedServiceACKCreateObject
-func NewBACnetConfirmedServiceACKCreateObject() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKCreateObject{
+func NewBACnetConfirmedServiceACKCreateObject() *BACnetConfirmedServiceACKCreateObject {
+	_result := &BACnetConfirmedServiceACKCreateObject{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKCreateObject(structType interface{}) *BACnetConfirmedServiceACKCreateObject {
@@ -105,7 +103,7 @@ func (m *BACnetConfirmedServiceACKCreateObject) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKCreateObject, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKCreateObject"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetConfirmedServiceACKCreateObjectParse(readBuffer utils.ReadBuffer) (*B
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKCreateObject) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -52,21 +52,28 @@ type IFirmataMessageAnalogIO interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *FirmataMessageAnalogIO) MessageType() uint8 {
-	return 0xE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *FirmataMessageAnalogIO) GetMessageType() uint8 {
 	return 0xE
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *FirmataMessageAnalogIO) InitializeParent(parent *FirmataMessage) {}
 
+func (m *FirmataMessageAnalogIO) GetParent() *FirmataMessage {
+	return m.FirmataMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *FirmataMessageAnalogIO) GetPin() uint8 {
 	return m.Pin
 }
@@ -75,19 +82,20 @@ func (m *FirmataMessageAnalogIO) GetData() []int8 {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewFirmataMessageAnalogIO factory function for FirmataMessageAnalogIO
-func NewFirmataMessageAnalogIO(pin uint8, data []int8, response bool) *FirmataMessage {
-	child := &FirmataMessageAnalogIO{
+func NewFirmataMessageAnalogIO(pin uint8, data []int8, response bool) *FirmataMessageAnalogIO {
+	_result := &FirmataMessageAnalogIO{
 		Pin:            pin,
 		Data:           data,
 		FirmataMessage: NewFirmataMessage(response),
 	}
-	child.Child = child
-	return child.FirmataMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastFirmataMessageAnalogIO(structType interface{}) *FirmataMessageAnalogIO {
@@ -132,7 +140,7 @@ func (m *FirmataMessageAnalogIO) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func FirmataMessageAnalogIOParse(readBuffer utils.ReadBuffer, response bool) (*FirmataMessage, error) {
+func FirmataMessageAnalogIOParse(readBuffer utils.ReadBuffer, response bool) (*FirmataMessageAnalogIO, error) {
 	if pullErr := readBuffer.PullContext("FirmataMessageAnalogIO"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -176,7 +184,7 @@ func FirmataMessageAnalogIOParse(readBuffer utils.ReadBuffer, response bool) (*F
 		FirmataMessage: &FirmataMessage{},
 	}
 	_child.FirmataMessage.Child = _child
-	return _child.FirmataMessage, nil
+	return _child, nil
 }
 
 func (m *FirmataMessageAnalogIO) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -65,7 +65,12 @@ type IMonitoredSALLongFormSmartMode interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *MonitoredSALLongFormSmartMode) InitializeParent(parent *MonitoredSAL, salType byte, salData *SALData) {
@@ -73,9 +78,14 @@ func (m *MonitoredSALLongFormSmartMode) InitializeParent(parent *MonitoredSAL, s
 	m.MonitoredSAL.SalData = salData
 }
 
+func (m *MonitoredSALLongFormSmartMode) GetParent() *MonitoredSAL {
+	return m.MonitoredSAL
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *MonitoredSALLongFormSmartMode) GetTerminatingByte() uint32 {
 	return m.TerminatingByte
 }
@@ -100,9 +110,14 @@ func (m *MonitoredSALLongFormSmartMode) GetReplyNetwork() *ReplyNetwork {
 	return m.ReplyNetwork
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *MonitoredSALLongFormSmartMode) GetIsUnitAddress() bool {
 	unitAddress := m.UnitAddress
 	_ = unitAddress
@@ -112,12 +127,17 @@ func (m *MonitoredSALLongFormSmartMode) GetIsUnitAddress() bool {
 	_ = reservedByte
 	replyNetwork := m.ReplyNetwork
 	_ = replyNetwork
-	return bool(((m.GetTerminatingByte()) & (0xff)) == (0x00))
+	return bool(bool(((m.GetTerminatingByte()) & (0xff)) == (0x00)))
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewMonitoredSALLongFormSmartMode factory function for MonitoredSALLongFormSmartMode
-func NewMonitoredSALLongFormSmartMode(terminatingByte uint32, unitAddress *UnitAddress, bridgeAddress *BridgeAddress, serialInterfaceAddress *SerialInterfaceAddress, reservedByte *byte, replyNetwork *ReplyNetwork, salType byte, salData *SALData) *MonitoredSAL {
-	child := &MonitoredSALLongFormSmartMode{
+func NewMonitoredSALLongFormSmartMode(terminatingByte uint32, unitAddress *UnitAddress, bridgeAddress *BridgeAddress, serialInterfaceAddress *SerialInterfaceAddress, reservedByte *byte, replyNetwork *ReplyNetwork, salType byte, salData *SALData) *MonitoredSALLongFormSmartMode {
+	_result := &MonitoredSALLongFormSmartMode{
 		TerminatingByte:        terminatingByte,
 		UnitAddress:            unitAddress,
 		BridgeAddress:          bridgeAddress,
@@ -126,8 +146,8 @@ func NewMonitoredSALLongFormSmartMode(terminatingByte uint32, unitAddress *UnitA
 		ReplyNetwork:           replyNetwork,
 		MonitoredSAL:           NewMonitoredSAL(salType, salData),
 	}
-	child.Child = child
-	return child.MonitoredSAL
+	_result.Child = _result
+	return _result
 }
 
 func CastMonitoredSALLongFormSmartMode(structType interface{}) *MonitoredSALLongFormSmartMode {
@@ -192,7 +212,7 @@ func (m *MonitoredSALLongFormSmartMode) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer) (*MonitoredSAL, error) {
+func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer) (*MonitoredSALLongFormSmartMode, error) {
 	if pullErr := readBuffer.PullContext("MonitoredSALLongFormSmartMode"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -333,7 +353,7 @@ func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer) (*Monitored
 		MonitoredSAL:           &MonitoredSAL{},
 	}
 	_child.MonitoredSAL.Child = _child
-	return _child.MonitoredSAL, nil
+	return _child, nil
 }
 
 func (m *MonitoredSALLongFormSmartMode) Serialize(writeBuffer utils.WriteBuffer) error {

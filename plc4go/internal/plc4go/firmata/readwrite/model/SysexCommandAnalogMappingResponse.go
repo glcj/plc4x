@@ -42,41 +42,35 @@ type ISysexCommandAnalogMappingResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandAnalogMappingResponse) CommandType() uint8 {
-	return 0x6A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandAnalogMappingResponse) GetCommandType() uint8 {
 	return 0x6A
-}
-
-func (m *SysexCommandAnalogMappingResponse) Response() bool {
-	return false
 }
 
 func (m *SysexCommandAnalogMappingResponse) GetResponse() bool {
 	return false
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandAnalogMappingResponse) InitializeParent(parent *SysexCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *SysexCommandAnalogMappingResponse) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
 
 // NewSysexCommandAnalogMappingResponse factory function for SysexCommandAnalogMappingResponse
-func NewSysexCommandAnalogMappingResponse() *SysexCommand {
-	child := &SysexCommandAnalogMappingResponse{
+func NewSysexCommandAnalogMappingResponse() *SysexCommandAnalogMappingResponse {
+	_result := &SysexCommandAnalogMappingResponse{
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandAnalogMappingResponse(structType interface{}) *SysexCommandAnalogMappingResponse {
@@ -113,7 +107,7 @@ func (m *SysexCommandAnalogMappingResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandAnalogMappingResponseParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandAnalogMappingResponseParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandAnalogMappingResponse, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandAnalogMappingResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func SysexCommandAnalogMappingResponseParse(readBuffer utils.ReadBuffer, respons
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandAnalogMappingResponse) Serialize(writeBuffer utils.WriteBuffer) error {

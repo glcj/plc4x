@@ -49,16 +49,26 @@ type ISALDataRampToLevel interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *SALDataRampToLevel) InitializeParent(parent *SALData, commandTypeContainer SALCommandTypeContainer) {
 	m.SALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *SALDataRampToLevel) GetParent() *SALData {
+	return m.SALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *SALDataRampToLevel) GetGroup() byte {
 	return m.Group
 }
@@ -67,19 +77,20 @@ func (m *SALDataRampToLevel) GetLevel() byte {
 	return m.Level
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewSALDataRampToLevel factory function for SALDataRampToLevel
-func NewSALDataRampToLevel(group byte, level byte, commandTypeContainer SALCommandTypeContainer) *SALData {
-	child := &SALDataRampToLevel{
+func NewSALDataRampToLevel(group byte, level byte, commandTypeContainer SALCommandTypeContainer) *SALDataRampToLevel {
+	_result := &SALDataRampToLevel{
 		Group:   group,
 		Level:   level,
 		SALData: NewSALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.SALData
+	_result.Child = _result
+	return _result
 }
 
 func CastSALDataRampToLevel(structType interface{}) *SALDataRampToLevel {
@@ -122,7 +133,7 @@ func (m *SALDataRampToLevel) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SALDataRampToLevelParse(readBuffer utils.ReadBuffer) (*SALData, error) {
+func SALDataRampToLevelParse(readBuffer utils.ReadBuffer) (*SALDataRampToLevel, error) {
 	if pullErr := readBuffer.PullContext("SALDataRampToLevel"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -154,7 +165,7 @@ func SALDataRampToLevelParse(readBuffer utils.ReadBuffer) (*SALData, error) {
 		SALData: &SALData{},
 	}
 	_child.SALData.Child = _child
-	return _child.SALData, nil
+	return _child, nil
 }
 
 func (m *SALDataRampToLevel) Serialize(writeBuffer utils.WriteBuffer) error {

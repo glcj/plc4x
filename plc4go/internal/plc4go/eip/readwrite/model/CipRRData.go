@@ -50,15 +50,17 @@ type ICipRRData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CipRRData) Command() uint16 {
-	return 0x006F
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CipRRData) GetCommand() uint16 {
 	return 0x006F
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *CipRRData) InitializeParent(parent *EipPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
 	m.EipPacket.SessionHandle = sessionHandle
@@ -67,25 +69,31 @@ func (m *CipRRData) InitializeParent(parent *EipPacket, sessionHandle uint32, st
 	m.EipPacket.Options = options
 }
 
+func (m *CipRRData) GetParent() *EipPacket {
+	return m.EipPacket
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CipRRData) GetExchange() *CipExchange {
 	return m.Exchange
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCipRRData factory function for CipRRData
-func NewCipRRData(exchange *CipExchange, sessionHandle uint32, status uint32, senderContext []uint8, options uint32, len uint16) *EipPacket {
-	child := &CipRRData{
+func NewCipRRData(exchange *CipExchange, sessionHandle uint32, status uint32, senderContext []uint8, options uint32, len uint16) *CipRRData {
+	_result := &CipRRData{
 		Exchange:  exchange,
 		EipPacket: NewEipPacket(sessionHandle, status, senderContext, options),
 	}
-	child.Child = child
-	return child.EipPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastCipRRData(structType interface{}) *CipRRData {
@@ -131,7 +139,7 @@ func (m *CipRRData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CipRRDataParse(readBuffer utils.ReadBuffer, len uint16) (*EipPacket, error) {
+func CipRRDataParse(readBuffer utils.ReadBuffer, len uint16) (*CipRRData, error) {
 	if pullErr := readBuffer.PullContext("CipRRData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -189,7 +197,7 @@ func CipRRDataParse(readBuffer utils.ReadBuffer, len uint16) (*EipPacket, error)
 		EipPacket: &EipPacket{},
 	}
 	_child.EipPacket.Child = _child
-	return _child.EipPacket, nil
+	return _child, nil
 }
 
 func (m *CipRRData) Serialize(writeBuffer utils.WriteBuffer) error {

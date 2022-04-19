@@ -42,36 +42,34 @@ type IBACnetErrorCreateObject interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorCreateObject) ServiceChoice() uint8 {
-	return 0x0A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorCreateObject) GetServiceChoice() uint8 {
 	return 0x0A
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorCreateObject) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorCreateObject) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorCreateObject factory function for BACnetErrorCreateObject
-func NewBACnetErrorCreateObject(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorCreateObject{
+func NewBACnetErrorCreateObject(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorCreateObject {
+	_result := &BACnetErrorCreateObject{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorCreateObject(structType interface{}) *BACnetErrorCreateObject {
@@ -108,7 +106,7 @@ func (m *BACnetErrorCreateObject) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetErrorCreateObject, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorCreateObject"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorCreateObjectParse(readBuffer utils.ReadBuffer) (*BACnetError, er
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorCreateObject) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,35 +42,33 @@ type INotTransmittedToManyReTransmissions interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NotTransmittedToManyReTransmissions) ConfirmationType() byte {
-	return 0x23
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NotTransmittedToManyReTransmissions) GetConfirmationType() byte {
 	return 0x23
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NotTransmittedToManyReTransmissions) InitializeParent(parent *Confirmation, alpha *Alpha) {
 	m.Confirmation.Alpha = alpha
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *NotTransmittedToManyReTransmissions) GetParent() *Confirmation {
+	return m.Confirmation
+}
 
 // NewNotTransmittedToManyReTransmissions factory function for NotTransmittedToManyReTransmissions
-func NewNotTransmittedToManyReTransmissions(alpha *Alpha) *Confirmation {
-	child := &NotTransmittedToManyReTransmissions{
+func NewNotTransmittedToManyReTransmissions(alpha *Alpha) *NotTransmittedToManyReTransmissions {
+	_result := &NotTransmittedToManyReTransmissions{
 		Confirmation: NewConfirmation(alpha),
 	}
-	child.Child = child
-	return child.Confirmation
+	_result.Child = _result
+	return _result
 }
 
 func CastNotTransmittedToManyReTransmissions(structType interface{}) *NotTransmittedToManyReTransmissions {
@@ -107,7 +105,7 @@ func (m *NotTransmittedToManyReTransmissions) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NotTransmittedToManyReTransmissionsParse(readBuffer utils.ReadBuffer) (*Confirmation, error) {
+func NotTransmittedToManyReTransmissionsParse(readBuffer utils.ReadBuffer) (*NotTransmittedToManyReTransmissions, error) {
 	if pullErr := readBuffer.PullContext("NotTransmittedToManyReTransmissions"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -123,7 +121,7 @@ func NotTransmittedToManyReTransmissionsParse(readBuffer utils.ReadBuffer) (*Con
 		Confirmation: &Confirmation{},
 	}
 	_child.Confirmation.Child = _child
-	return _child.Confirmation, nil
+	return _child, nil
 }
 
 func (m *NotTransmittedToManyReTransmissions) Serialize(writeBuffer utils.WriteBuffer) error {

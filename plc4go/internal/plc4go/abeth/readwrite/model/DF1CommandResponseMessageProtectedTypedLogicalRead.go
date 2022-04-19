@@ -49,15 +49,17 @@ type IDF1CommandResponseMessageProtectedTypedLogicalRead interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) CommandCode() uint8 {
-	return 0x4F
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) GetCommandCode() uint8 {
 	return 0x4F
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) InitializeParent(parent *DF1ResponseMessage, destinationAddress uint8, sourceAddress uint8, status uint8, transactionCounter uint16) {
 	m.DF1ResponseMessage.DestinationAddress = destinationAddress
@@ -66,25 +68,31 @@ func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) InitializeParent(pa
 	m.DF1ResponseMessage.TransactionCounter = transactionCounter
 }
 
+func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) GetParent() *DF1ResponseMessage {
+	return m.DF1ResponseMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) GetData() []uint8 {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDF1CommandResponseMessageProtectedTypedLogicalRead factory function for DF1CommandResponseMessageProtectedTypedLogicalRead
-func NewDF1CommandResponseMessageProtectedTypedLogicalRead(data []uint8, destinationAddress uint8, sourceAddress uint8, status uint8, transactionCounter uint16, payloadLength uint16) *DF1ResponseMessage {
-	child := &DF1CommandResponseMessageProtectedTypedLogicalRead{
+func NewDF1CommandResponseMessageProtectedTypedLogicalRead(data []uint8, destinationAddress uint8, sourceAddress uint8, status uint8, transactionCounter uint16, payloadLength uint16) *DF1CommandResponseMessageProtectedTypedLogicalRead {
+	_result := &DF1CommandResponseMessageProtectedTypedLogicalRead{
 		Data:               data,
 		DF1ResponseMessage: NewDF1ResponseMessage(destinationAddress, sourceAddress, status, transactionCounter, payloadLength),
 	}
-	child.Child = child
-	return child.DF1ResponseMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastDF1CommandResponseMessageProtectedTypedLogicalRead(structType interface{}) *DF1CommandResponseMessageProtectedTypedLogicalRead {
@@ -126,7 +134,7 @@ func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) GetLengthInBytes() 
 	return m.GetLengthInBits() / 8
 }
 
-func DF1CommandResponseMessageProtectedTypedLogicalReadParse(readBuffer utils.ReadBuffer, payloadLength uint16) (*DF1ResponseMessage, error) {
+func DF1CommandResponseMessageProtectedTypedLogicalReadParse(readBuffer utils.ReadBuffer, payloadLength uint16) (*DF1CommandResponseMessageProtectedTypedLogicalRead, error) {
 	if pullErr := readBuffer.PullContext("DF1CommandResponseMessageProtectedTypedLogicalRead"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -164,7 +172,7 @@ func DF1CommandResponseMessageProtectedTypedLogicalReadParse(readBuffer utils.Re
 		DF1ResponseMessage: &DF1ResponseMessage{},
 	}
 	_child.DF1ResponseMessage.Child = _child
-	return _child.DF1ResponseMessage, nil
+	return _child, nil
 }
 
 func (m *DF1CommandResponseMessageProtectedTypedLogicalRead) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -49,16 +49,26 @@ type ICALDataReplyReply interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALDataReplyReply) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *CALDataReplyReply) GetParent() *CALData {
+	return m.CALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALDataReplyReply) GetParamNumber() uint8 {
 	return m.ParamNumber
 }
@@ -67,19 +77,20 @@ func (m *CALDataReplyReply) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCALDataReplyReply factory function for CALDataReplyReply
-func NewCALDataReplyReply(paramNumber uint8, data []byte, commandTypeContainer CALCommandTypeContainer) *CALData {
-	child := &CALDataReplyReply{
+func NewCALDataReplyReply(paramNumber uint8, data []byte, commandTypeContainer CALCommandTypeContainer) *CALDataReplyReply {
+	_result := &CALDataReplyReply{
 		ParamNumber: paramNumber,
 		Data:        data,
 		CALData:     NewCALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.CALData
+	_result.Child = _result
+	return _result
 }
 
 func CastCALDataReplyReply(structType interface{}) *CALDataReplyReply {
@@ -124,7 +135,7 @@ func (m *CALDataReplyReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALDataReplyReplyParse(readBuffer utils.ReadBuffer, commandTypeContainer CALCommandTypeContainer) (*CALData, error) {
+func CALDataReplyReplyParse(readBuffer utils.ReadBuffer, commandTypeContainer CALCommandTypeContainer) (*CALDataReplyReply, error) {
 	if pullErr := readBuffer.PullContext("CALDataReplyReply"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -155,7 +166,7 @@ func CALDataReplyReplyParse(readBuffer utils.ReadBuffer, commandTypeContainer CA
 		CALData:     &CALData{},
 	}
 	_child.CALData.Child = _child
-	return _child.CALData, nil
+	return _child, nil
 }
 
 func (m *CALDataReplyReply) Serialize(writeBuffer utils.WriteBuffer) error {

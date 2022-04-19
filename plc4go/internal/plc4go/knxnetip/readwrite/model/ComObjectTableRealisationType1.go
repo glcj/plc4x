@@ -52,21 +52,28 @@ type IComObjectTableRealisationType1 interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ComObjectTableRealisationType1) FirmwareType() FirmwareType {
-	return FirmwareType_SYSTEM_1
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ComObjectTableRealisationType1) GetFirmwareType() FirmwareType {
 	return FirmwareType_SYSTEM_1
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ComObjectTableRealisationType1) InitializeParent(parent *ComObjectTable) {}
 
+func (m *ComObjectTableRealisationType1) GetParent() *ComObjectTable {
+	return m.ComObjectTable
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ComObjectTableRealisationType1) GetNumEntries() uint8 {
 	return m.NumEntries
 }
@@ -79,20 +86,21 @@ func (m *ComObjectTableRealisationType1) GetComObjectDescriptors() []*GroupObjec
 	return m.ComObjectDescriptors
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewComObjectTableRealisationType1 factory function for ComObjectTableRealisationType1
-func NewComObjectTableRealisationType1(numEntries uint8, ramFlagsTablePointer uint8, comObjectDescriptors []*GroupObjectDescriptorRealisationType1) *ComObjectTable {
-	child := &ComObjectTableRealisationType1{
+func NewComObjectTableRealisationType1(numEntries uint8, ramFlagsTablePointer uint8, comObjectDescriptors []*GroupObjectDescriptorRealisationType1) *ComObjectTableRealisationType1 {
+	_result := &ComObjectTableRealisationType1{
 		NumEntries:           numEntries,
 		RamFlagsTablePointer: ramFlagsTablePointer,
 		ComObjectDescriptors: comObjectDescriptors,
 		ComObjectTable:       NewComObjectTable(),
 	}
-	child.Child = child
-	return child.ComObjectTable
+	_result.Child = _result
+	return _result
 }
 
 func CastComObjectTableRealisationType1(structType interface{}) *ComObjectTableRealisationType1 {
@@ -143,7 +151,7 @@ func (m *ComObjectTableRealisationType1) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ComObjectTableRealisationType1Parse(readBuffer utils.ReadBuffer, firmwareType FirmwareType) (*ComObjectTable, error) {
+func ComObjectTableRealisationType1Parse(readBuffer utils.ReadBuffer, firmwareType FirmwareType) (*ComObjectTableRealisationType1, error) {
 	if pullErr := readBuffer.PullContext("ComObjectTableRealisationType1"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -195,7 +203,7 @@ func ComObjectTableRealisationType1Parse(readBuffer utils.ReadBuffer, firmwareTy
 		ComObjectTable:       &ComObjectTable{},
 	}
 	_child.ComObjectTable.Child = _child
-	return _child.ComObjectTable, nil
+	return _child, nil
 }
 
 func (m *ComObjectTableRealisationType1) Serialize(writeBuffer utils.WriteBuffer) error {

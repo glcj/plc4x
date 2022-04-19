@@ -52,21 +52,28 @@ type IDeviceConfigurationRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DeviceConfigurationRequest) MsgType() uint16 {
-	return 0x0310
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DeviceConfigurationRequest) GetMsgType() uint16 {
 	return 0x0310
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *DeviceConfigurationRequest) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *DeviceConfigurationRequest) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *DeviceConfigurationRequest) GetDeviceConfigurationRequestDataBlock() *DeviceConfigurationRequestDataBlock {
 	return m.DeviceConfigurationRequestDataBlock
 }
@@ -75,19 +82,20 @@ func (m *DeviceConfigurationRequest) GetCemi() *CEMI {
 	return m.Cemi
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDeviceConfigurationRequest factory function for DeviceConfigurationRequest
-func NewDeviceConfigurationRequest(deviceConfigurationRequestDataBlock *DeviceConfigurationRequestDataBlock, cemi *CEMI, totalLength uint16) *KnxNetIpMessage {
-	child := &DeviceConfigurationRequest{
+func NewDeviceConfigurationRequest(deviceConfigurationRequestDataBlock *DeviceConfigurationRequestDataBlock, cemi *CEMI, totalLength uint16) *DeviceConfigurationRequest {
+	_result := &DeviceConfigurationRequest{
 		DeviceConfigurationRequestDataBlock: deviceConfigurationRequestDataBlock,
 		Cemi:                                cemi,
 		KnxNetIpMessage:                     NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastDeviceConfigurationRequest(structType interface{}) *DeviceConfigurationRequest {
@@ -130,7 +138,7 @@ func (m *DeviceConfigurationRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func DeviceConfigurationRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*KnxNetIpMessage, error) {
+func DeviceConfigurationRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*DeviceConfigurationRequest, error) {
 	if pullErr := readBuffer.PullContext("DeviceConfigurationRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -174,7 +182,7 @@ func DeviceConfigurationRequestParse(readBuffer utils.ReadBuffer, totalLength ui
 		KnxNetIpMessage:                     &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *DeviceConfigurationRequest) Serialize(writeBuffer utils.WriteBuffer) error {

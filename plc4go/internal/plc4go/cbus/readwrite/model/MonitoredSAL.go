@@ -61,13 +61,16 @@ type IMonitoredSALParent interface {
 type IMonitoredSALChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *MonitoredSAL, salType byte, salData *SALData)
+	GetParent() *MonitoredSAL
+
 	GetTypeName() string
 	IMonitoredSAL
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *MonitoredSAL) GetSalType() byte {
 	return m.SalType
 }
@@ -76,8 +79,25 @@ func (m *MonitoredSAL) GetSalData() *SALData {
 	return m.SalData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *MonitoredSAL) GetCr() byte {
+	return MonitoredSAL_CR
+}
+
+func (m *MonitoredSAL) GetLf() byte {
+	return MonitoredSAL_LF
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewMonitoredSAL factory function for MonitoredSAL
@@ -91,6 +111,9 @@ func CastMonitoredSAL(structType interface{}) *MonitoredSAL {
 	}
 	if casted, ok := structType.(*MonitoredSAL); ok {
 		return casted
+	}
+	if casted, ok := structType.(IMonitoredSALChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -145,13 +168,17 @@ func MonitoredSALParse(readBuffer utils.ReadBuffer) (*MonitoredSAL, error) {
 	readBuffer.Reset(currentPos)
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *MonitoredSAL
+	type MonitoredSALChild interface {
+		InitializeParent(*MonitoredSAL, byte, *SALData)
+		GetParent() *MonitoredSAL
+	}
+	var _child MonitoredSALChild
 	var typeSwitchError error
 	switch {
 	case salType == 0x05: // MonitoredSALLongFormSmartMode
-		_parent, typeSwitchError = MonitoredSALLongFormSmartModeParse(readBuffer)
+		_child, typeSwitchError = MonitoredSALLongFormSmartModeParse(readBuffer)
 	case true: // MonitoredSALShortFormBasicMode
-		_parent, typeSwitchError = MonitoredSALShortFormBasicModeParse(readBuffer)
+		_child, typeSwitchError = MonitoredSALShortFormBasicModeParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -204,8 +231,8 @@ func MonitoredSALParse(readBuffer utils.ReadBuffer) (*MonitoredSAL, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, salType, salData)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), salType, salData)
+	return _child.GetParent(), nil
 }
 
 func (m *MonitoredSAL) Serialize(writeBuffer utils.WriteBuffer) error {

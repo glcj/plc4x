@@ -53,22 +53,29 @@ type IBACnetConfirmedServiceRequestReinitializeDevice interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestReinitializeDevice) ServiceChoice() uint8 {
-	return 0x14
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestReinitializeDevice) GetServiceChoice() uint8 {
 	return 0x14
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestReinitializeDevice) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
+func (m *BACnetConfirmedServiceRequestReinitializeDevice) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestReinitializeDevice) GetReinitializedStateOfDevice() *BACnetContextTagDeviceState {
 	return m.ReinitializedStateOfDevice
 }
@@ -77,19 +84,20 @@ func (m *BACnetConfirmedServiceRequestReinitializeDevice) GetPassword() *BACnetC
 	return m.Password
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConfirmedServiceRequestReinitializeDevice factory function for BACnetConfirmedServiceRequestReinitializeDevice
-func NewBACnetConfirmedServiceRequestReinitializeDevice(reinitializedStateOfDevice *BACnetContextTagDeviceState, password *BACnetContextTagCharacterString, len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestReinitializeDevice{
+func NewBACnetConfirmedServiceRequestReinitializeDevice(reinitializedStateOfDevice *BACnetContextTagDeviceState, password *BACnetContextTagCharacterString, len uint16) *BACnetConfirmedServiceRequestReinitializeDevice {
+	_result := &BACnetConfirmedServiceRequestReinitializeDevice{
 		ReinitializedStateOfDevice:    reinitializedStateOfDevice,
 		Password:                      password,
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestReinitializeDevice(structType interface{}) *BACnetConfirmedServiceRequestReinitializeDevice {
@@ -134,7 +142,7 @@ func (m *BACnetConfirmedServiceRequestReinitializeDevice) GetLengthInBytes() uin
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestReinitializeDeviceParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestReinitializeDeviceParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestReinitializeDevice, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestReinitializeDevice"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -186,7 +194,7 @@ func BACnetConfirmedServiceRequestReinitializeDeviceParse(readBuffer utils.ReadB
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestReinitializeDevice) Serialize(writeBuffer utils.WriteBuffer) error {

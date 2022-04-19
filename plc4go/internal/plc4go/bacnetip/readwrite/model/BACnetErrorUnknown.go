@@ -42,36 +42,34 @@ type IBACnetErrorUnknown interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorUnknown) ServiceChoice() uint8 {
-	return 0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorUnknown) GetServiceChoice() uint8 {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorUnknown) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorUnknown) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorUnknown factory function for BACnetErrorUnknown
-func NewBACnetErrorUnknown(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorUnknown{
+func NewBACnetErrorUnknown(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorUnknown {
+	_result := &BACnetErrorUnknown{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorUnknown(structType interface{}) *BACnetErrorUnknown {
@@ -108,7 +106,7 @@ func (m *BACnetErrorUnknown) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorUnknownParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorUnknownParse(readBuffer utils.ReadBuffer) (*BACnetErrorUnknown, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorUnknown"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorUnknownParse(readBuffer utils.ReadBuffer) (*BACnetError, error) 
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorUnknown) Serialize(writeBuffer utils.WriteBuffer) error {

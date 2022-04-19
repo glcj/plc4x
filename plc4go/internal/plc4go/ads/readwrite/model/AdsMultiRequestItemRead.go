@@ -52,21 +52,28 @@ type IAdsMultiRequestItemRead interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsMultiRequestItemRead) IndexGroup() uint32 {
-	return uint32(61568)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsMultiRequestItemRead) GetIndexGroup() uint32 {
 	return uint32(61568)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsMultiRequestItemRead) InitializeParent(parent *AdsMultiRequestItem) {}
 
+func (m *AdsMultiRequestItemRead) GetParent() *AdsMultiRequestItem {
+	return m.AdsMultiRequestItem
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsMultiRequestItemRead) GetItemIndexGroup() uint32 {
 	return m.ItemIndexGroup
 }
@@ -79,20 +86,21 @@ func (m *AdsMultiRequestItemRead) GetItemReadLength() uint32 {
 	return m.ItemReadLength
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsMultiRequestItemRead factory function for AdsMultiRequestItemRead
-func NewAdsMultiRequestItemRead(itemIndexGroup uint32, itemIndexOffset uint32, itemReadLength uint32) *AdsMultiRequestItem {
-	child := &AdsMultiRequestItemRead{
+func NewAdsMultiRequestItemRead(itemIndexGroup uint32, itemIndexOffset uint32, itemReadLength uint32) *AdsMultiRequestItemRead {
+	_result := &AdsMultiRequestItemRead{
 		ItemIndexGroup:      itemIndexGroup,
 		ItemIndexOffset:     itemIndexOffset,
 		ItemReadLength:      itemReadLength,
 		AdsMultiRequestItem: NewAdsMultiRequestItem(),
 	}
-	child.Child = child
-	return child.AdsMultiRequestItem
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsMultiRequestItemRead(structType interface{}) *AdsMultiRequestItemRead {
@@ -138,7 +146,7 @@ func (m *AdsMultiRequestItemRead) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsMultiRequestItemReadParse(readBuffer utils.ReadBuffer, indexGroup uint32) (*AdsMultiRequestItem, error) {
+func AdsMultiRequestItemReadParse(readBuffer utils.ReadBuffer, indexGroup uint32) (*AdsMultiRequestItemRead, error) {
 	if pullErr := readBuffer.PullContext("AdsMultiRequestItemRead"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -178,7 +186,7 @@ func AdsMultiRequestItemReadParse(readBuffer utils.ReadBuffer, indexGroup uint32
 		AdsMultiRequestItem: &AdsMultiRequestItem{},
 	}
 	_child.AdsMultiRequestItem.Child = _child
-	return _child.AdsMultiRequestItem, nil
+	return _child, nil
 }
 
 func (m *AdsMultiRequestItemRead) Serialize(writeBuffer utils.WriteBuffer) error {

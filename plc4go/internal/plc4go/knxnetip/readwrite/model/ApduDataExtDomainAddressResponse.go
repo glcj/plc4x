@@ -45,33 +45,31 @@ type IApduDataExtDomainAddressResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtDomainAddressResponse) ExtApciType() uint8 {
-	return 0x22
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtDomainAddressResponse) GetExtApciType() uint8 {
 	return 0x22
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtDomainAddressResponse) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtDomainAddressResponse) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtDomainAddressResponse factory function for ApduDataExtDomainAddressResponse
-func NewApduDataExtDomainAddressResponse(length uint8) *ApduDataExt {
-	child := &ApduDataExtDomainAddressResponse{
+func NewApduDataExtDomainAddressResponse(length uint8) *ApduDataExtDomainAddressResponse {
+	_result := &ApduDataExtDomainAddressResponse{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtDomainAddressResponse(structType interface{}) *ApduDataExtDomainAddressResponse {
@@ -108,7 +106,7 @@ func (m *ApduDataExtDomainAddressResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtDomainAddressResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtDomainAddressResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtDomainAddressResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtDomainAddressResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtDomainAddressResponseParse(readBuffer utils.ReadBuffer, length u
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtDomainAddressResponse) Serialize(writeBuffer utils.WriteBuffer) error {

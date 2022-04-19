@@ -52,21 +52,28 @@ type IFirmataCommandSetPinMode interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *FirmataCommandSetPinMode) CommandCode() uint8 {
-	return 0x4
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *FirmataCommandSetPinMode) GetCommandCode() uint8 {
 	return 0x4
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *FirmataCommandSetPinMode) InitializeParent(parent *FirmataCommand) {}
 
+func (m *FirmataCommandSetPinMode) GetParent() *FirmataCommand {
+	return m.FirmataCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *FirmataCommandSetPinMode) GetPin() uint8 {
 	return m.Pin
 }
@@ -75,19 +82,20 @@ func (m *FirmataCommandSetPinMode) GetMode() PinMode {
 	return m.Mode
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewFirmataCommandSetPinMode factory function for FirmataCommandSetPinMode
-func NewFirmataCommandSetPinMode(pin uint8, mode PinMode, response bool) *FirmataCommand {
-	child := &FirmataCommandSetPinMode{
+func NewFirmataCommandSetPinMode(pin uint8, mode PinMode, response bool) *FirmataCommandSetPinMode {
+	_result := &FirmataCommandSetPinMode{
 		Pin:            pin,
 		Mode:           mode,
 		FirmataCommand: NewFirmataCommand(response),
 	}
-	child.Child = child
-	return child.FirmataCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastFirmataCommandSetPinMode(structType interface{}) *FirmataCommandSetPinMode {
@@ -130,7 +138,7 @@ func (m *FirmataCommandSetPinMode) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func FirmataCommandSetPinModeParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommand, error) {
+func FirmataCommandSetPinModeParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommandSetPinMode, error) {
 	if pullErr := readBuffer.PullContext("FirmataCommandSetPinMode"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -168,7 +176,7 @@ func FirmataCommandSetPinModeParse(readBuffer utils.ReadBuffer, response bool) (
 		FirmataCommand: &FirmataCommand{},
 	}
 	_child.FirmataCommand.Child = _child
-	return _child.FirmataCommand, nil
+	return _child, nil
 }
 
 func (m *FirmataCommandSetPinMode) Serialize(writeBuffer utils.WriteBuffer) error {

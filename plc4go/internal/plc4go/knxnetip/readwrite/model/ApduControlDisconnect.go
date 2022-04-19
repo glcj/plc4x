@@ -42,33 +42,31 @@ type IApduControlDisconnect interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduControlDisconnect) ControlType() uint8 {
-	return 0x1
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduControlDisconnect) GetControlType() uint8 {
 	return 0x1
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduControlDisconnect) InitializeParent(parent *ApduControl) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduControlDisconnect) GetParent() *ApduControl {
+	return m.ApduControl
+}
 
 // NewApduControlDisconnect factory function for ApduControlDisconnect
-func NewApduControlDisconnect() *ApduControl {
-	child := &ApduControlDisconnect{
+func NewApduControlDisconnect() *ApduControlDisconnect {
+	_result := &ApduControlDisconnect{
 		ApduControl: NewApduControl(),
 	}
-	child.Child = child
-	return child.ApduControl
+	_result.Child = _result
+	return _result
 }
 
 func CastApduControlDisconnect(structType interface{}) *ApduControlDisconnect {
@@ -105,7 +103,7 @@ func (m *ApduControlDisconnect) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduControlDisconnectParse(readBuffer utils.ReadBuffer) (*ApduControl, error) {
+func ApduControlDisconnectParse(readBuffer utils.ReadBuffer) (*ApduControlDisconnect, error) {
 	if pullErr := readBuffer.PullContext("ApduControlDisconnect"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func ApduControlDisconnectParse(readBuffer utils.ReadBuffer) (*ApduControl, erro
 		ApduControl: &ApduControl{},
 	}
 	_child.ApduControl.Child = _child
-	return _child.ApduControl, nil
+	return _child, nil
 }
 
 func (m *ApduControlDisconnect) Serialize(writeBuffer utils.WriteBuffer) error {

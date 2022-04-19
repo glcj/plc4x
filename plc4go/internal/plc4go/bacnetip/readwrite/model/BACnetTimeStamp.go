@@ -63,13 +63,16 @@ type IBACnetTimeStampParent interface {
 type IBACnetTimeStampChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *BACnetTimeStamp, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag)
+	GetParent() *BACnetTimeStamp
+
 	GetTypeName() string
 	IBACnetTimeStamp
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetTimeStamp) GetOpeningTag() *BACnetOpeningTag {
 	return m.OpeningTag
 }
@@ -82,12 +85,22 @@ func (m *BACnetTimeStamp) GetClosingTag() *BACnetClosingTag {
 	return m.ClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetTimeStamp) GetPeekedTagNumber() uint8 {
-	return m.GetPeekedTagHeader().GetActualTagNumber()
+	return uint8(m.GetPeekedTagHeader().GetActualTagNumber())
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetTimeStamp factory function for BACnetTimeStamp
 func NewBACnetTimeStamp(openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetTimeStamp {
@@ -100,6 +113,9 @@ func CastBACnetTimeStamp(structType interface{}) *BACnetTimeStamp {
 	}
 	if casted, ok := structType.(*BACnetTimeStamp); ok {
 		return casted
+	}
+	if casted, ok := structType.(IBACnetTimeStampChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -168,15 +184,19 @@ func BACnetTimeStampParse(readBuffer utils.ReadBuffer, tagNumber uint8) (*BACnet
 	_ = peekedTagNumber
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *BACnetTimeStamp
+	type BACnetTimeStampChild interface {
+		InitializeParent(*BACnetTimeStamp, *BACnetOpeningTag, *BACnetTagHeader, *BACnetClosingTag)
+		GetParent() *BACnetTimeStamp
+	}
+	var _child BACnetTimeStampChild
 	var typeSwitchError error
 	switch {
 	case peekedTagNumber == uint8(0): // BACnetTimeStampTime
-		_parent, typeSwitchError = BACnetTimeStampTimeParse(readBuffer, tagNumber)
+		_child, typeSwitchError = BACnetTimeStampTimeParse(readBuffer, tagNumber)
 	case peekedTagNumber == uint8(1): // BACnetTimeStampSequence
-		_parent, typeSwitchError = BACnetTimeStampSequenceParse(readBuffer, tagNumber)
+		_child, typeSwitchError = BACnetTimeStampSequenceParse(readBuffer, tagNumber)
 	case peekedTagNumber == uint8(2): // BACnetTimeStampDateTime
-		_parent, typeSwitchError = BACnetTimeStampDateTimeParse(readBuffer, tagNumber)
+		_child, typeSwitchError = BACnetTimeStampDateTimeParse(readBuffer, tagNumber)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -203,8 +223,8 @@ func BACnetTimeStampParse(readBuffer utils.ReadBuffer, tagNumber uint8) (*BACnet
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, openingTag, peekedTagHeader, closingTag)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), openingTag, peekedTagHeader, closingTag)
+	return _child.GetParent(), nil
 }
 
 func (m *BACnetTimeStamp) Serialize(writeBuffer utils.WriteBuffer) error {

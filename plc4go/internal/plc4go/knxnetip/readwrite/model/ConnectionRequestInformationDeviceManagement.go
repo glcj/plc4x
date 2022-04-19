@@ -42,34 +42,32 @@ type IConnectionRequestInformationDeviceManagement interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ConnectionRequestInformationDeviceManagement) ConnectionType() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ConnectionRequestInformationDeviceManagement) GetConnectionType() uint8 {
 	return 0x03
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ConnectionRequestInformationDeviceManagement) InitializeParent(parent *ConnectionRequestInformation) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ConnectionRequestInformationDeviceManagement) GetParent() *ConnectionRequestInformation {
+	return m.ConnectionRequestInformation
+}
 
 // NewConnectionRequestInformationDeviceManagement factory function for ConnectionRequestInformationDeviceManagement
-func NewConnectionRequestInformationDeviceManagement() *ConnectionRequestInformation {
-	child := &ConnectionRequestInformationDeviceManagement{
+func NewConnectionRequestInformationDeviceManagement() *ConnectionRequestInformationDeviceManagement {
+	_result := &ConnectionRequestInformationDeviceManagement{
 		ConnectionRequestInformation: NewConnectionRequestInformation(),
 	}
-	child.Child = child
-	return child.ConnectionRequestInformation
+	_result.Child = _result
+	return _result
 }
 
 func CastConnectionRequestInformationDeviceManagement(structType interface{}) *ConnectionRequestInformationDeviceManagement {
@@ -106,7 +104,7 @@ func (m *ConnectionRequestInformationDeviceManagement) GetLengthInBytes() uint16
 	return m.GetLengthInBits() / 8
 }
 
-func ConnectionRequestInformationDeviceManagementParse(readBuffer utils.ReadBuffer) (*ConnectionRequestInformation, error) {
+func ConnectionRequestInformationDeviceManagementParse(readBuffer utils.ReadBuffer) (*ConnectionRequestInformationDeviceManagement, error) {
 	if pullErr := readBuffer.PullContext("ConnectionRequestInformationDeviceManagement"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -122,7 +120,7 @@ func ConnectionRequestInformationDeviceManagementParse(readBuffer utils.ReadBuff
 		ConnectionRequestInformation: &ConnectionRequestInformation{},
 	}
 	_child.ConnectionRequestInformation.Child = _child
-	return _child.ConnectionRequestInformation, nil
+	return _child, nil
 }
 
 func (m *ConnectionRequestInformationDeviceManagement) Serialize(writeBuffer utils.WriteBuffer) error {

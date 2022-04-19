@@ -50,38 +50,58 @@ type ICEMIAdditionalInformationRelativeTimestamp interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CEMIAdditionalInformationRelativeTimestamp) AdditionalInformationType() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CEMIAdditionalInformationRelativeTimestamp) GetAdditionalInformationType() uint8 {
 	return 0x04
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *CEMIAdditionalInformationRelativeTimestamp) InitializeParent(parent *CEMIAdditionalInformation) {
 }
 
+func (m *CEMIAdditionalInformationRelativeTimestamp) GetParent() *CEMIAdditionalInformation {
+	return m.CEMIAdditionalInformation
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CEMIAdditionalInformationRelativeTimestamp) GetRelativeTimestamp() *RelativeTimestamp {
 	return m.RelativeTimestamp
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CEMIAdditionalInformationRelativeTimestamp) GetLen() uint8 {
+	return CEMIAdditionalInformationRelativeTimestamp_LEN
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewCEMIAdditionalInformationRelativeTimestamp factory function for CEMIAdditionalInformationRelativeTimestamp
-func NewCEMIAdditionalInformationRelativeTimestamp(relativeTimestamp *RelativeTimestamp) *CEMIAdditionalInformation {
-	child := &CEMIAdditionalInformationRelativeTimestamp{
+func NewCEMIAdditionalInformationRelativeTimestamp(relativeTimestamp *RelativeTimestamp) *CEMIAdditionalInformationRelativeTimestamp {
+	_result := &CEMIAdditionalInformationRelativeTimestamp{
 		RelativeTimestamp:         relativeTimestamp,
 		CEMIAdditionalInformation: NewCEMIAdditionalInformation(),
 	}
-	child.Child = child
-	return child.CEMIAdditionalInformation
+	_result.Child = _result
+	return _result
 }
 
 func CastCEMIAdditionalInformationRelativeTimestamp(structType interface{}) *CEMIAdditionalInformationRelativeTimestamp {
@@ -124,7 +144,7 @@ func (m *CEMIAdditionalInformationRelativeTimestamp) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CEMIAdditionalInformationRelativeTimestampParse(readBuffer utils.ReadBuffer) (*CEMIAdditionalInformation, error) {
+func CEMIAdditionalInformationRelativeTimestampParse(readBuffer utils.ReadBuffer) (*CEMIAdditionalInformationRelativeTimestamp, error) {
 	if pullErr := readBuffer.PullContext("CEMIAdditionalInformationRelativeTimestamp"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -163,7 +183,7 @@ func CEMIAdditionalInformationRelativeTimestampParse(readBuffer utils.ReadBuffer
 		CEMIAdditionalInformation: &CEMIAdditionalInformation{},
 	}
 	_child.CEMIAdditionalInformation.Child = _child
-	return _child.CEMIAdditionalInformation, nil
+	return _child, nil
 }
 
 func (m *CEMIAdditionalInformationRelativeTimestamp) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,23 +42,21 @@ type ILDataFrameACK interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *LDataFrameACK) NotAckFrame() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *LDataFrameACK) GetNotAckFrame() bool {
 	return bool(false)
-}
-
-func (m *LDataFrameACK) Polling() bool {
-	return false
 }
 
 func (m *LDataFrameACK) GetPolling() bool {
 	return false
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *LDataFrameACK) InitializeParent(parent *LDataFrame, frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) {
 	m.LDataFrame.FrameType = frameType
@@ -68,21 +66,17 @@ func (m *LDataFrameACK) InitializeParent(parent *LDataFrame, frameType bool, not
 	m.LDataFrame.ErrorFlag = errorFlag
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *LDataFrameACK) GetParent() *LDataFrame {
+	return m.LDataFrame
+}
 
 // NewLDataFrameACK factory function for LDataFrameACK
-func NewLDataFrameACK(frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) *LDataFrame {
-	child := &LDataFrameACK{
+func NewLDataFrameACK(frameType bool, notRepeated bool, priority CEMIPriority, acknowledgeRequested bool, errorFlag bool) *LDataFrameACK {
+	_result := &LDataFrameACK{
 		LDataFrame: NewLDataFrame(frameType, notRepeated, priority, acknowledgeRequested, errorFlag),
 	}
-	child.Child = child
-	return child.LDataFrame
+	_result.Child = _result
+	return _result
 }
 
 func CastLDataFrameACK(structType interface{}) *LDataFrameACK {
@@ -119,7 +113,7 @@ func (m *LDataFrameACK) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func LDataFrameACKParse(readBuffer utils.ReadBuffer) (*LDataFrame, error) {
+func LDataFrameACKParse(readBuffer utils.ReadBuffer) (*LDataFrameACK, error) {
 	if pullErr := readBuffer.PullContext("LDataFrameACK"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -135,7 +129,7 @@ func LDataFrameACKParse(readBuffer utils.ReadBuffer) (*LDataFrame, error) {
 		LDataFrame: &LDataFrame{},
 	}
 	_child.LDataFrame.Child = _child
-	return _child.LDataFrame, nil
+	return _child, nil
 }
 
 func (m *LDataFrameACK) Serialize(writeBuffer utils.WriteBuffer) error {

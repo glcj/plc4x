@@ -42,36 +42,34 @@ type IBACnetErrorDeviceCommunicationProtocol interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorDeviceCommunicationProtocol) ServiceChoice() uint8 {
-	return 0x11
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorDeviceCommunicationProtocol) GetServiceChoice() uint8 {
 	return 0x11
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorDeviceCommunicationProtocol) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorDeviceCommunicationProtocol) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorDeviceCommunicationProtocol factory function for BACnetErrorDeviceCommunicationProtocol
-func NewBACnetErrorDeviceCommunicationProtocol(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorDeviceCommunicationProtocol{
+func NewBACnetErrorDeviceCommunicationProtocol(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorDeviceCommunicationProtocol {
+	_result := &BACnetErrorDeviceCommunicationProtocol{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorDeviceCommunicationProtocol(structType interface{}) *BACnetErrorDeviceCommunicationProtocol {
@@ -108,7 +106,7 @@ func (m *BACnetErrorDeviceCommunicationProtocol) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorDeviceCommunicationProtocolParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorDeviceCommunicationProtocolParse(readBuffer utils.ReadBuffer) (*BACnetErrorDeviceCommunicationProtocol, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorDeviceCommunicationProtocol"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorDeviceCommunicationProtocolParse(readBuffer utils.ReadBuffer) (*
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorDeviceCommunicationProtocol) Serialize(writeBuffer utils.WriteBuffer) error {

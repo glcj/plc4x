@@ -49,37 +49,45 @@ type ICOTPParameterTpduSize interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *COTPParameterTpduSize) ParameterType() uint8 {
-	return 0xC0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *COTPParameterTpduSize) GetParameterType() uint8 {
 	return 0xC0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *COTPParameterTpduSize) InitializeParent(parent *COTPParameter) {}
 
+func (m *COTPParameterTpduSize) GetParent() *COTPParameter {
+	return m.COTPParameter
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *COTPParameterTpduSize) GetTpduSize() COTPTpduSize {
 	return m.TpduSize
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCOTPParameterTpduSize factory function for COTPParameterTpduSize
-func NewCOTPParameterTpduSize(tpduSize COTPTpduSize, rest uint8) *COTPParameter {
-	child := &COTPParameterTpduSize{
+func NewCOTPParameterTpduSize(tpduSize COTPTpduSize, rest uint8) *COTPParameterTpduSize {
+	_result := &COTPParameterTpduSize{
 		TpduSize:      tpduSize,
 		COTPParameter: NewCOTPParameter(rest),
 	}
-	child.Child = child
-	return child.COTPParameter
+	_result.Child = _result
+	return _result
 }
 
 func CastCOTPParameterTpduSize(structType interface{}) *COTPParameterTpduSize {
@@ -119,7 +127,7 @@ func (m *COTPParameterTpduSize) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func COTPParameterTpduSizeParse(readBuffer utils.ReadBuffer, rest uint8) (*COTPParameter, error) {
+func COTPParameterTpduSizeParse(readBuffer utils.ReadBuffer, rest uint8) (*COTPParameterTpduSize, error) {
 	if pullErr := readBuffer.PullContext("COTPParameterTpduSize"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -149,7 +157,7 @@ func COTPParameterTpduSizeParse(readBuffer utils.ReadBuffer, rest uint8) (*COTPP
 		COTPParameter: &COTPParameter{},
 	}
 	_child.COTPParameter.Child = _child
-	return _child.COTPParameter, nil
+	return _child, nil
 }
 
 func (m *COTPParameterTpduSize) Serialize(writeBuffer utils.WriteBuffer) error {

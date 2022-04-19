@@ -46,15 +46,17 @@ type IDF1CommandRequestMessage interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DF1CommandRequestMessage) CommandCode() uint8 {
-	return 0x0F
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DF1CommandRequestMessage) GetCommandCode() uint8 {
 	return 0x0F
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *DF1CommandRequestMessage) InitializeParent(parent *DF1RequestMessage, destinationAddress uint8, sourceAddress uint8, status uint8, transactionCounter uint16) {
 	m.DF1RequestMessage.DestinationAddress = destinationAddress
@@ -63,25 +65,31 @@ func (m *DF1CommandRequestMessage) InitializeParent(parent *DF1RequestMessage, d
 	m.DF1RequestMessage.TransactionCounter = transactionCounter
 }
 
+func (m *DF1CommandRequestMessage) GetParent() *DF1RequestMessage {
+	return m.DF1RequestMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *DF1CommandRequestMessage) GetCommand() *DF1RequestCommand {
 	return m.Command
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDF1CommandRequestMessage factory function for DF1CommandRequestMessage
-func NewDF1CommandRequestMessage(command *DF1RequestCommand, destinationAddress uint8, sourceAddress uint8, status uint8, transactionCounter uint16) *DF1RequestMessage {
-	child := &DF1CommandRequestMessage{
+func NewDF1CommandRequestMessage(command *DF1RequestCommand, destinationAddress uint8, sourceAddress uint8, status uint8, transactionCounter uint16) *DF1CommandRequestMessage {
+	_result := &DF1CommandRequestMessage{
 		Command:           command,
 		DF1RequestMessage: NewDF1RequestMessage(destinationAddress, sourceAddress, status, transactionCounter),
 	}
-	child.Child = child
-	return child.DF1RequestMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastDF1CommandRequestMessage(structType interface{}) *DF1CommandRequestMessage {
@@ -121,7 +129,7 @@ func (m *DF1CommandRequestMessage) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func DF1CommandRequestMessageParse(readBuffer utils.ReadBuffer) (*DF1RequestMessage, error) {
+func DF1CommandRequestMessageParse(readBuffer utils.ReadBuffer) (*DF1CommandRequestMessage, error) {
 	if pullErr := readBuffer.PullContext("DF1CommandRequestMessage"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -151,7 +159,7 @@ func DF1CommandRequestMessageParse(readBuffer utils.ReadBuffer) (*DF1RequestMess
 		DF1RequestMessage: &DF1RequestMessage{},
 	}
 	_child.DF1RequestMessage.Child = _child
-	return _child.DF1RequestMessage, nil
+	return _child, nil
 }
 
 func (m *DF1CommandRequestMessage) Serialize(writeBuffer utils.WriteBuffer) error {

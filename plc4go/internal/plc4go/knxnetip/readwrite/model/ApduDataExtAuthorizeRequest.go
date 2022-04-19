@@ -52,21 +52,28 @@ type IApduDataExtAuthorizeRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtAuthorizeRequest) ExtApciType() uint8 {
-	return 0x11
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtAuthorizeRequest) GetExtApciType() uint8 {
 	return 0x11
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtAuthorizeRequest) InitializeParent(parent *ApduDataExt) {}
 
+func (m *ApduDataExtAuthorizeRequest) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ApduDataExtAuthorizeRequest) GetLevel() uint8 {
 	return m.Level
 }
@@ -75,19 +82,20 @@ func (m *ApduDataExtAuthorizeRequest) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewApduDataExtAuthorizeRequest factory function for ApduDataExtAuthorizeRequest
-func NewApduDataExtAuthorizeRequest(level uint8, data []byte, length uint8) *ApduDataExt {
-	child := &ApduDataExtAuthorizeRequest{
+func NewApduDataExtAuthorizeRequest(level uint8, data []byte, length uint8) *ApduDataExtAuthorizeRequest {
+	_result := &ApduDataExtAuthorizeRequest{
 		Level:       level,
 		Data:        data,
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtAuthorizeRequest(structType interface{}) *ApduDataExtAuthorizeRequest {
@@ -132,7 +140,7 @@ func (m *ApduDataExtAuthorizeRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtAuthorizeRequestParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtAuthorizeRequestParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtAuthorizeRequest, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtAuthorizeRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -163,7 +171,7 @@ func ApduDataExtAuthorizeRequestParse(readBuffer utils.ReadBuffer, length uint8)
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtAuthorizeRequest) Serialize(writeBuffer utils.WriteBuffer) error {

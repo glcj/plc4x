@@ -49,16 +49,26 @@ type ICALDataRequestGetStatus interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALDataRequestGetStatus) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *CALDataRequestGetStatus) GetParent() *CALData {
+	return m.CALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALDataRequestGetStatus) GetParamNo() uint8 {
 	return m.ParamNo
 }
@@ -67,19 +77,20 @@ func (m *CALDataRequestGetStatus) GetCount() uint8 {
 	return m.Count
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCALDataRequestGetStatus factory function for CALDataRequestGetStatus
-func NewCALDataRequestGetStatus(paramNo uint8, count uint8, commandTypeContainer CALCommandTypeContainer) *CALData {
-	child := &CALDataRequestGetStatus{
+func NewCALDataRequestGetStatus(paramNo uint8, count uint8, commandTypeContainer CALCommandTypeContainer) *CALDataRequestGetStatus {
+	_result := &CALDataRequestGetStatus{
 		ParamNo: paramNo,
 		Count:   count,
 		CALData: NewCALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.CALData
+	_result.Child = _result
+	return _result
 }
 
 func CastCALDataRequestGetStatus(structType interface{}) *CALDataRequestGetStatus {
@@ -122,7 +133,7 @@ func (m *CALDataRequestGetStatus) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALDataRequestGetStatusParse(readBuffer utils.ReadBuffer) (*CALData, error) {
+func CALDataRequestGetStatusParse(readBuffer utils.ReadBuffer) (*CALDataRequestGetStatus, error) {
 	if pullErr := readBuffer.PullContext("CALDataRequestGetStatus"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -154,7 +165,7 @@ func CALDataRequestGetStatusParse(readBuffer utils.ReadBuffer) (*CALData, error)
 		CALData: &CALData{},
 	}
 	_child.CALData.Child = _child
-	return _child.CALData, nil
+	return _child, nil
 }
 
 func (m *CALDataRequestGetStatus) Serialize(writeBuffer utils.WriteBuffer) error {

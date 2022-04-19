@@ -42,41 +42,35 @@ type IAdsInvalidResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsInvalidResponse) CommandId() CommandId {
-	return CommandId_INVALID
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsInvalidResponse) GetCommandId() CommandId {
 	return CommandId_INVALID
-}
-
-func (m *AdsInvalidResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *AdsInvalidResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsInvalidResponse) InitializeParent(parent *AdsData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *AdsInvalidResponse) GetParent() *AdsData {
+	return m.AdsData
+}
 
 // NewAdsInvalidResponse factory function for AdsInvalidResponse
-func NewAdsInvalidResponse() *AdsData {
-	child := &AdsInvalidResponse{
+func NewAdsInvalidResponse() *AdsInvalidResponse {
+	_result := &AdsInvalidResponse{
 		AdsData: NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsInvalidResponse(structType interface{}) *AdsInvalidResponse {
@@ -113,7 +107,7 @@ func (m *AdsInvalidResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsInvalidResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsInvalidResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsInvalidResponse, error) {
 	if pullErr := readBuffer.PullContext("AdsInvalidResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func AdsInvalidResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, r
 		AdsData: &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsInvalidResponse) Serialize(writeBuffer utils.WriteBuffer) error {

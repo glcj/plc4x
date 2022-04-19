@@ -45,33 +45,31 @@ type IMPropWriteReq interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *MPropWriteReq) MessageCode() uint8 {
-	return 0xF6
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *MPropWriteReq) GetMessageCode() uint8 {
 	return 0xF6
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *MPropWriteReq) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *MPropWriteReq) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewMPropWriteReq factory function for MPropWriteReq
-func NewMPropWriteReq(size uint16) *CEMI {
-	child := &MPropWriteReq{
+func NewMPropWriteReq(size uint16) *MPropWriteReq {
+	_result := &MPropWriteReq{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastMPropWriteReq(structType interface{}) *MPropWriteReq {
@@ -108,7 +106,7 @@ func (m *MPropWriteReq) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MPropWriteReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func MPropWriteReqParse(readBuffer utils.ReadBuffer, size uint16) (*MPropWriteReq, error) {
 	if pullErr := readBuffer.PullContext("MPropWriteReq"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func MPropWriteReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error)
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *MPropWriteReq) Serialize(writeBuffer utils.WriteBuffer) error {

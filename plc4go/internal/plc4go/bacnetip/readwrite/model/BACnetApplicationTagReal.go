@@ -48,35 +48,55 @@ type IBACnetApplicationTagReal interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagReal) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagReal) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagReal) GetPayload() *BACnetTagPayloadReal {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagReal) GetActualValue() float32 {
-	return m.GetPayload().GetValue()
+	return float32(m.GetPayload().GetValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagReal factory function for BACnetApplicationTagReal
-func NewBACnetApplicationTagReal(payload *BACnetTagPayloadReal, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagReal{
+func NewBACnetApplicationTagReal(payload *BACnetTagPayloadReal, header *BACnetTagHeader) *BACnetApplicationTagReal {
+	_result := &BACnetApplicationTagReal{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagReal(structType interface{}) *BACnetApplicationTagReal {
@@ -118,7 +138,7 @@ func (m *BACnetApplicationTagReal) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagRealParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagRealParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTagReal, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagReal"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -153,7 +173,7 @@ func BACnetApplicationTagRealParse(readBuffer utils.ReadBuffer) (*BACnetApplicat
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagReal) Serialize(writeBuffer utils.WriteBuffer) error {

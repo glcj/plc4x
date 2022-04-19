@@ -54,21 +54,28 @@ type IIdentifyReplyCommandNetworkVoltage interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandNetworkVoltage) Attribute() Attribute {
-	return Attribute_NetworkVoltage
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandNetworkVoltage) GetAttribute() Attribute {
 	return Attribute_NetworkVoltage
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandNetworkVoltage) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandNetworkVoltage) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandNetworkVoltage) GetVolts() string {
 	return m.Volts
 }
@@ -77,19 +84,36 @@ func (m *IdentifyReplyCommandNetworkVoltage) GetVoltsDecimalPlace() string {
 	return m.VoltsDecimalPlace
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *IdentifyReplyCommandNetworkVoltage) GetDot() byte {
+	return IdentifyReplyCommandNetworkVoltage_DOT
+}
+
+func (m *IdentifyReplyCommandNetworkVoltage) GetV() byte {
+	return IdentifyReplyCommandNetworkVoltage_V
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandNetworkVoltage factory function for IdentifyReplyCommandNetworkVoltage
-func NewIdentifyReplyCommandNetworkVoltage(volts string, voltsDecimalPlace string) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandNetworkVoltage{
+func NewIdentifyReplyCommandNetworkVoltage(volts string, voltsDecimalPlace string) *IdentifyReplyCommandNetworkVoltage {
+	_result := &IdentifyReplyCommandNetworkVoltage{
 		Volts:                volts,
 		VoltsDecimalPlace:    voltsDecimalPlace,
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandNetworkVoltage(structType interface{}) *IdentifyReplyCommandNetworkVoltage {
@@ -138,7 +162,7 @@ func (m *IdentifyReplyCommandNetworkVoltage) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandNetworkVoltage, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandNetworkVoltage"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -188,7 +212,7 @@ func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attrib
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandNetworkVoltage) Serialize(writeBuffer utils.WriteBuffer) error {

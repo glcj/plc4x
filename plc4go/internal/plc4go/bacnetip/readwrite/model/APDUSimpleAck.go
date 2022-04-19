@@ -53,21 +53,28 @@ type IAPDUSimpleAck interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUSimpleAck) ApduType() uint8 {
-	return 0x2
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUSimpleAck) GetApduType() uint8 {
 	return 0x2
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUSimpleAck) InitializeParent(parent *APDU) {}
 
+func (m *APDUSimpleAck) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUSimpleAck) GetOriginalInvokeId() uint8 {
 	return m.OriginalInvokeId
 }
@@ -76,19 +83,20 @@ func (m *APDUSimpleAck) GetServiceChoice() uint8 {
 	return m.ServiceChoice
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUSimpleAck factory function for APDUSimpleAck
-func NewAPDUSimpleAck(originalInvokeId uint8, serviceChoice uint8, apduLength uint16) *APDU {
-	child := &APDUSimpleAck{
+func NewAPDUSimpleAck(originalInvokeId uint8, serviceChoice uint8, apduLength uint16) *APDUSimpleAck {
+	_result := &APDUSimpleAck{
 		OriginalInvokeId: originalInvokeId,
 		ServiceChoice:    serviceChoice,
 		APDU:             NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUSimpleAck(structType interface{}) *APDUSimpleAck {
@@ -134,7 +142,7 @@ func (m *APDUSimpleAck) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDUSimpleAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDUSimpleAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUSimpleAck, error) {
 	if pullErr := readBuffer.PullContext("APDUSimpleAck"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -180,7 +188,7 @@ func APDUSimpleAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, 
 		APDU:             &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUSimpleAck) Serialize(writeBuffer utils.WriteBuffer) error {

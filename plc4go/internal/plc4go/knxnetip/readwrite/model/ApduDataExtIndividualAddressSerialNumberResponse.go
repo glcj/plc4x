@@ -45,33 +45,31 @@ type IApduDataExtIndividualAddressSerialNumberResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtIndividualAddressSerialNumberResponse) ExtApciType() uint8 {
-	return 0x1D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtIndividualAddressSerialNumberResponse) GetExtApciType() uint8 {
 	return 0x1D
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtIndividualAddressSerialNumberResponse) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtIndividualAddressSerialNumberResponse) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtIndividualAddressSerialNumberResponse factory function for ApduDataExtIndividualAddressSerialNumberResponse
-func NewApduDataExtIndividualAddressSerialNumberResponse(length uint8) *ApduDataExt {
-	child := &ApduDataExtIndividualAddressSerialNumberResponse{
+func NewApduDataExtIndividualAddressSerialNumberResponse(length uint8) *ApduDataExtIndividualAddressSerialNumberResponse {
+	_result := &ApduDataExtIndividualAddressSerialNumberResponse{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtIndividualAddressSerialNumberResponse(structType interface{}) *ApduDataExtIndividualAddressSerialNumberResponse {
@@ -108,7 +106,7 @@ func (m *ApduDataExtIndividualAddressSerialNumberResponse) GetLengthInBytes() ui
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtIndividualAddressSerialNumberResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtIndividualAddressSerialNumberResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtIndividualAddressSerialNumberResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtIndividualAddressSerialNumberResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtIndividualAddressSerialNumberResponseParse(readBuffer utils.Read
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtIndividualAddressSerialNumberResponse) Serialize(writeBuffer utils.WriteBuffer) error {

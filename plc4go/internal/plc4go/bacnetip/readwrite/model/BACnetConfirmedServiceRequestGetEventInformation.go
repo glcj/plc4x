@@ -45,34 +45,32 @@ type IBACnetConfirmedServiceRequestGetEventInformation interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestGetEventInformation) ServiceChoice() uint8 {
-	return 0x1D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestGetEventInformation) GetServiceChoice() uint8 {
 	return 0x1D
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestGetEventInformation) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceRequestGetEventInformation) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
 
 // NewBACnetConfirmedServiceRequestGetEventInformation factory function for BACnetConfirmedServiceRequestGetEventInformation
-func NewBACnetConfirmedServiceRequestGetEventInformation(len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestGetEventInformation{
+func NewBACnetConfirmedServiceRequestGetEventInformation(len uint16) *BACnetConfirmedServiceRequestGetEventInformation {
+	_result := &BACnetConfirmedServiceRequestGetEventInformation{
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestGetEventInformation(structType interface{}) *BACnetConfirmedServiceRequestGetEventInformation {
@@ -109,7 +107,7 @@ func (m *BACnetConfirmedServiceRequestGetEventInformation) GetLengthInBytes() ui
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestGetEventInformationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestGetEventInformationParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestGetEventInformation, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestGetEventInformation"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func BACnetConfirmedServiceRequestGetEventInformationParse(readBuffer utils.Read
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestGetEventInformation) Serialize(writeBuffer utils.WriteBuffer) error {

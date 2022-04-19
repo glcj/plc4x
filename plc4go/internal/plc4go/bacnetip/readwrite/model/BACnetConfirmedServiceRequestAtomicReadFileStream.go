@@ -49,7 +49,12 @@ type IBACnetConfirmedServiceRequestAtomicReadFileStream interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetConfirmedServiceRequestAtomicReadFileStream) InitializeParent(parent *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord, peekedTagHeader *BACnetTagHeader, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
@@ -58,9 +63,14 @@ func (m *BACnetConfirmedServiceRequestAtomicReadFileStream) InitializeParent(par
 	m.BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord.ClosingTag = closingTag
 }
 
+func (m *BACnetConfirmedServiceRequestAtomicReadFileStream) GetParent() *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord {
+	return m.BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestAtomicReadFileStream) GetFileStartPosition() *BACnetApplicationTagSignedInteger {
 	return m.FileStartPosition
 }
@@ -69,19 +79,20 @@ func (m *BACnetConfirmedServiceRequestAtomicReadFileStream) GetRequestOctetCount
 	return m.RequestOctetCount
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConfirmedServiceRequestAtomicReadFileStream factory function for BACnetConfirmedServiceRequestAtomicReadFileStream
-func NewBACnetConfirmedServiceRequestAtomicReadFileStream(fileStartPosition *BACnetApplicationTagSignedInteger, requestOctetCount *BACnetApplicationTagUnsignedInteger, peekedTagHeader *BACnetTagHeader, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) *BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord {
-	child := &BACnetConfirmedServiceRequestAtomicReadFileStream{
+func NewBACnetConfirmedServiceRequestAtomicReadFileStream(fileStartPosition *BACnetApplicationTagSignedInteger, requestOctetCount *BACnetApplicationTagUnsignedInteger, peekedTagHeader *BACnetTagHeader, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) *BACnetConfirmedServiceRequestAtomicReadFileStream {
+	_result := &BACnetConfirmedServiceRequestAtomicReadFileStream{
 		FileStartPosition: fileStartPosition,
 		RequestOctetCount: requestOctetCount,
 		BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord: NewBACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord(peekedTagHeader, openingTag, closingTag),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestAtomicReadFileStream(structType interface{}) *BACnetConfirmedServiceRequestAtomicReadFileStream {
@@ -124,7 +135,7 @@ func (m *BACnetConfirmedServiceRequestAtomicReadFileStream) GetLengthInBytes() u
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestAtomicReadFileStreamParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord, error) {
+func BACnetConfirmedServiceRequestAtomicReadFileStreamParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceRequestAtomicReadFileStream, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestAtomicReadFileStream"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -168,7 +179,7 @@ func BACnetConfirmedServiceRequestAtomicReadFileStreamParse(readBuffer utils.Rea
 		BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord: &BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord{},
 	}
 	_child.BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord.Child = _child
-	return _child.BACnetConfirmedServiceRequestAtomicReadFileStreamOrRecord, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestAtomicReadFileStream) Serialize(writeBuffer utils.WriteBuffer) error {

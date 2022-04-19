@@ -42,36 +42,34 @@ type IBACnetErrorGetEventInformation interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorGetEventInformation) ServiceChoice() uint8 {
-	return 0x1D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorGetEventInformation) GetServiceChoice() uint8 {
 	return 0x1D
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorGetEventInformation) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorGetEventInformation) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorGetEventInformation factory function for BACnetErrorGetEventInformation
-func NewBACnetErrorGetEventInformation(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorGetEventInformation{
+func NewBACnetErrorGetEventInformation(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorGetEventInformation {
+	_result := &BACnetErrorGetEventInformation{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorGetEventInformation(structType interface{}) *BACnetErrorGetEventInformation {
@@ -108,7 +106,7 @@ func (m *BACnetErrorGetEventInformation) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetErrorGetEventInformation, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorGetEventInformation"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetEr
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorGetEventInformation) Serialize(writeBuffer utils.WriteBuffer) error {

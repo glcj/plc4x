@@ -42,15 +42,17 @@ type IEipDisconnectRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *EipDisconnectRequest) Command() uint16 {
-	return 0x0066
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *EipDisconnectRequest) GetCommand() uint16 {
 	return 0x0066
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *EipDisconnectRequest) InitializeParent(parent *EipPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
 	m.EipPacket.SessionHandle = sessionHandle
@@ -59,21 +61,17 @@ func (m *EipDisconnectRequest) InitializeParent(parent *EipPacket, sessionHandle
 	m.EipPacket.Options = options
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *EipDisconnectRequest) GetParent() *EipPacket {
+	return m.EipPacket
+}
 
 // NewEipDisconnectRequest factory function for EipDisconnectRequest
-func NewEipDisconnectRequest(sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *EipPacket {
-	child := &EipDisconnectRequest{
+func NewEipDisconnectRequest(sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *EipDisconnectRequest {
+	_result := &EipDisconnectRequest{
 		EipPacket: NewEipPacket(sessionHandle, status, senderContext, options),
 	}
-	child.Child = child
-	return child.EipPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastEipDisconnectRequest(structType interface{}) *EipDisconnectRequest {
@@ -110,7 +108,7 @@ func (m *EipDisconnectRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func EipDisconnectRequestParse(readBuffer utils.ReadBuffer) (*EipPacket, error) {
+func EipDisconnectRequestParse(readBuffer utils.ReadBuffer) (*EipDisconnectRequest, error) {
 	if pullErr := readBuffer.PullContext("EipDisconnectRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -126,7 +124,7 @@ func EipDisconnectRequestParse(readBuffer utils.ReadBuffer) (*EipPacket, error) 
 		EipPacket: &EipPacket{},
 	}
 	_child.EipPacket.Child = _child
-	return _child.EipPacket, nil
+	return _child, nil
 }
 
 func (m *EipDisconnectRequest) Serialize(writeBuffer utils.WriteBuffer) error {

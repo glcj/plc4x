@@ -42,33 +42,31 @@ type IIdentifyReplyCommandMaximumLevels interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandMaximumLevels) Attribute() Attribute {
-	return Attribute_MaximumLevels
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandMaximumLevels) GetAttribute() Attribute {
 	return Attribute_MaximumLevels
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandMaximumLevels) InitializeParent(parent *IdentifyReplyCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *IdentifyReplyCommandMaximumLevels) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
 
 // NewIdentifyReplyCommandMaximumLevels factory function for IdentifyReplyCommandMaximumLevels
-func NewIdentifyReplyCommandMaximumLevels() *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandMaximumLevels{
+func NewIdentifyReplyCommandMaximumLevels() *IdentifyReplyCommandMaximumLevels {
+	_result := &IdentifyReplyCommandMaximumLevels{
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandMaximumLevels(structType interface{}) *IdentifyReplyCommandMaximumLevels {
@@ -105,7 +103,7 @@ func (m *IdentifyReplyCommandMaximumLevels) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandMaximumLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandMaximumLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandMaximumLevels, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandMaximumLevels"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func IdentifyReplyCommandMaximumLevelsParse(readBuffer utils.ReadBuffer, attribu
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandMaximumLevels) Serialize(writeBuffer utils.WriteBuffer) error {

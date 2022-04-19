@@ -49,29 +49,32 @@ type IAdsReadResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsReadResponse) CommandId() CommandId {
-	return CommandId_ADS_READ
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsReadResponse) GetCommandId() CommandId {
 	return CommandId_ADS_READ
-}
-
-func (m *AdsReadResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *AdsReadResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsReadResponse) InitializeParent(parent *AdsData) {}
 
+func (m *AdsReadResponse) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsReadResponse) GetResult() ReturnCode {
 	return m.Result
 }
@@ -80,19 +83,20 @@ func (m *AdsReadResponse) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsReadResponse factory function for AdsReadResponse
-func NewAdsReadResponse(result ReturnCode, data []byte) *AdsData {
-	child := &AdsReadResponse{
+func NewAdsReadResponse(result ReturnCode, data []byte) *AdsReadResponse {
+	_result := &AdsReadResponse{
 		Result:  result,
 		Data:    data,
 		AdsData: NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsReadResponse(structType interface{}) *AdsReadResponse {
@@ -140,7 +144,7 @@ func (m *AdsReadResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsReadResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsReadResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsReadResponse, error) {
 	if pullErr := readBuffer.PullContext("AdsReadResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -184,7 +188,7 @@ func AdsReadResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, resp
 		AdsData: &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsReadResponse) Serialize(writeBuffer utils.WriteBuffer) error {

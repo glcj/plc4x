@@ -42,34 +42,32 @@ type IBACnetConfirmedServiceACKRemovedReadPropertyConditional interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKRemovedReadPropertyConditional) ServiceChoice() uint8 {
-	return 0x0D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKRemovedReadPropertyConditional) GetServiceChoice() uint8 {
 	return 0x0D
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKRemovedReadPropertyConditional) InitializeParent(parent *BACnetConfirmedServiceACK) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKRemovedReadPropertyConditional) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKRemovedReadPropertyConditional factory function for BACnetConfirmedServiceACKRemovedReadPropertyConditional
-func NewBACnetConfirmedServiceACKRemovedReadPropertyConditional() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKRemovedReadPropertyConditional{
+func NewBACnetConfirmedServiceACKRemovedReadPropertyConditional() *BACnetConfirmedServiceACKRemovedReadPropertyConditional {
+	_result := &BACnetConfirmedServiceACKRemovedReadPropertyConditional{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKRemovedReadPropertyConditional(structType interface{}) *BACnetConfirmedServiceACKRemovedReadPropertyConditional {
@@ -106,7 +104,7 @@ func (m *BACnetConfirmedServiceACKRemovedReadPropertyConditional) GetLengthInByt
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKRemovedReadPropertyConditionalParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKRemovedReadPropertyConditionalParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKRemovedReadPropertyConditional, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKRemovedReadPropertyConditional"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -122,7 +120,7 @@ func BACnetConfirmedServiceACKRemovedReadPropertyConditionalParse(readBuffer uti
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKRemovedReadPropertyConditional) Serialize(writeBuffer utils.WriteBuffer) error {

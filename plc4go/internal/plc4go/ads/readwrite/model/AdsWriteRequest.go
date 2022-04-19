@@ -52,29 +52,32 @@ type IAdsWriteRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsWriteRequest) CommandId() CommandId {
-	return CommandId_ADS_WRITE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsWriteRequest) GetCommandId() CommandId {
 	return CommandId_ADS_WRITE
-}
-
-func (m *AdsWriteRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *AdsWriteRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsWriteRequest) InitializeParent(parent *AdsData) {}
 
+func (m *AdsWriteRequest) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsWriteRequest) GetIndexGroup() uint32 {
 	return m.IndexGroup
 }
@@ -87,20 +90,21 @@ func (m *AdsWriteRequest) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsWriteRequest factory function for AdsWriteRequest
-func NewAdsWriteRequest(indexGroup uint32, indexOffset uint32, data []byte) *AdsData {
-	child := &AdsWriteRequest{
+func NewAdsWriteRequest(indexGroup uint32, indexOffset uint32, data []byte) *AdsWriteRequest {
+	_result := &AdsWriteRequest{
 		IndexGroup:  indexGroup,
 		IndexOffset: indexOffset,
 		Data:        data,
 		AdsData:     NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsWriteRequest(structType interface{}) *AdsWriteRequest {
@@ -151,7 +155,7 @@ func (m *AdsWriteRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsWriteRequest, error) {
 	if pullErr := readBuffer.PullContext("AdsWriteRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -197,7 +201,7 @@ func AdsWriteRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, resp
 		AdsData:     &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsWriteRequest) Serialize(writeBuffer utils.WriteBuffer) error {

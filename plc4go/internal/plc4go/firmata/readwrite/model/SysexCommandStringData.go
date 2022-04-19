@@ -42,41 +42,35 @@ type ISysexCommandStringData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandStringData) CommandType() uint8 {
-	return 0x71
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandStringData) GetCommandType() uint8 {
 	return 0x71
-}
-
-func (m *SysexCommandStringData) Response() bool {
-	return false
 }
 
 func (m *SysexCommandStringData) GetResponse() bool {
 	return false
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandStringData) InitializeParent(parent *SysexCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *SysexCommandStringData) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
 
 // NewSysexCommandStringData factory function for SysexCommandStringData
-func NewSysexCommandStringData() *SysexCommand {
-	child := &SysexCommandStringData{
+func NewSysexCommandStringData() *SysexCommandStringData {
+	_result := &SysexCommandStringData{
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandStringData(structType interface{}) *SysexCommandStringData {
@@ -113,7 +107,7 @@ func (m *SysexCommandStringData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandStringDataParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandStringDataParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandStringData, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandStringData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func SysexCommandStringDataParse(readBuffer utils.ReadBuffer, response bool) (*S
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandStringData) Serialize(writeBuffer utils.WriteBuffer) error {

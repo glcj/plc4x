@@ -72,21 +72,28 @@ type IAPDUComplexAck interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUComplexAck) ApduType() uint8 {
-	return 0x3
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUComplexAck) GetApduType() uint8 {
 	return 0x3
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUComplexAck) InitializeParent(parent *APDU) {}
 
+func (m *APDUComplexAck) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUComplexAck) GetSegmentedMessage() bool {
 	return m.SegmentedMessage
 }
@@ -119,13 +126,14 @@ func (m *APDUComplexAck) GetSegment() []byte {
 	return m.Segment
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUComplexAck factory function for APDUComplexAck
-func NewAPDUComplexAck(segmentedMessage bool, moreFollows bool, originalInvokeId uint8, sequenceNumber *uint8, proposedWindowSize *uint8, serviceAck *BACnetServiceAck, segmentServiceChoice *uint8, segment []byte, apduLength uint16) *APDU {
-	child := &APDUComplexAck{
+func NewAPDUComplexAck(segmentedMessage bool, moreFollows bool, originalInvokeId uint8, sequenceNumber *uint8, proposedWindowSize *uint8, serviceAck *BACnetServiceAck, segmentServiceChoice *uint8, segment []byte, apduLength uint16) *APDUComplexAck {
+	_result := &APDUComplexAck{
 		SegmentedMessage:     segmentedMessage,
 		MoreFollows:          moreFollows,
 		OriginalInvokeId:     originalInvokeId,
@@ -136,8 +144,8 @@ func NewAPDUComplexAck(segmentedMessage bool, moreFollows bool, originalInvokeId
 		Segment:              segment,
 		APDU:                 NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUComplexAck(structType interface{}) *APDUComplexAck {
@@ -211,7 +219,7 @@ func (m *APDUComplexAck) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDUComplexAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDUComplexAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUComplexAck, error) {
 	if pullErr := readBuffer.PullContext("APDUComplexAck"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -331,7 +339,7 @@ func APDUComplexAckParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU,
 		APDU:                 &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUComplexAck) Serialize(writeBuffer utils.WriteBuffer) error {

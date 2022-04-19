@@ -52,19 +52,23 @@ type IReplyParent interface {
 type IReplyChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *Reply, magicByte byte)
+	GetParent() *Reply
+
 	GetTypeName() string
 	IReply
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *Reply) GetMagicByte() byte {
 	return m.MagicByte
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewReply factory function for Reply
@@ -78,6 +82,9 @@ func CastReply(structType interface{}) *Reply {
 	}
 	if casted, ok := structType.(*Reply); ok {
 		return casted
+	}
+	if casted, ok := structType.(IReplyChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -121,21 +128,25 @@ func ReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 	readBuffer.Reset(currentPos)
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *Reply
+	type ReplyChild interface {
+		InitializeParent(*Reply, byte)
+		GetParent() *Reply
+	}
+	var _child ReplyChild
 	var typeSwitchError error
 	switch {
 	case magicByte == 0x0: // CALReplyReply
-		_parent, typeSwitchError = CALReplyReplyParse(readBuffer)
+		_child, typeSwitchError = CALReplyReplyParse(readBuffer)
 	case magicByte == 0x0: // MonitoredSALReply
-		_parent, typeSwitchError = MonitoredSALReplyParse(readBuffer)
+		_child, typeSwitchError = MonitoredSALReplyParse(readBuffer)
 	case magicByte == 0x0: // ConfirmationReply
-		_parent, typeSwitchError = ConfirmationReplyParse(readBuffer)
+		_child, typeSwitchError = ConfirmationReplyParse(readBuffer)
 	case magicByte == 0x0: // PowerUpReply
-		_parent, typeSwitchError = PowerUpReplyParse(readBuffer)
+		_child, typeSwitchError = PowerUpReplyParse(readBuffer)
 	case magicByte == 0x0: // ParameterChangeReply
-		_parent, typeSwitchError = ParameterChangeReplyParse(readBuffer)
+		_child, typeSwitchError = ParameterChangeReplyParse(readBuffer)
 	case magicByte == 0x0: // ExclamationMarkReply
-		_parent, typeSwitchError = ExclamationMarkReplyParse(readBuffer)
+		_child, typeSwitchError = ExclamationMarkReplyParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -149,8 +160,8 @@ func ReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, magicByte)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), magicByte)
+	return _child.GetParent(), nil
 }
 
 func (m *Reply) Serialize(writeBuffer utils.WriteBuffer) error {

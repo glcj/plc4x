@@ -42,33 +42,31 @@ type IIdentifyReplyCommandNetworkTerminalLevels interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandNetworkTerminalLevels) Attribute() Attribute {
-	return Attribute_NetworkTerminalLevels
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandNetworkTerminalLevels) GetAttribute() Attribute {
 	return Attribute_NetworkTerminalLevels
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandNetworkTerminalLevels) InitializeParent(parent *IdentifyReplyCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *IdentifyReplyCommandNetworkTerminalLevels) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
 
 // NewIdentifyReplyCommandNetworkTerminalLevels factory function for IdentifyReplyCommandNetworkTerminalLevels
-func NewIdentifyReplyCommandNetworkTerminalLevels() *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandNetworkTerminalLevels{
+func NewIdentifyReplyCommandNetworkTerminalLevels() *IdentifyReplyCommandNetworkTerminalLevels {
+	_result := &IdentifyReplyCommandNetworkTerminalLevels{
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandNetworkTerminalLevels(structType interface{}) *IdentifyReplyCommandNetworkTerminalLevels {
@@ -105,7 +103,7 @@ func (m *IdentifyReplyCommandNetworkTerminalLevels) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandNetworkTerminalLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandNetworkTerminalLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandNetworkTerminalLevels, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandNetworkTerminalLevels"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func IdentifyReplyCommandNetworkTerminalLevelsParse(readBuffer utils.ReadBuffer,
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandNetworkTerminalLevels) Serialize(writeBuffer utils.WriteBuffer) error {

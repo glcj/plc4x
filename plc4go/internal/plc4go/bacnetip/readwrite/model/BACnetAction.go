@@ -52,26 +52,37 @@ type IBACnetAction interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetAction) GetRawData() *BACnetContextTagEnumerated {
 	return m.RawData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetAction) GetIsDirect() bool {
 	rawData := m.RawData
 	_ = rawData
-	return bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (0)))
+	return bool(bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (0))))
 }
 
 func (m *BACnetAction) GetIsReverse() bool {
 	rawData := m.RawData
 	_ = rawData
-	return bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (1)))
+	return bool(bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (1))))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetAction factory function for BACnetAction
 func NewBACnetAction(rawData *BACnetContextTagEnumerated, tagNumber uint8) *BACnetAction {

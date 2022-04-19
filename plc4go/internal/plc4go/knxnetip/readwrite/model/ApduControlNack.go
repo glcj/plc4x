@@ -42,33 +42,31 @@ type IApduControlNack interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduControlNack) ControlType() uint8 {
-	return 0x3
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduControlNack) GetControlType() uint8 {
 	return 0x3
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduControlNack) InitializeParent(parent *ApduControl) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduControlNack) GetParent() *ApduControl {
+	return m.ApduControl
+}
 
 // NewApduControlNack factory function for ApduControlNack
-func NewApduControlNack() *ApduControl {
-	child := &ApduControlNack{
+func NewApduControlNack() *ApduControlNack {
+	_result := &ApduControlNack{
 		ApduControl: NewApduControl(),
 	}
-	child.Child = child
-	return child.ApduControl
+	_result.Child = _result
+	return _result
 }
 
 func CastApduControlNack(structType interface{}) *ApduControlNack {
@@ -105,7 +103,7 @@ func (m *ApduControlNack) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduControlNackParse(readBuffer utils.ReadBuffer) (*ApduControl, error) {
+func ApduControlNackParse(readBuffer utils.ReadBuffer) (*ApduControlNack, error) {
 	if pullErr := readBuffer.PullContext("ApduControlNack"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func ApduControlNackParse(readBuffer utils.ReadBuffer) (*ApduControl, error) {
 		ApduControl: &ApduControl{},
 	}
 	_child.ApduControl.Child = _child
-	return _child.ApduControl, nil
+	return _child, nil
 }
 
 func (m *ApduControlNack) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -54,17 +54,11 @@ type ICipServiceParent interface {
 type ICipServiceChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *CipService)
+	GetParent() *CipService
+
 	GetTypeName() string
 	ICipService
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewCipService factory function for CipService
 func NewCipService(serviceLen uint16) *CipService {
@@ -77,6 +71,9 @@ func CastCipService(structType interface{}) *CipService {
 	}
 	if casted, ok := structType.(*CipService); ok {
 		return casted
+	}
+	if casted, ok := structType.(ICipServiceChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -119,23 +116,27 @@ func CipServiceParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipServic
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *CipService
+	type CipServiceChild interface {
+		InitializeParent(*CipService)
+		GetParent() *CipService
+	}
+	var _child CipServiceChild
 	var typeSwitchError error
 	switch {
 	case service == 0x4C: // CipReadRequest
-		_parent, typeSwitchError = CipReadRequestParse(readBuffer, serviceLen)
+		_child, typeSwitchError = CipReadRequestParse(readBuffer, serviceLen)
 	case service == 0xCC: // CipReadResponse
-		_parent, typeSwitchError = CipReadResponseParse(readBuffer, serviceLen)
+		_child, typeSwitchError = CipReadResponseParse(readBuffer, serviceLen)
 	case service == 0x4D: // CipWriteRequest
-		_parent, typeSwitchError = CipWriteRequestParse(readBuffer, serviceLen)
+		_child, typeSwitchError = CipWriteRequestParse(readBuffer, serviceLen)
 	case service == 0xCD: // CipWriteResponse
-		_parent, typeSwitchError = CipWriteResponseParse(readBuffer, serviceLen)
+		_child, typeSwitchError = CipWriteResponseParse(readBuffer, serviceLen)
 	case service == 0x0A: // MultipleServiceRequest
-		_parent, typeSwitchError = MultipleServiceRequestParse(readBuffer, serviceLen)
+		_child, typeSwitchError = MultipleServiceRequestParse(readBuffer, serviceLen)
 	case service == 0x8A: // MultipleServiceResponse
-		_parent, typeSwitchError = MultipleServiceResponseParse(readBuffer, serviceLen)
+		_child, typeSwitchError = MultipleServiceResponseParse(readBuffer, serviceLen)
 	case service == 0x52: // CipUnconnectedRequest
-		_parent, typeSwitchError = CipUnconnectedRequestParse(readBuffer, serviceLen)
+		_child, typeSwitchError = CipUnconnectedRequestParse(readBuffer, serviceLen)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -149,8 +150,8 @@ func CipServiceParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipServic
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *CipService) Serialize(writeBuffer utils.WriteBuffer) error {

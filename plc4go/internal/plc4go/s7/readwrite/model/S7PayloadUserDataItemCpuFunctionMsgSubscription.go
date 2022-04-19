@@ -56,40 +56,39 @@ type IS7PayloadUserDataItemCpuFunctionMsgSubscription interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) CpuFunctionType() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetCpuFunctionType() uint8 {
 	return 0x04
-}
-
-func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) CpuSubfunction() uint8 {
-	return 0x02
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetCpuSubfunction() uint8 {
 	return 0x02
 }
 
-func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) DataLength() uint16 {
-	return 0
-}
-
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetDataLength() uint16 {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
 	m.S7PayloadUserDataItem.ReturnCode = returnCode
 	m.S7PayloadUserDataItem.TransportSize = transportSize
 }
 
+func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetParent() *S7PayloadUserDataItem {
+	return m.S7PayloadUserDataItem
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetSubscription() uint8 {
 	return m.Subscription
 }
@@ -106,21 +105,22 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetReserve() *uint8 {
 	return m.Reserve
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7PayloadUserDataItemCpuFunctionMsgSubscription factory function for S7PayloadUserDataItemCpuFunctionMsgSubscription
-func NewS7PayloadUserDataItemCpuFunctionMsgSubscription(Subscription uint8, magicKey string, Alarmtype *AlarmStateType, Reserve *uint8, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
-	child := &S7PayloadUserDataItemCpuFunctionMsgSubscription{
+func NewS7PayloadUserDataItemCpuFunctionMsgSubscription(Subscription uint8, magicKey string, Alarmtype *AlarmStateType, Reserve *uint8, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItemCpuFunctionMsgSubscription {
+	_result := &S7PayloadUserDataItemCpuFunctionMsgSubscription{
 		Subscription:          Subscription,
 		MagicKey:              magicKey,
 		Alarmtype:             Alarmtype,
 		Reserve:               Reserve,
 		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Child = child
-	return child.S7PayloadUserDataItem
+	_result.Child = _result
+	return _result
 }
 
 func CastS7PayloadUserDataItemCpuFunctionMsgSubscription(structType interface{}) *S7PayloadUserDataItemCpuFunctionMsgSubscription {
@@ -176,7 +176,7 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) GetLengthInBytes() uin
 	return m.GetLengthInBits() / 8
 }
 
-func S7PayloadUserDataItemCpuFunctionMsgSubscriptionParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItem, error) {
+func S7PayloadUserDataItemCpuFunctionMsgSubscriptionParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItemCpuFunctionMsgSubscription, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadUserDataItemCpuFunctionMsgSubscription"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -250,7 +250,7 @@ func S7PayloadUserDataItemCpuFunctionMsgSubscriptionParse(readBuffer utils.ReadB
 		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
 	_child.S7PayloadUserDataItem.Child = _child
-	return _child.S7PayloadUserDataItem, nil
+	return _child, nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscription) Serialize(writeBuffer utils.WriteBuffer) error {

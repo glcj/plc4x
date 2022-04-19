@@ -42,35 +42,33 @@ type INotTransmittedTooLong interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NotTransmittedTooLong) ConfirmationType() byte {
-	return 0x27
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NotTransmittedTooLong) GetConfirmationType() byte {
 	return 0x27
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NotTransmittedTooLong) InitializeParent(parent *Confirmation, alpha *Alpha) {
 	m.Confirmation.Alpha = alpha
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *NotTransmittedTooLong) GetParent() *Confirmation {
+	return m.Confirmation
+}
 
 // NewNotTransmittedTooLong factory function for NotTransmittedTooLong
-func NewNotTransmittedTooLong(alpha *Alpha) *Confirmation {
-	child := &NotTransmittedTooLong{
+func NewNotTransmittedTooLong(alpha *Alpha) *NotTransmittedTooLong {
+	_result := &NotTransmittedTooLong{
 		Confirmation: NewConfirmation(alpha),
 	}
-	child.Child = child
-	return child.Confirmation
+	_result.Child = _result
+	return _result
 }
 
 func CastNotTransmittedTooLong(structType interface{}) *NotTransmittedTooLong {
@@ -107,7 +105,7 @@ func (m *NotTransmittedTooLong) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NotTransmittedTooLongParse(readBuffer utils.ReadBuffer) (*Confirmation, error) {
+func NotTransmittedTooLongParse(readBuffer utils.ReadBuffer) (*NotTransmittedTooLong, error) {
 	if pullErr := readBuffer.PullContext("NotTransmittedTooLong"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -123,7 +121,7 @@ func NotTransmittedTooLongParse(readBuffer utils.ReadBuffer) (*Confirmation, err
 		Confirmation: &Confirmation{},
 	}
 	_child.Confirmation.Child = _child
-	return _child.Confirmation, nil
+	return _child, nil
 }
 
 func (m *NotTransmittedTooLong) Serialize(writeBuffer utils.WriteBuffer) error {

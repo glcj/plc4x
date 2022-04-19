@@ -42,15 +42,17 @@ type ICIPEncapsulationConnectionRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CIPEncapsulationConnectionRequest) CommandType() uint16 {
-	return 0x0101
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CIPEncapsulationConnectionRequest) GetCommandType() uint16 {
 	return 0x0101
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *CIPEncapsulationConnectionRequest) InitializeParent(parent *CIPEncapsulationPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32) {
 	m.CIPEncapsulationPacket.SessionHandle = sessionHandle
@@ -59,21 +61,17 @@ func (m *CIPEncapsulationConnectionRequest) InitializeParent(parent *CIPEncapsul
 	m.CIPEncapsulationPacket.Options = options
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *CIPEncapsulationConnectionRequest) GetParent() *CIPEncapsulationPacket {
+	return m.CIPEncapsulationPacket
+}
 
 // NewCIPEncapsulationConnectionRequest factory function for CIPEncapsulationConnectionRequest
-func NewCIPEncapsulationConnectionRequest(sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *CIPEncapsulationPacket {
-	child := &CIPEncapsulationConnectionRequest{
+func NewCIPEncapsulationConnectionRequest(sessionHandle uint32, status uint32, senderContext []uint8, options uint32) *CIPEncapsulationConnectionRequest {
+	_result := &CIPEncapsulationConnectionRequest{
 		CIPEncapsulationPacket: NewCIPEncapsulationPacket(sessionHandle, status, senderContext, options),
 	}
-	child.Child = child
-	return child.CIPEncapsulationPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastCIPEncapsulationConnectionRequest(structType interface{}) *CIPEncapsulationConnectionRequest {
@@ -110,7 +108,7 @@ func (m *CIPEncapsulationConnectionRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CIPEncapsulationConnectionRequestParse(readBuffer utils.ReadBuffer) (*CIPEncapsulationPacket, error) {
+func CIPEncapsulationConnectionRequestParse(readBuffer utils.ReadBuffer) (*CIPEncapsulationConnectionRequest, error) {
 	if pullErr := readBuffer.PullContext("CIPEncapsulationConnectionRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -126,7 +124,7 @@ func CIPEncapsulationConnectionRequestParse(readBuffer utils.ReadBuffer) (*CIPEn
 		CIPEncapsulationPacket: &CIPEncapsulationPacket{},
 	}
 	_child.CIPEncapsulationPacket.Child = _child
-	return _child.CIPEncapsulationPacket, nil
+	return _child, nil
 }
 
 func (m *CIPEncapsulationConnectionRequest) Serialize(writeBuffer utils.WriteBuffer) error {

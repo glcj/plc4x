@@ -48,35 +48,55 @@ type IBACnetApplicationTagEnumerated interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagEnumerated) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagEnumerated) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagEnumerated) GetPayload() *BACnetTagPayloadEnumerated {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagEnumerated) GetActualValue() uint32 {
-	return m.GetPayload().GetActualValue()
+	return uint32(m.GetPayload().GetActualValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagEnumerated factory function for BACnetApplicationTagEnumerated
-func NewBACnetApplicationTagEnumerated(payload *BACnetTagPayloadEnumerated, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagEnumerated{
+func NewBACnetApplicationTagEnumerated(payload *BACnetTagPayloadEnumerated, header *BACnetTagHeader) *BACnetApplicationTagEnumerated {
+	_result := &BACnetApplicationTagEnumerated{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagEnumerated(structType interface{}) *BACnetApplicationTagEnumerated {
@@ -118,7 +138,7 @@ func (m *BACnetApplicationTagEnumerated) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagEnumeratedParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagEnumeratedParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTagEnumerated, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagEnumerated"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -153,7 +173,7 @@ func BACnetApplicationTagEnumeratedParse(readBuffer utils.ReadBuffer, header *BA
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagEnumerated) Serialize(writeBuffer utils.WriteBuffer) error {

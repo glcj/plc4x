@@ -49,37 +49,36 @@ type IModbusPDUDiagnosticResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUDiagnosticResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUDiagnosticResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUDiagnosticResponse) FunctionFlag() uint8 {
-	return 0x08
 }
 
 func (m *ModbusPDUDiagnosticResponse) GetFunctionFlag() uint8 {
 	return 0x08
 }
 
-func (m *ModbusPDUDiagnosticResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUDiagnosticResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUDiagnosticResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUDiagnosticResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUDiagnosticResponse) GetSubFunction() uint16 {
 	return m.SubFunction
 }
@@ -88,19 +87,20 @@ func (m *ModbusPDUDiagnosticResponse) GetData() uint16 {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUDiagnosticResponse factory function for ModbusPDUDiagnosticResponse
-func NewModbusPDUDiagnosticResponse(subFunction uint16, data uint16) *ModbusPDU {
-	child := &ModbusPDUDiagnosticResponse{
+func NewModbusPDUDiagnosticResponse(subFunction uint16, data uint16) *ModbusPDUDiagnosticResponse {
+	_result := &ModbusPDUDiagnosticResponse{
 		SubFunction: subFunction,
 		Data:        data,
 		ModbusPDU:   NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUDiagnosticResponse(structType interface{}) *ModbusPDUDiagnosticResponse {
@@ -143,7 +143,7 @@ func (m *ModbusPDUDiagnosticResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUDiagnosticResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUDiagnosticResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUDiagnosticResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUDiagnosticResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -175,7 +175,7 @@ func ModbusPDUDiagnosticResponseParse(readBuffer utils.ReadBuffer, response bool
 		ModbusPDU:   &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUDiagnosticResponse) Serialize(writeBuffer utils.WriteBuffer) error {

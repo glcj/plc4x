@@ -46,53 +46,53 @@ type IModbusPDUWriteFileRecordResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUWriteFileRecordResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUWriteFileRecordResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUWriteFileRecordResponse) FunctionFlag() uint8 {
-	return 0x15
 }
 
 func (m *ModbusPDUWriteFileRecordResponse) GetFunctionFlag() uint8 {
 	return 0x15
 }
 
-func (m *ModbusPDUWriteFileRecordResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUWriteFileRecordResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUWriteFileRecordResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUWriteFileRecordResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUWriteFileRecordResponse) GetItems() []*ModbusPDUWriteFileRecordResponseItem {
 	return m.Items
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUWriteFileRecordResponse factory function for ModbusPDUWriteFileRecordResponse
-func NewModbusPDUWriteFileRecordResponse(items []*ModbusPDUWriteFileRecordResponseItem) *ModbusPDU {
-	child := &ModbusPDUWriteFileRecordResponse{
+func NewModbusPDUWriteFileRecordResponse(items []*ModbusPDUWriteFileRecordResponseItem) *ModbusPDUWriteFileRecordResponse {
+	_result := &ModbusPDUWriteFileRecordResponse{
 		Items:     items,
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUWriteFileRecordResponse(structType interface{}) *ModbusPDUWriteFileRecordResponse {
@@ -139,7 +139,7 @@ func (m *ModbusPDUWriteFileRecordResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUWriteFileRecordResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUWriteFileRecordResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUWriteFileRecordResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUWriteFileRecordResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -184,7 +184,7 @@ func ModbusPDUWriteFileRecordResponseParse(readBuffer utils.ReadBuffer, response
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUWriteFileRecordResponse) Serialize(writeBuffer utils.WriteBuffer) error {

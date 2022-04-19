@@ -42,49 +42,39 @@ type IModbusPDUReadExceptionStatusRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUReadExceptionStatusRequest) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUReadExceptionStatusRequest) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUReadExceptionStatusRequest) FunctionFlag() uint8 {
-	return 0x07
 }
 
 func (m *ModbusPDUReadExceptionStatusRequest) GetFunctionFlag() uint8 {
 	return 0x07
 }
 
-func (m *ModbusPDUReadExceptionStatusRequest) Response() bool {
-	return bool(false)
-}
-
 func (m *ModbusPDUReadExceptionStatusRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUReadExceptionStatusRequest) InitializeParent(parent *ModbusPDU) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ModbusPDUReadExceptionStatusRequest) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
 
 // NewModbusPDUReadExceptionStatusRequest factory function for ModbusPDUReadExceptionStatusRequest
-func NewModbusPDUReadExceptionStatusRequest() *ModbusPDU {
-	child := &ModbusPDUReadExceptionStatusRequest{
+func NewModbusPDUReadExceptionStatusRequest() *ModbusPDUReadExceptionStatusRequest {
+	_result := &ModbusPDUReadExceptionStatusRequest{
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUReadExceptionStatusRequest(structType interface{}) *ModbusPDUReadExceptionStatusRequest {
@@ -121,7 +111,7 @@ func (m *ModbusPDUReadExceptionStatusRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUReadExceptionStatusRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUReadExceptionStatusRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUReadExceptionStatusRequest, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUReadExceptionStatusRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -137,7 +127,7 @@ func ModbusPDUReadExceptionStatusRequestParse(readBuffer utils.ReadBuffer, respo
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUReadExceptionStatusRequest) Serialize(writeBuffer utils.WriteBuffer) error {

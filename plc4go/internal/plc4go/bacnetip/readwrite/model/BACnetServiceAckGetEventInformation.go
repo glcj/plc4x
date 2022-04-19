@@ -42,33 +42,31 @@ type IBACnetServiceAckGetEventInformation interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckGetEventInformation) ServiceChoice() uint8 {
-	return 0x1D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckGetEventInformation) GetServiceChoice() uint8 {
 	return 0x1D
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckGetEventInformation) InitializeParent(parent *BACnetServiceAck) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetServiceAckGetEventInformation) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
 
 // NewBACnetServiceAckGetEventInformation factory function for BACnetServiceAckGetEventInformation
-func NewBACnetServiceAckGetEventInformation() *BACnetServiceAck {
-	child := &BACnetServiceAckGetEventInformation{
+func NewBACnetServiceAckGetEventInformation() *BACnetServiceAckGetEventInformation {
+	_result := &BACnetServiceAckGetEventInformation{
 		BACnetServiceAck: NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckGetEventInformation(structType interface{}) *BACnetServiceAckGetEventInformation {
@@ -105,7 +103,7 @@ func (m *BACnetServiceAckGetEventInformation) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckGetEventInformationParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckGetEventInformation, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckGetEventInformation"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetServiceAckGetEventInformationParse(readBuffer utils.ReadBuffer) (*BAC
 		BACnetServiceAck: &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckGetEventInformation) Serialize(writeBuffer utils.WriteBuffer) error {

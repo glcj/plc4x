@@ -56,23 +56,30 @@ type IBACnetContextTagPropertyIdentifier interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagPropertyIdentifier) DataType() BACnetDataType {
-	return BACnetDataType_BACNET_PROPERTY_IDENTIFIER
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagPropertyIdentifier) GetDataType() BACnetDataType {
 	return BACnetDataType_BACNET_PROPERTY_IDENTIFIER
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagPropertyIdentifier) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagPropertyIdentifier) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagPropertyIdentifier) GetPropertyIdentifier() BACnetPropertyIdentifier {
 	return m.PropertyIdentifier
 }
@@ -81,22 +88,32 @@ func (m *BACnetContextTagPropertyIdentifier) GetProprietaryValue() uint32 {
 	return m.ProprietaryValue
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetContextTagPropertyIdentifier) GetIsProprietary() bool {
-	return bool((m.GetPropertyIdentifier()) == (BACnetPropertyIdentifier_VENDOR_PROPRIETARY_VALUE))
+	return bool(bool((m.GetPropertyIdentifier()) == (BACnetPropertyIdentifier_VENDOR_PROPRIETARY_VALUE)))
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetContextTagPropertyIdentifier factory function for BACnetContextTagPropertyIdentifier
-func NewBACnetContextTagPropertyIdentifier(propertyIdentifier BACnetPropertyIdentifier, proprietaryValue uint32, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool, actualLength uint32) *BACnetContextTag {
-	child := &BACnetContextTagPropertyIdentifier{
+func NewBACnetContextTagPropertyIdentifier(propertyIdentifier BACnetPropertyIdentifier, proprietaryValue uint32, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool, actualLength uint32) *BACnetContextTagPropertyIdentifier {
+	_result := &BACnetContextTagPropertyIdentifier{
 		PropertyIdentifier: propertyIdentifier,
 		ProprietaryValue:   proprietaryValue,
 		BACnetContextTag:   NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagPropertyIdentifier(structType interface{}) *BACnetContextTagPropertyIdentifier {
@@ -141,7 +158,7 @@ func (m *BACnetContextTagPropertyIdentifier) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagPropertyIdentifierParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, actualLength uint32) (*BACnetContextTag, error) {
+func BACnetContextTagPropertyIdentifierParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, actualLength uint32) (*BACnetContextTagPropertyIdentifier, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagPropertyIdentifier"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -181,7 +198,7 @@ func BACnetContextTagPropertyIdentifierParse(readBuffer utils.ReadBuffer, tagNum
 		BACnetContextTag:   &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagPropertyIdentifier) Serialize(writeBuffer utils.WriteBuffer) error {

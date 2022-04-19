@@ -49,37 +49,45 @@ type IAPDUUnknown interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUUnknown) ApduType() uint8 {
-	return 0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUUnknown) GetApduType() uint8 {
 	return 0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUUnknown) InitializeParent(parent *APDU) {}
 
+func (m *APDUUnknown) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUUnknown) GetUnknownBytes() []byte {
 	return m.UnknownBytes
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUUnknown factory function for APDUUnknown
-func NewAPDUUnknown(unknownBytes []byte, apduLength uint16) *APDU {
-	child := &APDUUnknown{
+func NewAPDUUnknown(unknownBytes []byte, apduLength uint16) *APDUUnknown {
+	_result := &APDUUnknown{
 		UnknownBytes: unknownBytes,
 		APDU:         NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUUnknown(structType interface{}) *APDUUnknown {
@@ -121,7 +129,7 @@ func (m *APDUUnknown) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDUUnknownParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDUUnknownParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUUnknown, error) {
 	if pullErr := readBuffer.PullContext("APDUUnknown"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -144,7 +152,7 @@ func APDUUnknownParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, er
 		APDU:         &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUUnknown) Serialize(writeBuffer utils.WriteBuffer) error {

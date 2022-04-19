@@ -46,37 +46,45 @@ type IIdentifyReplyCommandType interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandType) Attribute() Attribute {
-	return Attribute_Type
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandType) GetAttribute() Attribute {
 	return Attribute_Type
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandType) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandType) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandType) GetUnitType() string {
 	return m.UnitType
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandType factory function for IdentifyReplyCommandType
-func NewIdentifyReplyCommandType(unitType string) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandType{
+func NewIdentifyReplyCommandType(unitType string) *IdentifyReplyCommandType {
+	_result := &IdentifyReplyCommandType{
 		UnitType:             unitType,
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandType(structType interface{}) *IdentifyReplyCommandType {
@@ -116,7 +124,7 @@ func (m *IdentifyReplyCommandType) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandTypeParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandTypeParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandType, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandType"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func IdentifyReplyCommandTypeParse(readBuffer utils.ReadBuffer, attribute Attrib
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandType) Serialize(writeBuffer utils.WriteBuffer) error {

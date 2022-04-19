@@ -42,33 +42,31 @@ type IBVLCReadForeignDeviceTable interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BVLCReadForeignDeviceTable) BvlcFunction() uint8 {
-	return 0x06
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BVLCReadForeignDeviceTable) GetBvlcFunction() uint8 {
 	return 0x06
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BVLCReadForeignDeviceTable) InitializeParent(parent *BVLC) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BVLCReadForeignDeviceTable) GetParent() *BVLC {
+	return m.BVLC
+}
 
 // NewBVLCReadForeignDeviceTable factory function for BVLCReadForeignDeviceTable
-func NewBVLCReadForeignDeviceTable() *BVLC {
-	child := &BVLCReadForeignDeviceTable{
+func NewBVLCReadForeignDeviceTable() *BVLCReadForeignDeviceTable {
+	_result := &BVLCReadForeignDeviceTable{
 		BVLC: NewBVLC(),
 	}
-	child.Child = child
-	return child.BVLC
+	_result.Child = _result
+	return _result
 }
 
 func CastBVLCReadForeignDeviceTable(structType interface{}) *BVLCReadForeignDeviceTable {
@@ -105,7 +103,7 @@ func (m *BVLCReadForeignDeviceTable) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BVLCReadForeignDeviceTableParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
+func BVLCReadForeignDeviceTableParse(readBuffer utils.ReadBuffer) (*BVLCReadForeignDeviceTable, error) {
 	if pullErr := readBuffer.PullContext("BVLCReadForeignDeviceTable"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BVLCReadForeignDeviceTableParse(readBuffer utils.ReadBuffer) (*BVLC, error)
 		BVLC: &BVLC{},
 	}
 	_child.BVLC.Child = _child
-	return _child.BVLC, nil
+	return _child, nil
 }
 
 func (m *BVLCReadForeignDeviceTable) Serialize(writeBuffer utils.WriteBuffer) error {

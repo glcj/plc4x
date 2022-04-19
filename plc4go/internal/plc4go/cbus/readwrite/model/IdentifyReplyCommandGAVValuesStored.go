@@ -46,37 +46,45 @@ type IIdentifyReplyCommandGAVValuesStored interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandGAVValuesStored) Attribute() Attribute {
-	return Attribute_GAVValuesStored
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandGAVValuesStored) GetAttribute() Attribute {
 	return Attribute_GAVValuesStored
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandGAVValuesStored) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandGAVValuesStored) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandGAVValuesStored) GetValues() []byte {
 	return m.Values
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandGAVValuesStored factory function for IdentifyReplyCommandGAVValuesStored
-func NewIdentifyReplyCommandGAVValuesStored(values []byte) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandGAVValuesStored{
+func NewIdentifyReplyCommandGAVValuesStored(values []byte) *IdentifyReplyCommandGAVValuesStored {
+	_result := &IdentifyReplyCommandGAVValuesStored{
 		Values:               values,
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandGAVValuesStored(structType interface{}) *IdentifyReplyCommandGAVValuesStored {
@@ -118,7 +126,7 @@ func (m *IdentifyReplyCommandGAVValuesStored) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandGAVValuesStoredParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandGAVValuesStoredParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandGAVValuesStored, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandGAVValuesStored"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +149,7 @@ func IdentifyReplyCommandGAVValuesStoredParse(readBuffer utils.ReadBuffer, attri
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandGAVValuesStored) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -55,7 +55,12 @@ type ICBusPointToPointCommandIndirect interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CBusPointToPointCommandIndirect) InitializeParent(parent *CBusPointToPointCommand, bridgeAddressCountPeek uint16, calData *CALData, crc *Checksum, peekAlpha byte, alpha *Alpha) {
@@ -66,9 +71,14 @@ func (m *CBusPointToPointCommandIndirect) InitializeParent(parent *CBusPointToPo
 	m.CBusPointToPointCommand.Alpha = alpha
 }
 
+func (m *CBusPointToPointCommandIndirect) GetParent() *CBusPointToPointCommand {
+	return m.CBusPointToPointCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusPointToPointCommandIndirect) GetBridgeAddress() *BridgeAddress {
 	return m.BridgeAddress
 }
@@ -81,20 +91,21 @@ func (m *CBusPointToPointCommandIndirect) GetUnitAddress() *UnitAddress {
 	return m.UnitAddress
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCBusPointToPointCommandIndirect factory function for CBusPointToPointCommandIndirect
-func NewCBusPointToPointCommandIndirect(bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, unitAddress *UnitAddress, bridgeAddressCountPeek uint16, calData *CALData, crc *Checksum, peekAlpha byte, alpha *Alpha, srchk bool) *CBusPointToPointCommand {
-	child := &CBusPointToPointCommandIndirect{
+func NewCBusPointToPointCommandIndirect(bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, unitAddress *UnitAddress, bridgeAddressCountPeek uint16, calData *CALData, crc *Checksum, peekAlpha byte, alpha *Alpha, srchk bool) *CBusPointToPointCommandIndirect {
+	_result := &CBusPointToPointCommandIndirect{
 		BridgeAddress:           bridgeAddress,
 		NetworkRoute:            networkRoute,
 		UnitAddress:             unitAddress,
 		CBusPointToPointCommand: NewCBusPointToPointCommand(bridgeAddressCountPeek, calData, crc, peekAlpha, alpha, srchk),
 	}
-	child.Child = child
-	return child.CBusPointToPointCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastCBusPointToPointCommandIndirect(structType interface{}) *CBusPointToPointCommandIndirect {
@@ -140,7 +151,7 @@ func (m *CBusPointToPointCommandIndirect) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusPointToPointCommandIndirectParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToPointCommand, error) {
+func CBusPointToPointCommandIndirectParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToPointCommandIndirect, error) {
 	if pullErr := readBuffer.PullContext("CBusPointToPointCommandIndirect"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -198,7 +209,7 @@ func CBusPointToPointCommandIndirectParse(readBuffer utils.ReadBuffer, srchk boo
 		CBusPointToPointCommand: &CBusPointToPointCommand{},
 	}
 	_child.CBusPointToPointCommand.Child = _child
-	return _child.CBusPointToPointCommand, nil
+	return _child, nil
 }
 
 func (m *CBusPointToPointCommandIndirect) Serialize(writeBuffer utils.WriteBuffer) error {

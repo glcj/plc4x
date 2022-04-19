@@ -55,21 +55,28 @@ type ICipReadRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CipReadRequest) Service() uint8 {
-	return 0x4C
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CipReadRequest) GetService() uint8 {
 	return 0x4C
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *CipReadRequest) InitializeParent(parent *CipService) {}
 
+func (m *CipReadRequest) GetParent() *CipService {
+	return m.CipService
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CipReadRequest) GetRequestPathSize() int8 {
 	return m.RequestPathSize
 }
@@ -82,20 +89,21 @@ func (m *CipReadRequest) GetElementNb() uint16 {
 	return m.ElementNb
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCipReadRequest factory function for CipReadRequest
-func NewCipReadRequest(requestPathSize int8, tag []byte, elementNb uint16, serviceLen uint16) *CipService {
-	child := &CipReadRequest{
+func NewCipReadRequest(requestPathSize int8, tag []byte, elementNb uint16, serviceLen uint16) *CipReadRequest {
+	_result := &CipReadRequest{
 		RequestPathSize: requestPathSize,
 		Tag:             tag,
 		ElementNb:       elementNb,
 		CipService:      NewCipService(serviceLen),
 	}
-	child.Child = child
-	return child.CipService
+	_result.Child = _result
+	return _result
 }
 
 func CastCipReadRequest(structType interface{}) *CipReadRequest {
@@ -143,7 +151,7 @@ func (m *CipReadRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CipReadRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipService, error) {
+func CipReadRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipReadRequest, error) {
 	if pullErr := readBuffer.PullContext("CipReadRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -182,7 +190,7 @@ func CipReadRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipSe
 		CipService:      &CipService{},
 	}
 	_child.CipService.Child = _child
-	return _child.CipService, nil
+	return _child, nil
 }
 
 func (m *CipReadRequest) Serialize(writeBuffer utils.WriteBuffer) error {

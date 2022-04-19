@@ -52,37 +52,36 @@ type IModbusPDUMaskWriteHoldingRegisterResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUMaskWriteHoldingRegisterResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUMaskWriteHoldingRegisterResponse) FunctionFlag() uint8 {
-	return 0x16
 }
 
 func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetFunctionFlag() uint8 {
 	return 0x16
 }
 
-func (m *ModbusPDUMaskWriteHoldingRegisterResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUMaskWriteHoldingRegisterResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetReferenceAddress() uint16 {
 	return m.ReferenceAddress
 }
@@ -95,20 +94,21 @@ func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetOrMask() uint16 {
 	return m.OrMask
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUMaskWriteHoldingRegisterResponse factory function for ModbusPDUMaskWriteHoldingRegisterResponse
-func NewModbusPDUMaskWriteHoldingRegisterResponse(referenceAddress uint16, andMask uint16, orMask uint16) *ModbusPDU {
-	child := &ModbusPDUMaskWriteHoldingRegisterResponse{
+func NewModbusPDUMaskWriteHoldingRegisterResponse(referenceAddress uint16, andMask uint16, orMask uint16) *ModbusPDUMaskWriteHoldingRegisterResponse {
+	_result := &ModbusPDUMaskWriteHoldingRegisterResponse{
 		ReferenceAddress: referenceAddress,
 		AndMask:          andMask,
 		OrMask:           orMask,
 		ModbusPDU:        NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUMaskWriteHoldingRegisterResponse(structType interface{}) *ModbusPDUMaskWriteHoldingRegisterResponse {
@@ -154,7 +154,7 @@ func (m *ModbusPDUMaskWriteHoldingRegisterResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUMaskWriteHoldingRegisterResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUMaskWriteHoldingRegisterResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUMaskWriteHoldingRegisterResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUMaskWriteHoldingRegisterResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -194,7 +194,7 @@ func ModbusPDUMaskWriteHoldingRegisterResponseParse(readBuffer utils.ReadBuffer,
 		ModbusPDU:        &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUMaskWriteHoldingRegisterResponse) Serialize(writeBuffer utils.WriteBuffer) error {

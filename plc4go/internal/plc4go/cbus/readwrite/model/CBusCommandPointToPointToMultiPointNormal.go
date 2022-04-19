@@ -66,7 +66,12 @@ type ICBusCommandPointToPointToMultiPointNormal interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CBusCommandPointToPointToMultiPointNormal) InitializeParent(parent *CBusPointToPointToMultipointCommand, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte) {
@@ -75,9 +80,14 @@ func (m *CBusCommandPointToPointToMultiPointNormal) InitializeParent(parent *CBu
 	m.CBusPointToPointToMultipointCommand.PeekedApplication = peekedApplication
 }
 
+func (m *CBusCommandPointToPointToMultiPointNormal) GetParent() *CBusPointToPointToMultipointCommand {
+	return m.CBusPointToPointToMultipointCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusCommandPointToPointToMultiPointNormal) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
@@ -98,13 +108,26 @@ func (m *CBusCommandPointToPointToMultiPointNormal) GetAlpha() *Alpha {
 	return m.Alpha
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CBusCommandPointToPointToMultiPointNormal) GetCr() byte {
+	return CBusCommandPointToPointToMultiPointNormal_CR
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewCBusCommandPointToPointToMultiPointNormal factory function for CBusCommandPointToPointToMultiPointNormal
-func NewCBusCommandPointToPointToMultiPointNormal(application ApplicationIdContainer, salData *SALData, crc *Checksum, peekAlpha byte, alpha *Alpha, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte, srchk bool) *CBusPointToPointToMultipointCommand {
-	child := &CBusCommandPointToPointToMultiPointNormal{
+func NewCBusCommandPointToPointToMultiPointNormal(application ApplicationIdContainer, salData *SALData, crc *Checksum, peekAlpha byte, alpha *Alpha, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte, srchk bool) *CBusCommandPointToPointToMultiPointNormal {
+	_result := &CBusCommandPointToPointToMultiPointNormal{
 		Application:                         application,
 		SalData:                             salData,
 		Crc:                                 crc,
@@ -112,8 +135,8 @@ func NewCBusCommandPointToPointToMultiPointNormal(application ApplicationIdConta
 		Alpha:                               alpha,
 		CBusPointToPointToMultipointCommand: NewCBusPointToPointToMultipointCommand(bridgeAddress, networkRoute, peekedApplication, srchk),
 	}
-	child.Child = child
-	return child.CBusPointToPointToMultipointCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastCBusCommandPointToPointToMultiPointNormal(structType interface{}) *CBusCommandPointToPointToMultiPointNormal {
@@ -169,7 +192,7 @@ func (m *CBusCommandPointToPointToMultiPointNormal) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToPointToMultipointCommand, error) {
+func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommandPointToPointToMultiPointNormal, error) {
 	if pullErr := readBuffer.PullContext("CBusCommandPointToPointToMultiPointNormal"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -276,7 +299,7 @@ func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer,
 		CBusPointToPointToMultipointCommand: &CBusPointToPointToMultipointCommand{},
 	}
 	_child.CBusPointToPointToMultipointCommand.Child = _child
-	return _child.CBusPointToPointToMultipointCommand, nil
+	return _child, nil
 }
 
 func (m *CBusCommandPointToPointToMultiPointNormal) Serialize(writeBuffer utils.WriteBuffer) error {

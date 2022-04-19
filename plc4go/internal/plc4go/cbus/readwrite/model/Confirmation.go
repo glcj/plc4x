@@ -54,19 +54,23 @@ type IConfirmationParent interface {
 type IConfirmationChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *Confirmation, alpha *Alpha)
+	GetParent() *Confirmation
+
 	GetTypeName() string
 	IConfirmation
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *Confirmation) GetAlpha() *Alpha {
 	return m.Alpha
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewConfirmation factory function for Confirmation
@@ -80,6 +84,9 @@ func CastConfirmation(structType interface{}) *Confirmation {
 	}
 	if casted, ok := structType.(*Confirmation); ok {
 		return casted
+	}
+	if casted, ok := structType.(IConfirmationChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -138,19 +145,23 @@ func ConfirmationParse(readBuffer utils.ReadBuffer) (*Confirmation, error) {
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *Confirmation
+	type ConfirmationChild interface {
+		InitializeParent(*Confirmation, *Alpha)
+		GetParent() *Confirmation
+	}
+	var _child ConfirmationChild
 	var typeSwitchError error
 	switch {
 	case confirmationType == 0x2E: // ConfirmationSuccessful
-		_parent, typeSwitchError = ConfirmationSuccessfulParse(readBuffer)
+		_child, typeSwitchError = ConfirmationSuccessfulParse(readBuffer)
 	case confirmationType == 0x23: // NotTransmittedToManyReTransmissions
-		_parent, typeSwitchError = NotTransmittedToManyReTransmissionsParse(readBuffer)
+		_child, typeSwitchError = NotTransmittedToManyReTransmissionsParse(readBuffer)
 	case confirmationType == 0x24: // NotTransmittedCorruption
-		_parent, typeSwitchError = NotTransmittedCorruptionParse(readBuffer)
+		_child, typeSwitchError = NotTransmittedCorruptionParse(readBuffer)
 	case confirmationType == 0x25: // NotTransmittedSyncLoss
-		_parent, typeSwitchError = NotTransmittedSyncLossParse(readBuffer)
+		_child, typeSwitchError = NotTransmittedSyncLossParse(readBuffer)
 	case confirmationType == 0x27: // NotTransmittedTooLong
-		_parent, typeSwitchError = NotTransmittedTooLongParse(readBuffer)
+		_child, typeSwitchError = NotTransmittedTooLongParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -164,8 +175,8 @@ func ConfirmationParse(readBuffer utils.ReadBuffer) (*Confirmation, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, alpha)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), alpha)
+	return _child.GetParent(), nil
 }
 
 func (m *Confirmation) Serialize(writeBuffer utils.WriteBuffer) error {

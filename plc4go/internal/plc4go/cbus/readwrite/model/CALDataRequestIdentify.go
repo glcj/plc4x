@@ -46,32 +46,43 @@ type ICALDataRequestIdentify interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALDataRequestIdentify) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *CALDataRequestIdentify) GetParent() *CALData {
+	return m.CALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALDataRequestIdentify) GetAttribute() Attribute {
 	return m.Attribute
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCALDataRequestIdentify factory function for CALDataRequestIdentify
-func NewCALDataRequestIdentify(attribute Attribute, commandTypeContainer CALCommandTypeContainer) *CALData {
-	child := &CALDataRequestIdentify{
+func NewCALDataRequestIdentify(attribute Attribute, commandTypeContainer CALCommandTypeContainer) *CALDataRequestIdentify {
+	_result := &CALDataRequestIdentify{
 		Attribute: attribute,
 		CALData:   NewCALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.CALData
+	_result.Child = _result
+	return _result
 }
 
 func CastCALDataRequestIdentify(structType interface{}) *CALDataRequestIdentify {
@@ -111,7 +122,7 @@ func (m *CALDataRequestIdentify) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALDataRequestIdentifyParse(readBuffer utils.ReadBuffer) (*CALData, error) {
+func CALDataRequestIdentifyParse(readBuffer utils.ReadBuffer) (*CALDataRequestIdentify, error) {
 	if pullErr := readBuffer.PullContext("CALDataRequestIdentify"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func CALDataRequestIdentifyParse(readBuffer utils.ReadBuffer) (*CALData, error) 
 		CALData:   &CALData{},
 	}
 	_child.CALData.Child = _child
-	return _child.CALData, nil
+	return _child, nil
 }
 
 func (m *CALDataRequestIdentify) Serialize(writeBuffer utils.WriteBuffer) error {

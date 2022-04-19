@@ -46,45 +46,49 @@ type IS7ParameterUserData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7ParameterUserData) ParameterType() uint8 {
-	return 0x00
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7ParameterUserData) GetParameterType() uint8 {
 	return 0x00
-}
-
-func (m *S7ParameterUserData) MessageType() uint8 {
-	return 0x07
 }
 
 func (m *S7ParameterUserData) GetMessageType() uint8 {
 	return 0x07
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7ParameterUserData) InitializeParent(parent *S7Parameter) {}
 
+func (m *S7ParameterUserData) GetParent() *S7Parameter {
+	return m.S7Parameter
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7ParameterUserData) GetItems() []*S7ParameterUserDataItem {
 	return m.Items
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7ParameterUserData factory function for S7ParameterUserData
-func NewS7ParameterUserData(items []*S7ParameterUserDataItem) *S7Parameter {
-	child := &S7ParameterUserData{
+func NewS7ParameterUserData(items []*S7ParameterUserDataItem) *S7ParameterUserData {
+	_result := &S7ParameterUserData{
 		Items:       items,
 		S7Parameter: NewS7Parameter(),
 	}
-	child.Child = child
-	return child.S7Parameter
+	_result.Child = _result
+	return _result
 }
 
 func CastS7ParameterUserData(structType interface{}) *S7ParameterUserData {
@@ -132,7 +136,7 @@ func (m *S7ParameterUserData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7ParameterUserDataParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7Parameter, error) {
+func S7ParameterUserDataParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7ParameterUserData, error) {
 	if pullErr := readBuffer.PullContext("S7ParameterUserData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -175,7 +179,7 @@ func S7ParameterUserDataParse(readBuffer utils.ReadBuffer, messageType uint8) (*
 		S7Parameter: &S7Parameter{},
 	}
 	_child.S7Parameter.Child = _child
-	return _child.S7Parameter, nil
+	return _child, nil
 }
 
 func (m *S7ParameterUserData) Serialize(writeBuffer utils.WriteBuffer) error {

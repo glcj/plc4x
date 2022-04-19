@@ -58,21 +58,28 @@ type IS7MessageObjectRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7MessageObjectRequest) CpuFunctionType() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7MessageObjectRequest) GetCpuFunctionType() uint8 {
 	return 0x04
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7MessageObjectRequest) InitializeParent(parent *S7DataAlarmMessage) {}
 
+func (m *S7MessageObjectRequest) GetParent() *S7DataAlarmMessage {
+	return m.S7DataAlarmMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7MessageObjectRequest) GetSyntaxId() SyntaxIdType {
 	return m.SyntaxId
 }
@@ -85,20 +92,37 @@ func (m *S7MessageObjectRequest) GetAlarmType() AlarmType {
 	return m.AlarmType
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *S7MessageObjectRequest) GetVariableSpec() uint8 {
+	return S7MessageObjectRequest_VARIABLESPEC
+}
+
+func (m *S7MessageObjectRequest) GetLength() uint8 {
+	return S7MessageObjectRequest_LENGTH
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewS7MessageObjectRequest factory function for S7MessageObjectRequest
-func NewS7MessageObjectRequest(syntaxId SyntaxIdType, queryType QueryType, alarmType AlarmType) *S7DataAlarmMessage {
-	child := &S7MessageObjectRequest{
+func NewS7MessageObjectRequest(syntaxId SyntaxIdType, queryType QueryType, alarmType AlarmType) *S7MessageObjectRequest {
+	_result := &S7MessageObjectRequest{
 		SyntaxId:           syntaxId,
 		QueryType:          queryType,
 		AlarmType:          alarmType,
 		S7DataAlarmMessage: NewS7DataAlarmMessage(),
 	}
-	child.Child = child
-	return child.S7DataAlarmMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastS7MessageObjectRequest(structType interface{}) *S7MessageObjectRequest {
@@ -156,7 +180,7 @@ func (m *S7MessageObjectRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7MessageObjectRequestParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8) (*S7DataAlarmMessage, error) {
+func S7MessageObjectRequestParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8) (*S7MessageObjectRequest, error) {
 	if pullErr := readBuffer.PullContext("S7MessageObjectRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -260,7 +284,7 @@ func S7MessageObjectRequestParse(readBuffer utils.ReadBuffer, cpuFunctionType ui
 		S7DataAlarmMessage: &S7DataAlarmMessage{},
 	}
 	_child.S7DataAlarmMessage.Child = _child
-	return _child.S7DataAlarmMessage, nil
+	return _child, nil
 }
 
 func (m *S7MessageObjectRequest) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -52,29 +52,32 @@ type IAdsReadStateResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsReadStateResponse) CommandId() CommandId {
-	return CommandId_ADS_READ_STATE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsReadStateResponse) GetCommandId() CommandId {
 	return CommandId_ADS_READ_STATE
-}
-
-func (m *AdsReadStateResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *AdsReadStateResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsReadStateResponse) InitializeParent(parent *AdsData) {}
 
+func (m *AdsReadStateResponse) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsReadStateResponse) GetResult() ReturnCode {
 	return m.Result
 }
@@ -87,20 +90,21 @@ func (m *AdsReadStateResponse) GetDeviceState() uint16 {
 	return m.DeviceState
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsReadStateResponse factory function for AdsReadStateResponse
-func NewAdsReadStateResponse(result ReturnCode, adsState uint16, deviceState uint16) *AdsData {
-	child := &AdsReadStateResponse{
+func NewAdsReadStateResponse(result ReturnCode, adsState uint16, deviceState uint16) *AdsReadStateResponse {
+	_result := &AdsReadStateResponse{
 		Result:      result,
 		AdsState:    adsState,
 		DeviceState: deviceState,
 		AdsData:     NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsReadStateResponse(structType interface{}) *AdsReadStateResponse {
@@ -146,7 +150,7 @@ func (m *AdsReadStateResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsReadStateResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsReadStateResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsReadStateResponse, error) {
 	if pullErr := readBuffer.PullContext("AdsReadStateResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -192,7 +196,7 @@ func AdsReadStateResponseParse(readBuffer utils.ReadBuffer, commandId CommandId,
 		AdsData:     &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsReadStateResponse) Serialize(writeBuffer utils.WriteBuffer) error {

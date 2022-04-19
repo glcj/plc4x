@@ -42,33 +42,31 @@ type IIdentifyReplyCommandDelays interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandDelays) Attribute() Attribute {
-	return Attribute_Delays
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandDelays) GetAttribute() Attribute {
 	return Attribute_Delays
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandDelays) InitializeParent(parent *IdentifyReplyCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *IdentifyReplyCommandDelays) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
 
 // NewIdentifyReplyCommandDelays factory function for IdentifyReplyCommandDelays
-func NewIdentifyReplyCommandDelays() *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandDelays{
+func NewIdentifyReplyCommandDelays() *IdentifyReplyCommandDelays {
+	_result := &IdentifyReplyCommandDelays{
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandDelays(structType interface{}) *IdentifyReplyCommandDelays {
@@ -105,7 +103,7 @@ func (m *IdentifyReplyCommandDelays) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandDelaysParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandDelaysParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandDelays, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandDelays"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func IdentifyReplyCommandDelaysParse(readBuffer utils.ReadBuffer, attribute Attr
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandDelays) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,36 +42,34 @@ type IBACnetErrorConfirmedPrivateTransfer interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorConfirmedPrivateTransfer) ServiceChoice() uint8 {
-	return 0x12
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorConfirmedPrivateTransfer) GetServiceChoice() uint8 {
 	return 0x12
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorConfirmedPrivateTransfer) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorConfirmedPrivateTransfer) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorConfirmedPrivateTransfer factory function for BACnetErrorConfirmedPrivateTransfer
-func NewBACnetErrorConfirmedPrivateTransfer(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorConfirmedPrivateTransfer{
+func NewBACnetErrorConfirmedPrivateTransfer(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorConfirmedPrivateTransfer {
+	_result := &BACnetErrorConfirmedPrivateTransfer{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorConfirmedPrivateTransfer(structType interface{}) *BACnetErrorConfirmedPrivateTransfer {
@@ -108,7 +106,7 @@ func (m *BACnetErrorConfirmedPrivateTransfer) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorConfirmedPrivateTransferParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorConfirmedPrivateTransferParse(readBuffer utils.ReadBuffer) (*BACnetErrorConfirmedPrivateTransfer, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorConfirmedPrivateTransfer"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorConfirmedPrivateTransferParse(readBuffer utils.ReadBuffer) (*BAC
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorConfirmedPrivateTransfer) Serialize(writeBuffer utils.WriteBuffer) error {

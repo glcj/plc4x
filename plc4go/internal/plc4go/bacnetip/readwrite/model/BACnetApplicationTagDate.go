@@ -46,32 +46,43 @@ type IBACnetApplicationTagDate interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagDate) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagDate) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagDate) GetPayload() *BACnetTagPayloadDate {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetApplicationTagDate factory function for BACnetApplicationTagDate
-func NewBACnetApplicationTagDate(payload *BACnetTagPayloadDate, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagDate{
+func NewBACnetApplicationTagDate(payload *BACnetTagPayloadDate, header *BACnetTagHeader) *BACnetApplicationTagDate {
+	_result := &BACnetApplicationTagDate{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagDate(structType interface{}) *BACnetApplicationTagDate {
@@ -111,7 +122,7 @@ func (m *BACnetApplicationTagDate) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagDateParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagDateParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTagDate, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagDate"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func BACnetApplicationTagDateParse(readBuffer utils.ReadBuffer) (*BACnetApplicat
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagDate) Serialize(writeBuffer utils.WriteBuffer) error {

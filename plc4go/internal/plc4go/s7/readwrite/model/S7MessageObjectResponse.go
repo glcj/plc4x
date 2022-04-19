@@ -50,21 +50,28 @@ type IS7MessageObjectResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7MessageObjectResponse) CpuFunctionType() uint8 {
-	return 0x08
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7MessageObjectResponse) GetCpuFunctionType() uint8 {
 	return 0x08
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7MessageObjectResponse) InitializeParent(parent *S7DataAlarmMessage) {}
 
+func (m *S7MessageObjectResponse) GetParent() *S7DataAlarmMessage {
+	return m.S7DataAlarmMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7MessageObjectResponse) GetReturnCode() DataTransportErrorCode {
 	return m.ReturnCode
 }
@@ -73,19 +80,20 @@ func (m *S7MessageObjectResponse) GetTransportSize() DataTransportSize {
 	return m.TransportSize
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7MessageObjectResponse factory function for S7MessageObjectResponse
-func NewS7MessageObjectResponse(returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7DataAlarmMessage {
-	child := &S7MessageObjectResponse{
+func NewS7MessageObjectResponse(returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7MessageObjectResponse {
+	_result := &S7MessageObjectResponse{
 		ReturnCode:         returnCode,
 		TransportSize:      transportSize,
 		S7DataAlarmMessage: NewS7DataAlarmMessage(),
 	}
-	child.Child = child
-	return child.S7DataAlarmMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastS7MessageObjectResponse(structType interface{}) *S7MessageObjectResponse {
@@ -131,7 +139,7 @@ func (m *S7MessageObjectResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7MessageObjectResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8) (*S7DataAlarmMessage, error) {
+func S7MessageObjectResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8) (*S7MessageObjectResponse, error) {
 	if pullErr := readBuffer.PullContext("S7MessageObjectResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -189,7 +197,7 @@ func S7MessageObjectResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType u
 		S7DataAlarmMessage: &S7DataAlarmMessage{},
 	}
 	_child.S7DataAlarmMessage.Child = _child
-	return _child.S7DataAlarmMessage, nil
+	return _child, nil
 }
 
 func (m *S7MessageObjectResponse) Serialize(writeBuffer utils.WriteBuffer) error {

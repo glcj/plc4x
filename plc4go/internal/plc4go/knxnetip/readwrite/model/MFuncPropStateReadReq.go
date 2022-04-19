@@ -45,33 +45,31 @@ type IMFuncPropStateReadReq interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *MFuncPropStateReadReq) MessageCode() uint8 {
-	return 0xF9
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *MFuncPropStateReadReq) GetMessageCode() uint8 {
 	return 0xF9
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *MFuncPropStateReadReq) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *MFuncPropStateReadReq) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewMFuncPropStateReadReq factory function for MFuncPropStateReadReq
-func NewMFuncPropStateReadReq(size uint16) *CEMI {
-	child := &MFuncPropStateReadReq{
+func NewMFuncPropStateReadReq(size uint16) *MFuncPropStateReadReq {
+	_result := &MFuncPropStateReadReq{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastMFuncPropStateReadReq(structType interface{}) *MFuncPropStateReadReq {
@@ -108,7 +106,7 @@ func (m *MFuncPropStateReadReq) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MFuncPropStateReadReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func MFuncPropStateReadReqParse(readBuffer utils.ReadBuffer, size uint16) (*MFuncPropStateReadReq, error) {
 	if pullErr := readBuffer.PullContext("MFuncPropStateReadReq"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func MFuncPropStateReadReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *MFuncPropStateReadReq) Serialize(writeBuffer utils.WriteBuffer) error {

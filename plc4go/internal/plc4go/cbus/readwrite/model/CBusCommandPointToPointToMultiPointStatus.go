@@ -64,7 +64,12 @@ type ICBusCommandPointToPointToMultiPointStatus interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CBusCommandPointToPointToMultiPointStatus) InitializeParent(parent *CBusPointToPointToMultipointCommand, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte) {
@@ -73,9 +78,14 @@ func (m *CBusCommandPointToPointToMultiPointStatus) InitializeParent(parent *CBu
 	m.CBusPointToPointToMultipointCommand.PeekedApplication = peekedApplication
 }
 
+func (m *CBusCommandPointToPointToMultiPointStatus) GetParent() *CBusPointToPointToMultipointCommand {
+	return m.CBusPointToPointToMultipointCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusCommandPointToPointToMultiPointStatus) GetStatusRequest() *StatusRequest {
 	return m.StatusRequest
 }
@@ -92,21 +102,34 @@ func (m *CBusCommandPointToPointToMultiPointStatus) GetAlpha() *Alpha {
 	return m.Alpha
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CBusCommandPointToPointToMultiPointStatus) GetCr() byte {
+	return CBusCommandPointToPointToMultiPointStatus_CR
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewCBusCommandPointToPointToMultiPointStatus factory function for CBusCommandPointToPointToMultiPointStatus
-func NewCBusCommandPointToPointToMultiPointStatus(statusRequest *StatusRequest, crc *Checksum, peekAlpha byte, alpha *Alpha, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte, srchk bool) *CBusPointToPointToMultipointCommand {
-	child := &CBusCommandPointToPointToMultiPointStatus{
+func NewCBusCommandPointToPointToMultiPointStatus(statusRequest *StatusRequest, crc *Checksum, peekAlpha byte, alpha *Alpha, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte, srchk bool) *CBusCommandPointToPointToMultiPointStatus {
+	_result := &CBusCommandPointToPointToMultiPointStatus{
 		StatusRequest:                       statusRequest,
 		Crc:                                 crc,
 		PeekAlpha:                           peekAlpha,
 		Alpha:                               alpha,
 		CBusPointToPointToMultipointCommand: NewCBusPointToPointToMultipointCommand(bridgeAddress, networkRoute, peekedApplication, srchk),
 	}
-	child.Child = child
-	return child.CBusPointToPointToMultipointCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastCBusCommandPointToPointToMultiPointStatus(structType interface{}) *CBusCommandPointToPointToMultiPointStatus {
@@ -162,7 +185,7 @@ func (m *CBusCommandPointToPointToMultiPointStatus) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusCommandPointToPointToMultiPointStatusParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToPointToMultipointCommand, error) {
+func CBusCommandPointToPointToMultiPointStatusParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommandPointToPointToMultiPointStatus, error) {
 	if pullErr := readBuffer.PullContext("CBusCommandPointToPointToMultiPointStatus"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -269,7 +292,7 @@ func CBusCommandPointToPointToMultiPointStatusParse(readBuffer utils.ReadBuffer,
 		CBusPointToPointToMultipointCommand: &CBusPointToPointToMultipointCommand{},
 	}
 	_child.CBusPointToPointToMultipointCommand.Child = _child
-	return _child.CBusPointToPointToMultipointCommand, nil
+	return _child, nil
 }
 
 func (m *CBusCommandPointToPointToMultiPointStatus) Serialize(writeBuffer utils.WriteBuffer) error {

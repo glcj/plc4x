@@ -52,29 +52,32 @@ type ISysexCommandReportFirmwareResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandReportFirmwareResponse) CommandType() uint8 {
-	return 0x79
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandReportFirmwareResponse) GetCommandType() uint8 {
 	return 0x79
-}
-
-func (m *SysexCommandReportFirmwareResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *SysexCommandReportFirmwareResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandReportFirmwareResponse) InitializeParent(parent *SysexCommand) {}
 
+func (m *SysexCommandReportFirmwareResponse) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *SysexCommandReportFirmwareResponse) GetMajorVersion() uint8 {
 	return m.MajorVersion
 }
@@ -87,20 +90,21 @@ func (m *SysexCommandReportFirmwareResponse) GetFileName() []byte {
 	return m.FileName
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewSysexCommandReportFirmwareResponse factory function for SysexCommandReportFirmwareResponse
-func NewSysexCommandReportFirmwareResponse(majorVersion uint8, minorVersion uint8, fileName []byte) *SysexCommand {
-	child := &SysexCommandReportFirmwareResponse{
+func NewSysexCommandReportFirmwareResponse(majorVersion uint8, minorVersion uint8, fileName []byte) *SysexCommandReportFirmwareResponse {
+	_result := &SysexCommandReportFirmwareResponse{
 		MajorVersion: majorVersion,
 		MinorVersion: minorVersion,
 		FileName:     fileName,
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandReportFirmwareResponse(structType interface{}) *SysexCommandReportFirmwareResponse {
@@ -137,8 +141,7 @@ func (m *SysexCommandReportFirmwareResponse) GetLengthInBitsConditional(lastItem
 	lengthInBits += 8
 
 	// Manual Array Field (fileName)
-	fileName := m.FileName
-	lengthInBits += uint16(LengthSysexString(fileName))
+	lengthInBits += uint16(LengthSysexString(m.GetFileName()))
 
 	return lengthInBits
 }
@@ -147,7 +150,7 @@ func (m *SysexCommandReportFirmwareResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandReportFirmwareResponse, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandReportFirmwareResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -198,7 +201,7 @@ func SysexCommandReportFirmwareResponseParse(readBuffer utils.ReadBuffer, respon
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandReportFirmwareResponse) Serialize(writeBuffer utils.WriteBuffer) error {

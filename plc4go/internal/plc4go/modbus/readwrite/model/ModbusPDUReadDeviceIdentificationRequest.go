@@ -53,37 +53,36 @@ type IModbusPDUReadDeviceIdentificationRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUReadDeviceIdentificationRequest) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUReadDeviceIdentificationRequest) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUReadDeviceIdentificationRequest) FunctionFlag() uint8 {
-	return 0x2B
 }
 
 func (m *ModbusPDUReadDeviceIdentificationRequest) GetFunctionFlag() uint8 {
 	return 0x2B
 }
 
-func (m *ModbusPDUReadDeviceIdentificationRequest) Response() bool {
-	return bool(false)
-}
-
 func (m *ModbusPDUReadDeviceIdentificationRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUReadDeviceIdentificationRequest) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUReadDeviceIdentificationRequest) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUReadDeviceIdentificationRequest) GetLevel() ModbusDeviceInformationLevel {
 	return m.Level
 }
@@ -92,19 +91,32 @@ func (m *ModbusPDUReadDeviceIdentificationRequest) GetObjectId() uint8 {
 	return m.ObjectId
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *ModbusPDUReadDeviceIdentificationRequest) GetMeiType() uint8 {
+	return ModbusPDUReadDeviceIdentificationRequest_MEITYPE
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUReadDeviceIdentificationRequest factory function for ModbusPDUReadDeviceIdentificationRequest
-func NewModbusPDUReadDeviceIdentificationRequest(level ModbusDeviceInformationLevel, objectId uint8) *ModbusPDU {
-	child := &ModbusPDUReadDeviceIdentificationRequest{
+func NewModbusPDUReadDeviceIdentificationRequest(level ModbusDeviceInformationLevel, objectId uint8) *ModbusPDUReadDeviceIdentificationRequest {
+	_result := &ModbusPDUReadDeviceIdentificationRequest{
 		Level:     level,
 		ObjectId:  objectId,
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUReadDeviceIdentificationRequest(structType interface{}) *ModbusPDUReadDeviceIdentificationRequest {
@@ -150,7 +162,7 @@ func (m *ModbusPDUReadDeviceIdentificationRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUReadDeviceIdentificationRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUReadDeviceIdentificationRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUReadDeviceIdentificationRequest, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUReadDeviceIdentificationRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -197,7 +209,7 @@ func ModbusPDUReadDeviceIdentificationRequestParse(readBuffer utils.ReadBuffer, 
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUReadDeviceIdentificationRequest) Serialize(writeBuffer utils.WriteBuffer) error {

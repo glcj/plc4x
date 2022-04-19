@@ -42,49 +42,39 @@ type IModbusPDUReportServerIdRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUReportServerIdRequest) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUReportServerIdRequest) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUReportServerIdRequest) FunctionFlag() uint8 {
-	return 0x11
 }
 
 func (m *ModbusPDUReportServerIdRequest) GetFunctionFlag() uint8 {
 	return 0x11
 }
 
-func (m *ModbusPDUReportServerIdRequest) Response() bool {
-	return bool(false)
-}
-
 func (m *ModbusPDUReportServerIdRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUReportServerIdRequest) InitializeParent(parent *ModbusPDU) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ModbusPDUReportServerIdRequest) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
 
 // NewModbusPDUReportServerIdRequest factory function for ModbusPDUReportServerIdRequest
-func NewModbusPDUReportServerIdRequest() *ModbusPDU {
-	child := &ModbusPDUReportServerIdRequest{
+func NewModbusPDUReportServerIdRequest() *ModbusPDUReportServerIdRequest {
+	_result := &ModbusPDUReportServerIdRequest{
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUReportServerIdRequest(structType interface{}) *ModbusPDUReportServerIdRequest {
@@ -121,7 +111,7 @@ func (m *ModbusPDUReportServerIdRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUReportServerIdRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUReportServerIdRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUReportServerIdRequest, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUReportServerIdRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -137,7 +127,7 @@ func ModbusPDUReportServerIdRequestParse(readBuffer utils.ReadBuffer, response b
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUReportServerIdRequest) Serialize(writeBuffer utils.WriteBuffer) error {

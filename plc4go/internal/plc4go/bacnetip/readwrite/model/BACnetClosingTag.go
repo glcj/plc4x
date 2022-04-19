@@ -46,35 +46,33 @@ type IBACnetClosingTag interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetClosingTag) DataType() BACnetDataType {
-	return BACnetDataType_CLOSING_TAG
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetClosingTag) GetDataType() BACnetDataType {
 	return BACnetDataType_CLOSING_TAG
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetClosingTag) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetClosingTag) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
 
 // NewBACnetClosingTag factory function for BACnetClosingTag
-func NewBACnetClosingTag(header *BACnetTagHeader, tagNumberArgument uint8, actualLength uint32) *BACnetContextTag {
-	child := &BACnetClosingTag{
+func NewBACnetClosingTag(header *BACnetTagHeader, tagNumberArgument uint8, actualLength uint32) *BACnetClosingTag {
+	_result := &BACnetClosingTag{
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetClosingTag(structType interface{}) *BACnetClosingTag {
@@ -111,7 +109,7 @@ func (m *BACnetClosingTag) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetClosingTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, actualLength uint32) (*BACnetContextTag, error) {
+func BACnetClosingTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, actualLength uint32) (*BACnetClosingTag, error) {
 	if pullErr := readBuffer.PullContext("BACnetClosingTag"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -132,7 +130,7 @@ func BACnetClosingTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetClosingTag) Serialize(writeBuffer utils.WriteBuffer) error {

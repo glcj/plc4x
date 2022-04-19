@@ -52,23 +52,30 @@ type INLMInitalizeRoutingTable interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NLMInitalizeRoutingTable) MessageType() uint8 {
-	return 0x06
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NLMInitalizeRoutingTable) GetMessageType() uint8 {
 	return 0x06
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NLMInitalizeRoutingTable) InitializeParent(parent *NLM, vendorId *uint16) {
 	m.NLM.VendorId = vendorId
 }
 
+func (m *NLMInitalizeRoutingTable) GetParent() *NLM {
+	return m.NLM
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *NLMInitalizeRoutingTable) GetNumberOfPorts() uint8 {
 	return m.NumberOfPorts
 }
@@ -77,19 +84,20 @@ func (m *NLMInitalizeRoutingTable) GetPortMappings() []*NLMInitalizeRoutingTable
 	return m.PortMappings
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewNLMInitalizeRoutingTable factory function for NLMInitalizeRoutingTable
-func NewNLMInitalizeRoutingTable(numberOfPorts uint8, portMappings []*NLMInitalizeRoutingTablePortMapping, vendorId *uint16, apduLength uint16) *NLM {
-	child := &NLMInitalizeRoutingTable{
+func NewNLMInitalizeRoutingTable(numberOfPorts uint8, portMappings []*NLMInitalizeRoutingTablePortMapping, vendorId *uint16, apduLength uint16) *NLMInitalizeRoutingTable {
+	_result := &NLMInitalizeRoutingTable{
 		NumberOfPorts: numberOfPorts,
 		PortMappings:  portMappings,
 		NLM:           NewNLM(vendorId, apduLength),
 	}
-	child.Child = child
-	return child.NLM
+	_result.Child = _result
+	return _result
 }
 
 func CastNLMInitalizeRoutingTable(structType interface{}) *NLMInitalizeRoutingTable {
@@ -137,7 +145,7 @@ func (m *NLMInitalizeRoutingTable) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NLMInitalizeRoutingTableParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLM, error) {
+func NLMInitalizeRoutingTableParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLMInitalizeRoutingTable, error) {
 	if pullErr := readBuffer.PullContext("NLMInitalizeRoutingTable"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -181,7 +189,7 @@ func NLMInitalizeRoutingTableParse(readBuffer utils.ReadBuffer, apduLength uint1
 		NLM:           &NLM{},
 	}
 	_child.NLM.Child = _child
-	return _child.NLM, nil
+	return _child, nil
 }
 
 func (m *NLMInitalizeRoutingTable) Serialize(writeBuffer utils.WriteBuffer) error {

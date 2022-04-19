@@ -46,37 +46,45 @@ type IKnxNetRemoteLogging interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxNetRemoteLogging) ServiceType() uint8 {
-	return 0x06
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxNetRemoteLogging) GetServiceType() uint8 {
 	return 0x06
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxNetRemoteLogging) InitializeParent(parent *ServiceId) {}
 
+func (m *KnxNetRemoteLogging) GetParent() *ServiceId {
+	return m.ServiceId
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxNetRemoteLogging) GetVersion() uint8 {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxNetRemoteLogging factory function for KnxNetRemoteLogging
-func NewKnxNetRemoteLogging(version uint8) *ServiceId {
-	child := &KnxNetRemoteLogging{
+func NewKnxNetRemoteLogging(version uint8) *KnxNetRemoteLogging {
+	_result := &KnxNetRemoteLogging{
 		Version:   version,
 		ServiceId: NewServiceId(),
 	}
-	child.Child = child
-	return child.ServiceId
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxNetRemoteLogging(structType interface{}) *KnxNetRemoteLogging {
@@ -116,7 +124,7 @@ func (m *KnxNetRemoteLogging) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxNetRemoteLoggingParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
+func KnxNetRemoteLoggingParse(readBuffer utils.ReadBuffer) (*KnxNetRemoteLogging, error) {
 	if pullErr := readBuffer.PullContext("KnxNetRemoteLogging"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func KnxNetRemoteLoggingParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
 		ServiceId: &ServiceId{},
 	}
 	_child.ServiceId.Child = _child
-	return _child.ServiceId, nil
+	return _child, nil
 }
 
 func (m *KnxNetRemoteLogging) Serialize(writeBuffer utils.WriteBuffer) error {

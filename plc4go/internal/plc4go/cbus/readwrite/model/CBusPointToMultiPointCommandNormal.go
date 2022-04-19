@@ -67,16 +67,26 @@ type ICBusPointToMultiPointCommandNormal interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CBusPointToMultiPointCommandNormal) InitializeParent(parent *CBusPointToMultiPointCommand, peekedApplication byte) {
 	m.CBusPointToMultiPointCommand.PeekedApplication = peekedApplication
 }
 
+func (m *CBusPointToMultiPointCommandNormal) GetParent() *CBusPointToMultiPointCommand {
+	return m.CBusPointToMultiPointCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusPointToMultiPointCommandNormal) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
@@ -97,13 +107,26 @@ func (m *CBusPointToMultiPointCommandNormal) GetAlpha() *Alpha {
 	return m.Alpha
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *CBusPointToMultiPointCommandNormal) GetCr() byte {
+	return CBusPointToMultiPointCommandNormal_CR
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewCBusPointToMultiPointCommandNormal factory function for CBusPointToMultiPointCommandNormal
-func NewCBusPointToMultiPointCommandNormal(application ApplicationIdContainer, salData *SALData, crc *Checksum, peekAlpha byte, alpha *Alpha, peekedApplication byte, srchk bool) *CBusPointToMultiPointCommand {
-	child := &CBusPointToMultiPointCommandNormal{
+func NewCBusPointToMultiPointCommandNormal(application ApplicationIdContainer, salData *SALData, crc *Checksum, peekAlpha byte, alpha *Alpha, peekedApplication byte, srchk bool) *CBusPointToMultiPointCommandNormal {
+	_result := &CBusPointToMultiPointCommandNormal{
 		Application:                  application,
 		SalData:                      salData,
 		Crc:                          crc,
@@ -111,8 +134,8 @@ func NewCBusPointToMultiPointCommandNormal(application ApplicationIdContainer, s
 		Alpha:                        alpha,
 		CBusPointToMultiPointCommand: NewCBusPointToMultiPointCommand(peekedApplication, srchk),
 	}
-	child.Child = child
-	return child.CBusPointToMultiPointCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastCBusPointToMultiPointCommandNormal(structType interface{}) *CBusPointToMultiPointCommandNormal {
@@ -171,7 +194,7 @@ func (m *CBusPointToMultiPointCommandNormal) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusPointToMultiPointCommandNormalParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToMultiPointCommand, error) {
+func CBusPointToMultiPointCommandNormalParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToMultiPointCommandNormal, error) {
 	if pullErr := readBuffer.PullContext("CBusPointToMultiPointCommandNormal"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -292,7 +315,7 @@ func CBusPointToMultiPointCommandNormalParse(readBuffer utils.ReadBuffer, srchk 
 		CBusPointToMultiPointCommand: &CBusPointToMultiPointCommand{},
 	}
 	_child.CBusPointToMultiPointCommand.Child = _child
-	return _child.CBusPointToMultiPointCommand, nil
+	return _child, nil
 }
 
 func (m *CBusPointToMultiPointCommandNormal) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -56,40 +56,39 @@ type IS7PayloadUserDataItemCpuFunctionReadSzlResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) CpuFunctionType() uint8 {
-	return 0x08
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetCpuFunctionType() uint8 {
 	return 0x08
-}
-
-func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) CpuSubfunction() uint8 {
-	return 0x01
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetCpuSubfunction() uint8 {
 	return 0x01
 }
 
-func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) DataLength() uint16 {
-	return 0
-}
-
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetDataLength() uint16 {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
 	m.S7PayloadUserDataItem.ReturnCode = returnCode
 	m.S7PayloadUserDataItem.TransportSize = transportSize
 }
 
+func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetParent() *S7PayloadUserDataItem {
+	return m.S7PayloadUserDataItem
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetSzlId() *SzlId {
 	return m.SzlId
 }
@@ -102,20 +101,33 @@ func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetItems() []*SzlDataT
 	return m.Items
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetSzlItemLength() uint16 {
+	return S7PayloadUserDataItemCpuFunctionReadSzlResponse_SZLITEMLENGTH
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewS7PayloadUserDataItemCpuFunctionReadSzlResponse factory function for S7PayloadUserDataItemCpuFunctionReadSzlResponse
-func NewS7PayloadUserDataItemCpuFunctionReadSzlResponse(szlId *SzlId, szlIndex uint16, items []*SzlDataTreeItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
-	child := &S7PayloadUserDataItemCpuFunctionReadSzlResponse{
+func NewS7PayloadUserDataItemCpuFunctionReadSzlResponse(szlId *SzlId, szlIndex uint16, items []*SzlDataTreeItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItemCpuFunctionReadSzlResponse {
+	_result := &S7PayloadUserDataItemCpuFunctionReadSzlResponse{
 		SzlId:                 szlId,
 		SzlIndex:              szlIndex,
 		Items:                 items,
 		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Child = child
-	return child.S7PayloadUserDataItem
+	_result.Child = _result
+	return _result
 }
 
 func CastS7PayloadUserDataItemCpuFunctionReadSzlResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionReadSzlResponse {
@@ -172,7 +184,7 @@ func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) GetLengthInBytes() uin
 	return m.GetLengthInBits() / 8
 }
 
-func S7PayloadUserDataItemCpuFunctionReadSzlResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItem, error) {
+func S7PayloadUserDataItemCpuFunctionReadSzlResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItemCpuFunctionReadSzlResponse, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadUserDataItemCpuFunctionReadSzlResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -246,7 +258,7 @@ func S7PayloadUserDataItemCpuFunctionReadSzlResponseParse(readBuffer utils.ReadB
 		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
 	_child.S7PayloadUserDataItem.Child = _child
-	return _child.S7PayloadUserDataItem, nil
+	return _child, nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionReadSzlResponse) Serialize(writeBuffer utils.WriteBuffer) error {

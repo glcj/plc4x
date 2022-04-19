@@ -61,13 +61,16 @@ type ICBusPointToPointToMultipointCommandParent interface {
 type ICBusPointToPointToMultipointCommandChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *CBusPointToPointToMultipointCommand, bridgeAddress *BridgeAddress, networkRoute *NetworkRoute, peekedApplication byte)
+	GetParent() *CBusPointToPointToMultipointCommand
+
 	GetTypeName() string
 	ICBusPointToPointToMultipointCommand
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusPointToPointToMultipointCommand) GetBridgeAddress() *BridgeAddress {
 	return m.BridgeAddress
 }
@@ -80,8 +83,9 @@ func (m *CBusPointToPointToMultipointCommand) GetPeekedApplication() byte {
 	return m.PeekedApplication
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCBusPointToPointToMultipointCommand factory function for CBusPointToPointToMultipointCommand
@@ -95,6 +99,9 @@ func CastCBusPointToPointToMultipointCommand(structType interface{}) *CBusPointT
 	}
 	if casted, ok := structType.(*CBusPointToPointToMultipointCommand); ok {
 		return casted
+	}
+	if casted, ok := structType.(ICBusPointToPointToMultipointCommandChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -170,13 +177,17 @@ func CBusPointToPointToMultipointCommandParse(readBuffer utils.ReadBuffer, srchk
 	readBuffer.Reset(currentPos)
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *CBusPointToPointToMultipointCommand
+	type CBusPointToPointToMultipointCommandChild interface {
+		InitializeParent(*CBusPointToPointToMultipointCommand, *BridgeAddress, *NetworkRoute, byte)
+		GetParent() *CBusPointToPointToMultipointCommand
+	}
+	var _child CBusPointToPointToMultipointCommandChild
 	var typeSwitchError error
 	switch {
 	case peekedApplication == 0xFF: // CBusCommandPointToPointToMultiPointStatus
-		_parent, typeSwitchError = CBusCommandPointToPointToMultiPointStatusParse(readBuffer, srchk)
+		_child, typeSwitchError = CBusCommandPointToPointToMultiPointStatusParse(readBuffer, srchk)
 	case true: // CBusCommandPointToPointToMultiPointNormal
-		_parent, typeSwitchError = CBusCommandPointToPointToMultiPointNormalParse(readBuffer, srchk)
+		_child, typeSwitchError = CBusCommandPointToPointToMultiPointNormalParse(readBuffer, srchk)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -190,8 +201,8 @@ func CBusPointToPointToMultipointCommandParse(readBuffer utils.ReadBuffer, srchk
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, bridgeAddress, networkRoute, peekedApplication)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), bridgeAddress, networkRoute, peekedApplication)
+	return _child.GetParent(), nil
 }
 
 func (m *CBusPointToPointToMultipointCommand) Serialize(writeBuffer utils.WriteBuffer) error {

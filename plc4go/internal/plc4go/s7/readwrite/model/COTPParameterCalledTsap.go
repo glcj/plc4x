@@ -49,37 +49,45 @@ type ICOTPParameterCalledTsap interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *COTPParameterCalledTsap) ParameterType() uint8 {
-	return 0xC2
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *COTPParameterCalledTsap) GetParameterType() uint8 {
 	return 0xC2
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *COTPParameterCalledTsap) InitializeParent(parent *COTPParameter) {}
 
+func (m *COTPParameterCalledTsap) GetParent() *COTPParameter {
+	return m.COTPParameter
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *COTPParameterCalledTsap) GetTsapId() uint16 {
 	return m.TsapId
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCOTPParameterCalledTsap factory function for COTPParameterCalledTsap
-func NewCOTPParameterCalledTsap(tsapId uint16, rest uint8) *COTPParameter {
-	child := &COTPParameterCalledTsap{
+func NewCOTPParameterCalledTsap(tsapId uint16, rest uint8) *COTPParameterCalledTsap {
+	_result := &COTPParameterCalledTsap{
 		TsapId:        tsapId,
 		COTPParameter: NewCOTPParameter(rest),
 	}
-	child.Child = child
-	return child.COTPParameter
+	_result.Child = _result
+	return _result
 }
 
 func CastCOTPParameterCalledTsap(structType interface{}) *COTPParameterCalledTsap {
@@ -119,7 +127,7 @@ func (m *COTPParameterCalledTsap) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func COTPParameterCalledTsapParse(readBuffer utils.ReadBuffer, rest uint8) (*COTPParameter, error) {
+func COTPParameterCalledTsapParse(readBuffer utils.ReadBuffer, rest uint8) (*COTPParameterCalledTsap, error) {
 	if pullErr := readBuffer.PullContext("COTPParameterCalledTsap"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -143,7 +151,7 @@ func COTPParameterCalledTsapParse(readBuffer utils.ReadBuffer, rest uint8) (*COT
 		COTPParameter: &COTPParameter{},
 	}
 	_child.COTPParameter.Child = _child
-	return _child.COTPParameter, nil
+	return _child, nil
 }
 
 func (m *COTPParameterCalledTsap) Serialize(writeBuffer utils.WriteBuffer) error {

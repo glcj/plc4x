@@ -49,16 +49,26 @@ type ICALDataReplyAcknowledge interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALDataReplyAcknowledge) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *CALDataReplyAcknowledge) GetParent() *CALData {
+	return m.CALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALDataReplyAcknowledge) GetParamNo() uint8 {
 	return m.ParamNo
 }
@@ -67,19 +77,20 @@ func (m *CALDataReplyAcknowledge) GetCode() uint8 {
 	return m.Code
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCALDataReplyAcknowledge factory function for CALDataReplyAcknowledge
-func NewCALDataReplyAcknowledge(paramNo uint8, code uint8, commandTypeContainer CALCommandTypeContainer) *CALData {
-	child := &CALDataReplyAcknowledge{
+func NewCALDataReplyAcknowledge(paramNo uint8, code uint8, commandTypeContainer CALCommandTypeContainer) *CALDataReplyAcknowledge {
+	_result := &CALDataReplyAcknowledge{
 		ParamNo: paramNo,
 		Code:    code,
 		CALData: NewCALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.CALData
+	_result.Child = _result
+	return _result
 }
 
 func CastCALDataReplyAcknowledge(structType interface{}) *CALDataReplyAcknowledge {
@@ -122,7 +133,7 @@ func (m *CALDataReplyAcknowledge) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALDataReplyAcknowledgeParse(readBuffer utils.ReadBuffer) (*CALData, error) {
+func CALDataReplyAcknowledgeParse(readBuffer utils.ReadBuffer) (*CALDataReplyAcknowledge, error) {
 	if pullErr := readBuffer.PullContext("CALDataReplyAcknowledge"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -154,7 +165,7 @@ func CALDataReplyAcknowledgeParse(readBuffer utils.ReadBuffer) (*CALData, error)
 		CALData: &CALData{},
 	}
 	_child.CALData.Child = _child
-	return _child.CALData, nil
+	return _child, nil
 }
 
 func (m *CALDataReplyAcknowledge) Serialize(writeBuffer utils.WriteBuffer) error {

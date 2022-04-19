@@ -49,21 +49,28 @@ type IDescriptionResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DescriptionResponse) MsgType() uint16 {
-	return 0x0204
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DescriptionResponse) GetMsgType() uint16 {
 	return 0x0204
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *DescriptionResponse) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *DescriptionResponse) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *DescriptionResponse) GetDibDeviceInfo() *DIBDeviceInfo {
 	return m.DibDeviceInfo
 }
@@ -72,19 +79,20 @@ func (m *DescriptionResponse) GetDibSuppSvcFamilies() *DIBSuppSvcFamilies {
 	return m.DibSuppSvcFamilies
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDescriptionResponse factory function for DescriptionResponse
-func NewDescriptionResponse(dibDeviceInfo *DIBDeviceInfo, dibSuppSvcFamilies *DIBSuppSvcFamilies) *KnxNetIpMessage {
-	child := &DescriptionResponse{
+func NewDescriptionResponse(dibDeviceInfo *DIBDeviceInfo, dibSuppSvcFamilies *DIBSuppSvcFamilies) *DescriptionResponse {
+	_result := &DescriptionResponse{
 		DibDeviceInfo:      dibDeviceInfo,
 		DibSuppSvcFamilies: dibSuppSvcFamilies,
 		KnxNetIpMessage:    NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastDescriptionResponse(structType interface{}) *DescriptionResponse {
@@ -127,7 +135,7 @@ func (m *DescriptionResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func DescriptionResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+func DescriptionResponseParse(readBuffer utils.ReadBuffer) (*DescriptionResponse, error) {
 	if pullErr := readBuffer.PullContext("DescriptionResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -171,7 +179,7 @@ func DescriptionResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, er
 		KnxNetIpMessage:    &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *DescriptionResponse) Serialize(writeBuffer utils.WriteBuffer) error {

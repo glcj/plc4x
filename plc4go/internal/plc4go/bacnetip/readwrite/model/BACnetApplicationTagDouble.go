@@ -48,35 +48,55 @@ type IBACnetApplicationTagDouble interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagDouble) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagDouble) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagDouble) GetPayload() *BACnetTagPayloadDouble {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagDouble) GetActualValue() float64 {
-	return m.GetPayload().GetValue()
+	return float64(m.GetPayload().GetValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagDouble factory function for BACnetApplicationTagDouble
-func NewBACnetApplicationTagDouble(payload *BACnetTagPayloadDouble, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagDouble{
+func NewBACnetApplicationTagDouble(payload *BACnetTagPayloadDouble, header *BACnetTagHeader) *BACnetApplicationTagDouble {
+	_result := &BACnetApplicationTagDouble{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagDouble(structType interface{}) *BACnetApplicationTagDouble {
@@ -118,7 +138,7 @@ func (m *BACnetApplicationTagDouble) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagDoubleParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagDoubleParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTagDouble, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagDouble"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -153,7 +173,7 @@ func BACnetApplicationTagDoubleParse(readBuffer utils.ReadBuffer) (*BACnetApplic
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagDouble) Serialize(writeBuffer utils.WriteBuffer) error {

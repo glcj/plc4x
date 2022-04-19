@@ -42,7 +42,12 @@ type ICALReplyShort interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALReplyShort) InitializeParent(parent *CALReply, calType byte, calData *CALData) {
@@ -50,21 +55,17 @@ func (m *CALReplyShort) InitializeParent(parent *CALReply, calType byte, calData
 	m.CALReply.CalData = calData
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *CALReplyShort) GetParent() *CALReply {
+	return m.CALReply
+}
 
 // NewCALReplyShort factory function for CALReplyShort
-func NewCALReplyShort(calType byte, calData *CALData) *CALReply {
-	child := &CALReplyShort{
+func NewCALReplyShort(calType byte, calData *CALData) *CALReplyShort {
+	_result := &CALReplyShort{
 		CALReply: NewCALReply(calType, calData),
 	}
-	child.Child = child
-	return child.CALReply
+	_result.Child = _result
+	return _result
 }
 
 func CastCALReplyShort(structType interface{}) *CALReplyShort {
@@ -101,7 +102,7 @@ func (m *CALReplyShort) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALReplyShortParse(readBuffer utils.ReadBuffer) (*CALReply, error) {
+func CALReplyShortParse(readBuffer utils.ReadBuffer) (*CALReplyShort, error) {
 	if pullErr := readBuffer.PullContext("CALReplyShort"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -117,7 +118,7 @@ func CALReplyShortParse(readBuffer utils.ReadBuffer) (*CALReply, error) {
 		CALReply: &CALReply{},
 	}
 	_child.CALReply.Child = _child
-	return _child.CALReply, nil
+	return _child, nil
 }
 
 func (m *CALReplyShort) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -45,33 +45,31 @@ type IMPropInfoInd interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *MPropInfoInd) MessageCode() uint8 {
-	return 0xF7
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *MPropInfoInd) GetMessageCode() uint8 {
 	return 0xF7
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *MPropInfoInd) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *MPropInfoInd) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewMPropInfoInd factory function for MPropInfoInd
-func NewMPropInfoInd(size uint16) *CEMI {
-	child := &MPropInfoInd{
+func NewMPropInfoInd(size uint16) *MPropInfoInd {
+	_result := &MPropInfoInd{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastMPropInfoInd(structType interface{}) *MPropInfoInd {
@@ -108,7 +106,7 @@ func (m *MPropInfoInd) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MPropInfoIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func MPropInfoIndParse(readBuffer utils.ReadBuffer, size uint16) (*MPropInfoInd, error) {
 	if pullErr := readBuffer.PullContext("MPropInfoInd"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func MPropInfoIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) 
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *MPropInfoInd) Serialize(writeBuffer utils.WriteBuffer) error {

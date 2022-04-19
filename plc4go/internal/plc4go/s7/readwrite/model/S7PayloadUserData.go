@@ -49,45 +49,49 @@ type IS7PayloadUserData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7PayloadUserData) ParameterParameterType() uint8 {
-	return 0x00
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7PayloadUserData) GetParameterParameterType() uint8 {
 	return 0x00
-}
-
-func (m *S7PayloadUserData) MessageType() uint8 {
-	return 0x07
 }
 
 func (m *S7PayloadUserData) GetMessageType() uint8 {
 	return 0x07
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7PayloadUserData) InitializeParent(parent *S7Payload) {}
 
+func (m *S7PayloadUserData) GetParent() *S7Payload {
+	return m.S7Payload
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7PayloadUserData) GetItems() []*S7PayloadUserDataItem {
 	return m.Items
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7PayloadUserData factory function for S7PayloadUserData
-func NewS7PayloadUserData(items []*S7PayloadUserDataItem, parameter S7Parameter) *S7Payload {
-	child := &S7PayloadUserData{
+func NewS7PayloadUserData(items []*S7PayloadUserDataItem, parameter S7Parameter) *S7PayloadUserData {
+	_result := &S7PayloadUserData{
 		Items:     items,
 		S7Payload: NewS7Payload(parameter),
 	}
-	child.Child = child
-	return child.S7Payload
+	_result.Child = _result
+	return _result
 }
 
 func CastS7PayloadUserData(structType interface{}) *S7PayloadUserData {
@@ -132,7 +136,7 @@ func (m *S7PayloadUserData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7PayloadUserDataParse(readBuffer utils.ReadBuffer, messageType uint8, parameter *S7Parameter) (*S7Payload, error) {
+func S7PayloadUserDataParse(readBuffer utils.ReadBuffer, messageType uint8, parameter *S7Parameter) (*S7PayloadUserData, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadUserData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -168,7 +172,7 @@ func S7PayloadUserDataParse(readBuffer utils.ReadBuffer, messageType uint8, para
 		S7Payload: &S7Payload{},
 	}
 	_child.S7Payload.Child = _child
-	return _child.S7Payload, nil
+	return _child, nil
 }
 
 func (m *S7PayloadUserData) Serialize(writeBuffer utils.WriteBuffer) error {

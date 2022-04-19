@@ -46,56 +46,56 @@ type IS7PayloadNotify8 interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7PayloadNotify8) CpuFunctionType() uint8 {
-	return 0x00
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7PayloadNotify8) GetCpuFunctionType() uint8 {
 	return 0x00
-}
-
-func (m *S7PayloadNotify8) CpuSubfunction() uint8 {
-	return 0x16
 }
 
 func (m *S7PayloadNotify8) GetCpuSubfunction() uint8 {
 	return 0x16
 }
 
-func (m *S7PayloadNotify8) DataLength() uint16 {
-	return 0
-}
-
 func (m *S7PayloadNotify8) GetDataLength() uint16 {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7PayloadNotify8) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
 	m.S7PayloadUserDataItem.ReturnCode = returnCode
 	m.S7PayloadUserDataItem.TransportSize = transportSize
 }
 
+func (m *S7PayloadNotify8) GetParent() *S7PayloadUserDataItem {
+	return m.S7PayloadUserDataItem
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7PayloadNotify8) GetAlarmMessage() *AlarmMessagePushType {
 	return m.AlarmMessage
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7PayloadNotify8 factory function for S7PayloadNotify8
-func NewS7PayloadNotify8(alarmMessage *AlarmMessagePushType, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
-	child := &S7PayloadNotify8{
+func NewS7PayloadNotify8(alarmMessage *AlarmMessagePushType, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadNotify8 {
+	_result := &S7PayloadNotify8{
 		AlarmMessage:          alarmMessage,
 		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Child = child
-	return child.S7PayloadUserDataItem
+	_result.Child = _result
+	return _result
 }
 
 func CastS7PayloadNotify8(structType interface{}) *S7PayloadNotify8 {
@@ -135,7 +135,7 @@ func (m *S7PayloadNotify8) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7PayloadNotify8Parse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItem, error) {
+func S7PayloadNotify8Parse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadNotify8, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadNotify8"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -165,7 +165,7 @@ func S7PayloadNotify8Parse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, c
 		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
 	_child.S7PayloadUserDataItem.Child = _child
-	return _child.S7PayloadUserDataItem, nil
+	return _child, nil
 }
 
 func (m *S7PayloadNotify8) Serialize(writeBuffer utils.WriteBuffer) error {

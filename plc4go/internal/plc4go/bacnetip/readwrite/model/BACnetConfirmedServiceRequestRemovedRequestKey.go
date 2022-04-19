@@ -45,34 +45,32 @@ type IBACnetConfirmedServiceRequestRemovedRequestKey interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestRemovedRequestKey) ServiceChoice() uint8 {
-	return 0x19
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestRemovedRequestKey) GetServiceChoice() uint8 {
 	return 0x19
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestRemovedRequestKey) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceRequestRemovedRequestKey) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
 
 // NewBACnetConfirmedServiceRequestRemovedRequestKey factory function for BACnetConfirmedServiceRequestRemovedRequestKey
-func NewBACnetConfirmedServiceRequestRemovedRequestKey(len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestRemovedRequestKey{
+func NewBACnetConfirmedServiceRequestRemovedRequestKey(len uint16) *BACnetConfirmedServiceRequestRemovedRequestKey {
+	_result := &BACnetConfirmedServiceRequestRemovedRequestKey{
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestRemovedRequestKey(structType interface{}) *BACnetConfirmedServiceRequestRemovedRequestKey {
@@ -109,7 +107,7 @@ func (m *BACnetConfirmedServiceRequestRemovedRequestKey) GetLengthInBytes() uint
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestRemovedRequestKeyParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestRemovedRequestKeyParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestRemovedRequestKey, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestRemovedRequestKey"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func BACnetConfirmedServiceRequestRemovedRequestKeyParse(readBuffer utils.ReadBu
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestRemovedRequestKey) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,34 +42,32 @@ type IBACnetConfirmedServiceACKRemovedAuthenticate interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceACKRemovedAuthenticate) ServiceChoice() uint8 {
-	return 0x18
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceACKRemovedAuthenticate) GetServiceChoice() uint8 {
 	return 0x18
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceACKRemovedAuthenticate) InitializeParent(parent *BACnetConfirmedServiceACK) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceACKRemovedAuthenticate) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceACKRemovedAuthenticate factory function for BACnetConfirmedServiceACKRemovedAuthenticate
-func NewBACnetConfirmedServiceACKRemovedAuthenticate() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceACKRemovedAuthenticate{
+func NewBACnetConfirmedServiceACKRemovedAuthenticate() *BACnetConfirmedServiceACKRemovedAuthenticate {
+	_result := &BACnetConfirmedServiceACKRemovedAuthenticate{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceACKRemovedAuthenticate(structType interface{}) *BACnetConfirmedServiceACKRemovedAuthenticate {
@@ -106,7 +104,7 @@ func (m *BACnetConfirmedServiceACKRemovedAuthenticate) GetLengthInBytes() uint16
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceACKRemovedAuthenticateParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceACKRemovedAuthenticateParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACKRemovedAuthenticate, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceACKRemovedAuthenticate"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -122,7 +120,7 @@ func BACnetConfirmedServiceACKRemovedAuthenticateParse(readBuffer utils.ReadBuff
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceACKRemovedAuthenticate) Serialize(writeBuffer utils.WriteBuffer) error {

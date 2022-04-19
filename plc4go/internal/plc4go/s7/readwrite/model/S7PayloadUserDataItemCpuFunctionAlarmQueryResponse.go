@@ -55,40 +55,39 @@ type IS7PayloadUserDataItemCpuFunctionAlarmQueryResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) CpuFunctionType() uint8 {
-	return 0x08
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetCpuFunctionType() uint8 {
 	return 0x08
-}
-
-func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) CpuSubfunction() uint8 {
-	return 0x13
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetCpuSubfunction() uint8 {
 	return 0x13
 }
 
-func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) DataLength() uint16 {
-	return 0
-}
-
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetDataLength() uint16 {
 	return 0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
 	m.S7PayloadUserDataItem.ReturnCode = returnCode
 	m.S7PayloadUserDataItem.TransportSize = transportSize
 }
 
+func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetParent() *S7PayloadUserDataItem {
+	return m.S7PayloadUserDataItem
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetPudicfReturnCode() DataTransportErrorCode {
 	return m.PudicfReturnCode
 }
@@ -97,19 +96,36 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetPudicftransportS
 	return m.PudicftransportSize
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for const fields.
+///////////////////////
+func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetFunctionId() uint8 {
+	return S7PayloadUserDataItemCpuFunctionAlarmQueryResponse_FUNCTIONID
+}
+
+func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetNumberMessageObj() uint8 {
+	return S7PayloadUserDataItemCpuFunctionAlarmQueryResponse_NUMBERMESSAGEOBJ
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewS7PayloadUserDataItemCpuFunctionAlarmQueryResponse factory function for S7PayloadUserDataItemCpuFunctionAlarmQueryResponse
-func NewS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(pudicfReturnCode DataTransportErrorCode, pudicftransportSize DataTransportSize, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
-	child := &S7PayloadUserDataItemCpuFunctionAlarmQueryResponse{
+func NewS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(pudicfReturnCode DataTransportErrorCode, pudicftransportSize DataTransportSize, returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse {
+	_result := &S7PayloadUserDataItemCpuFunctionAlarmQueryResponse{
 		PudicfReturnCode:      pudicfReturnCode,
 		PudicftransportSize:   pudicftransportSize,
 		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Child = child
-	return child.S7PayloadUserDataItem
+	_result.Child = _result
+	return _result
 }
 
 func CastS7PayloadUserDataItemCpuFunctionAlarmQueryResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse {
@@ -161,7 +177,7 @@ func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) GetLengthInBytes() 
 	return m.GetLengthInBits() / 8
 }
 
-func S7PayloadUserDataItemCpuFunctionAlarmQueryResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItem, error) {
+func S7PayloadUserDataItemCpuFunctionAlarmQueryResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItemCpuFunctionAlarmQueryResponse, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadUserDataItemCpuFunctionAlarmQueryResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -237,7 +253,7 @@ func S7PayloadUserDataItemCpuFunctionAlarmQueryResponseParse(readBuffer utils.Re
 		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
 	_child.S7PayloadUserDataItem.Child = _child
-	return _child.S7PayloadUserDataItem, nil
+	return _child, nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionAlarmQueryResponse) Serialize(writeBuffer utils.WriteBuffer) error {

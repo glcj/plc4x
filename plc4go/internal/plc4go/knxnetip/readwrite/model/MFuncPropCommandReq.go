@@ -45,33 +45,31 @@ type IMFuncPropCommandReq interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *MFuncPropCommandReq) MessageCode() uint8 {
-	return 0xF8
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *MFuncPropCommandReq) GetMessageCode() uint8 {
 	return 0xF8
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *MFuncPropCommandReq) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *MFuncPropCommandReq) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewMFuncPropCommandReq factory function for MFuncPropCommandReq
-func NewMFuncPropCommandReq(size uint16) *CEMI {
-	child := &MFuncPropCommandReq{
+func NewMFuncPropCommandReq(size uint16) *MFuncPropCommandReq {
+	_result := &MFuncPropCommandReq{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastMFuncPropCommandReq(structType interface{}) *MFuncPropCommandReq {
@@ -108,7 +106,7 @@ func (m *MFuncPropCommandReq) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MFuncPropCommandReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func MFuncPropCommandReqParse(readBuffer utils.ReadBuffer, size uint16) (*MFuncPropCommandReq, error) {
 	if pullErr := readBuffer.PullContext("MFuncPropCommandReq"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func MFuncPropCommandReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, 
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *MFuncPropCommandReq) Serialize(writeBuffer utils.WriteBuffer) error {

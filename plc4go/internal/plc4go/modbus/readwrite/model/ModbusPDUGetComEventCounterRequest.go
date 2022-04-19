@@ -42,49 +42,39 @@ type IModbusPDUGetComEventCounterRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUGetComEventCounterRequest) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUGetComEventCounterRequest) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUGetComEventCounterRequest) FunctionFlag() uint8 {
-	return 0x0B
 }
 
 func (m *ModbusPDUGetComEventCounterRequest) GetFunctionFlag() uint8 {
 	return 0x0B
 }
 
-func (m *ModbusPDUGetComEventCounterRequest) Response() bool {
-	return bool(false)
-}
-
 func (m *ModbusPDUGetComEventCounterRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUGetComEventCounterRequest) InitializeParent(parent *ModbusPDU) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ModbusPDUGetComEventCounterRequest) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
 
 // NewModbusPDUGetComEventCounterRequest factory function for ModbusPDUGetComEventCounterRequest
-func NewModbusPDUGetComEventCounterRequest() *ModbusPDU {
-	child := &ModbusPDUGetComEventCounterRequest{
+func NewModbusPDUGetComEventCounterRequest() *ModbusPDUGetComEventCounterRequest {
+	_result := &ModbusPDUGetComEventCounterRequest{
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUGetComEventCounterRequest(structType interface{}) *ModbusPDUGetComEventCounterRequest {
@@ -121,7 +111,7 @@ func (m *ModbusPDUGetComEventCounterRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUGetComEventCounterRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUGetComEventCounterRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUGetComEventCounterRequest, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUGetComEventCounterRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -137,7 +127,7 @@ func ModbusPDUGetComEventCounterRequestParse(readBuffer utils.ReadBuffer, respon
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUGetComEventCounterRequest) Serialize(writeBuffer utils.WriteBuffer) error {

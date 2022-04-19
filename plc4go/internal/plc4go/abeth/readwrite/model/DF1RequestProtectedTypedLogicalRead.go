@@ -58,21 +58,28 @@ type IDF1RequestProtectedTypedLogicalRead interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DF1RequestProtectedTypedLogicalRead) FunctionCode() uint8 {
-	return 0xA2
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DF1RequestProtectedTypedLogicalRead) GetFunctionCode() uint8 {
 	return 0xA2
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *DF1RequestProtectedTypedLogicalRead) InitializeParent(parent *DF1RequestCommand) {}
 
+func (m *DF1RequestProtectedTypedLogicalRead) GetParent() *DF1RequestCommand {
+	return m.DF1RequestCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *DF1RequestProtectedTypedLogicalRead) GetByteSize() uint8 {
 	return m.ByteSize
 }
@@ -93,13 +100,14 @@ func (m *DF1RequestProtectedTypedLogicalRead) GetSubElementNumber() uint8 {
 	return m.SubElementNumber
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDF1RequestProtectedTypedLogicalRead factory function for DF1RequestProtectedTypedLogicalRead
-func NewDF1RequestProtectedTypedLogicalRead(byteSize uint8, fileNumber uint8, fileType uint8, elementNumber uint8, subElementNumber uint8) *DF1RequestCommand {
-	child := &DF1RequestProtectedTypedLogicalRead{
+func NewDF1RequestProtectedTypedLogicalRead(byteSize uint8, fileNumber uint8, fileType uint8, elementNumber uint8, subElementNumber uint8) *DF1RequestProtectedTypedLogicalRead {
+	_result := &DF1RequestProtectedTypedLogicalRead{
 		ByteSize:          byteSize,
 		FileNumber:        fileNumber,
 		FileType:          fileType,
@@ -107,8 +115,8 @@ func NewDF1RequestProtectedTypedLogicalRead(byteSize uint8, fileNumber uint8, fi
 		SubElementNumber:  subElementNumber,
 		DF1RequestCommand: NewDF1RequestCommand(),
 	}
-	child.Child = child
-	return child.DF1RequestCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastDF1RequestProtectedTypedLogicalRead(structType interface{}) *DF1RequestProtectedTypedLogicalRead {
@@ -160,7 +168,7 @@ func (m *DF1RequestProtectedTypedLogicalRead) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func DF1RequestProtectedTypedLogicalReadParse(readBuffer utils.ReadBuffer) (*DF1RequestCommand, error) {
+func DF1RequestProtectedTypedLogicalReadParse(readBuffer utils.ReadBuffer) (*DF1RequestProtectedTypedLogicalRead, error) {
 	if pullErr := readBuffer.PullContext("DF1RequestProtectedTypedLogicalRead"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -216,7 +224,7 @@ func DF1RequestProtectedTypedLogicalReadParse(readBuffer utils.ReadBuffer) (*DF1
 		DF1RequestCommand: &DF1RequestCommand{},
 	}
 	_child.DF1RequestCommand.Child = _child
-	return _child.DF1RequestCommand, nil
+	return _child, nil
 }
 
 func (m *DF1RequestProtectedTypedLogicalRead) Serialize(writeBuffer utils.WriteBuffer) error {

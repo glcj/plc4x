@@ -53,21 +53,28 @@ type IAPDUError interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUError) ApduType() uint8 {
-	return 0x5
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUError) GetApduType() uint8 {
 	return 0x5
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUError) InitializeParent(parent *APDU) {}
 
+func (m *APDUError) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUError) GetOriginalInvokeId() uint8 {
 	return m.OriginalInvokeId
 }
@@ -76,19 +83,20 @@ func (m *APDUError) GetError() *BACnetError {
 	return m.Error
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUError factory function for APDUError
-func NewAPDUError(originalInvokeId uint8, error *BACnetError, apduLength uint16) *APDU {
-	child := &APDUError{
+func NewAPDUError(originalInvokeId uint8, error *BACnetError, apduLength uint16) *APDUError {
+	_result := &APDUError{
 		OriginalInvokeId: originalInvokeId,
 		Error:            error,
 		APDU:             NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUError(structType interface{}) *APDUError {
@@ -134,7 +142,7 @@ func (m *APDUError) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDUErrorParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDUErrorParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUError, error) {
 	if pullErr := readBuffer.PullContext("APDUError"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -186,7 +194,7 @@ func APDUErrorParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, erro
 		APDU:             &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUError) Serialize(writeBuffer utils.WriteBuffer) error {

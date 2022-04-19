@@ -46,37 +46,45 @@ type IBVLCResult interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BVLCResult) BvlcFunction() uint8 {
-	return 0x00
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BVLCResult) GetBvlcFunction() uint8 {
 	return 0x00
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BVLCResult) InitializeParent(parent *BVLC) {}
 
+func (m *BVLCResult) GetParent() *BVLC {
+	return m.BVLC
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BVLCResult) GetCode() BVLCResultCode {
 	return m.Code
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBVLCResult factory function for BVLCResult
-func NewBVLCResult(code BVLCResultCode) *BVLC {
-	child := &BVLCResult{
+func NewBVLCResult(code BVLCResultCode) *BVLCResult {
+	_result := &BVLCResult{
 		Code: code,
 		BVLC: NewBVLC(),
 	}
-	child.Child = child
-	return child.BVLC
+	_result.Child = _result
+	return _result
 }
 
 func CastBVLCResult(structType interface{}) *BVLCResult {
@@ -116,7 +124,7 @@ func (m *BVLCResult) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BVLCResultParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
+func BVLCResultParse(readBuffer utils.ReadBuffer) (*BVLCResult, error) {
 	if pullErr := readBuffer.PullContext("BVLCResult"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -146,7 +154,7 @@ func BVLCResultParse(readBuffer utils.ReadBuffer) (*BVLC, error) {
 		BVLC: &BVLC{},
 	}
 	_child.BVLC.Child = _child
-	return _child.BVLC, nil
+	return _child, nil
 }
 
 func (m *BVLCResult) Serialize(writeBuffer utils.WriteBuffer) error {

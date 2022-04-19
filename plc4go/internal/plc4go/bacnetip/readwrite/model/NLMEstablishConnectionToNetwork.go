@@ -52,23 +52,30 @@ type INLMEstablishConnectionToNetwork interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NLMEstablishConnectionToNetwork) MessageType() uint8 {
-	return 0x08
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NLMEstablishConnectionToNetwork) GetMessageType() uint8 {
 	return 0x08
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NLMEstablishConnectionToNetwork) InitializeParent(parent *NLM, vendorId *uint16) {
 	m.NLM.VendorId = vendorId
 }
 
+func (m *NLMEstablishConnectionToNetwork) GetParent() *NLM {
+	return m.NLM
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *NLMEstablishConnectionToNetwork) GetDestinationNetworkAddress() uint16 {
 	return m.DestinationNetworkAddress
 }
@@ -77,19 +84,20 @@ func (m *NLMEstablishConnectionToNetwork) GetTerminationTime() uint8 {
 	return m.TerminationTime
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewNLMEstablishConnectionToNetwork factory function for NLMEstablishConnectionToNetwork
-func NewNLMEstablishConnectionToNetwork(destinationNetworkAddress uint16, terminationTime uint8, vendorId *uint16, apduLength uint16) *NLM {
-	child := &NLMEstablishConnectionToNetwork{
+func NewNLMEstablishConnectionToNetwork(destinationNetworkAddress uint16, terminationTime uint8, vendorId *uint16, apduLength uint16) *NLMEstablishConnectionToNetwork {
+	_result := &NLMEstablishConnectionToNetwork{
 		DestinationNetworkAddress: destinationNetworkAddress,
 		TerminationTime:           terminationTime,
 		NLM:                       NewNLM(vendorId, apduLength),
 	}
-	child.Child = child
-	return child.NLM
+	_result.Child = _result
+	return _result
 }
 
 func CastNLMEstablishConnectionToNetwork(structType interface{}) *NLMEstablishConnectionToNetwork {
@@ -132,7 +140,7 @@ func (m *NLMEstablishConnectionToNetwork) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NLMEstablishConnectionToNetworkParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLM, error) {
+func NLMEstablishConnectionToNetworkParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLMEstablishConnectionToNetwork, error) {
 	if pullErr := readBuffer.PullContext("NLMEstablishConnectionToNetwork"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -164,7 +172,7 @@ func NLMEstablishConnectionToNetworkParse(readBuffer utils.ReadBuffer, apduLengt
 		NLM:                       &NLM{},
 	}
 	_child.NLM.Child = _child
-	return _child.NLM, nil
+	return _child, nil
 }
 
 func (m *NLMEstablishConnectionToNetwork) Serialize(writeBuffer utils.WriteBuffer) error {

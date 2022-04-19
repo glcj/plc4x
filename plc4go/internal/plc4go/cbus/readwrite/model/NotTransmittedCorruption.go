@@ -42,35 +42,33 @@ type INotTransmittedCorruption interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NotTransmittedCorruption) ConfirmationType() byte {
-	return 0x24
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NotTransmittedCorruption) GetConfirmationType() byte {
 	return 0x24
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NotTransmittedCorruption) InitializeParent(parent *Confirmation, alpha *Alpha) {
 	m.Confirmation.Alpha = alpha
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *NotTransmittedCorruption) GetParent() *Confirmation {
+	return m.Confirmation
+}
 
 // NewNotTransmittedCorruption factory function for NotTransmittedCorruption
-func NewNotTransmittedCorruption(alpha *Alpha) *Confirmation {
-	child := &NotTransmittedCorruption{
+func NewNotTransmittedCorruption(alpha *Alpha) *NotTransmittedCorruption {
+	_result := &NotTransmittedCorruption{
 		Confirmation: NewConfirmation(alpha),
 	}
-	child.Child = child
-	return child.Confirmation
+	_result.Child = _result
+	return _result
 }
 
 func CastNotTransmittedCorruption(structType interface{}) *NotTransmittedCorruption {
@@ -107,7 +105,7 @@ func (m *NotTransmittedCorruption) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NotTransmittedCorruptionParse(readBuffer utils.ReadBuffer) (*Confirmation, error) {
+func NotTransmittedCorruptionParse(readBuffer utils.ReadBuffer) (*NotTransmittedCorruption, error) {
 	if pullErr := readBuffer.PullContext("NotTransmittedCorruption"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -123,7 +121,7 @@ func NotTransmittedCorruptionParse(readBuffer utils.ReadBuffer) (*Confirmation, 
 		Confirmation: &Confirmation{},
 	}
 	_child.Confirmation.Child = _child
-	return _child.Confirmation, nil
+	return _child, nil
 }
 
 func (m *NotTransmittedCorruption) Serialize(writeBuffer utils.WriteBuffer) error {

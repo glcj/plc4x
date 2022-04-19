@@ -52,21 +52,28 @@ type IIdentifyReplyCommandFirmwareSummary interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandFirmwareSummary) Attribute() Attribute {
-	return Attribute_Summary
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandFirmwareSummary) GetAttribute() Attribute {
 	return Attribute_Summary
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandFirmwareSummary) InitializeParent(parent *IdentifyReplyCommand) {}
 
+func (m *IdentifyReplyCommandFirmwareSummary) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *IdentifyReplyCommandFirmwareSummary) GetFirmwareVersion() string {
 	return m.FirmwareVersion
 }
@@ -79,20 +86,21 @@ func (m *IdentifyReplyCommandFirmwareSummary) GetVersion() string {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandFirmwareSummary factory function for IdentifyReplyCommandFirmwareSummary
-func NewIdentifyReplyCommandFirmwareSummary(firmwareVersion string, unitServiceType byte, version string) *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandFirmwareSummary{
+func NewIdentifyReplyCommandFirmwareSummary(firmwareVersion string, unitServiceType byte, version string) *IdentifyReplyCommandFirmwareSummary {
+	_result := &IdentifyReplyCommandFirmwareSummary{
 		FirmwareVersion:      firmwareVersion,
 		UnitServiceType:      unitServiceType,
 		Version:              version,
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandFirmwareSummary(structType interface{}) *IdentifyReplyCommandFirmwareSummary {
@@ -138,7 +146,7 @@ func (m *IdentifyReplyCommandFirmwareSummary) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandFirmwareSummaryParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandFirmwareSummaryParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandFirmwareSummary, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandFirmwareSummary"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -178,7 +186,7 @@ func IdentifyReplyCommandFirmwareSummaryParse(readBuffer utils.ReadBuffer, attri
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandFirmwareSummary) Serialize(writeBuffer utils.WriteBuffer) error {

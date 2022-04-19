@@ -52,24 +52,31 @@ type ICOTPPacketTpduError interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *COTPPacketTpduError) TpduCode() uint8 {
-	return 0x70
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *COTPPacketTpduError) GetTpduCode() uint8 {
 	return 0x70
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *COTPPacketTpduError) InitializeParent(parent *COTPPacket, parameters []*COTPParameter, payload *S7Message) {
 	m.COTPPacket.Parameters = parameters
 	m.COTPPacket.Payload = payload
 }
 
+func (m *COTPPacketTpduError) GetParent() *COTPPacket {
+	return m.COTPPacket
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *COTPPacketTpduError) GetDestinationReference() uint16 {
 	return m.DestinationReference
 }
@@ -78,19 +85,20 @@ func (m *COTPPacketTpduError) GetRejectCause() uint8 {
 	return m.RejectCause
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCOTPPacketTpduError factory function for COTPPacketTpduError
-func NewCOTPPacketTpduError(destinationReference uint16, rejectCause uint8, parameters []*COTPParameter, payload *S7Message, cotpLen uint16) *COTPPacket {
-	child := &COTPPacketTpduError{
+func NewCOTPPacketTpduError(destinationReference uint16, rejectCause uint8, parameters []*COTPParameter, payload *S7Message, cotpLen uint16) *COTPPacketTpduError {
+	_result := &COTPPacketTpduError{
 		DestinationReference: destinationReference,
 		RejectCause:          rejectCause,
 		COTPPacket:           NewCOTPPacket(parameters, payload, cotpLen),
 	}
-	child.Child = child
-	return child.COTPPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastCOTPPacketTpduError(structType interface{}) *COTPPacketTpduError {
@@ -133,7 +141,7 @@ func (m *COTPPacketTpduError) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func COTPPacketTpduErrorParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacket, error) {
+func COTPPacketTpduErrorParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacketTpduError, error) {
 	if pullErr := readBuffer.PullContext("COTPPacketTpduError"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -165,7 +173,7 @@ func COTPPacketTpduErrorParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COT
 		COTPPacket:           &COTPPacket{},
 	}
 	_child.COTPPacket.Child = _child
-	return _child.COTPPacket, nil
+	return _child, nil
 }
 
 func (m *COTPPacketTpduError) Serialize(writeBuffer utils.WriteBuffer) error {

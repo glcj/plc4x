@@ -62,21 +62,28 @@ type IMultipleServiceResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *MultipleServiceResponse) Service() uint8 {
-	return 0x8A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *MultipleServiceResponse) GetService() uint8 {
 	return 0x8A
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *MultipleServiceResponse) InitializeParent(parent *CipService) {}
 
+func (m *MultipleServiceResponse) GetParent() *CipService {
+	return m.CipService
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *MultipleServiceResponse) GetStatus() uint8 {
 	return m.Status
 }
@@ -97,13 +104,14 @@ func (m *MultipleServiceResponse) GetServicesData() []byte {
 	return m.ServicesData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewMultipleServiceResponse factory function for MultipleServiceResponse
-func NewMultipleServiceResponse(status uint8, extStatus uint8, serviceNb uint16, offsets []uint16, servicesData []byte, serviceLen uint16) *CipService {
-	child := &MultipleServiceResponse{
+func NewMultipleServiceResponse(status uint8, extStatus uint8, serviceNb uint16, offsets []uint16, servicesData []byte, serviceLen uint16) *MultipleServiceResponse {
+	_result := &MultipleServiceResponse{
 		Status:       status,
 		ExtStatus:    extStatus,
 		ServiceNb:    serviceNb,
@@ -111,8 +119,8 @@ func NewMultipleServiceResponse(status uint8, extStatus uint8, serviceNb uint16,
 		ServicesData: servicesData,
 		CipService:   NewCipService(serviceLen),
 	}
-	child.Child = child
-	return child.CipService
+	_result.Child = _result
+	return _result
 }
 
 func CastMultipleServiceResponse(structType interface{}) *MultipleServiceResponse {
@@ -171,7 +179,7 @@ func (m *MultipleServiceResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MultipleServiceResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipService, error) {
+func MultipleServiceResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*MultipleServiceResponse, error) {
 	if pullErr := readBuffer.PullContext("MultipleServiceResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -252,7 +260,7 @@ func MultipleServiceResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16
 		CipService:   &CipService{},
 	}
 	_child.CipService.Child = _child
-	return _child.CipService, nil
+	return _child, nil
 }
 
 func (m *MultipleServiceResponse) Serialize(writeBuffer utils.WriteBuffer) error {

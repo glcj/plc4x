@@ -42,36 +42,34 @@ type IBACnetErrorVTData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorVTData) ServiceChoice() uint8 {
-	return 0x17
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorVTData) GetServiceChoice() uint8 {
 	return 0x17
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorVTData) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorVTData) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorVTData factory function for BACnetErrorVTData
-func NewBACnetErrorVTData(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorVTData{
+func NewBACnetErrorVTData(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorVTData {
+	_result := &BACnetErrorVTData{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorVTData(structType interface{}) *BACnetErrorVTData {
@@ -108,7 +106,7 @@ func (m *BACnetErrorVTData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorVTDataParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorVTDataParse(readBuffer utils.ReadBuffer) (*BACnetErrorVTData, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorVTData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorVTDataParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorVTData) Serialize(writeBuffer utils.WriteBuffer) error {

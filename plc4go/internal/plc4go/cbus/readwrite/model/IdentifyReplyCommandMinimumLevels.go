@@ -42,33 +42,31 @@ type IIdentifyReplyCommandMinimumLevels interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandMinimumLevels) Attribute() Attribute {
-	return Attribute_MinimumLevels
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandMinimumLevels) GetAttribute() Attribute {
 	return Attribute_MinimumLevels
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandMinimumLevels) InitializeParent(parent *IdentifyReplyCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *IdentifyReplyCommandMinimumLevels) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
 
 // NewIdentifyReplyCommandMinimumLevels factory function for IdentifyReplyCommandMinimumLevels
-func NewIdentifyReplyCommandMinimumLevels() *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandMinimumLevels{
+func NewIdentifyReplyCommandMinimumLevels() *IdentifyReplyCommandMinimumLevels {
+	_result := &IdentifyReplyCommandMinimumLevels{
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandMinimumLevels(structType interface{}) *IdentifyReplyCommandMinimumLevels {
@@ -105,7 +103,7 @@ func (m *IdentifyReplyCommandMinimumLevels) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandMinimumLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandMinimumLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandMinimumLevels, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandMinimumLevels"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func IdentifyReplyCommandMinimumLevelsParse(readBuffer utils.ReadBuffer, attribu
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandMinimumLevels) Serialize(writeBuffer utils.WriteBuffer) error {

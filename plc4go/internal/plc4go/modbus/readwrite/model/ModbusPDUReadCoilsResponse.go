@@ -46,53 +46,53 @@ type IModbusPDUReadCoilsResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUReadCoilsResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUReadCoilsResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUReadCoilsResponse) FunctionFlag() uint8 {
-	return 0x01
 }
 
 func (m *ModbusPDUReadCoilsResponse) GetFunctionFlag() uint8 {
 	return 0x01
 }
 
-func (m *ModbusPDUReadCoilsResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUReadCoilsResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUReadCoilsResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUReadCoilsResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUReadCoilsResponse) GetValue() []byte {
 	return m.Value
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUReadCoilsResponse factory function for ModbusPDUReadCoilsResponse
-func NewModbusPDUReadCoilsResponse(value []byte) *ModbusPDU {
-	child := &ModbusPDUReadCoilsResponse{
+func NewModbusPDUReadCoilsResponse(value []byte) *ModbusPDUReadCoilsResponse {
+	_result := &ModbusPDUReadCoilsResponse{
 		Value:     value,
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUReadCoilsResponse(structType interface{}) *ModbusPDUReadCoilsResponse {
@@ -137,7 +137,7 @@ func (m *ModbusPDUReadCoilsResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUReadCoilsResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUReadCoilsResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUReadCoilsResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUReadCoilsResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -167,7 +167,7 @@ func ModbusPDUReadCoilsResponseParse(readBuffer utils.ReadBuffer, response bool)
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUReadCoilsResponse) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -45,33 +45,31 @@ type IApduDataExtDomainAddressSelectiveRead interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtDomainAddressSelectiveRead) ExtApciType() uint8 {
-	return 0x23
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtDomainAddressSelectiveRead) GetExtApciType() uint8 {
 	return 0x23
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtDomainAddressSelectiveRead) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtDomainAddressSelectiveRead) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtDomainAddressSelectiveRead factory function for ApduDataExtDomainAddressSelectiveRead
-func NewApduDataExtDomainAddressSelectiveRead(length uint8) *ApduDataExt {
-	child := &ApduDataExtDomainAddressSelectiveRead{
+func NewApduDataExtDomainAddressSelectiveRead(length uint8) *ApduDataExtDomainAddressSelectiveRead {
+	_result := &ApduDataExtDomainAddressSelectiveRead{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtDomainAddressSelectiveRead(structType interface{}) *ApduDataExtDomainAddressSelectiveRead {
@@ -108,7 +106,7 @@ func (m *ApduDataExtDomainAddressSelectiveRead) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtDomainAddressSelectiveReadParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtDomainAddressSelectiveReadParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtDomainAddressSelectiveRead, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtDomainAddressSelectiveRead"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtDomainAddressSelectiveReadParse(readBuffer utils.ReadBuffer, len
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtDomainAddressSelectiveRead) Serialize(writeBuffer utils.WriteBuffer) error {

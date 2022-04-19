@@ -45,33 +45,31 @@ type ILRawReq interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *LRawReq) MessageCode() uint8 {
-	return 0x10
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *LRawReq) GetMessageCode() uint8 {
 	return 0x10
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *LRawReq) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *LRawReq) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewLRawReq factory function for LRawReq
-func NewLRawReq(size uint16) *CEMI {
-	child := &LRawReq{
+func NewLRawReq(size uint16) *LRawReq {
+	_result := &LRawReq{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastLRawReq(structType interface{}) *LRawReq {
@@ -108,7 +106,7 @@ func (m *LRawReq) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func LRawReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func LRawReqParse(readBuffer utils.ReadBuffer, size uint16) (*LRawReq, error) {
 	if pullErr := readBuffer.PullContext("LRawReq"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func LRawReqParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *LRawReq) Serialize(writeBuffer utils.WriteBuffer) error {

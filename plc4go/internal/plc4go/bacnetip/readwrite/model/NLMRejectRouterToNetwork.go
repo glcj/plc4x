@@ -52,23 +52,30 @@ type INLMRejectRouterToNetwork interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NLMRejectRouterToNetwork) MessageType() uint8 {
-	return 0x03
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NLMRejectRouterToNetwork) GetMessageType() uint8 {
 	return 0x03
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NLMRejectRouterToNetwork) InitializeParent(parent *NLM, vendorId *uint16) {
 	m.NLM.VendorId = vendorId
 }
 
+func (m *NLMRejectRouterToNetwork) GetParent() *NLM {
+	return m.NLM
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *NLMRejectRouterToNetwork) GetRejectReason() NLMRejectRouterToNetworkRejectReason {
 	return m.RejectReason
 }
@@ -77,19 +84,20 @@ func (m *NLMRejectRouterToNetwork) GetDestinationNetworkAddress() uint16 {
 	return m.DestinationNetworkAddress
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewNLMRejectRouterToNetwork factory function for NLMRejectRouterToNetwork
-func NewNLMRejectRouterToNetwork(rejectReason NLMRejectRouterToNetworkRejectReason, destinationNetworkAddress uint16, vendorId *uint16, apduLength uint16) *NLM {
-	child := &NLMRejectRouterToNetwork{
+func NewNLMRejectRouterToNetwork(rejectReason NLMRejectRouterToNetworkRejectReason, destinationNetworkAddress uint16, vendorId *uint16, apduLength uint16) *NLMRejectRouterToNetwork {
+	_result := &NLMRejectRouterToNetwork{
 		RejectReason:              rejectReason,
 		DestinationNetworkAddress: destinationNetworkAddress,
 		NLM:                       NewNLM(vendorId, apduLength),
 	}
-	child.Child = child
-	return child.NLM
+	_result.Child = _result
+	return _result
 }
 
 func CastNLMRejectRouterToNetwork(structType interface{}) *NLMRejectRouterToNetwork {
@@ -132,7 +140,7 @@ func (m *NLMRejectRouterToNetwork) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NLMRejectRouterToNetworkParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLM, error) {
+func NLMRejectRouterToNetworkParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLMRejectRouterToNetwork, error) {
 	if pullErr := readBuffer.PullContext("NLMRejectRouterToNetwork"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -170,7 +178,7 @@ func NLMRejectRouterToNetworkParse(readBuffer utils.ReadBuffer, apduLength uint1
 		NLM:                       &NLM{},
 	}
 	_child.NLM.Child = _child
-	return _child.NLM, nil
+	return _child, nil
 }
 
 func (m *NLMRejectRouterToNetwork) Serialize(writeBuffer utils.WriteBuffer) error {

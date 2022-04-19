@@ -42,41 +42,35 @@ type ISysexCommandCapabilityResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandCapabilityResponse) CommandType() uint8 {
-	return 0x6C
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandCapabilityResponse) GetCommandType() uint8 {
 	return 0x6C
-}
-
-func (m *SysexCommandCapabilityResponse) Response() bool {
-	return false
 }
 
 func (m *SysexCommandCapabilityResponse) GetResponse() bool {
 	return false
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandCapabilityResponse) InitializeParent(parent *SysexCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *SysexCommandCapabilityResponse) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
 
 // NewSysexCommandCapabilityResponse factory function for SysexCommandCapabilityResponse
-func NewSysexCommandCapabilityResponse() *SysexCommand {
-	child := &SysexCommandCapabilityResponse{
+func NewSysexCommandCapabilityResponse() *SysexCommandCapabilityResponse {
+	_result := &SysexCommandCapabilityResponse{
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandCapabilityResponse(structType interface{}) *SysexCommandCapabilityResponse {
@@ -113,7 +107,7 @@ func (m *SysexCommandCapabilityResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandCapabilityResponseParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandCapabilityResponseParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandCapabilityResponse, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandCapabilityResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func SysexCommandCapabilityResponseParse(readBuffer utils.ReadBuffer, response b
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandCapabilityResponse) Serialize(writeBuffer utils.WriteBuffer) error {

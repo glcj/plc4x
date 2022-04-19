@@ -62,22 +62,29 @@ type IBACnetConfirmedServiceRequestAtomicWriteFile interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestAtomicWriteFile) ServiceChoice() uint8 {
-	return 0x07
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestAtomicWriteFile) GetServiceChoice() uint8 {
 	return 0x07
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestAtomicWriteFile) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
+func (m *BACnetConfirmedServiceRequestAtomicWriteFile) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestAtomicWriteFile) GetDeviceIdentifier() *BACnetApplicationTagObjectIdentifier {
 	return m.DeviceIdentifier
 }
@@ -98,13 +105,14 @@ func (m *BACnetConfirmedServiceRequestAtomicWriteFile) GetClosingTag() *BACnetCl
 	return m.ClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConfirmedServiceRequestAtomicWriteFile factory function for BACnetConfirmedServiceRequestAtomicWriteFile
-func NewBACnetConfirmedServiceRequestAtomicWriteFile(deviceIdentifier *BACnetApplicationTagObjectIdentifier, openingTag *BACnetOpeningTag, fileStartPosition *BACnetApplicationTagSignedInteger, fileData *BACnetApplicationTagOctetString, closingTag *BACnetClosingTag, len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestAtomicWriteFile{
+func NewBACnetConfirmedServiceRequestAtomicWriteFile(deviceIdentifier *BACnetApplicationTagObjectIdentifier, openingTag *BACnetOpeningTag, fileStartPosition *BACnetApplicationTagSignedInteger, fileData *BACnetApplicationTagOctetString, closingTag *BACnetClosingTag, len uint16) *BACnetConfirmedServiceRequestAtomicWriteFile {
+	_result := &BACnetConfirmedServiceRequestAtomicWriteFile{
 		DeviceIdentifier:              deviceIdentifier,
 		OpeningTag:                    openingTag,
 		FileStartPosition:             fileStartPosition,
@@ -112,8 +120,8 @@ func NewBACnetConfirmedServiceRequestAtomicWriteFile(deviceIdentifier *BACnetApp
 		ClosingTag:                    closingTag,
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestAtomicWriteFile(structType interface{}) *BACnetConfirmedServiceRequestAtomicWriteFile {
@@ -169,7 +177,7 @@ func (m *BACnetConfirmedServiceRequestAtomicWriteFile) GetLengthInBytes() uint16
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestAtomicWriteFileParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestAtomicWriteFileParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestAtomicWriteFile, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestAtomicWriteFile"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -271,7 +279,7 @@ func BACnetConfirmedServiceRequestAtomicWriteFileParse(readBuffer utils.ReadBuff
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestAtomicWriteFile) Serialize(writeBuffer utils.WriteBuffer) error {

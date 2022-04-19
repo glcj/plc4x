@@ -52,21 +52,28 @@ type IApduDataMemoryResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataMemoryResponse) ApciType() uint8 {
-	return 0x9
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataMemoryResponse) GetApciType() uint8 {
 	return 0x9
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataMemoryResponse) InitializeParent(parent *ApduData) {}
 
+func (m *ApduDataMemoryResponse) GetParent() *ApduData {
+	return m.ApduData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ApduDataMemoryResponse) GetAddress() uint16 {
 	return m.Address
 }
@@ -75,19 +82,20 @@ func (m *ApduDataMemoryResponse) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewApduDataMemoryResponse factory function for ApduDataMemoryResponse
-func NewApduDataMemoryResponse(address uint16, data []byte, dataLength uint8) *ApduData {
-	child := &ApduDataMemoryResponse{
+func NewApduDataMemoryResponse(address uint16, data []byte, dataLength uint8) *ApduDataMemoryResponse {
+	_result := &ApduDataMemoryResponse{
 		Address:  address,
 		Data:     data,
 		ApduData: NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataMemoryResponse(structType interface{}) *ApduDataMemoryResponse {
@@ -135,7 +143,7 @@ func (m *ApduDataMemoryResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataMemoryResponseParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataMemoryResponseParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataMemoryResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataMemoryResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -173,7 +181,7 @@ func ApduDataMemoryResponseParse(readBuffer utils.ReadBuffer, dataLength uint8) 
 		ApduData: &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataMemoryResponse) Serialize(writeBuffer utils.WriteBuffer) error {

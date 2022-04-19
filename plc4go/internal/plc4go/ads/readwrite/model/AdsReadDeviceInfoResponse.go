@@ -58,29 +58,32 @@ type IAdsReadDeviceInfoResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsReadDeviceInfoResponse) CommandId() CommandId {
-	return CommandId_ADS_READ_DEVICE_INFO
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsReadDeviceInfoResponse) GetCommandId() CommandId {
 	return CommandId_ADS_READ_DEVICE_INFO
-}
-
-func (m *AdsReadDeviceInfoResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *AdsReadDeviceInfoResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsReadDeviceInfoResponse) InitializeParent(parent *AdsData) {}
 
+func (m *AdsReadDeviceInfoResponse) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsReadDeviceInfoResponse) GetResult() ReturnCode {
 	return m.Result
 }
@@ -101,13 +104,14 @@ func (m *AdsReadDeviceInfoResponse) GetDevice() []byte {
 	return m.Device
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsReadDeviceInfoResponse factory function for AdsReadDeviceInfoResponse
-func NewAdsReadDeviceInfoResponse(result ReturnCode, majorVersion uint8, minorVersion uint8, version uint16, device []byte) *AdsData {
-	child := &AdsReadDeviceInfoResponse{
+func NewAdsReadDeviceInfoResponse(result ReturnCode, majorVersion uint8, minorVersion uint8, version uint16, device []byte) *AdsReadDeviceInfoResponse {
+	_result := &AdsReadDeviceInfoResponse{
 		Result:       result,
 		MajorVersion: majorVersion,
 		MinorVersion: minorVersion,
@@ -115,8 +119,8 @@ func NewAdsReadDeviceInfoResponse(result ReturnCode, majorVersion uint8, minorVe
 		Device:       device,
 		AdsData:      NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsReadDeviceInfoResponse(structType interface{}) *AdsReadDeviceInfoResponse {
@@ -170,7 +174,7 @@ func (m *AdsReadDeviceInfoResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsReadDeviceInfoResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsReadDeviceInfoResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsReadDeviceInfoResponse, error) {
 	if pullErr := readBuffer.PullContext("AdsReadDeviceInfoResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -231,7 +235,7 @@ func AdsReadDeviceInfoResponseParse(readBuffer utils.ReadBuffer, commandId Comma
 		AdsData:      &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsReadDeviceInfoResponse) Serialize(writeBuffer utils.WriteBuffer) error {

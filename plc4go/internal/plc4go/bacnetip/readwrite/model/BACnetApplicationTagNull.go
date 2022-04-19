@@ -42,28 +42,29 @@ type IBACnetApplicationTagNull interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagNull) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetApplicationTagNull) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
 
 // NewBACnetApplicationTagNull factory function for BACnetApplicationTagNull
-func NewBACnetApplicationTagNull(header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagNull{
+func NewBACnetApplicationTagNull(header *BACnetTagHeader) *BACnetApplicationTagNull {
+	_result := &BACnetApplicationTagNull{
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagNull(structType interface{}) *BACnetApplicationTagNull {
@@ -100,7 +101,7 @@ func (m *BACnetApplicationTagNull) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagNullParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagNullParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTagNull, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagNull"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -116,7 +117,7 @@ func BACnetApplicationTagNullParse(readBuffer utils.ReadBuffer) (*BACnetApplicat
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagNull) Serialize(writeBuffer utils.WriteBuffer) error {

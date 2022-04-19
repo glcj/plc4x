@@ -42,41 +42,35 @@ type ISysexCommandReportFirmwareRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SysexCommandReportFirmwareRequest) CommandType() uint8 {
-	return 0x79
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SysexCommandReportFirmwareRequest) GetCommandType() uint8 {
 	return 0x79
-}
-
-func (m *SysexCommandReportFirmwareRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *SysexCommandReportFirmwareRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SysexCommandReportFirmwareRequest) InitializeParent(parent *SysexCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *SysexCommandReportFirmwareRequest) GetParent() *SysexCommand {
+	return m.SysexCommand
+}
 
 // NewSysexCommandReportFirmwareRequest factory function for SysexCommandReportFirmwareRequest
-func NewSysexCommandReportFirmwareRequest() *SysexCommand {
-	child := &SysexCommandReportFirmwareRequest{
+func NewSysexCommandReportFirmwareRequest() *SysexCommandReportFirmwareRequest {
+	_result := &SysexCommandReportFirmwareRequest{
 		SysexCommand: NewSysexCommand(),
 	}
-	child.Child = child
-	return child.SysexCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastSysexCommandReportFirmwareRequest(structType interface{}) *SysexCommandReportFirmwareRequest {
@@ -113,7 +107,7 @@ func (m *SysexCommandReportFirmwareRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SysexCommandReportFirmwareRequestParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommand, error) {
+func SysexCommandReportFirmwareRequestParse(readBuffer utils.ReadBuffer, response bool) (*SysexCommandReportFirmwareRequest, error) {
 	if pullErr := readBuffer.PullContext("SysexCommandReportFirmwareRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func SysexCommandReportFirmwareRequestParse(readBuffer utils.ReadBuffer, respons
 		SysexCommand: &SysexCommand{},
 	}
 	_child.SysexCommand.Child = _child
-	return _child.SysexCommand, nil
+	return _child, nil
 }
 
 func (m *SysexCommandReportFirmwareRequest) Serialize(writeBuffer utils.WriteBuffer) error {

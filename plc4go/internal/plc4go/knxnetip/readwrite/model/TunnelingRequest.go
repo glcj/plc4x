@@ -52,21 +52,28 @@ type ITunnelingRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *TunnelingRequest) MsgType() uint16 {
-	return 0x0420
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *TunnelingRequest) GetMsgType() uint16 {
 	return 0x0420
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *TunnelingRequest) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *TunnelingRequest) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *TunnelingRequest) GetTunnelingRequestDataBlock() *TunnelingRequestDataBlock {
 	return m.TunnelingRequestDataBlock
 }
@@ -75,19 +82,20 @@ func (m *TunnelingRequest) GetCemi() *CEMI {
 	return m.Cemi
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewTunnelingRequest factory function for TunnelingRequest
-func NewTunnelingRequest(tunnelingRequestDataBlock *TunnelingRequestDataBlock, cemi *CEMI, totalLength uint16) *KnxNetIpMessage {
-	child := &TunnelingRequest{
+func NewTunnelingRequest(tunnelingRequestDataBlock *TunnelingRequestDataBlock, cemi *CEMI, totalLength uint16) *TunnelingRequest {
+	_result := &TunnelingRequest{
 		TunnelingRequestDataBlock: tunnelingRequestDataBlock,
 		Cemi:                      cemi,
 		KnxNetIpMessage:           NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastTunnelingRequest(structType interface{}) *TunnelingRequest {
@@ -130,7 +138,7 @@ func (m *TunnelingRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func TunnelingRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*KnxNetIpMessage, error) {
+func TunnelingRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*TunnelingRequest, error) {
 	if pullErr := readBuffer.PullContext("TunnelingRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -174,7 +182,7 @@ func TunnelingRequestParse(readBuffer utils.ReadBuffer, totalLength uint16) (*Kn
 		KnxNetIpMessage:           &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *TunnelingRequest) Serialize(writeBuffer utils.WriteBuffer) error {

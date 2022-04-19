@@ -50,40 +50,48 @@ type IBACnetConstructedDataLifeSafetyZone interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConstructedDataLifeSafetyZone) ObjectType() BACnetObjectType {
-	return BACnetObjectType_LIFE_SAFETY_ZONE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConstructedDataLifeSafetyZone) GetObjectType() BACnetObjectType {
 	return BACnetObjectType_LIFE_SAFETY_ZONE
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetConstructedDataLifeSafetyZone) InitializeParent(parent *BACnetConstructedData, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag) {
 	m.BACnetConstructedData.OpeningTag = openingTag
 	m.BACnetConstructedData.ClosingTag = closingTag
 }
 
+func (m *BACnetConstructedDataLifeSafetyZone) GetParent() *BACnetConstructedData {
+	return m.BACnetConstructedData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConstructedDataLifeSafetyZone) GetZones() []*BACnetContextTagObjectIdentifier {
 	return m.Zones
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetConstructedDataLifeSafetyZone factory function for BACnetConstructedDataLifeSafetyZone
-func NewBACnetConstructedDataLifeSafetyZone(zones []*BACnetContextTagObjectIdentifier, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedData {
-	child := &BACnetConstructedDataLifeSafetyZone{
+func NewBACnetConstructedDataLifeSafetyZone(zones []*BACnetContextTagObjectIdentifier, openingTag *BACnetOpeningTag, closingTag *BACnetClosingTag, tagNumber uint8, propertyIdentifierArgument BACnetContextTagPropertyIdentifier) *BACnetConstructedDataLifeSafetyZone {
+	_result := &BACnetConstructedDataLifeSafetyZone{
 		Zones:                 zones,
 		BACnetConstructedData: NewBACnetConstructedData(openingTag, closingTag, tagNumber, propertyIdentifierArgument),
 	}
-	child.Child = child
-	return child.BACnetConstructedData
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConstructedDataLifeSafetyZone(structType interface{}) *BACnetConstructedDataLifeSafetyZone {
@@ -127,7 +135,7 @@ func (m *BACnetConstructedDataLifeSafetyZone) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConstructedDataLifeSafetyZoneParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedData, error) {
+func BACnetConstructedDataLifeSafetyZoneParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, propertyIdentifierArgument *BACnetContextTagPropertyIdentifier) (*BACnetConstructedDataLifeSafetyZone, error) {
 	if pullErr := readBuffer.PullContext("BACnetConstructedDataLifeSafetyZone"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -164,7 +172,7 @@ func BACnetConstructedDataLifeSafetyZoneParse(readBuffer utils.ReadBuffer, tagNu
 		BACnetConstructedData: &BACnetConstructedData{},
 	}
 	_child.BACnetConstructedData.Child = _child
-	return _child.BACnetConstructedData, nil
+	return _child, nil
 }
 
 func (m *BACnetConstructedDataLifeSafetyZone) Serialize(writeBuffer utils.WriteBuffer) error {

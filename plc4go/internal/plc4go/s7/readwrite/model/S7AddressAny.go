@@ -62,21 +62,28 @@ type IS7AddressAny interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7AddressAny) AddressType() uint8 {
-	return 0x10
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7AddressAny) GetAddressType() uint8 {
 	return 0x10
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7AddressAny) InitializeParent(parent *S7Address) {}
 
+func (m *S7AddressAny) GetParent() *S7Address {
+	return m.S7Address
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7AddressAny) GetTransportSize() TransportSize {
 	return m.TransportSize
 }
@@ -101,13 +108,14 @@ func (m *S7AddressAny) GetBitAddress() uint8 {
 	return m.BitAddress
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7AddressAny factory function for S7AddressAny
-func NewS7AddressAny(transportSize TransportSize, numberOfElements uint16, dbNumber uint16, area MemoryArea, byteAddress uint16, bitAddress uint8) *S7Address {
-	child := &S7AddressAny{
+func NewS7AddressAny(transportSize TransportSize, numberOfElements uint16, dbNumber uint16, area MemoryArea, byteAddress uint16, bitAddress uint8) *S7AddressAny {
+	_result := &S7AddressAny{
 		TransportSize:    transportSize,
 		NumberOfElements: numberOfElements,
 		DbNumber:         dbNumber,
@@ -116,8 +124,8 @@ func NewS7AddressAny(transportSize TransportSize, numberOfElements uint16, dbNum
 		BitAddress:       bitAddress,
 		S7Address:        NewS7Address(),
 	}
-	child.Child = child
-	return child.S7Address
+	_result.Child = _result
+	return _result
 }
 
 func CastS7AddressAny(structType interface{}) *S7AddressAny {
@@ -175,7 +183,7 @@ func (m *S7AddressAny) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7AddressAnyParse(readBuffer utils.ReadBuffer) (*S7Address, error) {
+func S7AddressAnyParse(readBuffer utils.ReadBuffer) (*S7AddressAny, error) {
 	if pullErr := readBuffer.PullContext("S7AddressAny"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -268,7 +276,7 @@ func S7AddressAnyParse(readBuffer utils.ReadBuffer) (*S7Address, error) {
 		S7Address:        &S7Address{},
 	}
 	_child.S7Address.Child = _child
-	return _child.S7Address, nil
+	return _child, nil
 }
 
 func (m *S7AddressAny) Serialize(writeBuffer utils.WriteBuffer) error {

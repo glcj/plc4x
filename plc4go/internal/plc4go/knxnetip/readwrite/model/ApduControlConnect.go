@@ -42,33 +42,31 @@ type IApduControlConnect interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduControlConnect) ControlType() uint8 {
-	return 0x0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduControlConnect) GetControlType() uint8 {
 	return 0x0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduControlConnect) InitializeParent(parent *ApduControl) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduControlConnect) GetParent() *ApduControl {
+	return m.ApduControl
+}
 
 // NewApduControlConnect factory function for ApduControlConnect
-func NewApduControlConnect() *ApduControl {
-	child := &ApduControlConnect{
+func NewApduControlConnect() *ApduControlConnect {
+	_result := &ApduControlConnect{
 		ApduControl: NewApduControl(),
 	}
-	child.Child = child
-	return child.ApduControl
+	_result.Child = _result
+	return _result
 }
 
 func CastApduControlConnect(structType interface{}) *ApduControlConnect {
@@ -105,7 +103,7 @@ func (m *ApduControlConnect) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduControlConnectParse(readBuffer utils.ReadBuffer) (*ApduControl, error) {
+func ApduControlConnectParse(readBuffer utils.ReadBuffer) (*ApduControlConnect, error) {
 	if pullErr := readBuffer.PullContext("ApduControlConnect"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func ApduControlConnectParse(readBuffer utils.ReadBuffer) (*ApduControl, error) 
 		ApduControl: &ApduControl{},
 	}
 	_child.ApduControl.Child = _child
-	return _child.ApduControl, nil
+	return _child, nil
 }
 
 func (m *ApduControlConnect) Serialize(writeBuffer utils.WriteBuffer) error {

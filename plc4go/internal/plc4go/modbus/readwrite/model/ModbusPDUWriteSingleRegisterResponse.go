@@ -49,37 +49,36 @@ type IModbusPDUWriteSingleRegisterResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUWriteSingleRegisterResponse) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUWriteSingleRegisterResponse) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUWriteSingleRegisterResponse) FunctionFlag() uint8 {
-	return 0x06
 }
 
 func (m *ModbusPDUWriteSingleRegisterResponse) GetFunctionFlag() uint8 {
 	return 0x06
 }
 
-func (m *ModbusPDUWriteSingleRegisterResponse) Response() bool {
-	return bool(true)
-}
-
 func (m *ModbusPDUWriteSingleRegisterResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUWriteSingleRegisterResponse) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUWriteSingleRegisterResponse) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUWriteSingleRegisterResponse) GetAddress() uint16 {
 	return m.Address
 }
@@ -88,19 +87,20 @@ func (m *ModbusPDUWriteSingleRegisterResponse) GetValue() uint16 {
 	return m.Value
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUWriteSingleRegisterResponse factory function for ModbusPDUWriteSingleRegisterResponse
-func NewModbusPDUWriteSingleRegisterResponse(address uint16, value uint16) *ModbusPDU {
-	child := &ModbusPDUWriteSingleRegisterResponse{
+func NewModbusPDUWriteSingleRegisterResponse(address uint16, value uint16) *ModbusPDUWriteSingleRegisterResponse {
+	_result := &ModbusPDUWriteSingleRegisterResponse{
 		Address:   address,
 		Value:     value,
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUWriteSingleRegisterResponse(structType interface{}) *ModbusPDUWriteSingleRegisterResponse {
@@ -143,7 +143,7 @@ func (m *ModbusPDUWriteSingleRegisterResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUWriteSingleRegisterResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUWriteSingleRegisterResponseParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUWriteSingleRegisterResponse, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUWriteSingleRegisterResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -175,7 +175,7 @@ func ModbusPDUWriteSingleRegisterResponseParse(readBuffer utils.ReadBuffer, resp
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUWriteSingleRegisterResponse) Serialize(writeBuffer utils.WriteBuffer) error {

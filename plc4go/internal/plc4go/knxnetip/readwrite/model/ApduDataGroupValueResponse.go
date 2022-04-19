@@ -52,21 +52,28 @@ type IApduDataGroupValueResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataGroupValueResponse) ApciType() uint8 {
-	return 0x1
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataGroupValueResponse) GetApciType() uint8 {
 	return 0x1
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataGroupValueResponse) InitializeParent(parent *ApduData) {}
 
+func (m *ApduDataGroupValueResponse) GetParent() *ApduData {
+	return m.ApduData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ApduDataGroupValueResponse) GetDataFirstByte() int8 {
 	return m.DataFirstByte
 }
@@ -75,19 +82,20 @@ func (m *ApduDataGroupValueResponse) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewApduDataGroupValueResponse factory function for ApduDataGroupValueResponse
-func NewApduDataGroupValueResponse(dataFirstByte int8, data []byte, dataLength uint8) *ApduData {
-	child := &ApduDataGroupValueResponse{
+func NewApduDataGroupValueResponse(dataFirstByte int8, data []byte, dataLength uint8) *ApduDataGroupValueResponse {
+	_result := &ApduDataGroupValueResponse{
 		DataFirstByte: dataFirstByte,
 		Data:          data,
 		ApduData:      NewApduData(dataLength),
 	}
-	child.Child = child
-	return child.ApduData
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataGroupValueResponse(structType interface{}) *ApduDataGroupValueResponse {
@@ -132,7 +140,7 @@ func (m *ApduDataGroupValueResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataGroupValueResponseParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduData, error) {
+func ApduDataGroupValueResponseParse(readBuffer utils.ReadBuffer, dataLength uint8) (*ApduDataGroupValueResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataGroupValueResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -163,7 +171,7 @@ func ApduDataGroupValueResponseParse(readBuffer utils.ReadBuffer, dataLength uin
 		ApduData:      &ApduData{},
 	}
 	_child.ApduData.Child = _child
-	return _child.ApduData, nil
+	return _child, nil
 }
 
 func (m *ApduDataGroupValueResponse) Serialize(writeBuffer utils.WriteBuffer) error {

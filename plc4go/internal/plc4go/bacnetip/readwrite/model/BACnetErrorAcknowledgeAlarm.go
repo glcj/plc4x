@@ -42,36 +42,34 @@ type IBACnetErrorAcknowledgeAlarm interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorAcknowledgeAlarm) ServiceChoice() uint8 {
-	return 0x00
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorAcknowledgeAlarm) GetServiceChoice() uint8 {
 	return 0x00
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorAcknowledgeAlarm) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorAcknowledgeAlarm) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorAcknowledgeAlarm factory function for BACnetErrorAcknowledgeAlarm
-func NewBACnetErrorAcknowledgeAlarm(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorAcknowledgeAlarm{
+func NewBACnetErrorAcknowledgeAlarm(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorAcknowledgeAlarm {
+	_result := &BACnetErrorAcknowledgeAlarm{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorAcknowledgeAlarm(structType interface{}) *BACnetErrorAcknowledgeAlarm {
@@ -108,7 +106,7 @@ func (m *BACnetErrorAcknowledgeAlarm) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorAcknowledgeAlarmParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorAcknowledgeAlarmParse(readBuffer utils.ReadBuffer) (*BACnetErrorAcknowledgeAlarm, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorAcknowledgeAlarm"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorAcknowledgeAlarmParse(readBuffer utils.ReadBuffer) (*BACnetError
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorAcknowledgeAlarm) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,35 +42,33 @@ type IConfirmationSuccessful interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ConfirmationSuccessful) ConfirmationType() byte {
-	return 0x2E
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ConfirmationSuccessful) GetConfirmationType() byte {
 	return 0x2E
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *ConfirmationSuccessful) InitializeParent(parent *Confirmation, alpha *Alpha) {
 	m.Confirmation.Alpha = alpha
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ConfirmationSuccessful) GetParent() *Confirmation {
+	return m.Confirmation
+}
 
 // NewConfirmationSuccessful factory function for ConfirmationSuccessful
-func NewConfirmationSuccessful(alpha *Alpha) *Confirmation {
-	child := &ConfirmationSuccessful{
+func NewConfirmationSuccessful(alpha *Alpha) *ConfirmationSuccessful {
+	_result := &ConfirmationSuccessful{
 		Confirmation: NewConfirmation(alpha),
 	}
-	child.Child = child
-	return child.Confirmation
+	_result.Child = _result
+	return _result
 }
 
 func CastConfirmationSuccessful(structType interface{}) *ConfirmationSuccessful {
@@ -107,7 +105,7 @@ func (m *ConfirmationSuccessful) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ConfirmationSuccessfulParse(readBuffer utils.ReadBuffer) (*Confirmation, error) {
+func ConfirmationSuccessfulParse(readBuffer utils.ReadBuffer) (*ConfirmationSuccessful, error) {
 	if pullErr := readBuffer.PullContext("ConfirmationSuccessful"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -123,7 +121,7 @@ func ConfirmationSuccessfulParse(readBuffer utils.ReadBuffer) (*Confirmation, er
 		Confirmation: &Confirmation{},
 	}
 	_child.Confirmation.Child = _child
-	return _child.Confirmation, nil
+	return _child, nil
 }
 
 func (m *ConfirmationSuccessful) Serialize(writeBuffer utils.WriteBuffer) error {

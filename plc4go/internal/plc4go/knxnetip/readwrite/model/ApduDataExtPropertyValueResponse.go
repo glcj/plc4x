@@ -61,21 +61,28 @@ type IApduDataExtPropertyValueResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtPropertyValueResponse) ExtApciType() uint8 {
-	return 0x16
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtPropertyValueResponse) GetExtApciType() uint8 {
 	return 0x16
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtPropertyValueResponse) InitializeParent(parent *ApduDataExt) {}
 
+func (m *ApduDataExtPropertyValueResponse) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ApduDataExtPropertyValueResponse) GetObjectIndex() uint8 {
 	return m.ObjectIndex
 }
@@ -96,13 +103,14 @@ func (m *ApduDataExtPropertyValueResponse) GetData() []byte {
 	return m.Data
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewApduDataExtPropertyValueResponse factory function for ApduDataExtPropertyValueResponse
-func NewApduDataExtPropertyValueResponse(objectIndex uint8, propertyId uint8, count uint8, index uint16, data []byte, length uint8) *ApduDataExt {
-	child := &ApduDataExtPropertyValueResponse{
+func NewApduDataExtPropertyValueResponse(objectIndex uint8, propertyId uint8, count uint8, index uint16, data []byte, length uint8) *ApduDataExtPropertyValueResponse {
+	_result := &ApduDataExtPropertyValueResponse{
 		ObjectIndex: objectIndex,
 		PropertyId:  propertyId,
 		Count:       count,
@@ -110,8 +118,8 @@ func NewApduDataExtPropertyValueResponse(objectIndex uint8, propertyId uint8, co
 		Data:        data,
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtPropertyValueResponse(structType interface{}) *ApduDataExtPropertyValueResponse {
@@ -165,7 +173,7 @@ func (m *ApduDataExtPropertyValueResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtPropertyValueResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtPropertyValueResponseParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtPropertyValueResponse, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtPropertyValueResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -220,7 +228,7 @@ func ApduDataExtPropertyValueResponseParse(readBuffer utils.ReadBuffer, length u
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtPropertyValueResponse) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -52,24 +52,31 @@ type ICOTPPacketData interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *COTPPacketData) TpduCode() uint8 {
-	return 0xF0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *COTPPacketData) GetTpduCode() uint8 {
 	return 0xF0
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *COTPPacketData) InitializeParent(parent *COTPPacket, parameters []*COTPParameter, payload *S7Message) {
 	m.COTPPacket.Parameters = parameters
 	m.COTPPacket.Payload = payload
 }
 
+func (m *COTPPacketData) GetParent() *COTPPacket {
+	return m.COTPPacket
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *COTPPacketData) GetEot() bool {
 	return m.Eot
 }
@@ -78,19 +85,20 @@ func (m *COTPPacketData) GetTpduRef() uint8 {
 	return m.TpduRef
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCOTPPacketData factory function for COTPPacketData
-func NewCOTPPacketData(eot bool, tpduRef uint8, parameters []*COTPParameter, payload *S7Message, cotpLen uint16) *COTPPacket {
-	child := &COTPPacketData{
+func NewCOTPPacketData(eot bool, tpduRef uint8, parameters []*COTPParameter, payload *S7Message, cotpLen uint16) *COTPPacketData {
+	_result := &COTPPacketData{
 		Eot:        eot,
 		TpduRef:    tpduRef,
 		COTPPacket: NewCOTPPacket(parameters, payload, cotpLen),
 	}
-	child.Child = child
-	return child.COTPPacket
+	_result.Child = _result
+	return _result
 }
 
 func CastCOTPPacketData(structType interface{}) *COTPPacketData {
@@ -133,7 +141,7 @@ func (m *COTPPacketData) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func COTPPacketDataParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacket, error) {
+func COTPPacketDataParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPacketData, error) {
 	if pullErr := readBuffer.PullContext("COTPPacketData"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -165,7 +173,7 @@ func COTPPacketDataParse(readBuffer utils.ReadBuffer, cotpLen uint16) (*COTPPack
 		COTPPacket: &COTPPacket{},
 	}
 	_child.COTPPacket.Child = _child
-	return _child.COTPPacket, nil
+	return _child, nil
 }
 
 func (m *COTPPacketData) Serialize(writeBuffer utils.WriteBuffer) error {

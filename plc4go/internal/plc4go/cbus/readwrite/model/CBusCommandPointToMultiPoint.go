@@ -49,32 +49,43 @@ type ICBusCommandPointToMultiPoint interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CBusCommandPointToMultiPoint) InitializeParent(parent *CBusCommand, header *CBusHeader) {
 	m.CBusCommand.Header = header
 }
 
+func (m *CBusCommandPointToMultiPoint) GetParent() *CBusCommand {
+	return m.CBusCommand
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CBusCommandPointToMultiPoint) GetCommand() *CBusPointToMultiPointCommand {
 	return m.Command
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCBusCommandPointToMultiPoint factory function for CBusCommandPointToMultiPoint
-func NewCBusCommandPointToMultiPoint(command *CBusPointToMultiPointCommand, header *CBusHeader, srchk bool) *CBusCommand {
-	child := &CBusCommandPointToMultiPoint{
+func NewCBusCommandPointToMultiPoint(command *CBusPointToMultiPointCommand, header *CBusHeader, srchk bool) *CBusCommandPointToMultiPoint {
+	_result := &CBusCommandPointToMultiPoint{
 		Command:     command,
 		CBusCommand: NewCBusCommand(header, srchk),
 	}
-	child.Child = child
-	return child.CBusCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastCBusCommandPointToMultiPoint(structType interface{}) *CBusCommandPointToMultiPoint {
@@ -114,7 +125,7 @@ func (m *CBusCommandPointToMultiPoint) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusCommandPointToMultiPointParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommand, error) {
+func CBusCommandPointToMultiPointParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommandPointToMultiPoint, error) {
 	if pullErr := readBuffer.PullContext("CBusCommandPointToMultiPoint"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -144,7 +155,7 @@ func CBusCommandPointToMultiPointParse(readBuffer utils.ReadBuffer, srchk bool) 
 		CBusCommand: &CBusCommand{},
 	}
 	_child.CBusCommand.Child = _child
-	return _child.CBusCommand, nil
+	return _child, nil
 }
 
 func (m *CBusCommandPointToMultiPoint) Serialize(writeBuffer utils.WriteBuffer) error {

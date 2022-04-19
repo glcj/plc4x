@@ -49,24 +49,31 @@ type IDF1UnprotectedReadRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DF1UnprotectedReadRequest) CommandCode() uint8 {
-	return 0x01
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DF1UnprotectedReadRequest) GetCommandCode() uint8 {
 	return 0x01
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *DF1UnprotectedReadRequest) InitializeParent(parent *DF1Command, status uint8, transactionCounter uint16) {
 	m.DF1Command.Status = status
 	m.DF1Command.TransactionCounter = transactionCounter
 }
 
+func (m *DF1UnprotectedReadRequest) GetParent() *DF1Command {
+	return m.DF1Command
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *DF1UnprotectedReadRequest) GetAddress() uint16 {
 	return m.Address
 }
@@ -75,19 +82,20 @@ func (m *DF1UnprotectedReadRequest) GetSize() uint8 {
 	return m.Size
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewDF1UnprotectedReadRequest factory function for DF1UnprotectedReadRequest
-func NewDF1UnprotectedReadRequest(address uint16, size uint8, status uint8, transactionCounter uint16) *DF1Command {
-	child := &DF1UnprotectedReadRequest{
+func NewDF1UnprotectedReadRequest(address uint16, size uint8, status uint8, transactionCounter uint16) *DF1UnprotectedReadRequest {
+	_result := &DF1UnprotectedReadRequest{
 		Address:    address,
 		Size:       size,
 		DF1Command: NewDF1Command(status, transactionCounter),
 	}
-	child.Child = child
-	return child.DF1Command
+	_result.Child = _result
+	return _result
 }
 
 func CastDF1UnprotectedReadRequest(structType interface{}) *DF1UnprotectedReadRequest {
@@ -130,7 +138,7 @@ func (m *DF1UnprotectedReadRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func DF1UnprotectedReadRequestParse(readBuffer utils.ReadBuffer) (*DF1Command, error) {
+func DF1UnprotectedReadRequestParse(readBuffer utils.ReadBuffer) (*DF1UnprotectedReadRequest, error) {
 	if pullErr := readBuffer.PullContext("DF1UnprotectedReadRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -162,7 +170,7 @@ func DF1UnprotectedReadRequestParse(readBuffer utils.ReadBuffer) (*DF1Command, e
 		DF1Command: &DF1Command{},
 	}
 	_child.DF1Command.Child = _child
-	return _child.DF1Command, nil
+	return _child, nil
 }
 
 func (m *DF1UnprotectedReadRequest) Serialize(writeBuffer utils.WriteBuffer) error {

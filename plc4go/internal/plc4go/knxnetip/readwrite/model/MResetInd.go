@@ -45,33 +45,31 @@ type IMResetInd interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *MResetInd) MessageCode() uint8 {
-	return 0xF0
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *MResetInd) GetMessageCode() uint8 {
 	return 0xF0
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *MResetInd) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *MResetInd) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewMResetInd factory function for MResetInd
-func NewMResetInd(size uint16) *CEMI {
-	child := &MResetInd{
+func NewMResetInd(size uint16) *MResetInd {
+	_result := &MResetInd{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastMResetInd(structType interface{}) *MResetInd {
@@ -108,7 +106,7 @@ func (m *MResetInd) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MResetIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func MResetIndParse(readBuffer utils.ReadBuffer, size uint16) (*MResetInd, error) {
 	if pullErr := readBuffer.PullContext("MResetInd"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func MResetIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *MResetInd) Serialize(writeBuffer utils.WriteBuffer) error {

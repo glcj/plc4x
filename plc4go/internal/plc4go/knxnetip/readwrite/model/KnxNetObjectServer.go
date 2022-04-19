@@ -46,37 +46,45 @@ type IKnxNetObjectServer interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxNetObjectServer) ServiceType() uint8 {
-	return 0x08
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxNetObjectServer) GetServiceType() uint8 {
 	return 0x08
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxNetObjectServer) InitializeParent(parent *ServiceId) {}
 
+func (m *KnxNetObjectServer) GetParent() *ServiceId {
+	return m.ServiceId
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxNetObjectServer) GetVersion() uint8 {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxNetObjectServer factory function for KnxNetObjectServer
-func NewKnxNetObjectServer(version uint8) *ServiceId {
-	child := &KnxNetObjectServer{
+func NewKnxNetObjectServer(version uint8) *KnxNetObjectServer {
+	_result := &KnxNetObjectServer{
 		Version:   version,
 		ServiceId: NewServiceId(),
 	}
-	child.Child = child
-	return child.ServiceId
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxNetObjectServer(structType interface{}) *KnxNetObjectServer {
@@ -116,7 +124,7 @@ func (m *KnxNetObjectServer) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxNetObjectServerParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
+func KnxNetObjectServerParse(readBuffer utils.ReadBuffer) (*KnxNetObjectServer, error) {
 	if pullErr := readBuffer.PullContext("KnxNetObjectServer"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func KnxNetObjectServerParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
 		ServiceId: &ServiceId{},
 	}
 	_child.ServiceId.Child = _child
-	return _child.ServiceId, nil
+	return _child, nil
 }
 
 func (m *KnxNetObjectServer) Serialize(writeBuffer utils.WriteBuffer) error {

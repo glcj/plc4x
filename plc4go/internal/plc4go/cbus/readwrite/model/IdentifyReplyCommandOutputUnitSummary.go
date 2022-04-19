@@ -42,33 +42,31 @@ type IIdentifyReplyCommandOutputUnitSummary interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandOutputUnitSummary) Attribute() Attribute {
-	return Attribute_OutputUnitSummary
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandOutputUnitSummary) GetAttribute() Attribute {
 	return Attribute_OutputUnitSummary
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandOutputUnitSummary) InitializeParent(parent *IdentifyReplyCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *IdentifyReplyCommandOutputUnitSummary) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
 
 // NewIdentifyReplyCommandOutputUnitSummary factory function for IdentifyReplyCommandOutputUnitSummary
-func NewIdentifyReplyCommandOutputUnitSummary() *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandOutputUnitSummary{
+func NewIdentifyReplyCommandOutputUnitSummary() *IdentifyReplyCommandOutputUnitSummary {
+	_result := &IdentifyReplyCommandOutputUnitSummary{
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandOutputUnitSummary(structType interface{}) *IdentifyReplyCommandOutputUnitSummary {
@@ -105,7 +103,7 @@ func (m *IdentifyReplyCommandOutputUnitSummary) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandOutputUnitSummaryParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandOutputUnitSummaryParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandOutputUnitSummary, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandOutputUnitSummary"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func IdentifyReplyCommandOutputUnitSummaryParse(readBuffer utils.ReadBuffer, att
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandOutputUnitSummary) Serialize(writeBuffer utils.WriteBuffer) error {

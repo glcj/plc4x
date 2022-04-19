@@ -46,32 +46,43 @@ type ISALDataOn interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *SALDataOn) InitializeParent(parent *SALData, commandTypeContainer SALCommandTypeContainer) {
 	m.SALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *SALDataOn) GetParent() *SALData {
+	return m.SALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *SALDataOn) GetGroup() byte {
 	return m.Group
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewSALDataOn factory function for SALDataOn
-func NewSALDataOn(group byte, commandTypeContainer SALCommandTypeContainer) *SALData {
-	child := &SALDataOn{
+func NewSALDataOn(group byte, commandTypeContainer SALCommandTypeContainer) *SALDataOn {
+	_result := &SALDataOn{
 		Group:   group,
 		SALData: NewSALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.SALData
+	_result.Child = _result
+	return _result
 }
 
 func CastSALDataOn(structType interface{}) *SALDataOn {
@@ -111,7 +122,7 @@ func (m *SALDataOn) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SALDataOnParse(readBuffer utils.ReadBuffer) (*SALData, error) {
+func SALDataOnParse(readBuffer utils.ReadBuffer) (*SALDataOn, error) {
 	if pullErr := readBuffer.PullContext("SALDataOn"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -135,7 +146,7 @@ func SALDataOnParse(readBuffer utils.ReadBuffer) (*SALData, error) {
 		SALData: &SALData{},
 	}
 	_child.SALData.Child = _child
-	return _child.SALData, nil
+	return _child, nil
 }
 
 func (m *SALDataOn) Serialize(writeBuffer utils.WriteBuffer) error {

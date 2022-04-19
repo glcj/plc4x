@@ -42,36 +42,34 @@ type IBACnetErrorConfirmedEventNotification interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorConfirmedEventNotification) ServiceChoice() uint8 {
-	return 0x02
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorConfirmedEventNotification) GetServiceChoice() uint8 {
 	return 0x02
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorConfirmedEventNotification) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorConfirmedEventNotification) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorConfirmedEventNotification factory function for BACnetErrorConfirmedEventNotification
-func NewBACnetErrorConfirmedEventNotification(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorConfirmedEventNotification{
+func NewBACnetErrorConfirmedEventNotification(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorConfirmedEventNotification {
+	_result := &BACnetErrorConfirmedEventNotification{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorConfirmedEventNotification(structType interface{}) *BACnetErrorConfirmedEventNotification {
@@ -108,7 +106,7 @@ func (m *BACnetErrorConfirmedEventNotification) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorConfirmedEventNotificationParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorConfirmedEventNotificationParse(readBuffer utils.ReadBuffer) (*BACnetErrorConfirmedEventNotification, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorConfirmedEventNotification"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorConfirmedEventNotificationParse(readBuffer utils.ReadBuffer) (*B
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorConfirmedEventNotification) Serialize(writeBuffer utils.WriteBuffer) error {

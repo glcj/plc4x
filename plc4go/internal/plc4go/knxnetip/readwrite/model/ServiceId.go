@@ -51,17 +51,11 @@ type IServiceIdParent interface {
 type IServiceIdChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *ServiceId)
+	GetParent() *ServiceId
+
 	GetTypeName() string
 	IServiceId
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewServiceId factory function for ServiceId
 func NewServiceId() *ServiceId {
@@ -74,6 +68,9 @@ func CastServiceId(structType interface{}) *ServiceId {
 	}
 	if casted, ok := structType.(*ServiceId); ok {
 		return casted
+	}
+	if casted, ok := structType.(IServiceIdChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -116,23 +113,27 @@ func ServiceIdParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *ServiceId
+	type ServiceIdChild interface {
+		InitializeParent(*ServiceId)
+		GetParent() *ServiceId
+	}
+	var _child ServiceIdChild
 	var typeSwitchError error
 	switch {
 	case serviceType == 0x02: // KnxNetIpCore
-		_parent, typeSwitchError = KnxNetIpCoreParse(readBuffer)
+		_child, typeSwitchError = KnxNetIpCoreParse(readBuffer)
 	case serviceType == 0x03: // KnxNetIpDeviceManagement
-		_parent, typeSwitchError = KnxNetIpDeviceManagementParse(readBuffer)
+		_child, typeSwitchError = KnxNetIpDeviceManagementParse(readBuffer)
 	case serviceType == 0x04: // KnxNetIpTunneling
-		_parent, typeSwitchError = KnxNetIpTunnelingParse(readBuffer)
+		_child, typeSwitchError = KnxNetIpTunnelingParse(readBuffer)
 	case serviceType == 0x05: // KnxNetIpRouting
-		_parent, typeSwitchError = KnxNetIpRoutingParse(readBuffer)
+		_child, typeSwitchError = KnxNetIpRoutingParse(readBuffer)
 	case serviceType == 0x06: // KnxNetRemoteLogging
-		_parent, typeSwitchError = KnxNetRemoteLoggingParse(readBuffer)
+		_child, typeSwitchError = KnxNetRemoteLoggingParse(readBuffer)
 	case serviceType == 0x07: // KnxNetRemoteConfigurationAndDiagnosis
-		_parent, typeSwitchError = KnxNetRemoteConfigurationAndDiagnosisParse(readBuffer)
+		_child, typeSwitchError = KnxNetRemoteConfigurationAndDiagnosisParse(readBuffer)
 	case serviceType == 0x08: // KnxNetObjectServer
-		_parent, typeSwitchError = KnxNetObjectServerParse(readBuffer)
+		_child, typeSwitchError = KnxNetObjectServerParse(readBuffer)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -146,8 +147,8 @@ func ServiceIdParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *ServiceId) Serialize(writeBuffer utils.WriteBuffer) error {

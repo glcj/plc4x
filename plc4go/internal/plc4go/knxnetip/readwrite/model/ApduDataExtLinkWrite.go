@@ -45,33 +45,31 @@ type IApduDataExtLinkWrite interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ApduDataExtLinkWrite) ExtApciType() uint8 {
-	return 0x27
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ApduDataExtLinkWrite) GetExtApciType() uint8 {
 	return 0x27
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ApduDataExtLinkWrite) InitializeParent(parent *ApduDataExt) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ApduDataExtLinkWrite) GetParent() *ApduDataExt {
+	return m.ApduDataExt
+}
 
 // NewApduDataExtLinkWrite factory function for ApduDataExtLinkWrite
-func NewApduDataExtLinkWrite(length uint8) *ApduDataExt {
-	child := &ApduDataExtLinkWrite{
+func NewApduDataExtLinkWrite(length uint8) *ApduDataExtLinkWrite {
+	_result := &ApduDataExtLinkWrite{
 		ApduDataExt: NewApduDataExt(length),
 	}
-	child.Child = child
-	return child.ApduDataExt
+	_result.Child = _result
+	return _result
 }
 
 func CastApduDataExtLinkWrite(structType interface{}) *ApduDataExtLinkWrite {
@@ -108,7 +106,7 @@ func (m *ApduDataExtLinkWrite) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ApduDataExtLinkWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExt, error) {
+func ApduDataExtLinkWriteParse(readBuffer utils.ReadBuffer, length uint8) (*ApduDataExtLinkWrite, error) {
 	if pullErr := readBuffer.PullContext("ApduDataExtLinkWrite"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func ApduDataExtLinkWriteParse(readBuffer utils.ReadBuffer, length uint8) (*Apdu
 		ApduDataExt: &ApduDataExt{},
 	}
 	_child.ApduDataExt.Child = _child
-	return _child.ApduDataExt, nil
+	return _child, nil
 }
 
 func (m *ApduDataExtLinkWrite) Serialize(writeBuffer utils.WriteBuffer) error {

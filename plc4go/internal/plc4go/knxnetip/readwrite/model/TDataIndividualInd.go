@@ -45,33 +45,31 @@ type ITDataIndividualInd interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *TDataIndividualInd) MessageCode() uint8 {
-	return 0x94
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *TDataIndividualInd) GetMessageCode() uint8 {
 	return 0x94
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *TDataIndividualInd) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *TDataIndividualInd) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewTDataIndividualInd factory function for TDataIndividualInd
-func NewTDataIndividualInd(size uint16) *CEMI {
-	child := &TDataIndividualInd{
+func NewTDataIndividualInd(size uint16) *TDataIndividualInd {
+	_result := &TDataIndividualInd{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastTDataIndividualInd(structType interface{}) *TDataIndividualInd {
@@ -108,7 +106,7 @@ func (m *TDataIndividualInd) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func TDataIndividualIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func TDataIndividualIndParse(readBuffer utils.ReadBuffer, size uint16) (*TDataIndividualInd, error) {
 	if pullErr := readBuffer.PullContext("TDataIndividualInd"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func TDataIndividualIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, e
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *TDataIndividualInd) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -53,21 +53,28 @@ type ICipWriteResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *CipWriteResponse) Service() uint8 {
-	return 0xCD
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *CipWriteResponse) GetService() uint8 {
 	return 0xCD
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *CipWriteResponse) InitializeParent(parent *CipService) {}
 
+func (m *CipWriteResponse) GetParent() *CipService {
+	return m.CipService
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CipWriteResponse) GetStatus() uint8 {
 	return m.Status
 }
@@ -76,19 +83,20 @@ func (m *CipWriteResponse) GetExtStatus() uint8 {
 	return m.ExtStatus
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCipWriteResponse factory function for CipWriteResponse
-func NewCipWriteResponse(status uint8, extStatus uint8, serviceLen uint16) *CipService {
-	child := &CipWriteResponse{
+func NewCipWriteResponse(status uint8, extStatus uint8, serviceLen uint16) *CipWriteResponse {
+	_result := &CipWriteResponse{
 		Status:     status,
 		ExtStatus:  extStatus,
 		CipService: NewCipService(serviceLen),
 	}
-	child.Child = child
-	return child.CipService
+	_result.Child = _result
+	return _result
 }
 
 func CastCipWriteResponse(structType interface{}) *CipWriteResponse {
@@ -134,7 +142,7 @@ func (m *CipWriteResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CipWriteResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipService, error) {
+func CipWriteResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipWriteResponse, error) {
 	if pullErr := readBuffer.PullContext("CipWriteResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -180,7 +188,7 @@ func CipWriteResponseParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*Cip
 		CipService: &CipService{},
 	}
 	_child.CipService.Child = _child
-	return _child.CipService, nil
+	return _child, nil
 }
 
 func (m *CipWriteResponse) Serialize(writeBuffer utils.WriteBuffer) error {

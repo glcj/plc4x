@@ -42,52 +42,42 @@ type IS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) CpuFunctionType() uint8 {
-	return 0x08
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) GetCpuFunctionType() uint8 {
 	return 0x08
-}
-
-func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) CpuSubfunction() uint8 {
-	return 0x02
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) GetCpuSubfunction() uint8 {
 	return 0x02
 }
 
-func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) DataLength() uint16 {
-	return 0x00
-}
-
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) GetDataLength() uint16 {
 	return 0x00
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) InitializeParent(parent *S7PayloadUserDataItem, returnCode DataTransportErrorCode, transportSize DataTransportSize) {
 	m.S7PayloadUserDataItem.ReturnCode = returnCode
 	m.S7PayloadUserDataItem.TransportSize = transportSize
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) GetParent() *S7PayloadUserDataItem {
+	return m.S7PayloadUserDataItem
+}
 
 // NewS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse factory function for S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse
-func NewS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItem {
-	child := &S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse{
+func NewS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(returnCode DataTransportErrorCode, transportSize DataTransportSize) *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse {
+	_result := &S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse{
 		S7PayloadUserDataItem: NewS7PayloadUserDataItem(returnCode, transportSize),
 	}
-	child.Child = child
-	return child.S7PayloadUserDataItem
+	_result.Child = _result
+	return _result
 }
 
 func CastS7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse(structType interface{}) *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse {
@@ -124,7 +114,7 @@ func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) GetLengthInByt
 	return m.GetLengthInBits() / 8
 }
 
-func S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItem, error) {
+func S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponseParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8, cpuSubfunction uint8) (*S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse, error) {
 	if pullErr := readBuffer.PullContext("S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +130,7 @@ func S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponseParse(readBuffer uti
 		S7PayloadUserDataItem: &S7PayloadUserDataItem{},
 	}
 	_child.S7PayloadUserDataItem.Child = _child
-	return _child.S7PayloadUserDataItem, nil
+	return _child, nil
 }
 
 func (m *S7PayloadUserDataItemCpuFunctionMsgSubscriptionResponse) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,49 +42,39 @@ type IModbusPDUGetComEventLogRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUGetComEventLogRequest) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUGetComEventLogRequest) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUGetComEventLogRequest) FunctionFlag() uint8 {
-	return 0x0C
 }
 
 func (m *ModbusPDUGetComEventLogRequest) GetFunctionFlag() uint8 {
 	return 0x0C
 }
 
-func (m *ModbusPDUGetComEventLogRequest) Response() bool {
-	return bool(false)
-}
-
 func (m *ModbusPDUGetComEventLogRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUGetComEventLogRequest) InitializeParent(parent *ModbusPDU) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *ModbusPDUGetComEventLogRequest) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
 
 // NewModbusPDUGetComEventLogRequest factory function for ModbusPDUGetComEventLogRequest
-func NewModbusPDUGetComEventLogRequest() *ModbusPDU {
-	child := &ModbusPDUGetComEventLogRequest{
+func NewModbusPDUGetComEventLogRequest() *ModbusPDUGetComEventLogRequest {
+	_result := &ModbusPDUGetComEventLogRequest{
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUGetComEventLogRequest(structType interface{}) *ModbusPDUGetComEventLogRequest {
@@ -121,7 +111,7 @@ func (m *ModbusPDUGetComEventLogRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUGetComEventLogRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUGetComEventLogRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUGetComEventLogRequest, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUGetComEventLogRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -137,7 +127,7 @@ func ModbusPDUGetComEventLogRequestParse(readBuffer utils.ReadBuffer, response b
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUGetComEventLogRequest) Serialize(writeBuffer utils.WriteBuffer) error {

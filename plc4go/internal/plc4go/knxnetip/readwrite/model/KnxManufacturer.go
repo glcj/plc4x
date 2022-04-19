@@ -620,8 +620,10 @@ const (
 	KnxManufacturer_M_REMKO_GMBH_AND_CO__KG                              KnxManufacturer = 582
 	KnxManufacturer_M_SHENZHEN_CONGXUN_INTELLIGENT_TECHNOLOGY_CO___LTD   KnxManufacturer = 583
 	KnxManufacturer_M_ANDAS                                              KnxManufacturer = 584
-	KnxManufacturer_M_ABB___RESERVED                                     KnxManufacturer = 585
-	KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED                    KnxManufacturer = 586
+	KnxManufacturer_M_HEFEI_CHUANG_YUE_INTELLIGENT_TECHNOLOGY_CO__LTD    KnxManufacturer = 585
+	KnxManufacturer_M_LARFE                                              KnxManufacturer = 586
+	KnxManufacturer_M_ABB___RESERVED                                     KnxManufacturer = 587
+	KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED                    KnxManufacturer = 588
 )
 
 var KnxManufacturerValues []KnxManufacturer
@@ -1214,6 +1216,8 @@ func init() {
 		KnxManufacturer_M_REMKO_GMBH_AND_CO__KG,
 		KnxManufacturer_M_SHENZHEN_CONGXUN_INTELLIGENT_TECHNOLOGY_CO___LTD,
 		KnxManufacturer_M_ANDAS,
+		KnxManufacturer_M_HEFEI_CHUANG_YUE_INTELLIGENT_TECHNOLOGY_CO__LTD,
+		KnxManufacturer_M_LARFE,
 		KnxManufacturer_M_ABB___RESERVED,
 		KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED,
 	}
@@ -3383,10 +3387,18 @@ func (e KnxManufacturer) Number() uint16 {
 		}
 	case 585:
 		{ /* '585' */
-			return 43954
+			return 643
 		}
 	case 586:
 		{ /* '586' */
+			return 644
+		}
+	case 587:
+		{ /* '587' */
+			return 43954
+		}
+	case 588:
+		{ /* '588' */
 			return 43959
 		}
 	case 59:
@@ -5749,10 +5761,18 @@ func (e KnxManufacturer) Name() string {
 		}
 	case 585:
 		{ /* '585' */
-			return "ABB - reserved"
+			return "Hefei Chuang Yue Intelligent Technology Co.,LTD"
 		}
 	case 586:
 		{ /* '586' */
+			return "Larfe"
+		}
+	case 587:
+		{ /* '587' */
+			return "ABB - reserved"
+		}
+	case 588:
+		{ /* '588' */
 			return "Busch-Jaeger Elektro - reserved"
 		}
 	case 59:
@@ -7033,8 +7053,12 @@ func KnxManufacturerByValue(value uint16) KnxManufacturer {
 	case 584:
 		return KnxManufacturer_M_ANDAS
 	case 585:
-		return KnxManufacturer_M_ABB___RESERVED
+		return KnxManufacturer_M_HEFEI_CHUANG_YUE_INTELLIGENT_TECHNOLOGY_CO__LTD
 	case 586:
+		return KnxManufacturer_M_LARFE
+	case 587:
+		return KnxManufacturer_M_ABB___RESERVED
+	case 588:
 		return KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED
 	case 59:
 		return KnxManufacturer_M_ELECTRAK
@@ -8212,6 +8236,10 @@ func KnxManufacturerByName(value string) KnxManufacturer {
 		return KnxManufacturer_M_SHENZHEN_CONGXUN_INTELLIGENT_TECHNOLOGY_CO___LTD
 	case "M_ANDAS":
 		return KnxManufacturer_M_ANDAS
+	case "M_HEFEI_CHUANG_YUE_INTELLIGENT_TECHNOLOGY_CO__LTD":
+		return KnxManufacturer_M_HEFEI_CHUANG_YUE_INTELLIGENT_TECHNOLOGY_CO__LTD
+	case "M_LARFE":
+		return KnxManufacturer_M_LARFE
 	case "M_ABB___RESERVED":
 		return KnxManufacturer_M_ABB___RESERVED
 	case "M_BUSCH_JAEGER_ELEKTRO___RESERVED":
@@ -9431,6 +9459,10 @@ func (e KnxManufacturer) name() string {
 		return "M_SHENZHEN_CONGXUN_INTELLIGENT_TECHNOLOGY_CO___LTD"
 	case KnxManufacturer_M_ANDAS:
 		return "M_ANDAS"
+	case KnxManufacturer_M_HEFEI_CHUANG_YUE_INTELLIGENT_TECHNOLOGY_CO__LTD:
+		return "M_HEFEI_CHUANG_YUE_INTELLIGENT_TECHNOLOGY_CO__LTD"
+	case KnxManufacturer_M_LARFE:
+		return "M_LARFE"
 	case KnxManufacturer_M_ABB___RESERVED:
 		return "M_ABB___RESERVED"
 	case KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED:

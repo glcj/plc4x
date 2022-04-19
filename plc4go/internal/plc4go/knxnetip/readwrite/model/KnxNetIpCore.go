@@ -46,37 +46,45 @@ type IKnxNetIpCore interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxNetIpCore) ServiceType() uint8 {
-	return 0x02
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxNetIpCore) GetServiceType() uint8 {
 	return 0x02
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxNetIpCore) InitializeParent(parent *ServiceId) {}
 
+func (m *KnxNetIpCore) GetParent() *ServiceId {
+	return m.ServiceId
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxNetIpCore) GetVersion() uint8 {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxNetIpCore factory function for KnxNetIpCore
-func NewKnxNetIpCore(version uint8) *ServiceId {
-	child := &KnxNetIpCore{
+func NewKnxNetIpCore(version uint8) *KnxNetIpCore {
+	_result := &KnxNetIpCore{
 		Version:   version,
 		ServiceId: NewServiceId(),
 	}
-	child.Child = child
-	return child.ServiceId
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxNetIpCore(structType interface{}) *KnxNetIpCore {
@@ -116,7 +124,7 @@ func (m *KnxNetIpCore) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxNetIpCoreParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
+func KnxNetIpCoreParse(readBuffer utils.ReadBuffer) (*KnxNetIpCore, error) {
 	if pullErr := readBuffer.PullContext("KnxNetIpCore"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func KnxNetIpCoreParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
 		ServiceId: &ServiceId{},
 	}
 	_child.ServiceId.Child = _child
-	return _child.ServiceId, nil
+	return _child, nil
 }
 
 func (m *KnxNetIpCore) Serialize(writeBuffer utils.WriteBuffer) error {

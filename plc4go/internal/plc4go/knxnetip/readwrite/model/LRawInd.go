@@ -45,33 +45,31 @@ type ILRawInd interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *LRawInd) MessageCode() uint8 {
-	return 0x2D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *LRawInd) GetMessageCode() uint8 {
 	return 0x2D
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *LRawInd) InitializeParent(parent *CEMI) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *LRawInd) GetParent() *CEMI {
+	return m.CEMI
+}
 
 // NewLRawInd factory function for LRawInd
-func NewLRawInd(size uint16) *CEMI {
-	child := &LRawInd{
+func NewLRawInd(size uint16) *LRawInd {
+	_result := &LRawInd{
 		CEMI: NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastLRawInd(structType interface{}) *LRawInd {
@@ -108,7 +106,7 @@ func (m *LRawInd) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func LRawIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func LRawIndParse(readBuffer utils.ReadBuffer, size uint16) (*LRawInd, error) {
 	if pullErr := readBuffer.PullContext("LRawInd"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func LRawIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
 		CEMI: &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *LRawInd) Serialize(writeBuffer utils.WriteBuffer) error {

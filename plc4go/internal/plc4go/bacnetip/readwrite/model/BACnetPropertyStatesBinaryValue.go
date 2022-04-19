@@ -50,7 +50,12 @@ type IBACnetPropertyStatesBinaryValue interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetPropertyStatesBinaryValue) InitializeParent(parent *BACnetPropertyStates, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
@@ -59,25 +64,31 @@ func (m *BACnetPropertyStatesBinaryValue) InitializeParent(parent *BACnetPropert
 	m.BACnetPropertyStates.ClosingTag = closingTag
 }
 
+func (m *BACnetPropertyStatesBinaryValue) GetParent() *BACnetPropertyStates {
+	return m.BACnetPropertyStates
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetPropertyStatesBinaryValue) GetBinaryValue() *BACnetBinaryPV {
 	return m.BinaryValue
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetPropertyStatesBinaryValue factory function for BACnetPropertyStatesBinaryValue
-func NewBACnetPropertyStatesBinaryValue(binaryValue *BACnetBinaryPV, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetPropertyStates {
-	child := &BACnetPropertyStatesBinaryValue{
+func NewBACnetPropertyStatesBinaryValue(binaryValue *BACnetBinaryPV, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetPropertyStatesBinaryValue {
+	_result := &BACnetPropertyStatesBinaryValue{
 		BinaryValue:          binaryValue,
 		BACnetPropertyStates: NewBACnetPropertyStates(openingTag, peekedTagHeader, closingTag, tagNumber),
 	}
-	child.Child = child
-	return child.BACnetPropertyStates
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetPropertyStatesBinaryValue(structType interface{}) *BACnetPropertyStatesBinaryValue {
@@ -119,7 +130,7 @@ func (m *BACnetPropertyStatesBinaryValue) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetPropertyStatesBinaryValueParse(readBuffer utils.ReadBuffer, tagNumber uint8, peekedTagNumber uint8) (*BACnetPropertyStates, error) {
+func BACnetPropertyStatesBinaryValueParse(readBuffer utils.ReadBuffer, tagNumber uint8, peekedTagNumber uint8) (*BACnetPropertyStatesBinaryValue, error) {
 	if pullErr := readBuffer.PullContext("BACnetPropertyStatesBinaryValue"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -157,7 +168,7 @@ func BACnetPropertyStatesBinaryValueParse(readBuffer utils.ReadBuffer, tagNumber
 		BACnetPropertyStates: &BACnetPropertyStates{},
 	}
 	_child.BACnetPropertyStates.Child = _child
-	return _child.BACnetPropertyStates, nil
+	return _child, nil
 }
 
 func (m *BACnetPropertyStatesBinaryValue) Serialize(writeBuffer utils.WriteBuffer) error {

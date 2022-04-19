@@ -46,35 +46,33 @@ type IBACnetOpeningTag interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetOpeningTag) DataType() BACnetDataType {
-	return BACnetDataType_OPENING_TAG
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetOpeningTag) GetDataType() BACnetDataType {
 	return BACnetDataType_OPENING_TAG
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetOpeningTag) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetOpeningTag) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
 
 // NewBACnetOpeningTag factory function for BACnetOpeningTag
-func NewBACnetOpeningTag(header *BACnetTagHeader, tagNumberArgument uint8, actualLength uint32) *BACnetContextTag {
-	child := &BACnetOpeningTag{
+func NewBACnetOpeningTag(header *BACnetTagHeader, tagNumberArgument uint8, actualLength uint32) *BACnetOpeningTag {
+	_result := &BACnetOpeningTag{
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetOpeningTag(structType interface{}) *BACnetOpeningTag {
@@ -111,7 +109,7 @@ func (m *BACnetOpeningTag) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetOpeningTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, actualLength uint32) (*BACnetContextTag, error) {
+func BACnetOpeningTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, actualLength uint32) (*BACnetOpeningTag, error) {
 	if pullErr := readBuffer.PullContext("BACnetOpeningTag"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -132,7 +130,7 @@ func BACnetOpeningTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetOpeningTag) Serialize(writeBuffer utils.WriteBuffer) error {

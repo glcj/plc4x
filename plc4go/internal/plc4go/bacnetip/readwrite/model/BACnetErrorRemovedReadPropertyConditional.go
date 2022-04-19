@@ -42,36 +42,34 @@ type IBACnetErrorRemovedReadPropertyConditional interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetErrorRemovedReadPropertyConditional) ServiceChoice() uint8 {
-	return 0x0D
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetErrorRemovedReadPropertyConditional) GetServiceChoice() uint8 {
 	return 0x0D
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetErrorRemovedReadPropertyConditional) InitializeParent(parent *BACnetError, errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) {
 	m.BACnetError.ErrorClass = errorClass
 	m.BACnetError.ErrorCode = errorCode
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetErrorRemovedReadPropertyConditional) GetParent() *BACnetError {
+	return m.BACnetError
+}
 
 // NewBACnetErrorRemovedReadPropertyConditional factory function for BACnetErrorRemovedReadPropertyConditional
-func NewBACnetErrorRemovedReadPropertyConditional(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetError {
-	child := &BACnetErrorRemovedReadPropertyConditional{
+func NewBACnetErrorRemovedReadPropertyConditional(errorClass *BACnetApplicationTagEnumerated, errorCode *BACnetApplicationTagEnumerated) *BACnetErrorRemovedReadPropertyConditional {
+	_result := &BACnetErrorRemovedReadPropertyConditional{
 		BACnetError: NewBACnetError(errorClass, errorCode),
 	}
-	child.Child = child
-	return child.BACnetError
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetErrorRemovedReadPropertyConditional(structType interface{}) *BACnetErrorRemovedReadPropertyConditional {
@@ -108,7 +106,7 @@ func (m *BACnetErrorRemovedReadPropertyConditional) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetErrorRemovedReadPropertyConditionalParse(readBuffer utils.ReadBuffer) (*BACnetError, error) {
+func BACnetErrorRemovedReadPropertyConditionalParse(readBuffer utils.ReadBuffer) (*BACnetErrorRemovedReadPropertyConditional, error) {
 	if pullErr := readBuffer.PullContext("BACnetErrorRemovedReadPropertyConditional"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func BACnetErrorRemovedReadPropertyConditionalParse(readBuffer utils.ReadBuffer)
 		BACnetError: &BACnetError{},
 	}
 	_child.BACnetError.Child = _child
-	return _child.BACnetError, nil
+	return _child, nil
 }
 
 func (m *BACnetErrorRemovedReadPropertyConditional) Serialize(writeBuffer utils.WriteBuffer) error {

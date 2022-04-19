@@ -46,32 +46,43 @@ type IBACnetApplicationTagBitString interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagBitString) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagBitString) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagBitString) GetPayload() *BACnetTagPayloadBitString {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetApplicationTagBitString factory function for BACnetApplicationTagBitString
-func NewBACnetApplicationTagBitString(payload *BACnetTagPayloadBitString, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagBitString{
+func NewBACnetApplicationTagBitString(payload *BACnetTagPayloadBitString, header *BACnetTagHeader) *BACnetApplicationTagBitString {
+	_result := &BACnetApplicationTagBitString{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagBitString(structType interface{}) *BACnetApplicationTagBitString {
@@ -111,7 +122,7 @@ func (m *BACnetApplicationTagBitString) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagBitStringParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagBitStringParse(readBuffer utils.ReadBuffer, header *BACnetTagHeader) (*BACnetApplicationTagBitString, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagBitString"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func BACnetApplicationTagBitStringParse(readBuffer utils.ReadBuffer, header *BAC
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagBitString) Serialize(writeBuffer utils.WriteBuffer) error {

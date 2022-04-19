@@ -52,29 +52,32 @@ type IAdsDeviceNotificationRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsDeviceNotificationRequest) CommandId() CommandId {
-	return CommandId_ADS_DEVICE_NOTIFICATION
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsDeviceNotificationRequest) GetCommandId() CommandId {
 	return CommandId_ADS_DEVICE_NOTIFICATION
-}
-
-func (m *AdsDeviceNotificationRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *AdsDeviceNotificationRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsDeviceNotificationRequest) InitializeParent(parent *AdsData) {}
 
+func (m *AdsDeviceNotificationRequest) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsDeviceNotificationRequest) GetLength() uint32 {
 	return m.Length
 }
@@ -87,20 +90,21 @@ func (m *AdsDeviceNotificationRequest) GetAdsStampHeaders() []*AdsStampHeader {
 	return m.AdsStampHeaders
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsDeviceNotificationRequest factory function for AdsDeviceNotificationRequest
-func NewAdsDeviceNotificationRequest(length uint32, stamps uint32, adsStampHeaders []*AdsStampHeader) *AdsData {
-	child := &AdsDeviceNotificationRequest{
+func NewAdsDeviceNotificationRequest(length uint32, stamps uint32, adsStampHeaders []*AdsStampHeader) *AdsDeviceNotificationRequest {
+	_result := &AdsDeviceNotificationRequest{
 		Length:          length,
 		Stamps:          stamps,
 		AdsStampHeaders: adsStampHeaders,
 		AdsData:         NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsDeviceNotificationRequest(structType interface{}) *AdsDeviceNotificationRequest {
@@ -151,7 +155,7 @@ func (m *AdsDeviceNotificationRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsDeviceNotificationRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsDeviceNotificationRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsDeviceNotificationRequest, error) {
 	if pullErr := readBuffer.PullContext("AdsDeviceNotificationRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -203,7 +207,7 @@ func AdsDeviceNotificationRequestParse(readBuffer utils.ReadBuffer, commandId Co
 		AdsData:         &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsDeviceNotificationRequest) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -49,16 +49,26 @@ type ICALDataRequestRecall interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *CALDataRequestRecall) InitializeParent(parent *CALData, commandTypeContainer CALCommandTypeContainer) {
 	m.CALData.CommandTypeContainer = commandTypeContainer
 }
 
+func (m *CALDataRequestRecall) GetParent() *CALData {
+	return m.CALData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *CALDataRequestRecall) GetParamNo() uint8 {
 	return m.ParamNo
 }
@@ -67,19 +77,20 @@ func (m *CALDataRequestRecall) GetCount() uint8 {
 	return m.Count
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewCALDataRequestRecall factory function for CALDataRequestRecall
-func NewCALDataRequestRecall(paramNo uint8, count uint8, commandTypeContainer CALCommandTypeContainer) *CALData {
-	child := &CALDataRequestRecall{
+func NewCALDataRequestRecall(paramNo uint8, count uint8, commandTypeContainer CALCommandTypeContainer) *CALDataRequestRecall {
+	_result := &CALDataRequestRecall{
 		ParamNo: paramNo,
 		Count:   count,
 		CALData: NewCALData(commandTypeContainer),
 	}
-	child.Child = child
-	return child.CALData
+	_result.Child = _result
+	return _result
 }
 
 func CastCALDataRequestRecall(structType interface{}) *CALDataRequestRecall {
@@ -122,7 +133,7 @@ func (m *CALDataRequestRecall) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CALDataRequestRecallParse(readBuffer utils.ReadBuffer) (*CALData, error) {
+func CALDataRequestRecallParse(readBuffer utils.ReadBuffer) (*CALDataRequestRecall, error) {
 	if pullErr := readBuffer.PullContext("CALDataRequestRecall"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -154,7 +165,7 @@ func CALDataRequestRecallParse(readBuffer utils.ReadBuffer) (*CALData, error) {
 		CALData: &CALData{},
 	}
 	_child.CALData.Child = _child
-	return _child.CALData, nil
+	return _child, nil
 }
 
 func (m *CALDataRequestRecall) Serialize(writeBuffer utils.WriteBuffer) error {

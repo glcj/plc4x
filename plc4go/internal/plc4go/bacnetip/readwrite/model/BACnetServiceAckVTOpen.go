@@ -42,33 +42,31 @@ type IBACnetServiceAckVTOpen interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckVTOpen) ServiceChoice() uint8 {
-	return 0x15
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckVTOpen) GetServiceChoice() uint8 {
 	return 0x15
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckVTOpen) InitializeParent(parent *BACnetServiceAck) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetServiceAckVTOpen) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
 
 // NewBACnetServiceAckVTOpen factory function for BACnetServiceAckVTOpen
-func NewBACnetServiceAckVTOpen() *BACnetServiceAck {
-	child := &BACnetServiceAckVTOpen{
+func NewBACnetServiceAckVTOpen() *BACnetServiceAckVTOpen {
+	_result := &BACnetServiceAckVTOpen{
 		BACnetServiceAck: NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckVTOpen(structType interface{}) *BACnetServiceAckVTOpen {
@@ -105,7 +103,7 @@ func (m *BACnetServiceAckVTOpen) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckVTOpenParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckVTOpenParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckVTOpen, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckVTOpen"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetServiceAckVTOpenParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck
 		BACnetServiceAck: &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckVTOpen) Serialize(writeBuffer utils.WriteBuffer) error {

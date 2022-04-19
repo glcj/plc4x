@@ -45,34 +45,32 @@ type IBACnetConfirmedServiceRequestReadRange interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestReadRange) ServiceChoice() uint8 {
-	return 0x1A
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestReadRange) GetServiceChoice() uint8 {
 	return 0x1A
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestReadRange) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceRequestReadRange) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
 
 // NewBACnetConfirmedServiceRequestReadRange factory function for BACnetConfirmedServiceRequestReadRange
-func NewBACnetConfirmedServiceRequestReadRange(len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestReadRange{
+func NewBACnetConfirmedServiceRequestReadRange(len uint16) *BACnetConfirmedServiceRequestReadRange {
+	_result := &BACnetConfirmedServiceRequestReadRange{
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestReadRange(structType interface{}) *BACnetConfirmedServiceRequestReadRange {
@@ -109,7 +107,7 @@ func (m *BACnetConfirmedServiceRequestReadRange) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestReadRangeParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestReadRangeParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestReadRange, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestReadRange"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func BACnetConfirmedServiceRequestReadRangeParse(readBuffer utils.ReadBuffer, le
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestReadRange) Serialize(writeBuffer utils.WriteBuffer) error {

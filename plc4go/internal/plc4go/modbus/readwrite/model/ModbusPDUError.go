@@ -46,53 +46,53 @@ type IModbusPDUError interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUError) ErrorFlag() bool {
-	return bool(true)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUError) GetErrorFlag() bool {
 	return bool(true)
-}
-
-func (m *ModbusPDUError) FunctionFlag() uint8 {
-	return 0
 }
 
 func (m *ModbusPDUError) GetFunctionFlag() uint8 {
 	return 0
 }
 
-func (m *ModbusPDUError) Response() bool {
-	return false
-}
-
 func (m *ModbusPDUError) GetResponse() bool {
 	return false
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUError) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUError) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUError) GetExceptionCode() ModbusErrorCode {
 	return m.ExceptionCode
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUError factory function for ModbusPDUError
-func NewModbusPDUError(exceptionCode ModbusErrorCode) *ModbusPDU {
-	child := &ModbusPDUError{
+func NewModbusPDUError(exceptionCode ModbusErrorCode) *ModbusPDUError {
+	_result := &ModbusPDUError{
 		ExceptionCode: exceptionCode,
 		ModbusPDU:     NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUError(structType interface{}) *ModbusPDUError {
@@ -132,7 +132,7 @@ func (m *ModbusPDUError) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUErrorParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUErrorParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUError, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUError"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -162,7 +162,7 @@ func ModbusPDUErrorParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU
 		ModbusPDU:     &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUError) Serialize(writeBuffer utils.WriteBuffer) error {

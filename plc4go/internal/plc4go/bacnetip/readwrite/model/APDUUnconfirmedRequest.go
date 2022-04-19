@@ -50,37 +50,45 @@ type IAPDUUnconfirmedRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *APDUUnconfirmedRequest) ApduType() uint8 {
-	return 0x1
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *APDUUnconfirmedRequest) GetApduType() uint8 {
 	return 0x1
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *APDUUnconfirmedRequest) InitializeParent(parent *APDU) {}
 
+func (m *APDUUnconfirmedRequest) GetParent() *APDU {
+	return m.APDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *APDUUnconfirmedRequest) GetServiceRequest() *BACnetUnconfirmedServiceRequest {
 	return m.ServiceRequest
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAPDUUnconfirmedRequest factory function for APDUUnconfirmedRequest
-func NewAPDUUnconfirmedRequest(serviceRequest *BACnetUnconfirmedServiceRequest, apduLength uint16) *APDU {
-	child := &APDUUnconfirmedRequest{
+func NewAPDUUnconfirmedRequest(serviceRequest *BACnetUnconfirmedServiceRequest, apduLength uint16) *APDUUnconfirmedRequest {
+	_result := &APDUUnconfirmedRequest{
 		ServiceRequest: serviceRequest,
 		APDU:           NewAPDU(apduLength),
 	}
-	child.Child = child
-	return child.APDU
+	_result.Child = _result
+	return _result
 }
 
 func CastAPDUUnconfirmedRequest(structType interface{}) *APDUUnconfirmedRequest {
@@ -123,7 +131,7 @@ func (m *APDUUnconfirmedRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func APDUUnconfirmedRequestParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
+func APDUUnconfirmedRequestParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDUUnconfirmedRequest, error) {
 	if pullErr := readBuffer.PullContext("APDUUnconfirmedRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -167,7 +175,7 @@ func APDUUnconfirmedRequestParse(readBuffer utils.ReadBuffer, apduLength uint16)
 		APDU:           &APDU{},
 	}
 	_child.APDU.Child = _child
-	return _child.APDU, nil
+	return _child, nil
 }
 
 func (m *APDUUnconfirmedRequest) Serialize(writeBuffer utils.WriteBuffer) error {

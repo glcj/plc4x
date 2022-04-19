@@ -55,21 +55,28 @@ type ILDataInd interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *LDataInd) MessageCode() uint8 {
-	return 0x29
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *LDataInd) GetMessageCode() uint8 {
 	return 0x29
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *LDataInd) InitializeParent(parent *CEMI) {}
 
+func (m *LDataInd) GetParent() *CEMI {
+	return m.CEMI
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *LDataInd) GetAdditionalInformationLength() uint8 {
 	return m.AdditionalInformationLength
 }
@@ -82,20 +89,21 @@ func (m *LDataInd) GetDataFrame() *LDataFrame {
 	return m.DataFrame
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewLDataInd factory function for LDataInd
-func NewLDataInd(additionalInformationLength uint8, additionalInformation []*CEMIAdditionalInformation, dataFrame *LDataFrame, size uint16) *CEMI {
-	child := &LDataInd{
+func NewLDataInd(additionalInformationLength uint8, additionalInformation []*CEMIAdditionalInformation, dataFrame *LDataFrame, size uint16) *LDataInd {
+	_result := &LDataInd{
 		AdditionalInformationLength: additionalInformationLength,
 		AdditionalInformation:       additionalInformation,
 		DataFrame:                   dataFrame,
 		CEMI:                        NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastLDataInd(structType interface{}) *LDataInd {
@@ -145,7 +153,7 @@ func (m *LDataInd) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func LDataIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func LDataIndParse(readBuffer utils.ReadBuffer, size uint16) (*LDataInd, error) {
 	if pullErr := readBuffer.PullContext("LDataInd"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -205,7 +213,7 @@ func LDataIndParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
 		CEMI:                        &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *LDataInd) Serialize(writeBuffer utils.WriteBuffer) error {

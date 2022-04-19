@@ -42,33 +42,31 @@ type IIdentifyReplyCommandCurrentSenseLevels interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandCurrentSenseLevels) Attribute() Attribute {
-	return Attribute_CurrentSenseLevels
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandCurrentSenseLevels) GetAttribute() Attribute {
 	return Attribute_CurrentSenseLevels
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandCurrentSenseLevels) InitializeParent(parent *IdentifyReplyCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *IdentifyReplyCommandCurrentSenseLevels) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
 
 // NewIdentifyReplyCommandCurrentSenseLevels factory function for IdentifyReplyCommandCurrentSenseLevels
-func NewIdentifyReplyCommandCurrentSenseLevels() *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandCurrentSenseLevels{
+func NewIdentifyReplyCommandCurrentSenseLevels() *IdentifyReplyCommandCurrentSenseLevels {
+	_result := &IdentifyReplyCommandCurrentSenseLevels{
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandCurrentSenseLevels(structType interface{}) *IdentifyReplyCommandCurrentSenseLevels {
@@ -105,7 +103,7 @@ func (m *IdentifyReplyCommandCurrentSenseLevels) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandCurrentSenseLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandCurrentSenseLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandCurrentSenseLevels, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandCurrentSenseLevels"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func IdentifyReplyCommandCurrentSenseLevelsParse(readBuffer utils.ReadBuffer, at
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandCurrentSenseLevels) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,33 +42,31 @@ type IBACnetConfirmedServiceAddListElement interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceAddListElement) ServiceChoice() uint8 {
-	return 0x08
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceAddListElement) GetServiceChoice() uint8 {
 	return 0x08
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceAddListElement) InitializeParent(parent *BACnetConfirmedServiceACK) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceAddListElement) GetParent() *BACnetConfirmedServiceACK {
+	return m.BACnetConfirmedServiceACK
+}
 
 // NewBACnetConfirmedServiceAddListElement factory function for BACnetConfirmedServiceAddListElement
-func NewBACnetConfirmedServiceAddListElement() *BACnetConfirmedServiceACK {
-	child := &BACnetConfirmedServiceAddListElement{
+func NewBACnetConfirmedServiceAddListElement() *BACnetConfirmedServiceAddListElement {
+	_result := &BACnetConfirmedServiceAddListElement{
 		BACnetConfirmedServiceACK: NewBACnetConfirmedServiceACK(),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceACK
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceAddListElement(structType interface{}) *BACnetConfirmedServiceAddListElement {
@@ -105,7 +103,7 @@ func (m *BACnetConfirmedServiceAddListElement) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceAddListElementParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceACK, error) {
+func BACnetConfirmedServiceAddListElementParse(readBuffer utils.ReadBuffer) (*BACnetConfirmedServiceAddListElement, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceAddListElement"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func BACnetConfirmedServiceAddListElementParse(readBuffer utils.ReadBuffer) (*BA
 		BACnetConfirmedServiceACK: &BACnetConfirmedServiceACK{},
 	}
 	_child.BACnetConfirmedServiceACK.Child = _child
-	return _child.BACnetConfirmedServiceACK, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceAddListElement) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -49,37 +49,36 @@ type IModbusPDUWriteSingleCoilRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ModbusPDUWriteSingleCoilRequest) ErrorFlag() bool {
-	return bool(false)
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ModbusPDUWriteSingleCoilRequest) GetErrorFlag() bool {
 	return bool(false)
-}
-
-func (m *ModbusPDUWriteSingleCoilRequest) FunctionFlag() uint8 {
-	return 0x05
 }
 
 func (m *ModbusPDUWriteSingleCoilRequest) GetFunctionFlag() uint8 {
 	return 0x05
 }
 
-func (m *ModbusPDUWriteSingleCoilRequest) Response() bool {
-	return bool(false)
-}
-
 func (m *ModbusPDUWriteSingleCoilRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ModbusPDUWriteSingleCoilRequest) InitializeParent(parent *ModbusPDU) {}
 
+func (m *ModbusPDUWriteSingleCoilRequest) GetParent() *ModbusPDU {
+	return m.ModbusPDU
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ModbusPDUWriteSingleCoilRequest) GetAddress() uint16 {
 	return m.Address
 }
@@ -88,19 +87,20 @@ func (m *ModbusPDUWriteSingleCoilRequest) GetValue() uint16 {
 	return m.Value
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewModbusPDUWriteSingleCoilRequest factory function for ModbusPDUWriteSingleCoilRequest
-func NewModbusPDUWriteSingleCoilRequest(address uint16, value uint16) *ModbusPDU {
-	child := &ModbusPDUWriteSingleCoilRequest{
+func NewModbusPDUWriteSingleCoilRequest(address uint16, value uint16) *ModbusPDUWriteSingleCoilRequest {
+	_result := &ModbusPDUWriteSingleCoilRequest{
 		Address:   address,
 		Value:     value,
 		ModbusPDU: NewModbusPDU(),
 	}
-	child.Child = child
-	return child.ModbusPDU
+	_result.Child = _result
+	return _result
 }
 
 func CastModbusPDUWriteSingleCoilRequest(structType interface{}) *ModbusPDUWriteSingleCoilRequest {
@@ -143,7 +143,7 @@ func (m *ModbusPDUWriteSingleCoilRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ModbusPDUWriteSingleCoilRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDU, error) {
+func ModbusPDUWriteSingleCoilRequestParse(readBuffer utils.ReadBuffer, response bool) (*ModbusPDUWriteSingleCoilRequest, error) {
 	if pullErr := readBuffer.PullContext("ModbusPDUWriteSingleCoilRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -175,7 +175,7 @@ func ModbusPDUWriteSingleCoilRequestParse(readBuffer utils.ReadBuffer, response 
 		ModbusPDU: &ModbusPDU{},
 	}
 	_child.ModbusPDU.Child = _child
-	return _child.ModbusPDU, nil
+	return _child, nil
 }
 
 func (m *ModbusPDUWriteSingleCoilRequest) Serialize(writeBuffer utils.WriteBuffer) error {

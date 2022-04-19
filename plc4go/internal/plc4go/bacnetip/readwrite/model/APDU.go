@@ -54,17 +54,11 @@ type IAPDUParent interface {
 type IAPDUChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *APDU)
+	GetParent() *APDU
+
 	GetTypeName() string
 	IAPDU
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewAPDU factory function for APDU
 func NewAPDU(apduLength uint16) *APDU {
@@ -77,6 +71,9 @@ func CastAPDU(structType interface{}) *APDU {
 	}
 	if casted, ok := structType.(*APDU); ok {
 		return casted
+	}
+	if casted, ok := structType.(IAPDUChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -119,27 +116,31 @@ func APDUParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *APDU
+	type APDUChild interface {
+		InitializeParent(*APDU)
+		GetParent() *APDU
+	}
+	var _child APDUChild
 	var typeSwitchError error
 	switch {
 	case apduType == 0x0: // APDUConfirmedRequest
-		_parent, typeSwitchError = APDUConfirmedRequestParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUConfirmedRequestParse(readBuffer, apduLength)
 	case apduType == 0x1: // APDUUnconfirmedRequest
-		_parent, typeSwitchError = APDUUnconfirmedRequestParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUUnconfirmedRequestParse(readBuffer, apduLength)
 	case apduType == 0x2: // APDUSimpleAck
-		_parent, typeSwitchError = APDUSimpleAckParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUSimpleAckParse(readBuffer, apduLength)
 	case apduType == 0x3: // APDUComplexAck
-		_parent, typeSwitchError = APDUComplexAckParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUComplexAckParse(readBuffer, apduLength)
 	case apduType == 0x4: // APDUSegmentAck
-		_parent, typeSwitchError = APDUSegmentAckParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUSegmentAckParse(readBuffer, apduLength)
 	case apduType == 0x5: // APDUError
-		_parent, typeSwitchError = APDUErrorParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUErrorParse(readBuffer, apduLength)
 	case apduType == 0x6: // APDUReject
-		_parent, typeSwitchError = APDURejectParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDURejectParse(readBuffer, apduLength)
 	case apduType == 0x7: // APDUAbort
-		_parent, typeSwitchError = APDUAbortParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUAbortParse(readBuffer, apduLength)
 	case true: // APDUUnknown
-		_parent, typeSwitchError = APDUUnknownParse(readBuffer, apduLength)
+		_child, typeSwitchError = APDUUnknownParse(readBuffer, apduLength)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -153,8 +154,8 @@ func APDUParse(readBuffer utils.ReadBuffer, apduLength uint16) (*APDU, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *APDU) Serialize(writeBuffer utils.WriteBuffer) error {

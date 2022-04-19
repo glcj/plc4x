@@ -46,32 +46,43 @@ type IParameterChangeReply interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *ParameterChangeReply) InitializeParent(parent *Reply, magicByte byte) {
 	m.Reply.MagicByte = magicByte
 }
 
+func (m *ParameterChangeReply) GetParent() *Reply {
+	return m.Reply
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ParameterChangeReply) GetIsA() *ParameterChange {
 	return m.IsA
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewParameterChangeReply factory function for ParameterChangeReply
-func NewParameterChangeReply(isA *ParameterChange, magicByte byte) *Reply {
-	child := &ParameterChangeReply{
+func NewParameterChangeReply(isA *ParameterChange, magicByte byte) *ParameterChangeReply {
+	_result := &ParameterChangeReply{
 		IsA:   isA,
 		Reply: NewReply(magicByte),
 	}
-	child.Child = child
-	return child.Reply
+	_result.Child = _result
+	return _result
 }
 
 func CastParameterChangeReply(structType interface{}) *ParameterChangeReply {
@@ -111,7 +122,7 @@ func (m *ParameterChangeReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ParameterChangeReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
+func ParameterChangeReplyParse(readBuffer utils.ReadBuffer) (*ParameterChangeReply, error) {
 	if pullErr := readBuffer.PullContext("ParameterChangeReply"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func ParameterChangeReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 		Reply: &Reply{},
 	}
 	_child.Reply.Child = _child
-	return _child.Reply, nil
+	return _child, nil
 }
 
 func (m *ParameterChangeReply) Serialize(writeBuffer utils.WriteBuffer) error {

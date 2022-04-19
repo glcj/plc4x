@@ -51,17 +51,11 @@ type IComObjectTableParent interface {
 type IComObjectTableChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *ComObjectTable)
+	GetParent() *ComObjectTable
+
 	GetTypeName() string
 	IComObjectTable
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewComObjectTable factory function for ComObjectTable
 func NewComObjectTable() *ComObjectTable {
@@ -74,6 +68,9 @@ func CastComObjectTable(structType interface{}) *ComObjectTable {
 	}
 	if casted, ok := structType.(*ComObjectTable); ok {
 		return casted
+	}
+	if casted, ok := structType.(IComObjectTableChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -108,15 +105,19 @@ func ComObjectTableParse(readBuffer utils.ReadBuffer, firmwareType FirmwareType)
 	_ = currentPos
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *ComObjectTable
+	type ComObjectTableChild interface {
+		InitializeParent(*ComObjectTable)
+		GetParent() *ComObjectTable
+	}
+	var _child ComObjectTableChild
 	var typeSwitchError error
 	switch {
 	case firmwareType == FirmwareType_SYSTEM_1: // ComObjectTableRealisationType1
-		_parent, typeSwitchError = ComObjectTableRealisationType1Parse(readBuffer, firmwareType)
+		_child, typeSwitchError = ComObjectTableRealisationType1Parse(readBuffer, firmwareType)
 	case firmwareType == FirmwareType_SYSTEM_2: // ComObjectTableRealisationType2
-		_parent, typeSwitchError = ComObjectTableRealisationType2Parse(readBuffer, firmwareType)
+		_child, typeSwitchError = ComObjectTableRealisationType2Parse(readBuffer, firmwareType)
 	case firmwareType == FirmwareType_SYSTEM_300: // ComObjectTableRealisationType6
-		_parent, typeSwitchError = ComObjectTableRealisationType6Parse(readBuffer, firmwareType)
+		_child, typeSwitchError = ComObjectTableRealisationType6Parse(readBuffer, firmwareType)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -130,8 +131,8 @@ func ComObjectTableParse(readBuffer utils.ReadBuffer, firmwareType FirmwareType)
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *ComObjectTable) Serialize(writeBuffer utils.WriteBuffer) error {

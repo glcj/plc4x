@@ -46,45 +46,49 @@ type IAdsWriteResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsWriteResponse) CommandId() CommandId {
-	return CommandId_ADS_WRITE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsWriteResponse) GetCommandId() CommandId {
 	return CommandId_ADS_WRITE
-}
-
-func (m *AdsWriteResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *AdsWriteResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsWriteResponse) InitializeParent(parent *AdsData) {}
 
+func (m *AdsWriteResponse) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsWriteResponse) GetResult() ReturnCode {
 	return m.Result
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsWriteResponse factory function for AdsWriteResponse
-func NewAdsWriteResponse(result ReturnCode) *AdsData {
-	child := &AdsWriteResponse{
+func NewAdsWriteResponse(result ReturnCode) *AdsWriteResponse {
+	_result := &AdsWriteResponse{
 		Result:  result,
 		AdsData: NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsWriteResponse(structType interface{}) *AdsWriteResponse {
@@ -124,7 +128,7 @@ func (m *AdsWriteResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsWriteResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsWriteResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsWriteResponse, error) {
 	if pullErr := readBuffer.PullContext("AdsWriteResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -154,7 +158,7 @@ func AdsWriteResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, res
 		AdsData: &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsWriteResponse) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -42,33 +42,31 @@ type IDF1SymbolMessageFrameNAK interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *DF1SymbolMessageFrameNAK) SymbolType() uint8 {
-	return 0x15
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *DF1SymbolMessageFrameNAK) GetSymbolType() uint8 {
 	return 0x15
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *DF1SymbolMessageFrameNAK) InitializeParent(parent *DF1Symbol) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *DF1SymbolMessageFrameNAK) GetParent() *DF1Symbol {
+	return m.DF1Symbol
+}
 
 // NewDF1SymbolMessageFrameNAK factory function for DF1SymbolMessageFrameNAK
-func NewDF1SymbolMessageFrameNAK() *DF1Symbol {
-	child := &DF1SymbolMessageFrameNAK{
+func NewDF1SymbolMessageFrameNAK() *DF1SymbolMessageFrameNAK {
+	_result := &DF1SymbolMessageFrameNAK{
 		DF1Symbol: NewDF1Symbol(),
 	}
-	child.Child = child
-	return child.DF1Symbol
+	_result.Child = _result
+	return _result
 }
 
 func CastDF1SymbolMessageFrameNAK(structType interface{}) *DF1SymbolMessageFrameNAK {
@@ -105,7 +103,7 @@ func (m *DF1SymbolMessageFrameNAK) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func DF1SymbolMessageFrameNAKParse(readBuffer utils.ReadBuffer) (*DF1Symbol, error) {
+func DF1SymbolMessageFrameNAKParse(readBuffer utils.ReadBuffer) (*DF1SymbolMessageFrameNAK, error) {
 	if pullErr := readBuffer.PullContext("DF1SymbolMessageFrameNAK"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func DF1SymbolMessageFrameNAKParse(readBuffer utils.ReadBuffer) (*DF1Symbol, err
 		DF1Symbol: &DF1Symbol{},
 	}
 	_child.DF1Symbol.Child = _child
-	return _child.DF1Symbol, nil
+	return _child, nil
 }
 
 func (m *DF1SymbolMessageFrameNAK) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -52,26 +52,37 @@ type IBACnetBinaryPV interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetBinaryPV) GetRawData() *BACnetContextTagEnumerated {
 	return m.RawData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetBinaryPV) GetIsInactive() bool {
 	rawData := m.RawData
 	_ = rawData
-	return bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (0)))
+	return bool(bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (0))))
 }
 
 func (m *BACnetBinaryPV) GetIsActive() bool {
 	rawData := m.RawData
 	_ = rawData
-	return bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (1)))
+	return bool(bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (1))))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetBinaryPV factory function for BACnetBinaryPV
 func NewBACnetBinaryPV(rawData *BACnetContextTagEnumerated, tagNumber uint8) *BACnetBinaryPV {

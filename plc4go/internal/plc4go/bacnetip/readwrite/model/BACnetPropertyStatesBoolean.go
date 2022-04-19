@@ -50,7 +50,12 @@ type IBACnetPropertyStatesBoolean interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetPropertyStatesBoolean) InitializeParent(parent *BACnetPropertyStates, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
@@ -59,25 +64,31 @@ func (m *BACnetPropertyStatesBoolean) InitializeParent(parent *BACnetPropertySta
 	m.BACnetPropertyStates.ClosingTag = closingTag
 }
 
+func (m *BACnetPropertyStatesBoolean) GetParent() *BACnetPropertyStates {
+	return m.BACnetPropertyStates
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetPropertyStatesBoolean) GetBooleanValue() *BACnetContextTagBoolean {
 	return m.BooleanValue
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetPropertyStatesBoolean factory function for BACnetPropertyStatesBoolean
-func NewBACnetPropertyStatesBoolean(booleanValue *BACnetContextTagBoolean, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetPropertyStates {
-	child := &BACnetPropertyStatesBoolean{
+func NewBACnetPropertyStatesBoolean(booleanValue *BACnetContextTagBoolean, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8) *BACnetPropertyStatesBoolean {
+	_result := &BACnetPropertyStatesBoolean{
 		BooleanValue:         booleanValue,
 		BACnetPropertyStates: NewBACnetPropertyStates(openingTag, peekedTagHeader, closingTag, tagNumber),
 	}
-	child.Child = child
-	return child.BACnetPropertyStates
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetPropertyStatesBoolean(structType interface{}) *BACnetPropertyStatesBoolean {
@@ -119,7 +130,7 @@ func (m *BACnetPropertyStatesBoolean) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetPropertyStatesBooleanParse(readBuffer utils.ReadBuffer, tagNumber uint8, peekedTagNumber uint8) (*BACnetPropertyStates, error) {
+func BACnetPropertyStatesBooleanParse(readBuffer utils.ReadBuffer, tagNumber uint8, peekedTagNumber uint8) (*BACnetPropertyStatesBoolean, error) {
 	if pullErr := readBuffer.PullContext("BACnetPropertyStatesBoolean"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -157,7 +168,7 @@ func BACnetPropertyStatesBooleanParse(readBuffer utils.ReadBuffer, tagNumber uin
 		BACnetPropertyStates: &BACnetPropertyStates{},
 	}
 	_child.BACnetPropertyStates.Child = _child
-	return _child.BACnetPropertyStates, nil
+	return _child, nil
 }
 
 func (m *BACnetPropertyStatesBoolean) Serialize(writeBuffer utils.WriteBuffer) error {

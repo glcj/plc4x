@@ -54,32 +54,43 @@ type IBACnetConfirmedServiceRequestReinitializeDeviceEnableDisable interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable) GetRawData() *BACnetContextTagEnumerated {
 	return m.RawData
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable) GetIsEnable() bool {
 	rawData := m.RawData
 	_ = rawData
-	return bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (0)))
+	return bool(bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (0))))
 }
 
 func (m *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable) GetIsDisable() bool {
 	rawData := m.RawData
 	_ = rawData
-	return bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (1)))
+	return bool(bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (1))))
 }
 
 func (m *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable) GetIsDisableInitiation() bool {
 	rawData := m.RawData
 	_ = rawData
-	return bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (2)))
+	return bool(bool(bool((m.GetRawData()) != (nil))) && bool(bool(((*m.GetRawData()).GetPayload().GetActualValue()) == (2))))
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 // NewBACnetConfirmedServiceRequestReinitializeDeviceEnableDisable factory function for BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable
 func NewBACnetConfirmedServiceRequestReinitializeDeviceEnableDisable(rawData *BACnetContextTagEnumerated, tagNumber uint8) *BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable {

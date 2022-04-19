@@ -46,32 +46,43 @@ type IExclamationMarkReply interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *ExclamationMarkReply) InitializeParent(parent *Reply, magicByte byte) {
 	m.Reply.MagicByte = magicByte
 }
 
+func (m *ExclamationMarkReply) GetParent() *Reply {
+	return m.Reply
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ExclamationMarkReply) GetIsA() *ExclamationMark {
 	return m.IsA
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewExclamationMarkReply factory function for ExclamationMarkReply
-func NewExclamationMarkReply(isA *ExclamationMark, magicByte byte) *Reply {
-	child := &ExclamationMarkReply{
+func NewExclamationMarkReply(isA *ExclamationMark, magicByte byte) *ExclamationMarkReply {
+	_result := &ExclamationMarkReply{
 		IsA:   isA,
 		Reply: NewReply(magicByte),
 	}
-	child.Child = child
-	return child.Reply
+	_result.Child = _result
+	return _result
 }
 
 func CastExclamationMarkReply(structType interface{}) *ExclamationMarkReply {
@@ -111,7 +122,7 @@ func (m *ExclamationMarkReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ExclamationMarkReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
+func ExclamationMarkReplyParse(readBuffer utils.ReadBuffer) (*ExclamationMarkReply, error) {
 	if pullErr := readBuffer.PullContext("ExclamationMarkReply"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -141,7 +152,7 @@ func ExclamationMarkReplyParse(readBuffer utils.ReadBuffer) (*Reply, error) {
 		Reply: &Reply{},
 	}
 	_child.Reply.Child = _child
-	return _child.Reply, nil
+	return _child, nil
 }
 
 func (m *ExclamationMarkReply) Serialize(writeBuffer utils.WriteBuffer) error {

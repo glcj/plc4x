@@ -53,17 +53,11 @@ type IS7ParameterParent interface {
 type IS7ParameterChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *S7Parameter)
+	GetParent() *S7Parameter
+
 	GetTypeName() string
 	IS7Parameter
 }
-
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
 
 // NewS7Parameter factory function for S7Parameter
 func NewS7Parameter() *S7Parameter {
@@ -76,6 +70,9 @@ func CastS7Parameter(structType interface{}) *S7Parameter {
 	}
 	if casted, ok := structType.(*S7Parameter); ok {
 		return casted
+	}
+	if casted, ok := structType.(IS7ParameterChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -118,23 +115,27 @@ func S7ParameterParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7Parame
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *S7Parameter
+	type S7ParameterChild interface {
+		InitializeParent(*S7Parameter)
+		GetParent() *S7Parameter
+	}
+	var _child S7ParameterChild
 	var typeSwitchError error
 	switch {
 	case parameterType == 0xF0: // S7ParameterSetupCommunication
-		_parent, typeSwitchError = S7ParameterSetupCommunicationParse(readBuffer, messageType)
+		_child, typeSwitchError = S7ParameterSetupCommunicationParse(readBuffer, messageType)
 	case parameterType == 0x04 && messageType == 0x01: // S7ParameterReadVarRequest
-		_parent, typeSwitchError = S7ParameterReadVarRequestParse(readBuffer, messageType)
+		_child, typeSwitchError = S7ParameterReadVarRequestParse(readBuffer, messageType)
 	case parameterType == 0x04 && messageType == 0x03: // S7ParameterReadVarResponse
-		_parent, typeSwitchError = S7ParameterReadVarResponseParse(readBuffer, messageType)
+		_child, typeSwitchError = S7ParameterReadVarResponseParse(readBuffer, messageType)
 	case parameterType == 0x05 && messageType == 0x01: // S7ParameterWriteVarRequest
-		_parent, typeSwitchError = S7ParameterWriteVarRequestParse(readBuffer, messageType)
+		_child, typeSwitchError = S7ParameterWriteVarRequestParse(readBuffer, messageType)
 	case parameterType == 0x05 && messageType == 0x03: // S7ParameterWriteVarResponse
-		_parent, typeSwitchError = S7ParameterWriteVarResponseParse(readBuffer, messageType)
+		_child, typeSwitchError = S7ParameterWriteVarResponseParse(readBuffer, messageType)
 	case parameterType == 0x00 && messageType == 0x07: // S7ParameterUserData
-		_parent, typeSwitchError = S7ParameterUserDataParse(readBuffer, messageType)
+		_child, typeSwitchError = S7ParameterUserDataParse(readBuffer, messageType)
 	case parameterType == 0x01 && messageType == 0x07: // S7ParameterModeTransition
-		_parent, typeSwitchError = S7ParameterModeTransitionParse(readBuffer, messageType)
+		_child, typeSwitchError = S7ParameterModeTransitionParse(readBuffer, messageType)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -148,8 +149,8 @@ func S7ParameterParse(readBuffer utils.ReadBuffer, messageType uint8) (*S7Parame
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent())
+	return _child.GetParent(), nil
 }
 
 func (m *S7Parameter) Serialize(writeBuffer utils.WriteBuffer) error {

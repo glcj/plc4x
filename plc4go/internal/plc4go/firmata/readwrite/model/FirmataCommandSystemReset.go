@@ -45,33 +45,31 @@ type IFirmataCommandSystemReset interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *FirmataCommandSystemReset) CommandCode() uint8 {
-	return 0xF
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *FirmataCommandSystemReset) GetCommandCode() uint8 {
 	return 0xF
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *FirmataCommandSystemReset) InitializeParent(parent *FirmataCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *FirmataCommandSystemReset) GetParent() *FirmataCommand {
+	return m.FirmataCommand
+}
 
 // NewFirmataCommandSystemReset factory function for FirmataCommandSystemReset
-func NewFirmataCommandSystemReset(response bool) *FirmataCommand {
-	child := &FirmataCommandSystemReset{
+func NewFirmataCommandSystemReset(response bool) *FirmataCommandSystemReset {
+	_result := &FirmataCommandSystemReset{
 		FirmataCommand: NewFirmataCommand(response),
 	}
-	child.Child = child
-	return child.FirmataCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastFirmataCommandSystemReset(structType interface{}) *FirmataCommandSystemReset {
@@ -108,7 +106,7 @@ func (m *FirmataCommandSystemReset) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func FirmataCommandSystemResetParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommand, error) {
+func FirmataCommandSystemResetParse(readBuffer utils.ReadBuffer, response bool) (*FirmataCommandSystemReset, error) {
 	if pullErr := readBuffer.PullContext("FirmataCommandSystemReset"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -124,7 +122,7 @@ func FirmataCommandSystemResetParse(readBuffer utils.ReadBuffer, response bool) 
 		FirmataCommand: &FirmataCommand{},
 	}
 	_child.FirmataCommand.Child = _child
-	return _child.FirmataCommand, nil
+	return _child, nil
 }
 
 func (m *FirmataCommandSystemReset) Serialize(writeBuffer utils.WriteBuffer) error {

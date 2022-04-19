@@ -52,21 +52,28 @@ type ISearchResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *SearchResponse) MsgType() uint16 {
-	return 0x0202
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *SearchResponse) GetMsgType() uint16 {
 	return 0x0202
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *SearchResponse) InitializeParent(parent *KnxNetIpMessage) {}
 
+func (m *SearchResponse) GetParent() *KnxNetIpMessage {
+	return m.KnxNetIpMessage
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *SearchResponse) GetHpaiControlEndpoint() *HPAIControlEndpoint {
 	return m.HpaiControlEndpoint
 }
@@ -79,20 +86,21 @@ func (m *SearchResponse) GetDibSuppSvcFamilies() *DIBSuppSvcFamilies {
 	return m.DibSuppSvcFamilies
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewSearchResponse factory function for SearchResponse
-func NewSearchResponse(hpaiControlEndpoint *HPAIControlEndpoint, dibDeviceInfo *DIBDeviceInfo, dibSuppSvcFamilies *DIBSuppSvcFamilies) *KnxNetIpMessage {
-	child := &SearchResponse{
+func NewSearchResponse(hpaiControlEndpoint *HPAIControlEndpoint, dibDeviceInfo *DIBDeviceInfo, dibSuppSvcFamilies *DIBSuppSvcFamilies) *SearchResponse {
+	_result := &SearchResponse{
 		HpaiControlEndpoint: hpaiControlEndpoint,
 		DibDeviceInfo:       dibDeviceInfo,
 		DibSuppSvcFamilies:  dibSuppSvcFamilies,
 		KnxNetIpMessage:     NewKnxNetIpMessage(),
 	}
-	child.Child = child
-	return child.KnxNetIpMessage
+	_result.Child = _result
+	return _result
 }
 
 func CastSearchResponse(structType interface{}) *SearchResponse {
@@ -138,7 +146,7 @@ func (m *SearchResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func SearchResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+func SearchResponseParse(readBuffer utils.ReadBuffer) (*SearchResponse, error) {
 	if pullErr := readBuffer.PullContext("SearchResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -196,7 +204,7 @@ func SearchResponseParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) 
 		KnxNetIpMessage:     &KnxNetIpMessage{},
 	}
 	_child.KnxNetIpMessage.Child = _child
-	return _child.KnxNetIpMessage, nil
+	return _child, nil
 }
 
 func (m *SearchResponse) Serialize(writeBuffer utils.WriteBuffer) error {

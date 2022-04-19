@@ -55,21 +55,28 @@ type ILDataCon interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *LDataCon) MessageCode() uint8 {
-	return 0x2E
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *LDataCon) GetMessageCode() uint8 {
 	return 0x2E
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *LDataCon) InitializeParent(parent *CEMI) {}
 
+func (m *LDataCon) GetParent() *CEMI {
+	return m.CEMI
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *LDataCon) GetAdditionalInformationLength() uint8 {
 	return m.AdditionalInformationLength
 }
@@ -82,20 +89,21 @@ func (m *LDataCon) GetDataFrame() *LDataFrame {
 	return m.DataFrame
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewLDataCon factory function for LDataCon
-func NewLDataCon(additionalInformationLength uint8, additionalInformation []*CEMIAdditionalInformation, dataFrame *LDataFrame, size uint16) *CEMI {
-	child := &LDataCon{
+func NewLDataCon(additionalInformationLength uint8, additionalInformation []*CEMIAdditionalInformation, dataFrame *LDataFrame, size uint16) *LDataCon {
+	_result := &LDataCon{
 		AdditionalInformationLength: additionalInformationLength,
 		AdditionalInformation:       additionalInformation,
 		DataFrame:                   dataFrame,
 		CEMI:                        NewCEMI(size),
 	}
-	child.Child = child
-	return child.CEMI
+	_result.Child = _result
+	return _result
 }
 
 func CastLDataCon(structType interface{}) *LDataCon {
@@ -145,7 +153,7 @@ func (m *LDataCon) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func LDataConParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
+func LDataConParse(readBuffer utils.ReadBuffer, size uint16) (*LDataCon, error) {
 	if pullErr := readBuffer.PullContext("LDataCon"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -205,7 +213,7 @@ func LDataConParse(readBuffer utils.ReadBuffer, size uint16) (*CEMI, error) {
 		CEMI:                        &CEMI{},
 	}
 	_child.CEMI.Child = _child
-	return _child.CEMI, nil
+	return _child, nil
 }
 
 func (m *LDataCon) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -59,7 +59,12 @@ type IBACnetNotificationParametersChangeOfBitString interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetNotificationParametersChangeOfBitString) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
@@ -68,9 +73,14 @@ func (m *BACnetNotificationParametersChangeOfBitString) InitializeParent(parent 
 	m.BACnetNotificationParameters.ClosingTag = closingTag
 }
 
+func (m *BACnetNotificationParametersChangeOfBitString) GetParent() *BACnetNotificationParameters {
+	return m.BACnetNotificationParameters
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetNotificationParametersChangeOfBitString) GetInnerOpeningTag() *BACnetOpeningTag {
 	return m.InnerOpeningTag
 }
@@ -87,21 +97,22 @@ func (m *BACnetNotificationParametersChangeOfBitString) GetInnerClosingTag() *BA
 	return m.InnerClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetNotificationParametersChangeOfBitString factory function for BACnetNotificationParametersChangeOfBitString
-func NewBACnetNotificationParametersChangeOfBitString(innerOpeningTag *BACnetOpeningTag, changeOfBitString *BACnetContextTagBitString, statusFlags *BACnetStatusFlags, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8, objectType BACnetObjectType) *BACnetNotificationParameters {
-	child := &BACnetNotificationParametersChangeOfBitString{
+func NewBACnetNotificationParametersChangeOfBitString(innerOpeningTag *BACnetOpeningTag, changeOfBitString *BACnetContextTagBitString, statusFlags *BACnetStatusFlags, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8, objectType BACnetObjectType) *BACnetNotificationParametersChangeOfBitString {
+	_result := &BACnetNotificationParametersChangeOfBitString{
 		InnerOpeningTag:              innerOpeningTag,
 		ChangeOfBitString:            changeOfBitString,
 		StatusFlags:                  statusFlags,
 		InnerClosingTag:              innerClosingTag,
 		BACnetNotificationParameters: NewBACnetNotificationParameters(openingTag, peekedTagHeader, closingTag, tagNumber, objectType),
 	}
-	child.Child = child
-	return child.BACnetNotificationParameters
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetNotificationParametersChangeOfBitString(structType interface{}) *BACnetNotificationParametersChangeOfBitString {
@@ -150,7 +161,7 @@ func (m *BACnetNotificationParametersChangeOfBitString) GetLengthInBytes() uint1
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetNotificationParametersChangeOfBitStringParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, peekedTagNumber uint8) (*BACnetNotificationParameters, error) {
+func BACnetNotificationParametersChangeOfBitStringParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, peekedTagNumber uint8) (*BACnetNotificationParametersChangeOfBitString, error) {
 	if pullErr := readBuffer.PullContext("BACnetNotificationParametersChangeOfBitString"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -222,7 +233,7 @@ func BACnetNotificationParametersChangeOfBitStringParse(readBuffer utils.ReadBuf
 		BACnetNotificationParameters: &BACnetNotificationParameters{},
 	}
 	_child.BACnetNotificationParameters.Child = _child
-	return _child.BACnetNotificationParameters, nil
+	return _child, nil
 }
 
 func (m *BACnetNotificationParametersChangeOfBitString) Serialize(writeBuffer utils.WriteBuffer) error {

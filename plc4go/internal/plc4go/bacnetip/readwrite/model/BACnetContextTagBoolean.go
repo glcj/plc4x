@@ -55,23 +55,30 @@ type IBACnetContextTagBoolean interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetContextTagBoolean) DataType() BACnetDataType {
-	return BACnetDataType_BOOLEAN
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetContextTagBoolean) GetDataType() BACnetDataType {
 	return BACnetDataType_BOOLEAN
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *BACnetContextTagBoolean) InitializeParent(parent *BACnetContextTag, header *BACnetTagHeader) {
 	m.BACnetContextTag.Header = header
 }
 
+func (m *BACnetContextTagBoolean) GetParent() *BACnetContextTag {
+	return m.BACnetContextTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetContextTagBoolean) GetValue() uint8 {
 	return m.Value
 }
@@ -80,22 +87,32 @@ func (m *BACnetContextTagBoolean) GetPayload() *BACnetTagPayloadBoolean {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetContextTagBoolean) GetActualValue() bool {
-	return m.GetPayload().GetValue()
+	return bool(m.GetPayload().GetValue())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetContextTagBoolean factory function for BACnetContextTagBoolean
-func NewBACnetContextTagBoolean(value uint8, payload *BACnetTagPayloadBoolean, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTag {
-	child := &BACnetContextTagBoolean{
+func NewBACnetContextTagBoolean(value uint8, payload *BACnetTagPayloadBoolean, header *BACnetTagHeader, tagNumberArgument uint8, isNotOpeningOrClosingTag bool) *BACnetContextTagBoolean {
+	_result := &BACnetContextTagBoolean{
 		Value:            value,
 		Payload:          payload,
 		BACnetContextTag: NewBACnetContextTag(header, tagNumberArgument),
 	}
-	child.Child = child
-	return child.BACnetContextTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetContextTagBoolean(structType interface{}) *BACnetContextTagBoolean {
@@ -140,7 +157,7 @@ func (m *BACnetContextTagBoolean) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetContextTagBooleanParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, header *BACnetTagHeader) (*BACnetContextTag, error) {
+func BACnetContextTagBooleanParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8, dataType BACnetDataType, isNotOpeningOrClosingTag bool, header *BACnetTagHeader) (*BACnetContextTagBoolean, error) {
 	if pullErr := readBuffer.PullContext("BACnetContextTagBoolean"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -193,7 +210,7 @@ func BACnetContextTagBooleanParse(readBuffer utils.ReadBuffer, tagNumberArgument
 		BACnetContextTag: &BACnetContextTag{},
 	}
 	_child.BACnetContextTag.Child = _child
-	return _child.BACnetContextTag, nil
+	return _child, nil
 }
 
 func (m *BACnetContextTagBoolean) Serialize(writeBuffer utils.WriteBuffer) error {

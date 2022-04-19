@@ -59,7 +59,12 @@ type IMonitoredSALShortFormBasicMode interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *MonitoredSALShortFormBasicMode) InitializeParent(parent *MonitoredSAL, salType byte, salData *SALData) {
@@ -67,9 +72,14 @@ func (m *MonitoredSALShortFormBasicMode) InitializeParent(parent *MonitoredSAL, 
 	m.MonitoredSAL.SalData = salData
 }
 
+func (m *MonitoredSALShortFormBasicMode) GetParent() *MonitoredSAL {
+	return m.MonitoredSAL
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *MonitoredSALShortFormBasicMode) GetCounts() byte {
 	return m.Counts
 }
@@ -90,13 +100,14 @@ func (m *MonitoredSALShortFormBasicMode) GetApplication() ApplicationIdContainer
 	return m.Application
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewMonitoredSALShortFormBasicMode factory function for MonitoredSALShortFormBasicMode
-func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount *BridgeCount, networkNumber *NetworkNumber, noCounts *byte, application ApplicationIdContainer, salType byte, salData *SALData) *MonitoredSAL {
-	child := &MonitoredSALShortFormBasicMode{
+func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount *BridgeCount, networkNumber *NetworkNumber, noCounts *byte, application ApplicationIdContainer, salType byte, salData *SALData) *MonitoredSALShortFormBasicMode {
+	_result := &MonitoredSALShortFormBasicMode{
 		Counts:        counts,
 		BridgeCount:   bridgeCount,
 		NetworkNumber: networkNumber,
@@ -104,8 +115,8 @@ func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount *BridgeCount, ne
 		Application:   application,
 		MonitoredSAL:  NewMonitoredSAL(salType, salData),
 	}
-	child.Child = child
-	return child.MonitoredSAL
+	_result.Child = _result
+	return _result
 }
 
 func CastMonitoredSALShortFormBasicMode(structType interface{}) *MonitoredSALShortFormBasicMode {
@@ -160,7 +171,7 @@ func (m *MonitoredSALShortFormBasicMode) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (*MonitoredSAL, error) {
+func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (*MonitoredSALShortFormBasicMode, error) {
 	if pullErr := readBuffer.PullContext("MonitoredSALShortFormBasicMode"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -255,7 +266,7 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (*Monitore
 		MonitoredSAL:  &MonitoredSAL{},
 	}
 	_child.MonitoredSAL.Child = _child
-	return _child.MonitoredSAL, nil
+	return _child, nil
 }
 
 func (m *MonitoredSALShortFormBasicMode) Serialize(writeBuffer utils.WriteBuffer) error {

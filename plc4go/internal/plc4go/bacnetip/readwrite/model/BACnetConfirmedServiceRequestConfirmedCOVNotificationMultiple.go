@@ -45,34 +45,32 @@ type IBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) ServiceChoice() uint8 {
-	return 0x1F
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) GetServiceChoice() uint8 {
 	return 0x1F
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) InitializeParent(parent *BACnetConfirmedServiceRequest) {
 }
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) GetParent() *BACnetConfirmedServiceRequest {
+	return m.BACnetConfirmedServiceRequest
+}
 
 // NewBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple factory function for BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple
-func NewBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(len uint16) *BACnetConfirmedServiceRequest {
-	child := &BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple{
+func NewBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(len uint16) *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple {
+	_result := &BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple{
 		BACnetConfirmedServiceRequest: NewBACnetConfirmedServiceRequest(len),
 	}
-	child.Child = child
-	return child.BACnetConfirmedServiceRequest
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple(structType interface{}) *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple {
@@ -109,7 +107,7 @@ func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) GetLengt
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetConfirmedServiceRequestConfirmedCOVNotificationMultipleParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequest, error) {
+func BACnetConfirmedServiceRequestConfirmedCOVNotificationMultipleParse(readBuffer utils.ReadBuffer, len uint16) (*BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple, error) {
 	if pullErr := readBuffer.PullContext("BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -125,7 +123,7 @@ func BACnetConfirmedServiceRequestConfirmedCOVNotificationMultipleParse(readBuff
 		BACnetConfirmedServiceRequest: &BACnetConfirmedServiceRequest{},
 	}
 	_child.BACnetConfirmedServiceRequest.Child = _child
-	return _child.BACnetConfirmedServiceRequest, nil
+	return _child, nil
 }
 
 func (m *BACnetConfirmedServiceRequestConfirmedCOVNotificationMultiple) Serialize(writeBuffer utils.WriteBuffer) error {

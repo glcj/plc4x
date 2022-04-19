@@ -50,39 +50,59 @@ type IBACnetApplicationTagObjectIdentifier interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetApplicationTagObjectIdentifier) InitializeParent(parent *BACnetApplicationTag, header *BACnetTagHeader) {
 	m.BACnetApplicationTag.Header = header
 }
 
+func (m *BACnetApplicationTagObjectIdentifier) GetParent() *BACnetApplicationTag {
+	return m.BACnetApplicationTag
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetApplicationTagObjectIdentifier) GetPayload() *BACnetTagPayloadObjectIdentifier {
 	return m.Payload
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for virtual fields.
+///////////////////////
 func (m *BACnetApplicationTagObjectIdentifier) GetObjectType() BACnetObjectType {
-	return m.GetPayload().GetObjectType()
+	return BACnetObjectType(m.GetPayload().GetObjectType())
 }
 
 func (m *BACnetApplicationTagObjectIdentifier) GetInstanceNumber() uint32 {
-	return m.GetPayload().GetInstanceNumber()
+	return uint32(m.GetPayload().GetInstanceNumber())
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewBACnetApplicationTagObjectIdentifier factory function for BACnetApplicationTagObjectIdentifier
-func NewBACnetApplicationTagObjectIdentifier(payload *BACnetTagPayloadObjectIdentifier, header *BACnetTagHeader) *BACnetApplicationTag {
-	child := &BACnetApplicationTagObjectIdentifier{
+func NewBACnetApplicationTagObjectIdentifier(payload *BACnetTagPayloadObjectIdentifier, header *BACnetTagHeader) *BACnetApplicationTagObjectIdentifier {
+	_result := &BACnetApplicationTagObjectIdentifier{
 		Payload:              payload,
 		BACnetApplicationTag: NewBACnetApplicationTag(header),
 	}
-	child.Child = child
-	return child.BACnetApplicationTag
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetApplicationTagObjectIdentifier(structType interface{}) *BACnetApplicationTagObjectIdentifier {
@@ -126,7 +146,7 @@ func (m *BACnetApplicationTagObjectIdentifier) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetApplicationTagObjectIdentifierParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTag, error) {
+func BACnetApplicationTagObjectIdentifierParse(readBuffer utils.ReadBuffer) (*BACnetApplicationTagObjectIdentifier, error) {
 	if pullErr := readBuffer.PullContext("BACnetApplicationTagObjectIdentifier"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -166,7 +186,7 @@ func BACnetApplicationTagObjectIdentifierParse(readBuffer utils.ReadBuffer) (*BA
 		BACnetApplicationTag: &BACnetApplicationTag{},
 	}
 	_child.BACnetApplicationTag.Child = _child
-	return _child.BACnetApplicationTag, nil
+	return _child, nil
 }
 
 func (m *BACnetApplicationTagObjectIdentifier) Serialize(writeBuffer utils.WriteBuffer) error {

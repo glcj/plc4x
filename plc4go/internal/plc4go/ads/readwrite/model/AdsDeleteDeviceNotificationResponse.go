@@ -46,45 +46,49 @@ type IAdsDeleteDeviceNotificationResponse interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsDeleteDeviceNotificationResponse) CommandId() CommandId {
-	return CommandId_ADS_DELETE_DEVICE_NOTIFICATION
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsDeleteDeviceNotificationResponse) GetCommandId() CommandId {
 	return CommandId_ADS_DELETE_DEVICE_NOTIFICATION
-}
-
-func (m *AdsDeleteDeviceNotificationResponse) Response() bool {
-	return bool(true)
 }
 
 func (m *AdsDeleteDeviceNotificationResponse) GetResponse() bool {
 	return bool(true)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsDeleteDeviceNotificationResponse) InitializeParent(parent *AdsData) {}
 
+func (m *AdsDeleteDeviceNotificationResponse) GetParent() *AdsData {
+	return m.AdsData
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *AdsDeleteDeviceNotificationResponse) GetResult() ReturnCode {
 	return m.Result
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewAdsDeleteDeviceNotificationResponse factory function for AdsDeleteDeviceNotificationResponse
-func NewAdsDeleteDeviceNotificationResponse(result ReturnCode) *AdsData {
-	child := &AdsDeleteDeviceNotificationResponse{
+func NewAdsDeleteDeviceNotificationResponse(result ReturnCode) *AdsDeleteDeviceNotificationResponse {
+	_result := &AdsDeleteDeviceNotificationResponse{
 		Result:  result,
 		AdsData: NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsDeleteDeviceNotificationResponse(structType interface{}) *AdsDeleteDeviceNotificationResponse {
@@ -124,7 +128,7 @@ func (m *AdsDeleteDeviceNotificationResponse) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsDeleteDeviceNotificationResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsDeleteDeviceNotificationResponseParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsDeleteDeviceNotificationResponse, error) {
 	if pullErr := readBuffer.PullContext("AdsDeleteDeviceNotificationResponse"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -154,7 +158,7 @@ func AdsDeleteDeviceNotificationResponseParse(readBuffer utils.ReadBuffer, comma
 		AdsData: &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsDeleteDeviceNotificationResponse) Serialize(writeBuffer utils.WriteBuffer) error {

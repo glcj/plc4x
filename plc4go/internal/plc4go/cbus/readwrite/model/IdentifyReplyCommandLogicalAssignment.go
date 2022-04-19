@@ -42,33 +42,31 @@ type IIdentifyReplyCommandLogicalAssignment interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *IdentifyReplyCommandLogicalAssignment) Attribute() Attribute {
-	return Attribute_LogicalAssignment
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *IdentifyReplyCommandLogicalAssignment) GetAttribute() Attribute {
 	return Attribute_LogicalAssignment
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *IdentifyReplyCommandLogicalAssignment) InitializeParent(parent *IdentifyReplyCommand) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *IdentifyReplyCommandLogicalAssignment) GetParent() *IdentifyReplyCommand {
+	return m.IdentifyReplyCommand
+}
 
 // NewIdentifyReplyCommandLogicalAssignment factory function for IdentifyReplyCommandLogicalAssignment
-func NewIdentifyReplyCommandLogicalAssignment() *IdentifyReplyCommand {
-	child := &IdentifyReplyCommandLogicalAssignment{
+func NewIdentifyReplyCommandLogicalAssignment() *IdentifyReplyCommandLogicalAssignment {
+	_result := &IdentifyReplyCommandLogicalAssignment{
 		IdentifyReplyCommand: NewIdentifyReplyCommand(),
 	}
-	child.Child = child
-	return child.IdentifyReplyCommand
+	_result.Child = _result
+	return _result
 }
 
 func CastIdentifyReplyCommandLogicalAssignment(structType interface{}) *IdentifyReplyCommandLogicalAssignment {
@@ -105,7 +103,7 @@ func (m *IdentifyReplyCommandLogicalAssignment) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandLogicalAssignmentParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommand, error) {
+func IdentifyReplyCommandLogicalAssignmentParse(readBuffer utils.ReadBuffer, attribute Attribute) (*IdentifyReplyCommandLogicalAssignment, error) {
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandLogicalAssignment"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -121,7 +119,7 @@ func IdentifyReplyCommandLogicalAssignmentParse(readBuffer utils.ReadBuffer, att
 		IdentifyReplyCommand: &IdentifyReplyCommand{},
 	}
 	_child.IdentifyReplyCommand.Child = _child
-	return _child.IdentifyReplyCommand, nil
+	return _child, nil
 }
 
 func (m *IdentifyReplyCommandLogicalAssignment) Serialize(writeBuffer utils.WriteBuffer) error {

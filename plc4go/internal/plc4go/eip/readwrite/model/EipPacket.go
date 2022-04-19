@@ -63,13 +63,16 @@ type IEipPacketParent interface {
 type IEipPacketChild interface {
 	Serialize(writeBuffer utils.WriteBuffer) error
 	InitializeParent(parent *EipPacket, sessionHandle uint32, status uint32, senderContext []uint8, options uint32)
+	GetParent() *EipPacket
+
 	GetTypeName() string
 	IEipPacket
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *EipPacket) GetSessionHandle() uint32 {
 	return m.SessionHandle
 }
@@ -86,8 +89,9 @@ func (m *EipPacket) GetOptions() uint32 {
 	return m.Options
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewEipPacket factory function for EipPacket
@@ -101,6 +105,9 @@ func CastEipPacket(structType interface{}) *EipPacket {
 	}
 	if casted, ok := structType.(*EipPacket); ok {
 		return casted
+	}
+	if casted, ok := structType.(IEipPacketChild); ok {
+		return casted.GetParent()
 	}
 	return nil
 }
@@ -207,15 +214,19 @@ func EipPacketParse(readBuffer utils.ReadBuffer) (*EipPacket, error) {
 	options := _options
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
-	var _parent *EipPacket
+	type EipPacketChild interface {
+		InitializeParent(*EipPacket, uint32, uint32, []uint8, uint32)
+		GetParent() *EipPacket
+	}
+	var _child EipPacketChild
 	var typeSwitchError error
 	switch {
 	case command == 0x0065: // EipConnectionRequest
-		_parent, typeSwitchError = EipConnectionRequestParse(readBuffer)
+		_child, typeSwitchError = EipConnectionRequestParse(readBuffer)
 	case command == 0x0066: // EipDisconnectRequest
-		_parent, typeSwitchError = EipDisconnectRequestParse(readBuffer)
+		_child, typeSwitchError = EipDisconnectRequestParse(readBuffer)
 	case command == 0x006F: // CipRRData
-		_parent, typeSwitchError = CipRRDataParse(readBuffer, len)
+		_child, typeSwitchError = CipRRDataParse(readBuffer, len)
 	default:
 		// TODO: return actual type
 		typeSwitchError = errors.New("Unmapped type")
@@ -229,8 +240,8 @@ func EipPacketParse(readBuffer utils.ReadBuffer) (*EipPacket, error) {
 	}
 
 	// Finish initializing
-	_parent.Child.InitializeParent(_parent, sessionHandle, status, senderContext, options)
-	return _parent, nil
+	_child.InitializeParent(_child.GetParent(), sessionHandle, status, senderContext, options)
+	return _child.GetParent(), nil
 }
 
 func (m *EipPacket) Serialize(writeBuffer utils.WriteBuffer) error {

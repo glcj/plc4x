@@ -42,41 +42,35 @@ type IAdsReadStateRequest interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *AdsReadStateRequest) CommandId() CommandId {
-	return CommandId_ADS_READ_STATE
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *AdsReadStateRequest) GetCommandId() CommandId {
 	return CommandId_ADS_READ_STATE
-}
-
-func (m *AdsReadStateRequest) Response() bool {
-	return bool(false)
 }
 
 func (m *AdsReadStateRequest) GetResponse() bool {
 	return bool(false)
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *AdsReadStateRequest) InitializeParent(parent *AdsData) {}
 
-///////////////////////////////////////////////////////////
-// Accessors for property fields.
-///////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
-///////////////////////////////////////////////////////////
+func (m *AdsReadStateRequest) GetParent() *AdsData {
+	return m.AdsData
+}
 
 // NewAdsReadStateRequest factory function for AdsReadStateRequest
-func NewAdsReadStateRequest() *AdsData {
-	child := &AdsReadStateRequest{
+func NewAdsReadStateRequest() *AdsReadStateRequest {
+	_result := &AdsReadStateRequest{
 		AdsData: NewAdsData(),
 	}
-	child.Child = child
-	return child.AdsData
+	_result.Child = _result
+	return _result
 }
 
 func CastAdsReadStateRequest(structType interface{}) *AdsReadStateRequest {
@@ -113,7 +107,7 @@ func (m *AdsReadStateRequest) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func AdsReadStateRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsData, error) {
+func AdsReadStateRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, response bool) (*AdsReadStateRequest, error) {
 	if pullErr := readBuffer.PullContext("AdsReadStateRequest"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -129,7 +123,7 @@ func AdsReadStateRequestParse(readBuffer utils.ReadBuffer, commandId CommandId, 
 		AdsData: &AdsData{},
 	}
 	_child.AdsData.Child = _child
-	return _child.AdsData, nil
+	return _child, nil
 }
 
 func (m *AdsReadStateRequest) Serialize(writeBuffer utils.WriteBuffer) error {

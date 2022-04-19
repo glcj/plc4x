@@ -46,37 +46,45 @@ type IS7VarRequestParameterItemAddress interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *S7VarRequestParameterItemAddress) ItemType() uint8 {
-	return 0x12
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *S7VarRequestParameterItemAddress) GetItemType() uint8 {
 	return 0x12
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *S7VarRequestParameterItemAddress) InitializeParent(parent *S7VarRequestParameterItem) {}
 
+func (m *S7VarRequestParameterItemAddress) GetParent() *S7VarRequestParameterItem {
+	return m.S7VarRequestParameterItem
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *S7VarRequestParameterItemAddress) GetAddress() *S7Address {
 	return m.Address
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewS7VarRequestParameterItemAddress factory function for S7VarRequestParameterItemAddress
-func NewS7VarRequestParameterItemAddress(address *S7Address) *S7VarRequestParameterItem {
-	child := &S7VarRequestParameterItemAddress{
+func NewS7VarRequestParameterItemAddress(address *S7Address) *S7VarRequestParameterItemAddress {
+	_result := &S7VarRequestParameterItemAddress{
 		Address:                   address,
 		S7VarRequestParameterItem: NewS7VarRequestParameterItem(),
 	}
-	child.Child = child
-	return child.S7VarRequestParameterItem
+	_result.Child = _result
+	return _result
 }
 
 func CastS7VarRequestParameterItemAddress(structType interface{}) *S7VarRequestParameterItemAddress {
@@ -119,7 +127,7 @@ func (m *S7VarRequestParameterItemAddress) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func S7VarRequestParameterItemAddressParse(readBuffer utils.ReadBuffer) (*S7VarRequestParameterItem, error) {
+func S7VarRequestParameterItemAddressParse(readBuffer utils.ReadBuffer) (*S7VarRequestParameterItemAddress, error) {
 	if pullErr := readBuffer.PullContext("S7VarRequestParameterItemAddress"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -156,7 +164,7 @@ func S7VarRequestParameterItemAddressParse(readBuffer utils.ReadBuffer) (*S7VarR
 		S7VarRequestParameterItem: &S7VarRequestParameterItem{},
 	}
 	_child.S7VarRequestParameterItem.Child = _child
-	return _child.S7VarRequestParameterItem, nil
+	return _child, nil
 }
 
 func (m *S7VarRequestParameterItemAddress) Serialize(writeBuffer utils.WriteBuffer) error {

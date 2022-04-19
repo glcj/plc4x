@@ -46,37 +46,45 @@ type IKnxNetIpTunneling interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *KnxNetIpTunneling) ServiceType() uint8 {
-	return 0x04
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *KnxNetIpTunneling) GetServiceType() uint8 {
 	return 0x04
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *KnxNetIpTunneling) InitializeParent(parent *ServiceId) {}
 
+func (m *KnxNetIpTunneling) GetParent() *ServiceId {
+	return m.ServiceId
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *KnxNetIpTunneling) GetVersion() uint8 {
 	return m.Version
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewKnxNetIpTunneling factory function for KnxNetIpTunneling
-func NewKnxNetIpTunneling(version uint8) *ServiceId {
-	child := &KnxNetIpTunneling{
+func NewKnxNetIpTunneling(version uint8) *KnxNetIpTunneling {
+	_result := &KnxNetIpTunneling{
 		Version:   version,
 		ServiceId: NewServiceId(),
 	}
-	child.Child = child
-	return child.ServiceId
+	_result.Child = _result
+	return _result
 }
 
 func CastKnxNetIpTunneling(structType interface{}) *KnxNetIpTunneling {
@@ -116,7 +124,7 @@ func (m *KnxNetIpTunneling) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func KnxNetIpTunnelingParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
+func KnxNetIpTunnelingParse(readBuffer utils.ReadBuffer) (*KnxNetIpTunneling, error) {
 	if pullErr := readBuffer.PullContext("KnxNetIpTunneling"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -140,7 +148,7 @@ func KnxNetIpTunnelingParse(readBuffer utils.ReadBuffer) (*ServiceId, error) {
 		ServiceId: &ServiceId{},
 	}
 	_child.ServiceId.Child = _child
-	return _child.ServiceId, nil
+	return _child, nil
 }
 
 func (m *KnxNetIpTunneling) Serialize(writeBuffer utils.WriteBuffer) error {

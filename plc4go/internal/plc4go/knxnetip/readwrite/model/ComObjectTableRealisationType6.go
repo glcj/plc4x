@@ -46,37 +46,45 @@ type IComObjectTableRealisationType6 interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *ComObjectTableRealisationType6) FirmwareType() FirmwareType {
-	return FirmwareType_SYSTEM_300
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *ComObjectTableRealisationType6) GetFirmwareType() FirmwareType {
 	return FirmwareType_SYSTEM_300
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *ComObjectTableRealisationType6) InitializeParent(parent *ComObjectTable) {}
 
+func (m *ComObjectTableRealisationType6) GetParent() *ComObjectTable {
+	return m.ComObjectTable
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *ComObjectTableRealisationType6) GetComObjectDescriptors() *GroupObjectDescriptorRealisationType6 {
 	return m.ComObjectDescriptors
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewComObjectTableRealisationType6 factory function for ComObjectTableRealisationType6
-func NewComObjectTableRealisationType6(comObjectDescriptors *GroupObjectDescriptorRealisationType6) *ComObjectTable {
-	child := &ComObjectTableRealisationType6{
+func NewComObjectTableRealisationType6(comObjectDescriptors *GroupObjectDescriptorRealisationType6) *ComObjectTableRealisationType6 {
+	_result := &ComObjectTableRealisationType6{
 		ComObjectDescriptors: comObjectDescriptors,
 		ComObjectTable:       NewComObjectTable(),
 	}
-	child.Child = child
-	return child.ComObjectTable
+	_result.Child = _result
+	return _result
 }
 
 func CastComObjectTableRealisationType6(structType interface{}) *ComObjectTableRealisationType6 {
@@ -116,7 +124,7 @@ func (m *ComObjectTableRealisationType6) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ComObjectTableRealisationType6Parse(readBuffer utils.ReadBuffer, firmwareType FirmwareType) (*ComObjectTable, error) {
+func ComObjectTableRealisationType6Parse(readBuffer utils.ReadBuffer, firmwareType FirmwareType) (*ComObjectTableRealisationType6, error) {
 	if pullErr := readBuffer.PullContext("ComObjectTableRealisationType6"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -146,7 +154,7 @@ func ComObjectTableRealisationType6Parse(readBuffer utils.ReadBuffer, firmwareTy
 		ComObjectTable:       &ComObjectTable{},
 	}
 	_child.ComObjectTable.Child = _child
-	return _child.ComObjectTable, nil
+	return _child, nil
 }
 
 func (m *ComObjectTableRealisationType6) Serialize(writeBuffer utils.WriteBuffer) error {

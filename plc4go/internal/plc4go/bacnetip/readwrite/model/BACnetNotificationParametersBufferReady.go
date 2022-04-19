@@ -62,7 +62,12 @@ type IBACnetNotificationParametersBufferReady interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for discriminator values.
+///////////////////////
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 func (m *BACnetNotificationParametersBufferReady) InitializeParent(parent *BACnetNotificationParameters, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag) {
@@ -71,9 +76,14 @@ func (m *BACnetNotificationParametersBufferReady) InitializeParent(parent *BACne
 	m.BACnetNotificationParameters.ClosingTag = closingTag
 }
 
+func (m *BACnetNotificationParametersBufferReady) GetParent() *BACnetNotificationParameters {
+	return m.BACnetNotificationParameters
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetNotificationParametersBufferReady) GetInnerOpeningTag() *BACnetOpeningTag {
 	return m.InnerOpeningTag
 }
@@ -94,13 +104,14 @@ func (m *BACnetNotificationParametersBufferReady) GetInnerClosingTag() *BACnetCl
 	return m.InnerClosingTag
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetNotificationParametersBufferReady factory function for BACnetNotificationParametersBufferReady
-func NewBACnetNotificationParametersBufferReady(innerOpeningTag *BACnetOpeningTag, bufferProperty *BACnetDeviceObjectPropertyReference, previousNotification *BACnetContextTagUnsignedInteger, currentNotification *BACnetContextTagUnsignedInteger, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8, objectType BACnetObjectType) *BACnetNotificationParameters {
-	child := &BACnetNotificationParametersBufferReady{
+func NewBACnetNotificationParametersBufferReady(innerOpeningTag *BACnetOpeningTag, bufferProperty *BACnetDeviceObjectPropertyReference, previousNotification *BACnetContextTagUnsignedInteger, currentNotification *BACnetContextTagUnsignedInteger, innerClosingTag *BACnetClosingTag, openingTag *BACnetOpeningTag, peekedTagHeader *BACnetTagHeader, closingTag *BACnetClosingTag, tagNumber uint8, objectType BACnetObjectType) *BACnetNotificationParametersBufferReady {
+	_result := &BACnetNotificationParametersBufferReady{
 		InnerOpeningTag:              innerOpeningTag,
 		BufferProperty:               bufferProperty,
 		PreviousNotification:         previousNotification,
@@ -108,8 +119,8 @@ func NewBACnetNotificationParametersBufferReady(innerOpeningTag *BACnetOpeningTa
 		InnerClosingTag:              innerClosingTag,
 		BACnetNotificationParameters: NewBACnetNotificationParameters(openingTag, peekedTagHeader, closingTag, tagNumber, objectType),
 	}
-	child.Child = child
-	return child.BACnetNotificationParameters
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetNotificationParametersBufferReady(structType interface{}) *BACnetNotificationParametersBufferReady {
@@ -161,7 +172,7 @@ func (m *BACnetNotificationParametersBufferReady) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetNotificationParametersBufferReadyParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, peekedTagNumber uint8) (*BACnetNotificationParameters, error) {
+func BACnetNotificationParametersBufferReadyParse(readBuffer utils.ReadBuffer, tagNumber uint8, objectType BACnetObjectType, peekedTagNumber uint8) (*BACnetNotificationParametersBufferReady, error) {
 	if pullErr := readBuffer.PullContext("BACnetNotificationParametersBufferReady"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -247,7 +258,7 @@ func BACnetNotificationParametersBufferReadyParse(readBuffer utils.ReadBuffer, t
 		BACnetNotificationParameters: &BACnetNotificationParameters{},
 	}
 	_child.BACnetNotificationParameters.Child = _child
-	return _child.BACnetNotificationParameters, nil
+	return _child, nil
 }
 
 func (m *BACnetNotificationParametersBufferReady) Serialize(writeBuffer utils.WriteBuffer) error {

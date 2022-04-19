@@ -52,23 +52,30 @@ type INLMInitalizeRoutingTableAck interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *NLMInitalizeRoutingTableAck) MessageType() uint8 {
-	return 0x07
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *NLMInitalizeRoutingTableAck) GetMessageType() uint8 {
 	return 0x07
 }
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 
 func (m *NLMInitalizeRoutingTableAck) InitializeParent(parent *NLM, vendorId *uint16) {
 	m.NLM.VendorId = vendorId
 }
 
+func (m *NLMInitalizeRoutingTableAck) GetParent() *NLM {
+	return m.NLM
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *NLMInitalizeRoutingTableAck) GetNumberOfPorts() uint8 {
 	return m.NumberOfPorts
 }
@@ -77,19 +84,20 @@ func (m *NLMInitalizeRoutingTableAck) GetPortMappings() []*NLMInitalizeRoutingTa
 	return m.PortMappings
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewNLMInitalizeRoutingTableAck factory function for NLMInitalizeRoutingTableAck
-func NewNLMInitalizeRoutingTableAck(numberOfPorts uint8, portMappings []*NLMInitalizeRoutingTablePortMapping, vendorId *uint16, apduLength uint16) *NLM {
-	child := &NLMInitalizeRoutingTableAck{
+func NewNLMInitalizeRoutingTableAck(numberOfPorts uint8, portMappings []*NLMInitalizeRoutingTablePortMapping, vendorId *uint16, apduLength uint16) *NLMInitalizeRoutingTableAck {
+	_result := &NLMInitalizeRoutingTableAck{
 		NumberOfPorts: numberOfPorts,
 		PortMappings:  portMappings,
 		NLM:           NewNLM(vendorId, apduLength),
 	}
-	child.Child = child
-	return child.NLM
+	_result.Child = _result
+	return _result
 }
 
 func CastNLMInitalizeRoutingTableAck(structType interface{}) *NLMInitalizeRoutingTableAck {
@@ -137,7 +145,7 @@ func (m *NLMInitalizeRoutingTableAck) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func NLMInitalizeRoutingTableAckParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLM, error) {
+func NLMInitalizeRoutingTableAckParse(readBuffer utils.ReadBuffer, apduLength uint16, messageType uint8) (*NLMInitalizeRoutingTableAck, error) {
 	if pullErr := readBuffer.PullContext("NLMInitalizeRoutingTableAck"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -181,7 +189,7 @@ func NLMInitalizeRoutingTableAckParse(readBuffer utils.ReadBuffer, apduLength ui
 		NLM:           &NLM{},
 	}
 	_child.NLM.Child = _child
-	return _child.NLM, nil
+	return _child, nil
 }
 
 func (m *NLMInitalizeRoutingTableAck) Serialize(writeBuffer utils.WriteBuffer) error {

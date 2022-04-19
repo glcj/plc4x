@@ -46,37 +46,45 @@ type IBACnetServiceAckAtomicWriteFile interface {
 }
 
 ///////////////////////////////////////////////////////////
-// Accessors for discriminator values.
 ///////////////////////////////////////////////////////////
-func (m *BACnetServiceAckAtomicWriteFile) ServiceChoice() uint8 {
-	return 0x07
-}
-
+/////////////////////// Accessors for discriminator values.
+///////////////////////
 func (m *BACnetServiceAckAtomicWriteFile) GetServiceChoice() uint8 {
 	return 0x07
 }
 
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 func (m *BACnetServiceAckAtomicWriteFile) InitializeParent(parent *BACnetServiceAck) {}
 
+func (m *BACnetServiceAckAtomicWriteFile) GetParent() *BACnetServiceAck {
+	return m.BACnetServiceAck
+}
+
 ///////////////////////////////////////////////////////////
-// Accessors for property fields.
 ///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
 func (m *BACnetServiceAckAtomicWriteFile) GetFileStartPosition() *BACnetContextTagSignedInteger {
 	return m.FileStartPosition
 }
 
+///////////////////////
+///////////////////////
 ///////////////////////////////////////////////////////////
-// Accessors for virtual fields.
 ///////////////////////////////////////////////////////////
 
 // NewBACnetServiceAckAtomicWriteFile factory function for BACnetServiceAckAtomicWriteFile
-func NewBACnetServiceAckAtomicWriteFile(fileStartPosition *BACnetContextTagSignedInteger) *BACnetServiceAck {
-	child := &BACnetServiceAckAtomicWriteFile{
+func NewBACnetServiceAckAtomicWriteFile(fileStartPosition *BACnetContextTagSignedInteger) *BACnetServiceAckAtomicWriteFile {
+	_result := &BACnetServiceAckAtomicWriteFile{
 		FileStartPosition: fileStartPosition,
 		BACnetServiceAck:  NewBACnetServiceAck(),
 	}
-	child.Child = child
-	return child.BACnetServiceAck
+	_result.Child = _result
+	return _result
 }
 
 func CastBACnetServiceAckAtomicWriteFile(structType interface{}) *BACnetServiceAckAtomicWriteFile {
@@ -116,7 +124,7 @@ func (m *BACnetServiceAckAtomicWriteFile) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func BACnetServiceAckAtomicWriteFileParse(readBuffer utils.ReadBuffer) (*BACnetServiceAck, error) {
+func BACnetServiceAckAtomicWriteFileParse(readBuffer utils.ReadBuffer) (*BACnetServiceAckAtomicWriteFile, error) {
 	if pullErr := readBuffer.PullContext("BACnetServiceAckAtomicWriteFile"); pullErr != nil {
 		return nil, pullErr
 	}
@@ -146,7 +154,7 @@ func BACnetServiceAckAtomicWriteFileParse(readBuffer utils.ReadBuffer) (*BACnetS
 		BACnetServiceAck:  &BACnetServiceAck{},
 	}
 	_child.BACnetServiceAck.Child = _child
-	return _child.BACnetServiceAck, nil
+	return _child, nil
 }
 
 func (m *BACnetServiceAckAtomicWriteFile) Serialize(writeBuffer utils.WriteBuffer) error {
