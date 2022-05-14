@@ -135,7 +135,7 @@ public class S7HDefaultNettyPlcConnection extends DefaultNettyPlcConnection impl
             });
             */
             doPrimaryTcpConnections();
-            
+                
             if (secondaryChannelFactory != null )
             doSecondaryTcpConnections();
             
