@@ -123,7 +123,6 @@ public class DefaultComplexTypeDefinition extends DefaultTypeDefinition implemen
             .collect(Collectors.toList());
     }
 
-    /*
     @Override
     public List<Field> getAllFields() {
         List<Field> fields = new LinkedList<>();
@@ -133,7 +132,7 @@ public class DefaultComplexTypeDefinition extends DefaultTypeDefinition implemen
         fields.addAll(getFields());
         return fields;
     }
-*/
+
     @Override
     public List<PropertyField> getAllPropertyFields() {
         List<PropertyField> fields = new LinkedList<>();
