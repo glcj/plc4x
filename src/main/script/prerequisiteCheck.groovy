@@ -319,7 +319,7 @@ def checkPython() {
         Matcher matcher = extractVersion(stdOut + stdErr)
         if (matcher.size() > 0) {
             def curVersion = matcher[0][1]
-            def result = checkVersionAtLeast(curVersion, "2.7.0")
+            def result = checkVersionAtLeast(curVersion, "3.6.0")
             if (!result) {
                 allConditionsMet = false
             }
@@ -513,7 +513,7 @@ println ""
 
 // - Windows:
 //     - Check the length of the path of the base dir as we're having issues with the length of paths being too long.
-if (os == "win") {
+if (os == "windows") {
     File pomFile = project.model.pomFile
     if (pomFile.absolutePath.length() > 100) {
         println "On Windows we encounter problems with maximum path lengths. " +
@@ -566,7 +566,7 @@ if (pythonEnabled) {
 }
 
 // Boost needs the visual-studio `cl` compiler to compile the boostrap.
-if (boostEnabled && (os == "win")) {
+if (boostEnabled && (os == "windows")) {
     // TODO: checkVisualStudio()
 }
 
@@ -588,7 +588,7 @@ if (apacheReleaseEnabled) {
     // TODO: Check libpcap is installed
 }
 
-if (cppEnabled && (os == "win")) {
+if (cppEnabled && (os == "windows")) {
     print "Unfortunately currently we don't support building the 'with-cpp' profile on windows. This will definitely change in the future."
     allConditionsMet = false
 }

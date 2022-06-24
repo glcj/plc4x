@@ -31,7 +31,7 @@ import (
 const StandardFormatStatusReply_CR byte = 0x0D
 const StandardFormatStatusReply_LF byte = 0x0A
 
-// The data-structure of this message
+// StandardFormatStatusReply is the data-structure of this message
 type StandardFormatStatusReply struct {
 	StatusHeader *StatusHeader
 	Application  ApplicationIdContainer
@@ -40,7 +40,7 @@ type StandardFormatStatusReply struct {
 	Crc          *Checksum
 }
 
-// The corresponding interface
+// IStandardFormatStatusReply is the corresponding interface of StandardFormatStatusReply
 type IStandardFormatStatusReply interface {
 	// GetStatusHeader returns StatusHeader (property field)
 	GetStatusHeader() *StatusHeader
@@ -64,6 +64,7 @@ type IStandardFormatStatusReply interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *StandardFormatStatusReply) GetStatusHeader() *StatusHeader {
 	return m.StatusHeader
 }
@@ -92,6 +93,7 @@ func (m *StandardFormatStatusReply) GetCrc() *Checksum {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *StandardFormatStatusReply) GetCr() byte {
 	return StandardFormatStatusReply_CR
 }
@@ -165,10 +167,12 @@ func (m *StandardFormatStatusReply) GetLengthInBytes() uint16 {
 }
 
 func StandardFormatStatusReplyParse(readBuffer utils.ReadBuffer) (*StandardFormatStatusReply, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("StandardFormatStatusReply"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Simple Field (statusHeader)
@@ -263,6 +267,8 @@ func StandardFormatStatusReplyParse(readBuffer utils.ReadBuffer) (*StandardForma
 }
 
 func (m *StandardFormatStatusReply) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("StandardFormatStatusReply"); pushErr != nil {
 		return pushErr
 	}

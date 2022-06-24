@@ -31,7 +31,7 @@ import (
 // Constant values.
 const CBusCommandPointToPointToMultiPointNormal_CR byte = 0xD
 
-// The data-structure of this message
+// CBusCommandPointToPointToMultiPointNormal is the data-structure of this message
 type CBusCommandPointToPointToMultiPointNormal struct {
 	*CBusPointToPointToMultipointCommand
 	Application ApplicationIdContainer
@@ -44,7 +44,7 @@ type CBusCommandPointToPointToMultiPointNormal struct {
 	Srchk bool
 }
 
-// The corresponding interface
+// ICBusCommandPointToPointToMultiPointNormal is the corresponding interface of CBusCommandPointToPointToMultiPointNormal
 type ICBusCommandPointToPointToMultiPointNormal interface {
 	ICBusPointToPointToMultipointCommand
 	// GetApplication returns Application (property field)
@@ -69,6 +69,7 @@ type ICBusCommandPointToPointToMultiPointNormal interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for discriminator values.
 ///////////////////////
+
 ///////////////////////
 ///////////////////////
 ///////////////////////////////////////////////////////////
@@ -88,6 +89,7 @@ func (m *CBusCommandPointToPointToMultiPointNormal) GetParent() *CBusPointToPoin
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *CBusCommandPointToPointToMultiPointNormal) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
@@ -116,6 +118,7 @@ func (m *CBusCommandPointToPointToMultiPointNormal) GetAlpha() *Alpha {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *CBusCommandPointToPointToMultiPointNormal) GetCr() byte {
 	return CBusCommandPointToPointToMultiPointNormal_CR
 }
@@ -193,10 +196,12 @@ func (m *CBusCommandPointToPointToMultiPointNormal) GetLengthInBytes() uint16 {
 }
 
 func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusCommandPointToPointToMultiPointNormal, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("CBusCommandPointToPointToMultiPointNormal"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Simple Field (application)
@@ -228,7 +233,7 @@ func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer,
 	// Optional Field (crc) (Can be skipped, if a given expression evaluates to false)
 	var crc *Checksum = nil
 	if srchk {
-		currentPos = readBuffer.GetPos()
+		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("crc"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -247,7 +252,7 @@ func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer,
 	}
 
 	// Peek Field (peekAlpha)
-	currentPos = readBuffer.GetPos()
+	currentPos = positionAware.GetPos()
 	peekAlpha, _err := readBuffer.ReadByte("peekAlpha")
 	if _err != nil {
 		return nil, errors.Wrap(_err, "Error parsing 'peekAlpha' field")
@@ -258,7 +263,7 @@ func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer,
 	// Optional Field (alpha) (Can be skipped, if a given expression evaluates to false)
 	var alpha *Alpha = nil
 	if bool(bool(bool((peekAlpha) >= (0x67)))) && bool(bool(bool((peekAlpha) <= (0x7A)))) {
-		currentPos = readBuffer.GetPos()
+		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("alpha"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -303,6 +308,8 @@ func CBusCommandPointToPointToMultiPointNormalParse(readBuffer utils.ReadBuffer,
 }
 
 func (m *CBusCommandPointToPointToMultiPointNormal) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("CBusCommandPointToPointToMultiPointNormal"); pushErr != nil {
 			return pushErr

@@ -31,7 +31,7 @@ import (
 // Constant values.
 const CBusPointToPointCommand_CR byte = 0xD
 
-// The data-structure of this message
+// CBusPointToPointCommand is the data-structure of this message
 type CBusPointToPointCommand struct {
 	BridgeAddressCountPeek uint16
 	CalData                *CALData
@@ -44,7 +44,7 @@ type CBusPointToPointCommand struct {
 	Child ICBusPointToPointCommandChild
 }
 
-// The corresponding interface
+// ICBusPointToPointCommand is the corresponding interface of CBusPointToPointCommand
 type ICBusPointToPointCommand interface {
 	// GetBridgeAddressCountPeek returns BridgeAddressCountPeek (property field)
 	GetBridgeAddressCountPeek() uint16
@@ -84,6 +84,7 @@ type ICBusPointToPointCommandChild interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *CBusPointToPointCommand) GetBridgeAddressCountPeek() uint16 {
 	return m.BridgeAddressCountPeek
 }
@@ -112,6 +113,7 @@ func (m *CBusPointToPointCommand) GetAlpha() *Alpha {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for virtual fields.
 ///////////////////////
+
 func (m *CBusPointToPointCommand) GetIsDirect() bool {
 	crc := m.Crc
 	_ = crc
@@ -128,6 +130,7 @@ func (m *CBusPointToPointCommand) GetIsDirect() bool {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *CBusPointToPointCommand) GetCr() byte {
 	return CBusPointToPointCommand_CR
 }
@@ -196,14 +199,16 @@ func (m *CBusPointToPointCommand) GetLengthInBytes() uint16 {
 }
 
 func CBusPointToPointCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToPointCommand, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("CBusPointToPointCommand"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Peek Field (bridgeAddressCountPeek)
-	currentPos = readBuffer.GetPos()
+	currentPos = positionAware.GetPos()
 	bridgeAddressCountPeek, _err := readBuffer.ReadUint16("bridgeAddressCountPeek", 16)
 	if _err != nil {
 		return nil, errors.Wrap(_err, "Error parsing 'bridgeAddressCountPeek' field")
@@ -252,7 +257,7 @@ func CBusPointToPointCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBu
 	// Optional Field (crc) (Can be skipped, if a given expression evaluates to false)
 	var crc *Checksum = nil
 	if srchk {
-		currentPos = readBuffer.GetPos()
+		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("crc"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -271,7 +276,7 @@ func CBusPointToPointCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBu
 	}
 
 	// Peek Field (peekAlpha)
-	currentPos = readBuffer.GetPos()
+	currentPos = positionAware.GetPos()
 	peekAlpha, _err := readBuffer.ReadByte("peekAlpha")
 	if _err != nil {
 		return nil, errors.Wrap(_err, "Error parsing 'peekAlpha' field")
@@ -282,7 +287,7 @@ func CBusPointToPointCommandParse(readBuffer utils.ReadBuffer, srchk bool) (*CBu
 	// Optional Field (alpha) (Can be skipped, if a given expression evaluates to false)
 	var alpha *Alpha = nil
 	if bool(bool(bool((peekAlpha) >= (0x67)))) && bool(bool(bool((peekAlpha) <= (0x7A)))) {
-		currentPos = readBuffer.GetPos()
+		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("alpha"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -323,6 +328,8 @@ func (m *CBusPointToPointCommand) Serialize(writeBuffer utils.WriteBuffer) error
 }
 
 func (m *CBusPointToPointCommand) SerializeParent(writeBuffer utils.WriteBuffer, child ICBusPointToPointCommand, serializeChildFunction func() error) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("CBusPointToPointCommand"); pushErr != nil {
 		return pushErr
 	}

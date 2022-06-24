@@ -32,11 +32,11 @@ const PowerUp_PLUS byte = 0x02B
 const PowerUp_CR byte = 0x0D
 const PowerUp_LF byte = 0x0A
 
-// The data-structure of this message
+// PowerUp is the data-structure of this message
 type PowerUp struct {
 }
 
-// The corresponding interface
+// IPowerUp is the corresponding interface of PowerUp
 type IPowerUp interface {
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -50,6 +50,7 @@ type IPowerUp interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *PowerUp) GetPlus() byte {
 	return PowerUp_PLUS
 }
@@ -110,10 +111,12 @@ func (m *PowerUp) GetLengthInBytes() uint16 {
 }
 
 func PowerUpParse(readBuffer utils.ReadBuffer) (*PowerUp, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("PowerUp"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Const Field (plus)
@@ -152,6 +155,8 @@ func PowerUpParse(readBuffer utils.ReadBuffer) (*PowerUp, error) {
 }
 
 func (m *PowerUp) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("PowerUp"); pushErr != nil {
 		return pushErr
 	}

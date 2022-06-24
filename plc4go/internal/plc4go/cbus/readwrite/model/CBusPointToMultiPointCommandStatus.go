@@ -32,7 +32,7 @@ import (
 // Constant values.
 const CBusPointToMultiPointCommandStatus_CR byte = 0xD
 
-// The data-structure of this message
+// CBusPointToMultiPointCommandStatus is the data-structure of this message
 type CBusPointToMultiPointCommandStatus struct {
 	*CBusPointToMultiPointCommand
 	StatusRequest *StatusRequest
@@ -44,7 +44,7 @@ type CBusPointToMultiPointCommandStatus struct {
 	Srchk bool
 }
 
-// The corresponding interface
+// ICBusPointToMultiPointCommandStatus is the corresponding interface of CBusPointToMultiPointCommandStatus
 type ICBusPointToMultiPointCommandStatus interface {
 	ICBusPointToMultiPointCommand
 	// GetStatusRequest returns StatusRequest (property field)
@@ -67,6 +67,7 @@ type ICBusPointToMultiPointCommandStatus interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for discriminator values.
 ///////////////////////
+
 ///////////////////////
 ///////////////////////
 ///////////////////////////////////////////////////////////
@@ -84,6 +85,7 @@ func (m *CBusPointToMultiPointCommandStatus) GetParent() *CBusPointToMultiPointC
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *CBusPointToMultiPointCommandStatus) GetStatusRequest() *StatusRequest {
 	return m.StatusRequest
 }
@@ -108,6 +110,7 @@ func (m *CBusPointToMultiPointCommandStatus) GetAlpha() *Alpha {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *CBusPointToMultiPointCommandStatus) GetCr() byte {
 	return CBusPointToMultiPointCommandStatus_CR
 }
@@ -187,10 +190,12 @@ func (m *CBusPointToMultiPointCommandStatus) GetLengthInBytes() uint16 {
 }
 
 func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk bool) (*CBusPointToMultiPointCommandStatus, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("CBusPointToMultiPointCommandStatus"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Reserved Field (Compartmentalized so the "reserved" variable can't leak)
@@ -237,7 +242,7 @@ func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk 
 	// Optional Field (crc) (Can be skipped, if a given expression evaluates to false)
 	var crc *Checksum = nil
 	if srchk {
-		currentPos = readBuffer.GetPos()
+		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("crc"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -256,7 +261,7 @@ func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk 
 	}
 
 	// Peek Field (peekAlpha)
-	currentPos = readBuffer.GetPos()
+	currentPos = positionAware.GetPos()
 	peekAlpha, _err := readBuffer.ReadByte("peekAlpha")
 	if _err != nil {
 		return nil, errors.Wrap(_err, "Error parsing 'peekAlpha' field")
@@ -267,7 +272,7 @@ func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk 
 	// Optional Field (alpha) (Can be skipped, if a given expression evaluates to false)
 	var alpha *Alpha = nil
 	if bool(bool(bool((peekAlpha) >= (0x67)))) && bool(bool(bool((peekAlpha) <= (0x7A)))) {
-		currentPos = readBuffer.GetPos()
+		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("alpha"); pullErr != nil {
 			return nil, pullErr
 		}
@@ -311,6 +316,8 @@ func CBusPointToMultiPointCommandStatusParse(readBuffer utils.ReadBuffer, srchk 
 }
 
 func (m *CBusPointToMultiPointCommandStatus) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("CBusPointToMultiPointCommandStatus"); pushErr != nil {
 			return pushErr

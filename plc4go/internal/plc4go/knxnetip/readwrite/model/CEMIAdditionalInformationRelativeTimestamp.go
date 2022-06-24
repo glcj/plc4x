@@ -30,13 +30,13 @@ import (
 // Constant values.
 const CEMIAdditionalInformationRelativeTimestamp_LEN uint8 = uint8(2)
 
-// The data-structure of this message
+// CEMIAdditionalInformationRelativeTimestamp is the data-structure of this message
 type CEMIAdditionalInformationRelativeTimestamp struct {
 	*CEMIAdditionalInformation
 	RelativeTimestamp *RelativeTimestamp
 }
 
-// The corresponding interface
+// ICEMIAdditionalInformationRelativeTimestamp is the corresponding interface of CEMIAdditionalInformationRelativeTimestamp
 type ICEMIAdditionalInformationRelativeTimestamp interface {
 	ICEMIAdditionalInformation
 	// GetRelativeTimestamp returns RelativeTimestamp (property field)
@@ -53,6 +53,7 @@ type ICEMIAdditionalInformationRelativeTimestamp interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for discriminator values.
 ///////////////////////
+
 func (m *CEMIAdditionalInformationRelativeTimestamp) GetAdditionalInformationType() uint8 {
 	return 0x04
 }
@@ -73,6 +74,7 @@ func (m *CEMIAdditionalInformationRelativeTimestamp) GetParent() *CEMIAdditional
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *CEMIAdditionalInformationRelativeTimestamp) GetRelativeTimestamp() *RelativeTimestamp {
 	return m.RelativeTimestamp
 }
@@ -85,6 +87,7 @@ func (m *CEMIAdditionalInformationRelativeTimestamp) GetRelativeTimestamp() *Rel
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *CEMIAdditionalInformationRelativeTimestamp) GetLen() uint8 {
 	return CEMIAdditionalInformationRelativeTimestamp_LEN
 }
@@ -145,10 +148,12 @@ func (m *CEMIAdditionalInformationRelativeTimestamp) GetLengthInBytes() uint16 {
 }
 
 func CEMIAdditionalInformationRelativeTimestampParse(readBuffer utils.ReadBuffer) (*CEMIAdditionalInformationRelativeTimestamp, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("CEMIAdditionalInformationRelativeTimestamp"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Const Field (len)
@@ -187,6 +192,8 @@ func CEMIAdditionalInformationRelativeTimestampParse(readBuffer utils.ReadBuffer
 }
 
 func (m *CEMIAdditionalInformationRelativeTimestamp) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("CEMIAdditionalInformationRelativeTimestamp"); pushErr != nil {
 			return pushErr

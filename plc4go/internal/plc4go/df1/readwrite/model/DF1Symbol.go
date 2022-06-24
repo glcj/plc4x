@@ -30,12 +30,12 @@ import (
 // Constant values.
 const DF1Symbol_MESSAGESTART uint8 = 0x10
 
-// The data-structure of this message
+// DF1Symbol is the data-structure of this message
 type DF1Symbol struct {
 	Child IDF1SymbolChild
 }
 
-// The corresponding interface
+// IDF1Symbol is the corresponding interface of DF1Symbol
 type IDF1Symbol interface {
 	// GetSymbolType returns SymbolType (discriminator field)
 	GetSymbolType() uint8
@@ -65,6 +65,7 @@ type IDF1SymbolChild interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *DF1Symbol) GetMessageStart() uint8 {
 	return DF1Symbol_MESSAGESTART
 }
@@ -120,10 +121,12 @@ func (m *DF1Symbol) GetLengthInBytes() uint16 {
 }
 
 func DF1SymbolParse(readBuffer utils.ReadBuffer) (*DF1Symbol, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("DF1Symbol"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Const Field (messageStart)
@@ -177,6 +180,8 @@ func (m *DF1Symbol) Serialize(writeBuffer utils.WriteBuffer) error {
 }
 
 func (m *DF1Symbol) SerializeParent(writeBuffer utils.WriteBuffer, child IDF1Symbol, serializeChildFunction func() error) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("DF1Symbol"); pushErr != nil {
 		return pushErr
 	}

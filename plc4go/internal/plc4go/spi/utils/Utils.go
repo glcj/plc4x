@@ -36,6 +36,20 @@ func (e ParseAssertError) Error() string {
 	return e.Message
 }
 
-func (m ParseAssertError) Is(target error) bool {
-	return true
+func (e ParseAssertError) Is(target error) bool {
+	_, ok := target.(ParseAssertError)
+	return ok
+}
+
+type ParseValidationError struct {
+	Message string
+}
+
+func (e ParseValidationError) Error() string {
+	return e.Message
+}
+
+func (e ParseValidationError) Is(target error) bool {
+	_, ok := target.(ParseValidationError)
+	return ok
 }

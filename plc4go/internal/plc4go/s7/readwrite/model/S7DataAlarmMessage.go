@@ -31,12 +31,12 @@ import (
 const S7DataAlarmMessage_FUNCTIONID uint8 = 0x00
 const S7DataAlarmMessage_NUMBERMESSAGEOBJ uint8 = 0x01
 
-// The data-structure of this message
+// S7DataAlarmMessage is the data-structure of this message
 type S7DataAlarmMessage struct {
 	Child IS7DataAlarmMessageChild
 }
 
-// The corresponding interface
+// IS7DataAlarmMessage is the corresponding interface of S7DataAlarmMessage
 type IS7DataAlarmMessage interface {
 	// GetCpuFunctionType returns CpuFunctionType (discriminator field)
 	GetCpuFunctionType() uint8
@@ -66,6 +66,7 @@ type IS7DataAlarmMessageChild interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *S7DataAlarmMessage) GetFunctionId() uint8 {
 	return S7DataAlarmMessage_FUNCTIONID
 }
@@ -126,10 +127,12 @@ func (m *S7DataAlarmMessage) GetLengthInBytes() uint16 {
 }
 
 func S7DataAlarmMessageParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8) (*S7DataAlarmMessage, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("S7DataAlarmMessage"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Const Field (functionId)
@@ -184,6 +187,8 @@ func (m *S7DataAlarmMessage) Serialize(writeBuffer utils.WriteBuffer) error {
 }
 
 func (m *S7DataAlarmMessage) SerializeParent(writeBuffer utils.WriteBuffer, child IS7DataAlarmMessage, serializeChildFunction func() error) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("S7DataAlarmMessage"); pushErr != nil {
 		return pushErr
 	}

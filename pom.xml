@@ -150,10 +150,11 @@
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <junit.platform.version>1.8.2</junit.platform.version>
     <logback.version>1.2.10</logback.version>
+    <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
     <milo.version>0.6.3</milo.version>
     <mockito.version>4.4.0</mockito.version>
-    <netty.version>4.1.75.Final</netty.version>
-    <owasp-dependency-check.version>6.5.1</owasp-dependency-check.version>
+    <netty.version>4.1.77.Final</netty.version>
+    <owasp-dependency-check.version>7.0.4</owasp-dependency-check.version>
     <pcap4j.version>1.8.2</pcap4j.version>
     <slf4j.version>1.7.36</slf4j.version>
     <vavr.version>0.10.4</vavr.version>
@@ -793,7 +794,8 @@
             <!-- Python related files -->
             <exclude>**/.pytest_cache/**</exclude>
             <exclude>**/.mypy_cache/**</exclude>
-            <exclude>**/poetry.lock</exclude>
+            <exclude>**/Pipfile</exclude>
+            <exclude>**/Pipfile.lock</exclude>
 
             <!-- Eclipse related files -->
             <exclude>**/.project</exclude>
@@ -804,6 +806,7 @@
             <!-- IntelliJ related files -->
             <exclude>**/.idea/**</exclude>
             <exclude>**/*.iml</exclude>
+            <exclude>**/.attach_pid*</exclude>
 
             <!-- Wireshark Captures -->
             <exclude>**/*.pcap</exclude>
@@ -943,6 +946,7 @@
               We're using at least 1.28, so this is a false positive.
             -->
             <exclude>org.apache.calcite.avatica:avatica-core</exclude>
+            <exclude>javax.ws.rs:javax.ws.rs-api</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -1356,7 +1360,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.3.0</version>
         </plugin>
 
         <plugin>
@@ -1602,6 +1606,7 @@
         <cmake.url>https://github.com/Kitware/CMake/releases/download/v${cmake-version}/cmake-${cmake-version}-linux-x86_64.tar.gz</cmake.url>
         <cmake.root>${project.build.directory}/cmake-${cmake-version}-linux-x86_64/bin/</cmake.root>
         <cmake.generator>Unix Makefiles</cmake.generator>
+        <python.venv.bin>venv/bin/</python.venv.bin>
       </properties>
     </profile>
     <profile>
@@ -1618,6 +1623,7 @@
         <cmake.url>https://github.com/Kitware/CMake/releases/download/v${cmake-version}/cmake-${cmake-version}-linux-${os.arch}.tar.gz</cmake.url>
         <cmake.root>${project.build.directory}/cmake-${cmake-version}-linux-${os.arch}/bin/</cmake.root>
         <cmake.generator>Unix Makefiles</cmake.generator>
+        <python.venv.bin>venv/bin/</python.venv.bin>
       </properties>
     </profile>
     <!-- Profile for mac (Self-Enabling) -->
@@ -1634,6 +1640,7 @@
         <cmake.url>https://github.com/Kitware/CMake/releases/download/v${cmake-version}/cmake-${cmake-version}-macos-universal.tar.gz</cmake.url>
         <cmake.root>${project.build.directory}/cmake-${cmake-version}-macos-universal/CMake.app/Contents/bin</cmake.root>
         <cmake.generator>Unix Makefiles</cmake.generator>
+        <python.venv.bin>venv/bin/</python.venv.bin>
       </properties>
     </profile>
     <!-- profile for windows (Self-Enabling) -->
@@ -1650,6 +1657,7 @@
         <cmake.url>https://github.com/Kitware/CMake/releases/download/v${cmake-version}/cmake-${cmake-version}-windows-x86_64.zip</cmake.url>
         <cmake.root>${project.build.directory}/cmake-${cmake-version}-windows-x86_64/bin</cmake.root>
         <cmake.generator>MinGW Makefiles</cmake.generator>
+        <python.venv.bin>venv/Scripts/</python.venv.bin>
       </properties>
     </profile>
 

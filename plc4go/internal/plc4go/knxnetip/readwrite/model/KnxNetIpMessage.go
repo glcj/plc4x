@@ -30,12 +30,12 @@ import (
 // Constant values.
 const KnxNetIpMessage_PROTOCOLVERSION uint8 = 0x10
 
-// The data-structure of this message
+// KnxNetIpMessage is the data-structure of this message
 type KnxNetIpMessage struct {
 	Child IKnxNetIpMessageChild
 }
 
-// The corresponding interface
+// IKnxNetIpMessage is the corresponding interface of KnxNetIpMessage
 type IKnxNetIpMessage interface {
 	// GetMsgType returns MsgType (discriminator field)
 	GetMsgType() uint16
@@ -65,6 +65,7 @@ type IKnxNetIpMessageChild interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *KnxNetIpMessage) GetProtocolVersion() uint8 {
 	return KnxNetIpMessage_PROTOCOLVERSION
 }
@@ -126,10 +127,12 @@ func (m *KnxNetIpMessage) GetLengthInBytes() uint16 {
 }
 
 func KnxNetIpMessageParse(readBuffer utils.ReadBuffer) (*KnxNetIpMessage, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("KnxNetIpMessage"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Implicit Field (headerLength) (Used for parsing, but its value is not stored as it's implicitly given by the objects content)
@@ -223,6 +226,8 @@ func (m *KnxNetIpMessage) Serialize(writeBuffer utils.WriteBuffer) error {
 }
 
 func (m *KnxNetIpMessage) SerializeParent(writeBuffer utils.WriteBuffer, child IKnxNetIpMessage, serializeChildFunction func() error) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("KnxNetIpMessage"); pushErr != nil {
 		return pushErr
 	}

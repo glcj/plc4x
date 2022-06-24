@@ -31,7 +31,7 @@ import (
 // Constant values.
 const CipUnconnectedRequest_ROUTE uint16 = 0x0001
 
-// The data-structure of this message
+// CipUnconnectedRequest is the data-structure of this message
 type CipUnconnectedRequest struct {
 	*CipService
 	UnconnectedService *CipService
@@ -42,7 +42,7 @@ type CipUnconnectedRequest struct {
 	ServiceLen uint16
 }
 
-// The corresponding interface
+// ICipUnconnectedRequest is the corresponding interface of CipUnconnectedRequest
 type ICipUnconnectedRequest interface {
 	ICipService
 	// GetUnconnectedService returns UnconnectedService (property field)
@@ -63,6 +63,7 @@ type ICipUnconnectedRequest interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for discriminator values.
 ///////////////////////
+
 func (m *CipUnconnectedRequest) GetService() uint8 {
 	return 0x52
 }
@@ -82,6 +83,7 @@ func (m *CipUnconnectedRequest) GetParent() *CipService {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *CipUnconnectedRequest) GetUnconnectedService() *CipService {
 	return m.UnconnectedService
 }
@@ -102,6 +104,7 @@ func (m *CipUnconnectedRequest) GetSlot() int8 {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *CipUnconnectedRequest) GetRoute() uint16 {
 	return CipUnconnectedRequest_ROUTE
 }
@@ -191,10 +194,12 @@ func (m *CipUnconnectedRequest) GetLengthInBytes() uint16 {
 }
 
 func CipUnconnectedRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (*CipUnconnectedRequest, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("CipUnconnectedRequest"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Reserved Field (Compartmentalized so the "reserved" variable can't leak)
@@ -340,6 +345,8 @@ func CipUnconnectedRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) 
 }
 
 func (m *CipUnconnectedRequest) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("CipUnconnectedRequest"); pushErr != nil {
 			return pushErr

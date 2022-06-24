@@ -55,6 +55,7 @@ import org.apache.plc4x.java.spi.transaction.RequestTransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.time.Duration;
@@ -408,6 +409,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                     System.out.println("004 Ejecutando la tarea.");
         // Create a new Request with correct tpuId (is not known before)
         S7MessageRequest s7MessageRequest = new S7MessageRequest(tpduId, request.getParameter(), request.getPayload());
+
 
         //TODO: Check cotpLen parameter
         TPKTPacket tpktPacket = new TPKTPacket(new COTPPacketData(null, s7MessageRequest, true, (short) tpduId, 0));
@@ -837,6 +839,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
     private void encodeEventSubcriptionRequest(DefaultPlcSubscriptionRequest request,
                                                 List<S7ParameterUserDataItem> parameterItems,
                                                 List<S7PayloadUserDataItem> payloadItems){
+
         byte subsevent = 0;
         for (String fieldName : request.getFieldNames()) {
             if (request.getField(fieldName) instanceof DefaultPlcSubscriptionField){
@@ -1552,7 +1555,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                         SzlSublist.MODULE_IDENTIFICATION), 
                         0x0000)
         ), null));
-        COTPPacketData cotpPacketData = new COTPPacketData(null, identifyRemoteMessage, true, (short) 2, null);
+        COTPPacketData cotpPacketData = new COTPPacketData(null, identifyRemoteMessage, true, (short) 2, Integer.MAX_VALUE);
         return new TPKTPacket(cotpPacketData);
     }
 
@@ -1615,7 +1618,9 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 s7DriverContext.getMaxAmqCaller(), s7DriverContext.getMaxAmqCallee(), s7DriverContext.getPduSize());
         S7Message s7Message = new S7MessageRequest(0, s7ParameterSetupCommunication,
             null);
+
         COTPPacketData cotpPacketData = new COTPPacketData(null, s7Message, true, (short) 1, null);
+
         return new TPKTPacket(cotpPacketData);
     }
 
@@ -1625,7 +1630,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
                 new COTPParameterCalledTsap(calledTsapId, null),
                 new COTPParameterCallingTsap(callingTsapId, null),
                 new COTPParameterTpduSize(cotpTpduSize, null)
-            ), null, (short) 0x0000, (short) 0x000F, COTPProtocolClass.CLASS_0, null);
+            ), null, (short) 0x0000, (short) 0x000F, COTPProtocolClass.CLASS_0, Integer.MAX_VALUE);
     }
     
     /*

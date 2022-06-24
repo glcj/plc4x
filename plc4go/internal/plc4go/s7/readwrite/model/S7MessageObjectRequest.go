@@ -32,7 +32,7 @@ import (
 const S7MessageObjectRequest_VARIABLESPEC uint8 = 0x12
 const S7MessageObjectRequest_LENGTH uint8 = 0x08
 
-// The data-structure of this message
+// S7MessageObjectRequest is the data-structure of this message
 type S7MessageObjectRequest struct {
 	*S7DataAlarmMessage
 	SyntaxId  SyntaxIdType
@@ -40,7 +40,7 @@ type S7MessageObjectRequest struct {
 	AlarmType AlarmType
 }
 
-// The corresponding interface
+// IS7MessageObjectRequest is the corresponding interface of S7MessageObjectRequest
 type IS7MessageObjectRequest interface {
 	IS7DataAlarmMessage
 	// GetSyntaxId returns SyntaxId (property field)
@@ -61,6 +61,7 @@ type IS7MessageObjectRequest interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for discriminator values.
 ///////////////////////
+
 func (m *S7MessageObjectRequest) GetCpuFunctionType() uint8 {
 	return 0x04
 }
@@ -80,6 +81,7 @@ func (m *S7MessageObjectRequest) GetParent() *S7DataAlarmMessage {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *S7MessageObjectRequest) GetSyntaxId() SyntaxIdType {
 	return m.SyntaxId
 }
@@ -100,6 +102,7 @@ func (m *S7MessageObjectRequest) GetAlarmType() AlarmType {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *S7MessageObjectRequest) GetVariableSpec() uint8 {
 	return S7MessageObjectRequest_VARIABLESPEC
 }
@@ -181,10 +184,12 @@ func (m *S7MessageObjectRequest) GetLengthInBytes() uint16 {
 }
 
 func S7MessageObjectRequestParse(readBuffer utils.ReadBuffer, cpuFunctionType uint8) (*S7MessageObjectRequest, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("S7MessageObjectRequest"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Const Field (variableSpec)
@@ -288,6 +293,8 @@ func S7MessageObjectRequestParse(readBuffer utils.ReadBuffer, cpuFunctionType ui
 }
 
 func (m *S7MessageObjectRequest) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("S7MessageObjectRequest"); pushErr != nil {
 			return pushErr

@@ -31,7 +31,7 @@ import (
 const DF1SymbolMessageFrame_MESSAGEEND uint8 = 0x10
 const DF1SymbolMessageFrame_ENDTRANSACTION uint8 = 0x03
 
-// The data-structure of this message
+// DF1SymbolMessageFrame is the data-structure of this message
 type DF1SymbolMessageFrame struct {
 	*DF1Symbol
 	DestinationAddress uint8
@@ -39,7 +39,7 @@ type DF1SymbolMessageFrame struct {
 	Command            *DF1Command
 }
 
-// The corresponding interface
+// IDF1SymbolMessageFrame is the corresponding interface of DF1SymbolMessageFrame
 type IDF1SymbolMessageFrame interface {
 	IDF1Symbol
 	// GetDestinationAddress returns DestinationAddress (property field)
@@ -60,6 +60,7 @@ type IDF1SymbolMessageFrame interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for discriminator values.
 ///////////////////////
+
 func (m *DF1SymbolMessageFrame) GetSymbolType() uint8 {
 	return 0x02
 }
@@ -79,6 +80,7 @@ func (m *DF1SymbolMessageFrame) GetParent() *DF1Symbol {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *DF1SymbolMessageFrame) GetDestinationAddress() uint8 {
 	return m.DestinationAddress
 }
@@ -99,6 +101,7 @@ func (m *DF1SymbolMessageFrame) GetCommand() *DF1Command {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *DF1SymbolMessageFrame) GetMessageEnd() uint8 {
 	return DF1SymbolMessageFrame_MESSAGEEND
 }
@@ -177,10 +180,12 @@ func (m *DF1SymbolMessageFrame) GetLengthInBytes() uint16 {
 }
 
 func DF1SymbolMessageFrameParse(readBuffer utils.ReadBuffer) (*DF1SymbolMessageFrame, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("DF1SymbolMessageFrame"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Simple Field (destinationAddress)
@@ -259,6 +264,8 @@ func DF1SymbolMessageFrameParse(readBuffer utils.ReadBuffer) (*DF1SymbolMessageF
 }
 
 func (m *DF1SymbolMessageFrame) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("DF1SymbolMessageFrame"); pushErr != nil {
 			return pushErr

@@ -29,14 +29,20 @@ import (
 )
 
 const (
+	////
 	// Bit & Bit-Strings
+
 	IEC61131_BOOL  string = "BOOL"
 	IEC61131_BYTE  string = "BYTE"
 	IEC61131_WORD  string = "WORD"
 	IEC61131_DWORD string = "DWORD"
 	IEC61131_LWORD string = "LWORD"
+	//
+	////
 
+	////
 	// Integers
+
 	IEC61131_USINT string = "USINT"
 	IEC61131_UINT  string = "UINT"
 	IEC61131_UDINT string = "UDINT"
@@ -45,22 +51,36 @@ const (
 	IEC61131_INT   string = "INT"
 	IEC61131_DINT  string = "DINT"
 	IEC61131_LINT  string = "LINT"
+	//
+	////
 
+	////
 	// Floating Point Values
+
 	IEC61131_REAL  string = "REAL"
 	IEC61131_LREAL string = "LREAL"
+	//
+	////
 
+	////
 	// Temporal Values
+
 	IEC61131_TIME          string = "TIME"
 	IEC61131_DATE          string = "DATE"
 	IEC61131_TIME_OF_DAY   string = "TIME_OF_DAY"
 	IEC61131_DATE_AND_TIME string = "DATE_AND_TIME"
+	//
+	////
 
+	////
 	// Chars and Strings
+
 	IEC61131_CHAR    string = "CHAR"
 	IEC61131_WCHAR   string = "WCHAR"
 	IEC61131_STRING  string = "STRING"
 	IEC61131_WSTRING string = "WSTRING"
+	//
+	////
 )
 
 type IEC61131ValueHandler struct {
@@ -122,7 +142,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 		}
 	case IEC61131_BYTE:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 8)
+			casted, err := strconv.ParseUint(stringValue, 10, 8)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to byte")
 			}
@@ -136,7 +156,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 		}
 	case IEC61131_WORD:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 16)
+			casted, err := strconv.ParseUint(stringValue, 10, 16)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to word")
 			}
@@ -150,7 +170,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 		}
 	case IEC61131_DWORD:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 32)
+			casted, err := strconv.ParseUint(stringValue, 10, 32)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to dword")
 			}
@@ -164,7 +184,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 		}
 	case IEC61131_LWORD:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 64)
+			casted, err := strconv.ParseUint(stringValue, 10, 64)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to lword")
 			}
@@ -180,7 +200,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 	// Integers
 	case IEC61131_USINT:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 8)
+			casted, err := strconv.ParseUint(stringValue, 10, 8)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to usint")
 			}
@@ -194,7 +214,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 		}
 	case IEC61131_UINT:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 16)
+			casted, err := strconv.ParseUint(stringValue, 10, 16)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to uint")
 			}
@@ -208,7 +228,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 		}
 	case IEC61131_UDINT:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 32)
+			casted, err := strconv.ParseUint(stringValue, 10, 32)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to udint")
 			}
@@ -222,7 +242,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 		}
 	case IEC61131_ULINT:
 		if isString {
-			casted, err := strconv.ParseInt(stringValue, 10, 64)
+			casted, err := strconv.ParseUint(stringValue, 10, 64)
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to ulint")
 			}

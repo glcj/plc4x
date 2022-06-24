@@ -31,7 +31,7 @@ import (
 // Constant values.
 const AlarmMessageObjectQueryType_VARIABLESPEC uint8 = 0x12
 
-// The data-structure of this message
+// AlarmMessageObjectQueryType is the data-structure of this message
 type AlarmMessageObjectQueryType struct {
 	LengthDataset  uint8
 	EventState     *State
@@ -43,7 +43,7 @@ type AlarmMessageObjectQueryType struct {
 	ValueGoing     *AssociatedValueType
 }
 
-// The corresponding interface
+// IAlarmMessageObjectQueryType is the corresponding interface of AlarmMessageObjectQueryType
 type IAlarmMessageObjectQueryType interface {
 	// GetLengthDataset returns LengthDataset (property field)
 	GetLengthDataset() uint8
@@ -73,6 +73,7 @@ type IAlarmMessageObjectQueryType interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *AlarmMessageObjectQueryType) GetLengthDataset() uint8 {
 	return m.LengthDataset
 }
@@ -113,6 +114,7 @@ func (m *AlarmMessageObjectQueryType) GetValueGoing() *AssociatedValueType {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *AlarmMessageObjectQueryType) GetVariableSpec() uint8 {
 	return AlarmMessageObjectQueryType_VARIABLESPEC
 }
@@ -186,10 +188,12 @@ func (m *AlarmMessageObjectQueryType) GetLengthInBytes() uint16 {
 }
 
 func AlarmMessageObjectQueryTypeParse(readBuffer utils.ReadBuffer) (*AlarmMessageObjectQueryType, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("AlarmMessageObjectQueryType"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Simple Field (lengthDataset)
@@ -322,6 +326,8 @@ func AlarmMessageObjectQueryTypeParse(readBuffer utils.ReadBuffer) (*AlarmMessag
 }
 
 func (m *AlarmMessageObjectQueryType) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("AlarmMessageObjectQueryType"); pushErr != nil {
 		return pushErr
 	}

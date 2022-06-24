@@ -30,7 +30,7 @@ import (
 // Constant values.
 const AlarmMessageQueryType_DATALENGTH uint16 = 0xFFFF
 
-// The data-structure of this message
+// AlarmMessageQueryType is the data-structure of this message
 type AlarmMessageQueryType struct {
 	FunctionId      uint8
 	NumberOfObjects uint8
@@ -39,7 +39,7 @@ type AlarmMessageQueryType struct {
 	MessageObjects  []*AlarmMessageObjectQueryType
 }
 
-// The corresponding interface
+// IAlarmMessageQueryType is the corresponding interface of AlarmMessageQueryType
 type IAlarmMessageQueryType interface {
 	// GetFunctionId returns FunctionId (property field)
 	GetFunctionId() uint8
@@ -63,6 +63,7 @@ type IAlarmMessageQueryType interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for property fields.
 ///////////////////////
+
 func (m *AlarmMessageQueryType) GetFunctionId() uint8 {
 	return m.FunctionId
 }
@@ -91,6 +92,7 @@ func (m *AlarmMessageQueryType) GetMessageObjects() []*AlarmMessageObjectQueryTy
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *AlarmMessageQueryType) GetDataLength() uint16 {
 	return AlarmMessageQueryType_DATALENGTH
 }
@@ -157,10 +159,12 @@ func (m *AlarmMessageQueryType) GetLengthInBytes() uint16 {
 }
 
 func AlarmMessageQueryTypeParse(readBuffer utils.ReadBuffer) (*AlarmMessageQueryType, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("AlarmMessageQueryType"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Simple Field (functionId)
@@ -240,6 +244,8 @@ func AlarmMessageQueryTypeParse(readBuffer utils.ReadBuffer) (*AlarmMessageQuery
 }
 
 func (m *AlarmMessageQueryType) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("AlarmMessageQueryType"); pushErr != nil {
 		return pushErr
 	}

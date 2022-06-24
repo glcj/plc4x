@@ -30,11 +30,11 @@ import (
 // Constant values.
 const ModbusConstants_MODBUSTCPDEFAULTPORT uint16 = uint16(502)
 
-// The data-structure of this message
+// ModbusConstants is the data-structure of this message
 type ModbusConstants struct {
 }
 
-// The corresponding interface
+// IModbusConstants is the corresponding interface of ModbusConstants
 type IModbusConstants interface {
 	// GetLengthInBytes returns the length in bytes
 	GetLengthInBytes() uint16
@@ -48,6 +48,7 @@ type IModbusConstants interface {
 ///////////////////////////////////////////////////////////
 /////////////////////// Accessors for const fields.
 ///////////////////////
+
 func (m *ModbusConstants) GetModbusTcpDefaultPort() uint16 {
 	return ModbusConstants_MODBUSTCPDEFAULTPORT
 }
@@ -94,10 +95,12 @@ func (m *ModbusConstants) GetLengthInBytes() uint16 {
 }
 
 func ModbusConstantsParse(readBuffer utils.ReadBuffer) (*ModbusConstants, error) {
+	positionAware := readBuffer
+	_ = positionAware
 	if pullErr := readBuffer.PullContext("ModbusConstants"); pullErr != nil {
 		return nil, pullErr
 	}
-	currentPos := readBuffer.GetPos()
+	currentPos := positionAware.GetPos()
 	_ = currentPos
 
 	// Const Field (modbusTcpDefaultPort)
@@ -118,6 +121,8 @@ func ModbusConstantsParse(readBuffer utils.ReadBuffer) (*ModbusConstants, error)
 }
 
 func (m *ModbusConstants) Serialize(writeBuffer utils.WriteBuffer) error {
+	positionAware := writeBuffer
+	_ = positionAware
 	if pushErr := writeBuffer.PushContext("ModbusConstants"); pushErr != nil {
 		return pushErr
 	}
