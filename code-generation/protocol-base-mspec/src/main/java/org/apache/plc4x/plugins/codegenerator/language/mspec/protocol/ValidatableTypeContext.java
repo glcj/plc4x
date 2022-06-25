@@ -16,15 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.plugins.codegenerator.language.mspec;
+package org.apache.plc4x.plugins.codegenerator.language.mspec.protocol;
 
-import org.apache.plc4x.plugins.codegenerator.types.definitions.ComplexTypeDefinition;
-import org.apache.plc4x.plugins.codegenerator.types.definitions.TypeDefinition;
+import org.apache.plc4x.plugins.codegenerator.protocol.TypeContext;
+import org.apache.plc4x.plugins.codegenerator.types.exceptions.GenerationException;
 
-import java.util.function.Consumer;
+public interface ValidatableTypeContext extends TypeContext {
 
-public interface LazyTypeDefinitionConsumer {
-
-    void setOrScheduleTypeDefinitionConsumer(String typeRefName, Consumer<TypeDefinition> setTypeDefinition);
-
+    /**
+     * validates the {@link TypeContext}
+     *
+     * @throws GenerationException if {@link TypeContext}
+     */
+    default void validate() throws GenerationException {
+        // TODO: check that we have at least of parsed type
+        if (getUnresolvedTypeReferences().size() > 0) {
+            throw new GenerationException("Unresolved types left: " + getUnresolvedTypeReferences());
+        }
+    }
 }

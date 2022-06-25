@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -153,7 +153,6 @@ public class ExpressionStringListener extends ExpressionBaseListener {
                 .getPropertyFieldByName(propertyName)
                 .map(DefaultTypedField.class::cast);
             // Check for other fields
-            /*
             if (propertyFieldByName.isEmpty()) {
                 propertyFieldByName = complexTypeDefinition.getAllFields().stream()
                     .filter(NamedField.class::isInstance)
@@ -162,7 +161,6 @@ public class ExpressionStringListener extends ExpressionBaseListener {
                     .map(DefaultTypedField.class::cast)
                     .findAny();
             }
-*/
             // Check for arguments context
             if (propertyFieldByName.isEmpty() && complexTypeDefinition.getAllParserArguments().isPresent()) {
                 Optional<DefaultArgument> defaultArgument = complexTypeDefinition.getAllParserArguments().orElseThrow().stream()
@@ -222,7 +220,7 @@ public class ExpressionStringListener extends ExpressionBaseListener {
         String name = ctx.name.getText();
         // TODO: Based on the current context type-definition, get the type of the property with name ctx.name.getText()
 
-        int index = VariableLiteral.NO_INDEX;
+        Integer index = null;
         if (indexContext != null) {
             // TODO: Add a check, that the field providing the property is an "array" or "manualArray" field.
             index = indexContext.getFirst().getNumber().intValue();

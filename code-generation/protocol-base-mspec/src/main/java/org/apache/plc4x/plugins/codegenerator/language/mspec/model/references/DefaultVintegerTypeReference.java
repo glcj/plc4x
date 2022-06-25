@@ -16,15 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.plugins.codegenerator.language.mspec;
+package org.apache.plc4x.plugins.codegenerator.language.mspec.model.references;
 
-import org.apache.plc4x.plugins.codegenerator.types.definitions.ComplexTypeDefinition;
-import org.apache.plc4x.plugins.codegenerator.types.definitions.TypeDefinition;
+import org.apache.plc4x.plugins.codegenerator.types.references.SimpleTypeReference;
+import org.apache.plc4x.plugins.codegenerator.types.references.VintegerTypeReference;
 
-import java.util.function.Consumer;
+public class DefaultVintegerTypeReference extends AbstractSimpleTypeReference implements VintegerTypeReference {
 
-public interface LazyTypeDefinitionConsumer {
+    private final SimpleTypeReference propertyType;
 
-    void setOrScheduleTypeDefinitionConsumer(String typeRefName, Consumer<TypeDefinition> setTypeDefinition);
+    public DefaultVintegerTypeReference(SimpleBaseType baseType, SimpleTypeReference propertyType) {
+        super(baseType, -1);
+        this.propertyType = propertyType;
+    }
+
+    @Override
+    public SimpleTypeReference getPropertyTypeReference() {
+        return propertyType;
+    }
 
 }
