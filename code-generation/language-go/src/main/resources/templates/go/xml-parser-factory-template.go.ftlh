@@ -7,7 +7,7 @@
   "License"); you may not use this file except in compliance
   with the License.  You may obtain a copy of the License at
 
-	  http://www.apache.org/licenses/LICENSE-2.0
+	  https://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing,
   software distributed under the License is distributed on an
@@ -35,7 +35,7 @@ ${helper.fileName(protocolName, languageName, outputFlavor)?replace(".", "/")}/X
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -48,8 +48,8 @@ ${helper.fileName(protocolName, languageName, outputFlavor)?replace(".", "/")}/X
 package ${outputFlavor?replace("-","")}
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/plc4go/${helper.getSanitizedProtocolName()}/${outputFlavor?replace("-","")}/model"
-	"github.com/apache/plc4x/plc4go/internal/plc4go/spi/utils"
+	"github.com/apache/plc4x/plc4go/protocols/${helper.getSanitizedProtocolName()}/${outputFlavor?replace("-","")}/model"
+	"github.com/apache/plc4x/plc4go/internal/spi/utils"
 	"github.com/pkg/errors"
     "strings"
     "strconv"
@@ -116,7 +116,7 @@ func (m ${helper.getSanitizedProtocolName()?cap_first}XmlParserHelper) Parse(typ
                     </#switch>
                 </#if>
             </#list>
-            <#assign parserArgumentList><#list typeDefinition.parserArguments.orElseThrow() as parserArgument><#if parserArgument.type.isNonSimpleTypeReference() && !parserArgument.type.isEnumTypeReference()>&</#if>${parserArgument.name}<#sep>, </#sep> </#list> </#assign>
+            <#assign parserArgumentList><#list typeDefinition.parserArguments.orElseThrow() as parserArgument>${parserArgument.name}<#sep>, </#sep> </#list> </#assign>
             return model.${typeDefinition.name}Parse(utils.NewXmlReadBuffer(strings.NewReader(xmlString)), ${parserArgumentList})
         <#else>
 			return model.${typeDefinition.name}Parse(utils.NewXmlReadBuffer(strings.NewReader(xmlString)))

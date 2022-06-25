@@ -7,7 +7,7 @@
   "License"); you may not use this file except in compliance
   with the License.  You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+      https://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing,
   software distributed under the License is distributed on an
@@ -36,7 +36,7 @@ ${helper.packageName(protocolName, languageName, outputFlavor)?replace(".", "/")
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -542,6 +542,7 @@ public<#if type.isDiscriminatedParentTypeDefinition()> abstract</#if> class ${ty
 
         // Unknown field
         lengthInBits += ${simpleTypeReference.sizeInBits};
+        <#break>
     <#case "virtual">
         <#assign virtualField = field.asVirtualField().orElseThrow()>
 
@@ -862,7 +863,7 @@ public<#if type.isDiscriminatedParentTypeDefinition()> abstract</#if> class ${ty
     public String toString() {
         WriteBufferBoxBased writeBufferBoxBased = new WriteBufferBoxBased(true, true);
         try {
-            serialize(writeBufferBoxBased);
+            writeBufferBoxBased.writeSerializable(this);
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
