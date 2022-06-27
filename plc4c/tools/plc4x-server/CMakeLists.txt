@@ -17,28 +17,37 @@
   under the License.
 ]]
 
-add_executable(plc4c-examples-hello-world-modbus
-        src/hello_world_modbus.c
+SET(generatedSources ${PLC4C_ROOT_DIR}/generated-sources/plc4x/src/plc4x_constants.c)
+SET(generatedHeaders ${PLC4C_ROOT_DIR}/generated-sources/plc4x/include/plc4x_constants.h)
+
+# Add the sources
+add_executable(plc4c-tools-plc4x-server
+        src/plc4x_server.c
+        ${generatedHeaders}
+        ${generatedSources}
         )
 
-target_include_directories(plc4c-examples-hello-world-modbus
-        PUBLIC
-        "../../api/include"
-        "../../spi/include"
-        "../../drivers/modbus/include"
-        "../../transports/tcp/include")
+target_include_directories(plc4c-tools-plc4x-server
+        PRIVATE
+        ${PLC4C_ROOT_DIR}/api/include
+        ${PLC4C_ROOT_DIR}/spi/include
+        ${PLC4C_ROOT_DIR}/drivers/plc4x/include
+        ${PLC4C_ROOT_DIR}/generated-sources/plc4x/include)
 
-IF (NOT WIN32)
-    target_link_libraries(plc4c-examples-hello-world-modbus
-            plc4c-spi
-            plc4c-driver-modbus
+if(WIN32)
+    target_link_libraries(plc4c-tools-plc4x-server
+            plc4c-driver-plc4x
             plc4c-transport-tcp
-            m
-    )
-ELSE()
-    target_link_libraries(plc4c-examples-hello-world-modbus
             plc4c-spi
-            plc4c-driver-modbus
-            plc4c-transport-tcp
+            wsock32
+            ws2_32
+            ${CMAKE_DL_LIBS}
     )
-ENDIF()
+else()
+    target_link_libraries(plc4c-tools-plc4x-server
+            plc4c-driver-plc4x
+            plc4c-transport-tcp
+            plc4c-spi
+            ${CMAKE_DL_LIBS}
+    )
+endif()

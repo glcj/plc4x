@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # ----------------------------------------------------------------------------
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
@@ -16,3 +18,9 @@
 # specific language governing permissions and limitations
 # under the License.
 # ----------------------------------------------------------------------------
+
+mkdir -p target/dependency
+
+wget -O target/unity.zip https://github.com/ThrowTheSwitch/Unity/archive/v2.5.2.zip
+
+unzip target/unity.zip -d target/dependency
