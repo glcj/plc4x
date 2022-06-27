@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -28,6 +28,27 @@
     ['0'    PASSBACK_OFF                            ]
     ['1'    HARD_PASSBACK                           ]
     ['2'    SOFT_PASSBACK                           ]
+]
+
+// Attention: No proprietary extension allowed
+[enum uint 8 BACnetAccessRuleLocationSpecifier
+    ['0'    SPECIFIED                               ]
+    ['1'    ALL                                     ]
+]
+
+// Attention: No proprietary extension allowed
+[enum uint 8 BACnetAccessRuleTimeRangeSpecifier
+    ['0'    SPECIFIED                               ]
+    ['1'    ALWAYS                                  ]
+]
+
+// Attention: No proprietary extension allowed
+[enum uint 8 BACnetAccumulatorRecordAccumulatorStatus
+    ['0'    NORMAL                                  ]
+    ['1'    STARTING                                ]
+    ['2'    RECOVERED                               ]
+    ['3'    ABNORMAL                                ]
+    ['4'    FAILED                                  ]
 ]
 
 // Attention: No proprietary extension allowed
@@ -159,10 +180,32 @@
 ]
 
 // Attention: No proprietary extension allowed
-[enum uint 8 BACnetConfirmedServiceRequestReinitializeDeviceEnableDisable
+[enum uint 8 BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriority
+    ['0' NORMAL                                 ]
+    ['1' URGENT                                 ]
+]
+
+// Attention: No proprietary extension allowed
+[enum uint 8 BACnetConfirmedServiceRequestDeviceCommunicationControlEnableDisable
     ['0' ENABLE                                 ]
     ['1' DISABLE                                ]
     ['2' DISABLE_INITIATION                     ]
+]
+
+// Attention: No proprietary extension allowed
+[enum uint 8 BACnetConfirmedServiceRequestGetEnrollmentSummaryAcknowledgementFilter
+    ['0' ALL                                    ]
+    ['1' ACKED                                  ]
+    ['2' NOT_ACKED                              ]
+]
+
+// Attention: No proprietary extension allowed
+[enum uint 8 BACnetConfirmedServiceRequestGetEnrollmentSummaryEventStateFilter
+    ['0' OFFNORMAL                              ]
+    ['1' FAULT                                  ]
+    ['2' NORMAL                                 ]
+    ['3' ALL                                    ]
+    ['4' ACTIVE                                 ]
 ]
 
 // Attention: No proprietary extension allowed
@@ -328,6 +371,13 @@
     ['1'  PROTOCOL                              ]
     ['2'  BACNET_APPLICATION                    ]
     ['3'  NON_BACNET_APPLICATION                ]
+]
+
+// Attention: No proprietary extension allowed
+[enum uint 8 BACnetRouterEntryStatus
+    ['0'  AVAILABLE                              ]
+    ['1'  BUSY                                   ]
+    ['2'  DISCONNECTED                           ]
 ]
 
 // Attention: No proprietary extension allowed

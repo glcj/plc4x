@@ -8,7 +8,7 @@
   "License"); you may not use this file except in compliance
   with the License.  You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+      https://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing,
   software distributed under the License is distributed on an
@@ -38,7 +38,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -119,19 +119,19 @@
             [reserved uint 7 '0x00']
             [simple   bit    value]
         ]
-        ['BYTE' BYTE
+        ['BYTE' BitString
             [reserved uint 8    '0x00']
             [simple   uint 8    value ]
         ]
-        ['WORD' WORD
+        ['WORD' BitString
             [reserved uint 8    '0x00']
             [simple   uint 16    value]
         ]
-        ['DWORD' DWORD
+        ['DWORD' BitString
             [reserved uint 8    '0x00']
             [simple   uint 32    value]
         ]
-        ['LWORD' LWORD
+        ['LWORD' BitString
             [reserved uint 8    '0x00']
             [simple   uint 64    value]
         ]

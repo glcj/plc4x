@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -206,7 +206,6 @@ public class DefaultNettyPlcConnection extends AbstractPlcConnection implements 
                             .map(ConnectionStateListener.class::cast);
                         if (evt instanceof ConnectedEvent) {
                             sessionSetupCompleteFuture.complete(null);
-                            System.out.println("");
                             eventListeners.forEach(ConnectionStateListener::connected);
                         } else if (evt instanceof DisconnectedEvent) {
                             sessionDisconnectCompleteFuture.complete(null);
@@ -231,7 +230,7 @@ public class DefaultNettyPlcConnection extends AbstractPlcConnection implements 
         // Send an event to the pipeline telling the Protocol filters what's going on.
         channel.pipeline().fireUserEventTriggered(new ConnectEvent());
     }
-    
+
     @Override
     public void addEventListener(EventListener listener) {
         listeners.add(listener);

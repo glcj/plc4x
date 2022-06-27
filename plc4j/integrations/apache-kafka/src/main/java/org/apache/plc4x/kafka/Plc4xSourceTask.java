@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -153,9 +153,8 @@ public class Plc4xSourceTask extends SourceTask {
         ScraperConfigurationTriggeredImpl scraperConfig = builder.build();
 
         try {
-            PlcDriverManager manager = new PlcDriverManager();
-            PlcDriverManager plcDriverManager = new CachedDriverManager(plc4xConnectionString,() -> manager.getConnection(plc4xConnectionString));
-            TriggerCollector triggerCollector = new TriggerCollectorImpl(plcDriverManager);
+            PlcDriverManager manager = new PooledDriverManager();
+            TriggerCollector triggerCollector = new TriggerCollectorImpl(manager);
             scraper = new TriggeredScraperImpl(scraperConfig, (jobName, sourceName, results) -> {
                 try {
                     Long timestamp = System.currentTimeMillis();
@@ -235,6 +234,7 @@ public class Plc4xSourceTask extends SourceTask {
             triggerCollector.start();
         } catch (ScraperException e) {
             log.error("Error starting the scraper", e);
+
         }
     }
 

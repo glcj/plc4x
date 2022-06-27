@@ -8,7 +8,7 @@
   "License"); you may not use this file except in compliance
   with the License.  You may obtain a copy of the License at
 
-      http://www.apache.org/licenses/LICENSE-2.0
+      https://www.apache.org/licenses/LICENSE-2.0
 
   Unless required by applicable law or agreed to in writing,
   software distributed under the License is distributed on an
@@ -33,7 +33,7 @@
   <description>Integration module for integrating PLC4X into Apache Nifi.</description>
 
   <properties>
-    <nifi.version>1.16.1</nifi.version>
+    <nifi.version>1.16.3</nifi.version>
   </properties>
 
   <modules>
@@ -50,7 +50,7 @@
         <version>1.3.3</version>
         <extensions>true</extensions>
       </plugin>
-      <!-- Makes buildRevision and buildBranch available to the NAR Plugin so they can be populated in the MANIFEST -->
+      <!-- Makes buildRevision and buildBranch available to the NAR Plugin, so they can be populated in the MANIFEST -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
@@ -91,7 +91,23 @@
       <dependency>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-annotations</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.6</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>${jaxb.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>4.0.0</version>
+        <exclusions>
+          <exclusion>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>

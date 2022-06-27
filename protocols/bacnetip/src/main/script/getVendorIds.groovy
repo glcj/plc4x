@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,10 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import groovy.text.SimpleTemplateEngine
+import org.jsoup.Jsoup
+
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import org.jsoup.Jsoup
-import groovy.text.SimpleTemplateEngine
 
 // Make sure the cache directory exists in the used maven local repo
 def localRepoBaseDir = session.getLocalRepository().getBasedir()
@@ -111,7 +113,7 @@ mspecTemplate = """
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *   https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -122,6 +124,28 @@ mspecTemplate = """
  */
 [enum uint 16 BACnetVendorId(uint 16 vendorId, string 8 vendorName)
 <% for (item in values) { %> ['<%= item.vendorId %>' <%= item.organizationSanitized %> ['<%= item.vendorId %>', '"<%= item.organization %>"']]\\n <% } %>
+  ['0xFFFF' UNKNOWN_VENDOR ['0xFFFF', '"Unknown"']]
+]
+
+[type BACnetVendorIdTagged(uint 8 tagNumber, TagClass tagClass)
+    [simple   BACnetTagHeader
+                        header                                                                               ]
+    [validation    'header.tagClass == tagClass'    "tag class doesn't match"                                ]
+    [validation    '(header.tagClass == TagClass.APPLICATION_TAGS && header.actualTagNumber == 2) || (header.actualTagNumber == tagNumber)'
+                                                    "tagnumber doesn't match" shouldFail=false               ]
+    [manual   BACnetVendorId
+                    value
+                        'STATIC_CALL("readEnumGeneric", readBuffer, header.actualLength, BACnetVendorId.UNKNOWN_VENDOR)'
+                        'STATIC_CALL("writeEnumGeneric", writeBuffer, value)'
+                        '_value.isUnknownId?0:(header.actualLength * 8)'                                     ]
+    [virtual  bit   isUnknownId
+                        'value == BACnetVendorId.UNKNOWN_VENDOR'                                             ]
+    //TODO: change to uint32 once cast is inserted
+    [manual   uint 32
+                    unknownId
+                        'STATIC_CALL("readProprietaryEnumGeneric", readBuffer, header.actualLength, isUnknownId)'
+                        'STATIC_CALL("writeProprietaryEnumGeneric", writeBuffer, unknownId, isUnknownId)'
+                        '_value.isUnknownId?(header.actualLength * 8):0'                                     ]
 ]
 """
 SimpleTemplateEngine templateEngine = new SimpleTemplateEngine()
