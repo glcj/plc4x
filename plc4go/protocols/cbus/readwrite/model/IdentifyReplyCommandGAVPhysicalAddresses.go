@@ -83,10 +83,10 @@ func (m *_IdentifyReplyCommandGAVPhysicalAddresses) GetValues() []byte {
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandGAVPhysicalAddresses factory function for _IdentifyReplyCommandGAVPhysicalAddresses
-func NewIdentifyReplyCommandGAVPhysicalAddresses(values []byte) *_IdentifyReplyCommandGAVPhysicalAddresses {
+func NewIdentifyReplyCommandGAVPhysicalAddresses(values []byte, numBytes uint8) *_IdentifyReplyCommandGAVPhysicalAddresses {
 	_result := &_IdentifyReplyCommandGAVPhysicalAddresses{
 		Values:                values,
-		_IdentifyReplyCommand: NewIdentifyReplyCommand(),
+		_IdentifyReplyCommand: NewIdentifyReplyCommand(numBytes),
 	}
 	_result._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _result
 	return _result
@@ -126,7 +126,7 @@ func (m *_IdentifyReplyCommandGAVPhysicalAddresses) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandGAVPhysicalAddressesParse(readBuffer utils.ReadBuffer, attribute Attribute) (IdentifyReplyCommandGAVPhysicalAddresses, error) {
+func IdentifyReplyCommandGAVPhysicalAddressesParse(readBuffer utils.ReadBuffer, attribute Attribute, numBytes uint8) (IdentifyReplyCommandGAVPhysicalAddresses, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandGAVPhysicalAddresses"); pullErr != nil {
@@ -135,10 +135,10 @@ func IdentifyReplyCommandGAVPhysicalAddressesParse(readBuffer utils.ReadBuffer, 
 	currentPos := positionAware.GetPos()
 	_ = currentPos
 	// Byte Array field (values)
-	numberOfBytesvalues := int(uint16(16))
+	numberOfBytesvalues := int(numBytes)
 	values, _readArrayErr := readBuffer.ReadByteArray("values", numberOfBytesvalues)
 	if _readArrayErr != nil {
-		return nil, errors.Wrap(_readArrayErr, "Error parsing 'values' field")
+		return nil, errors.Wrap(_readArrayErr, "Error parsing 'values' field of IdentifyReplyCommandGAVPhysicalAddresses")
 	}
 
 	if closeErr := readBuffer.CloseContext("IdentifyReplyCommandGAVPhysicalAddresses"); closeErr != nil {
@@ -147,8 +147,10 @@ func IdentifyReplyCommandGAVPhysicalAddressesParse(readBuffer utils.ReadBuffer, 
 
 	// Create a partially initialized instance
 	_child := &_IdentifyReplyCommandGAVPhysicalAddresses{
-		Values:                values,
-		_IdentifyReplyCommand: &_IdentifyReplyCommand{},
+		Values: values,
+		_IdentifyReplyCommand: &_IdentifyReplyCommand{
+			NumBytes: numBytes,
+		},
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil

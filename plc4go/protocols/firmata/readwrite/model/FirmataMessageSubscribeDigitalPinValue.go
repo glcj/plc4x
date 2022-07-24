@@ -151,7 +151,7 @@ func FirmataMessageSubscribeDigitalPinValueParse(readBuffer utils.ReadBuffer, re
 	// Simple Field (pin)
 	_pin, _pinErr := readBuffer.ReadUint8("pin", 4)
 	if _pinErr != nil {
-		return nil, errors.Wrap(_pinErr, "Error parsing 'pin' field")
+		return nil, errors.Wrap(_pinErr, "Error parsing 'pin' field of FirmataMessageSubscribeDigitalPinValue")
 	}
 	pin := _pin
 
@@ -159,20 +159,20 @@ func FirmataMessageSubscribeDigitalPinValueParse(readBuffer utils.ReadBuffer, re
 	{
 		reserved, _err := readBuffer.ReadUint8("reserved", 7)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of FirmataMessageSubscribeDigitalPinValue")
 		}
 		if reserved != uint8(0x00) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint8(0x00),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
 	// Simple Field (enable)
 	_enable, _enableErr := readBuffer.ReadBit("enable")
 	if _enableErr != nil {
-		return nil, errors.Wrap(_enableErr, "Error parsing 'enable' field")
+		return nil, errors.Wrap(_enableErr, "Error parsing 'enable' field of FirmataMessageSubscribeDigitalPinValue")
 	}
 	enable := _enable
 

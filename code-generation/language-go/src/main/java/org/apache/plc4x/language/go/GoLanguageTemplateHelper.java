@@ -363,7 +363,7 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                 if (!(encodingTerm instanceof StringLiteral)) {
                     throw new RuntimeException("Encoding must be a quoted string value");
                 }
-                String lengthExpression = toExpression(field, field.getType(), vstringTypeReference.getLengthExpression(), null, null, false, false);
+                String lengthExpression = toExpression(field, null, vstringTypeReference.getLengthExpression(), null, null, false, false);
                 return "readBuffer.ReadString(\"" + logicalName + "\", uint32(" + lengthExpression + "))";
             }
             case TIME:
@@ -467,7 +467,7 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                     .orElseThrow(() -> new RuntimeException("Encoding must be a literal"))
                     .asStringLiteral()
                     .orElseThrow(() -> new RuntimeException("Encoding must be a quoted string value")).getValue();
-                String lengthExpression = toExpression(field, field.getType(), vstringTypeReference.getLengthExpression(), null, null, true, false);
+                String lengthExpression = toExpression(field, null, vstringTypeReference.getLengthExpression(), null, null, true, false);
                 String length = Integer.toString(simpleTypeReference.getSizeInBits());
                 return "writeBuffer.WriteString(\"" + logicalName + "\", uint32(" + lengthExpression + "), \"" +
                     encoding + "\", " + fieldName + writerArgsString + ")";
@@ -841,7 +841,15 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                 variableLiteral.getChild()
                     .map(child -> "." + capitalize(toVariableExpression(field, typeReference, child, parserArguments, serializerArguments, false, suppressPointerAccess, true)))
                     .orElse("");
-        }
+        }/*
+        if ((parserArguments != null) && parserArguments.stream()
+            .anyMatch(argument -> argument.getName().equals(variableLiteralName))) {
+            tracer = tracer.dive("parser argument");
+            return tracer + "m." + capitalize(variableLiteralName) +
+                variableLiteral.getChild()
+                    .map(child -> "." + capitalize(toVariableExpression(field, typeReference, child, parserArguments, serializerArguments, false, suppressPointerAccess, true)))
+                    .orElse("");
+        }*/
         String indexCall = "";
         if (variableLiteral.getIndex().isPresent()) {
             tracer = tracer.dive("indexCall");
@@ -958,7 +966,7 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                 arg = ((UnaryTerm) arg).getA();
             }
             if (arg instanceof VariableLiteral) {
-                tracer = tracer.dive("VariableLiteral");
+                tracer = tracer.dive("VariableLiteral nr." + i);
                 VariableLiteral va = (VariableLiteral) arg;
                 // "io" is the default name of the reader argument which is always available.
                 boolean isParserArg = "readBuffer".equals(va.getName()) || "writeBuffer".equals(va.getName()) || ((thisType instanceof DataIoTypeDefinition) && "_value".equals(va.getName()));
@@ -972,11 +980,13 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                     }
                 }
                 if (isParserArg) {
+                    tracer = tracer.dive("isParserArg");
                     if (va.getName().equals("_value")) {
+                        tracer = tracer.dive("is _value");
                         sb.append(va.getName().substring(1)).append(va.getChild().map(child -> "." + toVariableExpression(field, typeReference, child, parserArguments, serializerArguments, false, suppressPointerAccess, true)).orElse(""));
                     } else {
                         sb.append(va.getName()).append((va.getChild().isPresent()) ?
-                            "." + toVariableExpression(field, typeReference, variableLiteral.getChild().orElseThrow(IllegalStateException::new), parserArguments, serializerArguments, false, suppressPointerAccess) : "");
+                            ".Get" + capitalize(toVariableExpression(field, typeReference, va.getChild().orElseThrow(IllegalStateException::new), parserArguments, serializerArguments, false, suppressPointerAccess)) + "()" : "");
                     }
                 }
                 // We have to manually evaluate the type information at code-generation time.
@@ -1047,7 +1057,7 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
 
     private String toOptionalVariableExpression(Field field, TypeReference typeReference, VariableLiteral variableLiteral, List<Argument> parserArguments, List<Argument> serializerArguments, boolean suppressPointerAccess, Tracer tracer) {
         tracer = tracer.dive("optional fields");
-        return tracer + "(" + (suppressPointerAccess || (typeReference != null && typeReference.isComplexTypeReference())? "" : "*") + variableLiteral.getName() + ")" +
+        return tracer + "(" + (suppressPointerAccess || (typeReference != null && typeReference.isComplexTypeReference()) ? "" : "*") + variableLiteral.getName() + ")" +
             variableLiteral.getChild().map(child -> "." + capitalize(toVariableExpression(field, typeReference, child, parserArguments, serializerArguments, false, suppressPointerAccess, true))).orElse("");
     }
 

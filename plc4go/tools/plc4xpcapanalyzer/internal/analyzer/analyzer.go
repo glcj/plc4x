@@ -21,30 +21,58 @@ package analyzer
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
+	"github.com/apache/plc4x/plc4go/tools/plc4xpcapanalyzer/config"
 	"github.com/apache/plc4x/plc4go/tools/plc4xpcapanalyzer/internal/bacnetanalyzer"
+	"github.com/apache/plc4x/plc4go/tools/plc4xpcapanalyzer/internal/cbusanalyzer"
+	"github.com/apache/plc4x/plc4go/tools/plc4xpcapanalyzer/internal/common"
 	"github.com/apache/plc4x/plc4go/tools/plc4xpcapanalyzer/internal/pcaphandler"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
 	"github.com/k0kubun/go-ansi"
 	"github.com/rs/zerolog/log"
 	"github.com/schollz/progressbar/v3"
+	"net"
+	"time"
 )
 
-func Analyze(pcapFile, protocolType, filter string, onlyParse, noBytesCompare bool) {
-	log.Info().Msgf("Analyzing pcap file '%s' with protocolType '%s' and filter '%s' now", pcapFile, protocolType, filter)
+func Analyze(pcapFile, protocolType string) {
+	log.Info().Msgf("Analyzing pcap file '%s' with protocolType '%s' and filter '%s' now", pcapFile, protocolType, config.AnalyzeConfigInstance.Filter)
 
-	handle, numberOfPackage, timestampToIndexMap := pcaphandler.GetIndexedPcapHandle(pcapFile, filter)
+	handle, numberOfPackage, timestampToIndexMap := pcaphandler.GetIndexedPcapHandle(pcapFile, config.AnalyzeConfigInstance.Filter)
 	log.Info().Msgf("Starting to analyze %d packages", numberOfPackage)
 	defer handle.Close()
 	log.Debug().Interface("handle", handle).Int("numberOfPackage", numberOfPackage).Msg("got handle")
 	source := pcaphandler.GetPacketSource(handle)
-	var packageParse func(string, []byte) (interface{}, error)
+	var mapPackets = func(in chan gopacket.Packet, packetInformationCreator func(packet gopacket.Packet) common.PacketInformation) chan gopacket.Packet {
+		return in
+	}
+	var packageParse func(common.PacketInformation, []byte) (interface{}, error)
 	var serializePackage func(interface{}) ([]byte, error)
+	var prettyPrint = func(item interface{}) {
+		fmt.Printf("%v\n", item)
+	}
+	var byteOutput = hex.Dump
 	switch protocolType {
 	case "bacnet":
 		packageParse = bacnetanalyzer.PackageParse
 		serializePackage = bacnetanalyzer.SerializePackage
+	case "c-bus":
+		analyzer := cbusanalyzer.Analyzer{Client: net.ParseIP(config.AnalyzeConfigInstance.Client)}
+		analyzer.Init()
+		packageParse = analyzer.PackageParse
+		serializePackage = analyzer.SerializePackage
+		prettyPrint = analyzer.PrettyPrint
+		mapPackets = analyzer.MapPackets
+		if !config.AnalyzeConfigInstance.NoCustomMapping {
+			byteOutput = analyzer.ByteOutput
+		} else {
+			log.Info().Msg("Custom mapping disabled")
+		}
 	}
-	bar := progressbar.NewOptions(numberOfPackage, progressbar.OptionSetWriter(ansi.NewAnsiStdout()),
+	bar := progressbar.NewOptions(numberOfPackage, progressbar.OptionSetWriter(ansi.NewAnsiStderr()),
+		progressbar.OptionSetVisibility(!config.RootConfigInstance.HideProgressBar),
 		progressbar.OptionEnableColorCodes(true),
 		progressbar.OptionShowBytes(false),
 		progressbar.OptionSetWidth(15),
@@ -56,7 +84,22 @@ func Analyze(pcapFile, protocolType, filter string, onlyParse, noBytesCompare bo
 			BarStart:      "[",
 			BarEnd:        "]",
 		}))
-	for packet := range source.Packets() {
+	currentPackageNum := uint(0)
+	parseFails := 0
+	serializeFails := 0
+	compareFails := 0
+	for packet := range mapPackets(source.Packets(), func(packet gopacket.Packet) common.PacketInformation {
+		return createPacketInformation(pcapFile, packet, timestampToIndexMap)
+	}) {
+		currentPackageNum++
+		if currentPackageNum < config.AnalyzeConfigInstance.StartPackageNumber {
+			log.Debug().Msgf("Skipping package number %d (till no. %d)", currentPackageNum, config.AnalyzeConfigInstance.StartPackageNumber)
+			continue
+		}
+		if currentPackageNum > config.AnalyzeConfigInstance.PackageNumberLimit {
+			log.Warn().Msgf("Aborting reading packages because we hit the limit of %d", config.AnalyzeConfigInstance.PackageNumberLimit)
+			break
+		}
 		if packet == nil {
 			log.Debug().Msg("Done reading packages. (nil returned)")
 			break
@@ -64,40 +107,80 @@ func Analyze(pcapFile, protocolType, filter string, onlyParse, noBytesCompare bo
 		if err := bar.Add(1); err != nil {
 			log.Warn().Err(err).Msg("Error updating progressBar")
 		}
-		packetTimestamp := packet.Metadata().Timestamp
-		realPacketNumber := timestampToIndexMap[packetTimestamp]
-		packetInformation := fmt.Sprintf("%s: [%d] timestamp: %v", pcapFile, realPacketNumber, packetTimestamp)
+		packetInformation := createPacketInformation(pcapFile, packet, timestampToIndexMap)
+		realPacketNumber := packetInformation.PacketNumber
+		if filteredPackage, ok := packet.(common.FilteredPackage); ok {
+			log.Info().Err(filteredPackage.FilterReason()).Msgf("No.[%d] was filtered", realPacketNumber)
+			continue
+		}
+
 		applicationLayer := packet.ApplicationLayer()
 		if applicationLayer == nil {
-			log.Info().Str("packetInformation", packetInformation).Msg("No application layer")
+			log.Info().Stringer("packetInformation", packetInformation).Msgf("No.[%d] No application layer", realPacketNumber)
 			continue
 		}
 		payload := applicationLayer.Payload()
 		if parsed, err := packageParse(packetInformation, payload); err != nil {
-			// TODO: write report to xml or something
-			log.Warn().Str("packetInformation", packetInformation).Err(err).Msg("Error parsing package")
+			switch err {
+			case common.ErrUnterminatedPackage:
+				log.Info().Stringer("packetInformation", packetInformation).Msgf("No.[%d] is unterminated", realPacketNumber)
+			case common.ErrEmptyPackage:
+				log.Info().Stringer("packetInformation", packetInformation).Msgf("No.[%d] is empty", realPacketNumber)
+			default:
+				parseFails++
+				// TODO: write report to xml or something
+				log.Error().Stringer("packetInformation", packetInformation).Err(err).Msgf("No.[%d] Error parsing package.\nInput:\n%s", realPacketNumber, byteOutput(payload))
+			}
 			continue
 		} else {
-			if onlyParse {
+			log.Info().Stringer("packetInformation", packetInformation).Msgf("No.[%d] Parsed", realPacketNumber)
+			if config.AnalyzeConfigInstance.Verbosity > 1 {
+				prettyPrint(parsed)
+			}
+			if config.AnalyzeConfigInstance.OnlyParse {
 				log.Trace().Msg("only parsing")
 				continue
 			}
 			serializedBytes, err := serializePackage(parsed)
 			if err != nil {
+				serializeFails++
 				// TODO: write report to xml or something
-				log.Warn().Str("packetInformation", packetInformation).Err(err).Msg("Error serializing")
+				log.Warn().Stringer("packetInformation", packetInformation).Err(err).Msgf("No.[%d] Error serializing", realPacketNumber)
 				continue
 			}
-			if noBytesCompare {
+			if config.AnalyzeConfigInstance.NoBytesCompare {
 				log.Trace().Msg("not comparing bytes")
 				continue
 			}
 			if compareResult := bytes.Compare(payload, serializedBytes); compareResult != 0 {
+				compareFails++
 				// TODO: write report to xml or something
-				log.Warn().Msg("Bytes don't match")
+				log.Warn().Stringer("packetInformation", packetInformation).Msgf("No.[%d] Bytes don't match.\nOriginal:\n%sSerialized:\n%s", realPacketNumber, byteOutput(payload), byteOutput(serializedBytes))
+				if config.AnalyzeConfigInstance.Verbosity > 0 {
+					println("Original bytes")
+					println(hex.Dump(payload))
+					println("Serialized bytes")
+					println(hex.Dump(serializedBytes))
+				}
 			}
 		}
 	}
 
-	log.Info().Msgf("Done evaluating %d packages", numberOfPackage)
+	log.Info().Msgf("Done evaluating %d of %d packages (%d failed to parse, %d failed to serialize and %d failed in byte comparison)", currentPackageNum, numberOfPackage, parseFails, serializeFails, compareFails)
+}
+
+func createPacketInformation(pcapFile string, packet gopacket.Packet, timestampToIndexMap map[time.Time]int) common.PacketInformation {
+	packetTimestamp := packet.Metadata().Timestamp
+	realPacketNumber := timestampToIndexMap[packetTimestamp]
+	description := fmt.Sprintf("No.[%d] timestamp: %v, %s", realPacketNumber, packetTimestamp, pcapFile)
+	packetInformation := common.PacketInformation{
+		PacketNumber:    realPacketNumber,
+		PacketTimestamp: packetTimestamp,
+		Description:     description,
+	}
+	if networkLayer, ok := packet.NetworkLayer().(*layers.IPv4); ok {
+		packetInformation.SrcIp = networkLayer.SrcIP
+		packetInformation.DstIp = networkLayer.DstIP
+	}
+	return packetInformation
 }

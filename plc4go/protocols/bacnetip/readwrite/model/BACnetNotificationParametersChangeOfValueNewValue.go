@@ -166,7 +166,7 @@ func BACnetNotificationParametersChangeOfValueNewValueParse(readBuffer utils.Rea
 	}
 	_openingTag, _openingTagErr := BACnetOpeningTagParse(readBuffer, uint8(tagNumber))
 	if _openingTagErr != nil {
-		return nil, errors.Wrap(_openingTagErr, "Error parsing 'openingTag' field")
+		return nil, errors.Wrap(_openingTagErr, "Error parsing 'openingTag' field of BACnetNotificationParametersChangeOfValueNewValue")
 	}
 	openingTag := _openingTag.(BACnetOpeningTag)
 	if closeErr := readBuffer.CloseContext("openingTag"); closeErr != nil {
@@ -201,11 +201,10 @@ func BACnetNotificationParametersChangeOfValueNewValueParse(readBuffer utils.Rea
 	case peekedTagNumber == uint8(1): // BACnetNotificationParametersChangeOfValueNewValueChangedValue
 		_childTemp, typeSwitchError = BACnetNotificationParametersChangeOfValueNewValueChangedValueParse(readBuffer, tagNumber, peekedTagNumber)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [peekedTagNumber=%v]", peekedTagNumber)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of BACnetNotificationParametersChangeOfValueNewValue")
 	}
 	_child = _childTemp.(BACnetNotificationParametersChangeOfValueNewValueChildSerializeRequirement)
 
@@ -215,7 +214,7 @@ func BACnetNotificationParametersChangeOfValueNewValueParse(readBuffer utils.Rea
 	}
 	_closingTag, _closingTagErr := BACnetClosingTagParse(readBuffer, uint8(tagNumber))
 	if _closingTagErr != nil {
-		return nil, errors.Wrap(_closingTagErr, "Error parsing 'closingTag' field")
+		return nil, errors.Wrap(_closingTagErr, "Error parsing 'closingTag' field of BACnetNotificationParametersChangeOfValueNewValue")
 	}
 	closingTag := _closingTag.(BACnetClosingTag)
 	if closeErr := readBuffer.CloseContext("closingTag"); closeErr != nil {

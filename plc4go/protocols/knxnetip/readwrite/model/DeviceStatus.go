@@ -114,20 +114,20 @@ func DeviceStatusParse(readBuffer utils.ReadBuffer) (DeviceStatus, error) {
 	{
 		reserved, _err := readBuffer.ReadUint8("reserved", 7)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of DeviceStatus")
 		}
 		if reserved != uint8(0x00) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint8(0x00),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
 	// Simple Field (programMode)
 	_programMode, _programModeErr := readBuffer.ReadBit("programMode")
 	if _programModeErr != nil {
-		return nil, errors.Wrap(_programModeErr, "Error parsing 'programMode' field")
+		return nil, errors.Wrap(_programModeErr, "Error parsing 'programMode' field of DeviceStatus")
 	}
 	programMode := _programMode
 

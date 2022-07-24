@@ -97,12 +97,12 @@ func (m *_IdentifyReplyCommandFirmwareSummary) GetVersion() string {
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandFirmwareSummary factory function for _IdentifyReplyCommandFirmwareSummary
-func NewIdentifyReplyCommandFirmwareSummary(firmwareVersion string, unitServiceType byte, version string) *_IdentifyReplyCommandFirmwareSummary {
+func NewIdentifyReplyCommandFirmwareSummary(firmwareVersion string, unitServiceType byte, version string, numBytes uint8) *_IdentifyReplyCommandFirmwareSummary {
 	_result := &_IdentifyReplyCommandFirmwareSummary{
 		FirmwareVersion:       firmwareVersion,
 		UnitServiceType:       unitServiceType,
 		Version:               version,
-		_IdentifyReplyCommand: NewIdentifyReplyCommand(),
+		_IdentifyReplyCommand: NewIdentifyReplyCommand(numBytes),
 	}
 	_result._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _result
 	return _result
@@ -146,7 +146,7 @@ func (m *_IdentifyReplyCommandFirmwareSummary) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandFirmwareSummaryParse(readBuffer utils.ReadBuffer, attribute Attribute) (IdentifyReplyCommandFirmwareSummary, error) {
+func IdentifyReplyCommandFirmwareSummaryParse(readBuffer utils.ReadBuffer, attribute Attribute, numBytes uint8) (IdentifyReplyCommandFirmwareSummary, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandFirmwareSummary"); pullErr != nil {
@@ -158,21 +158,21 @@ func IdentifyReplyCommandFirmwareSummaryParse(readBuffer utils.ReadBuffer, attri
 	// Simple Field (firmwareVersion)
 	_firmwareVersion, _firmwareVersionErr := readBuffer.ReadString("firmwareVersion", uint32(48))
 	if _firmwareVersionErr != nil {
-		return nil, errors.Wrap(_firmwareVersionErr, "Error parsing 'firmwareVersion' field")
+		return nil, errors.Wrap(_firmwareVersionErr, "Error parsing 'firmwareVersion' field of IdentifyReplyCommandFirmwareSummary")
 	}
 	firmwareVersion := _firmwareVersion
 
 	// Simple Field (unitServiceType)
 	_unitServiceType, _unitServiceTypeErr := readBuffer.ReadByte("unitServiceType")
 	if _unitServiceTypeErr != nil {
-		return nil, errors.Wrap(_unitServiceTypeErr, "Error parsing 'unitServiceType' field")
+		return nil, errors.Wrap(_unitServiceTypeErr, "Error parsing 'unitServiceType' field of IdentifyReplyCommandFirmwareSummary")
 	}
 	unitServiceType := _unitServiceType
 
 	// Simple Field (version)
 	_version, _versionErr := readBuffer.ReadString("version", uint32(32))
 	if _versionErr != nil {
-		return nil, errors.Wrap(_versionErr, "Error parsing 'version' field")
+		return nil, errors.Wrap(_versionErr, "Error parsing 'version' field of IdentifyReplyCommandFirmwareSummary")
 	}
 	version := _version
 
@@ -182,10 +182,12 @@ func IdentifyReplyCommandFirmwareSummaryParse(readBuffer utils.ReadBuffer, attri
 
 	// Create a partially initialized instance
 	_child := &_IdentifyReplyCommandFirmwareSummary{
-		FirmwareVersion:       firmwareVersion,
-		UnitServiceType:       unitServiceType,
-		Version:               version,
-		_IdentifyReplyCommand: &_IdentifyReplyCommand{},
+		FirmwareVersion: firmwareVersion,
+		UnitServiceType: unitServiceType,
+		Version:         version,
+		_IdentifyReplyCommand: &_IdentifyReplyCommand{
+			NumBytes: numBytes,
+		},
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil

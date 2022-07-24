@@ -111,7 +111,7 @@ func DF1RequestCommandParse(readBuffer utils.ReadBuffer) (DF1RequestCommand, err
 	// Discriminator Field (functionCode) (Used as input to a switch field)
 	functionCode, _functionCodeErr := readBuffer.ReadUint8("functionCode", 8)
 	if _functionCodeErr != nil {
-		return nil, errors.Wrap(_functionCodeErr, "Error parsing 'functionCode' field")
+		return nil, errors.Wrap(_functionCodeErr, "Error parsing 'functionCode' field of DF1RequestCommand")
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
@@ -127,11 +127,10 @@ func DF1RequestCommandParse(readBuffer utils.ReadBuffer) (DF1RequestCommand, err
 	case functionCode == 0xA2: // DF1RequestProtectedTypedLogicalRead
 		_childTemp, typeSwitchError = DF1RequestProtectedTypedLogicalReadParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [functionCode=%v]", functionCode)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of DF1RequestCommand")
 	}
 	_child = _childTemp.(DF1RequestCommandChildSerializeRequirement)
 

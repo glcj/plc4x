@@ -153,7 +153,7 @@ func BACnetLiftFaultTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, ta
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetLiftFaultTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -173,9 +173,12 @@ func BACnetLiftFaultTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, ta
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGeneric(readBuffer, header.GetActualLength(), BACnetLiftFault_VENDOR_PROPRIETARY_VALUE)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetLiftFaultTagged")
 	}
-	value := _value.(BACnetLiftFault)
+	var value BACnetLiftFault
+	if _value != nil {
+		value = _value.(BACnetLiftFault)
+	}
 
 	// Virtual field
 	_isProprietary := bool((value) == (BACnetLiftFault_VENDOR_PROPRIETARY_VALUE))
@@ -185,9 +188,12 @@ func BACnetLiftFaultTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, ta
 	// Manual Field (proprietaryValue)
 	_proprietaryValue, _proprietaryValueErr := ReadProprietaryEnumGeneric(readBuffer, header.GetActualLength(), isProprietary)
 	if _proprietaryValueErr != nil {
-		return nil, errors.Wrap(_proprietaryValueErr, "Error parsing 'proprietaryValue' field")
+		return nil, errors.Wrap(_proprietaryValueErr, "Error parsing 'proprietaryValue' field of BACnetLiftFaultTagged")
 	}
-	proprietaryValue := _proprietaryValue.(uint32)
+	var proprietaryValue uint32
+	if _proprietaryValue != nil {
+		proprietaryValue = _proprietaryValue.(uint32)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetLiftFaultTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetLiftFaultTagged")

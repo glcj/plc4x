@@ -117,13 +117,13 @@ func AmsTCPPacketParse(readBuffer utils.ReadBuffer) (AmsTCPPacket, error) {
 	{
 		reserved, _err := readBuffer.ReadUint16("reserved", 16)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of AmsTCPPacket")
 		}
 		if reserved != uint16(0x0000) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint16(0x0000),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
@@ -131,7 +131,7 @@ func AmsTCPPacketParse(readBuffer utils.ReadBuffer) (AmsTCPPacket, error) {
 	length, _lengthErr := readBuffer.ReadUint32("length", 32)
 	_ = length
 	if _lengthErr != nil {
-		return nil, errors.Wrap(_lengthErr, "Error parsing 'length' field")
+		return nil, errors.Wrap(_lengthErr, "Error parsing 'length' field of AmsTCPPacket")
 	}
 
 	// Simple Field (userdata)
@@ -140,7 +140,7 @@ func AmsTCPPacketParse(readBuffer utils.ReadBuffer) (AmsTCPPacket, error) {
 	}
 	_userdata, _userdataErr := AmsPacketParse(readBuffer)
 	if _userdataErr != nil {
-		return nil, errors.Wrap(_userdataErr, "Error parsing 'userdata' field")
+		return nil, errors.Wrap(_userdataErr, "Error parsing 'userdata' field of AmsTCPPacket")
 	}
 	userdata := _userdata.(AmsPacket)
 	if closeErr := readBuffer.CloseContext("userdata"); closeErr != nil {

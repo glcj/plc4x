@@ -43,6 +43,8 @@ type MonitoredSALShortFormBasicMode interface {
 	GetNoCounts() *byte
 	// GetApplication returns Application (property field)
 	GetApplication() ApplicationIdContainer
+	// GetSalData returns SalData (property field)
+	GetSalData() SALData
 }
 
 // MonitoredSALShortFormBasicModeExactly can be used when we want exactly this type and not a type which fulfills MonitoredSALShortFormBasicMode.
@@ -60,6 +62,7 @@ type _MonitoredSALShortFormBasicMode struct {
 	NetworkNumber NetworkNumber
 	NoCounts      *byte
 	Application   ApplicationIdContainer
+	SalData       SALData
 }
 
 ///////////////////////////////////////////////////////////
@@ -72,9 +75,8 @@ type _MonitoredSALShortFormBasicMode struct {
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
-func (m *_MonitoredSALShortFormBasicMode) InitializeParent(parent MonitoredSAL, salType byte, salData SALData) {
+func (m *_MonitoredSALShortFormBasicMode) InitializeParent(parent MonitoredSAL, salType byte) {
 	m.SalType = salType
-	m.SalData = salData
 }
 
 func (m *_MonitoredSALShortFormBasicMode) GetParent() MonitoredSAL {
@@ -106,20 +108,25 @@ func (m *_MonitoredSALShortFormBasicMode) GetApplication() ApplicationIdContaine
 	return m.Application
 }
 
+func (m *_MonitoredSALShortFormBasicMode) GetSalData() SALData {
+	return m.SalData
+}
+
 ///////////////////////
 ///////////////////////
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
 // NewMonitoredSALShortFormBasicMode factory function for _MonitoredSALShortFormBasicMode
-func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount BridgeCount, networkNumber NetworkNumber, noCounts *byte, application ApplicationIdContainer, salType byte, salData SALData) *_MonitoredSALShortFormBasicMode {
+func NewMonitoredSALShortFormBasicMode(counts byte, bridgeCount BridgeCount, networkNumber NetworkNumber, noCounts *byte, application ApplicationIdContainer, salData SALData, salType byte, cBusOptions CBusOptions) *_MonitoredSALShortFormBasicMode {
 	_result := &_MonitoredSALShortFormBasicMode{
 		Counts:        counts,
 		BridgeCount:   bridgeCount,
 		NetworkNumber: networkNumber,
 		NoCounts:      noCounts,
 		Application:   application,
-		_MonitoredSAL: NewMonitoredSAL(salType, salData),
+		SalData:       salData,
+		_MonitoredSAL: NewMonitoredSAL(salType, cBusOptions),
 	}
 	_result._MonitoredSAL._MonitoredSALChildRequirements = _result
 	return _result
@@ -165,6 +172,11 @@ func (m *_MonitoredSALShortFormBasicMode) GetLengthInBitsConditional(lastItem bo
 	// Simple field (application)
 	lengthInBits += 8
 
+	// Optional Field (salData)
+	if m.SalData != nil {
+		lengthInBits += m.SalData.GetLengthInBits()
+	}
+
 	return lengthInBits
 }
 
@@ -172,7 +184,7 @@ func (m *_MonitoredSALShortFormBasicMode) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (MonitoredSALShortFormBasicMode, error) {
+func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer, cBusOptions CBusOptions) (MonitoredSALShortFormBasicMode, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("MonitoredSALShortFormBasicMode"); pullErr != nil {
@@ -185,7 +197,7 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (Monitored
 	currentPos = positionAware.GetPos()
 	counts, _err := readBuffer.ReadByte("counts")
 	if _err != nil {
-		return nil, errors.Wrap(_err, "Error parsing 'counts' field")
+		return nil, errors.Wrap(_err, "Error parsing 'counts' field of MonitoredSALShortFormBasicMode")
 	}
 
 	readBuffer.Reset(currentPos)
@@ -203,7 +215,7 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (Monitored
 			log.Debug().Err(_err).Msg("Resetting position because optional threw an error")
 			readBuffer.Reset(currentPos)
 		case _err != nil:
-			return nil, errors.Wrap(_err, "Error parsing 'bridgeCount' field")
+			return nil, errors.Wrap(_err, "Error parsing 'bridgeCount' field of MonitoredSALShortFormBasicMode")
 		default:
 			bridgeCount = _val.(BridgeCount)
 			if closeErr := readBuffer.CloseContext("bridgeCount"); closeErr != nil {
@@ -225,7 +237,7 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (Monitored
 			log.Debug().Err(_err).Msg("Resetting position because optional threw an error")
 			readBuffer.Reset(currentPos)
 		case _err != nil:
-			return nil, errors.Wrap(_err, "Error parsing 'networkNumber' field")
+			return nil, errors.Wrap(_err, "Error parsing 'networkNumber' field of MonitoredSALShortFormBasicMode")
 		default:
 			networkNumber = _val.(NetworkNumber)
 			if closeErr := readBuffer.CloseContext("networkNumber"); closeErr != nil {
@@ -239,7 +251,7 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (Monitored
 	if bool((counts) == (0x00)) {
 		_val, _err := readBuffer.ReadByte("noCounts")
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'noCounts' field")
+			return nil, errors.Wrap(_err, "Error parsing 'noCounts' field of MonitoredSALShortFormBasicMode")
 		}
 		noCounts = &_val
 	}
@@ -250,11 +262,33 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (Monitored
 	}
 	_application, _applicationErr := ApplicationIdContainerParse(readBuffer)
 	if _applicationErr != nil {
-		return nil, errors.Wrap(_applicationErr, "Error parsing 'application' field")
+		return nil, errors.Wrap(_applicationErr, "Error parsing 'application' field of MonitoredSALShortFormBasicMode")
 	}
 	application := _application
 	if closeErr := readBuffer.CloseContext("application"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for application")
+	}
+
+	// Optional Field (salData) (Can be skipped, if a given expression evaluates to false)
+	var salData SALData = nil
+	{
+		currentPos = positionAware.GetPos()
+		if pullErr := readBuffer.PullContext("salData"); pullErr != nil {
+			return nil, errors.Wrap(pullErr, "Error pulling for salData")
+		}
+		_val, _err := SALDataParse(readBuffer, application.ApplicationId())
+		switch {
+		case errors.Is(_err, utils.ParseAssertError{}) || errors.Is(_err, io.EOF):
+			log.Debug().Err(_err).Msg("Resetting position because optional threw an error")
+			readBuffer.Reset(currentPos)
+		case _err != nil:
+			return nil, errors.Wrap(_err, "Error parsing 'salData' field of MonitoredSALShortFormBasicMode")
+		default:
+			salData = _val.(SALData)
+			if closeErr := readBuffer.CloseContext("salData"); closeErr != nil {
+				return nil, errors.Wrap(closeErr, "Error closing for salData")
+			}
+		}
 	}
 
 	if closeErr := readBuffer.CloseContext("MonitoredSALShortFormBasicMode"); closeErr != nil {
@@ -268,7 +302,10 @@ func MonitoredSALShortFormBasicModeParse(readBuffer utils.ReadBuffer) (Monitored
 		NetworkNumber: networkNumber,
 		NoCounts:      noCounts,
 		Application:   application,
-		_MonitoredSAL: &_MonitoredSAL{},
+		SalData:       salData,
+		_MonitoredSAL: &_MonitoredSAL{
+			CBusOptions: cBusOptions,
+		},
 	}
 	_child._MonitoredSAL._MonitoredSALChildRequirements = _child
 	return _child, nil
@@ -334,6 +371,22 @@ func (m *_MonitoredSALShortFormBasicMode) Serialize(writeBuffer utils.WriteBuffe
 		}
 		if _applicationErr != nil {
 			return errors.Wrap(_applicationErr, "Error serializing 'application' field")
+		}
+
+		// Optional Field (salData) (Can be skipped, if the value is null)
+		var salData SALData = nil
+		if m.GetSalData() != nil {
+			if pushErr := writeBuffer.PushContext("salData"); pushErr != nil {
+				return errors.Wrap(pushErr, "Error pushing for salData")
+			}
+			salData = m.GetSalData()
+			_salDataErr := writeBuffer.WriteSerializable(salData)
+			if popErr := writeBuffer.PopContext("salData"); popErr != nil {
+				return errors.Wrap(popErr, "Error popping for salData")
+			}
+			if _salDataErr != nil {
+				return errors.Wrap(_salDataErr, "Error serializing 'salData' field")
+			}
 		}
 
 		if popErr := writeBuffer.PopContext("MonitoredSALShortFormBasicMode"); popErr != nil {

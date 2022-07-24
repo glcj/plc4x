@@ -83,10 +83,10 @@ func (m *_IdentifyReplyCommandManufacturer) GetManufacturerName() string {
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandManufacturer factory function for _IdentifyReplyCommandManufacturer
-func NewIdentifyReplyCommandManufacturer(manufacturerName string) *_IdentifyReplyCommandManufacturer {
+func NewIdentifyReplyCommandManufacturer(manufacturerName string, numBytes uint8) *_IdentifyReplyCommandManufacturer {
 	_result := &_IdentifyReplyCommandManufacturer{
 		ManufacturerName:      manufacturerName,
-		_IdentifyReplyCommand: NewIdentifyReplyCommand(),
+		_IdentifyReplyCommand: NewIdentifyReplyCommand(numBytes),
 	}
 	_result._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _result
 	return _result
@@ -124,7 +124,7 @@ func (m *_IdentifyReplyCommandManufacturer) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandManufacturerParse(readBuffer utils.ReadBuffer, attribute Attribute) (IdentifyReplyCommandManufacturer, error) {
+func IdentifyReplyCommandManufacturerParse(readBuffer utils.ReadBuffer, attribute Attribute, numBytes uint8) (IdentifyReplyCommandManufacturer, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandManufacturer"); pullErr != nil {
@@ -136,7 +136,7 @@ func IdentifyReplyCommandManufacturerParse(readBuffer utils.ReadBuffer, attribut
 	// Simple Field (manufacturerName)
 	_manufacturerName, _manufacturerNameErr := readBuffer.ReadString("manufacturerName", uint32(64))
 	if _manufacturerNameErr != nil {
-		return nil, errors.Wrap(_manufacturerNameErr, "Error parsing 'manufacturerName' field")
+		return nil, errors.Wrap(_manufacturerNameErr, "Error parsing 'manufacturerName' field of IdentifyReplyCommandManufacturer")
 	}
 	manufacturerName := _manufacturerName
 
@@ -146,8 +146,10 @@ func IdentifyReplyCommandManufacturerParse(readBuffer utils.ReadBuffer, attribut
 
 	// Create a partially initialized instance
 	_child := &_IdentifyReplyCommandManufacturer{
-		ManufacturerName:      manufacturerName,
-		_IdentifyReplyCommand: &_IdentifyReplyCommand{},
+		ManufacturerName: manufacturerName,
+		_IdentifyReplyCommand: &_IdentifyReplyCommand{
+			NumBytes: numBytes,
+		},
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil

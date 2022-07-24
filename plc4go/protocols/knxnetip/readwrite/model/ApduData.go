@@ -114,7 +114,7 @@ func ApduDataParse(readBuffer utils.ReadBuffer, dataLength uint8) (ApduData, err
 	// Discriminator Field (apciType) (Used as input to a switch field)
 	apciType, _apciTypeErr := readBuffer.ReadUint8("apciType", 4)
 	if _apciTypeErr != nil {
-		return nil, errors.Wrap(_apciTypeErr, "Error parsing 'apciType' field")
+		return nil, errors.Wrap(_apciTypeErr, "Error parsing 'apciType' field of ApduData")
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
@@ -160,11 +160,10 @@ func ApduDataParse(readBuffer utils.ReadBuffer, dataLength uint8) (ApduData, err
 	case apciType == 0xF: // ApduDataOther
 		_childTemp, typeSwitchError = ApduDataOtherParse(readBuffer, dataLength)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [apciType=%v]", apciType)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of ApduData")
 	}
 	_child = _childTemp.(ApduDataChildSerializeRequirement)
 

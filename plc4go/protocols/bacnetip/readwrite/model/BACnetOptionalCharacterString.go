@@ -162,14 +162,13 @@ func BACnetOptionalCharacterStringParse(readBuffer utils.ReadBuffer) (BACnetOpti
 	switch {
 	case peekedTagNumber == uint8(0): // BACnetOptionalCharacterStringNull
 		_childTemp, typeSwitchError = BACnetOptionalCharacterStringNullParse(readBuffer)
-	case true: // BACnetOptionalCharacterStringValue
+	case 0 == 0: // BACnetOptionalCharacterStringValue
 		_childTemp, typeSwitchError = BACnetOptionalCharacterStringValueParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [peekedTagNumber=%v]", peekedTagNumber)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of BACnetOptionalCharacterString")
 	}
 	_child = _childTemp.(BACnetOptionalCharacterStringChildSerializeRequirement)
 

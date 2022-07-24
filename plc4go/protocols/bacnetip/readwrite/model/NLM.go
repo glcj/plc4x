@@ -136,7 +136,7 @@ func NLMParse(readBuffer utils.ReadBuffer, apduLength uint16) (NLM, error) {
 	// Discriminator Field (messageType) (Used as input to a switch field)
 	messageType, _messageTypeErr := readBuffer.ReadUint8("messageType", 8)
 	if _messageTypeErr != nil {
-		return nil, errors.Wrap(_messageTypeErr, "Error parsing 'messageType' field")
+		return nil, errors.Wrap(_messageTypeErr, "Error parsing 'messageType' field of NLM")
 	}
 
 	// Optional Field (vendorId) (Can be skipped, if a given expression evaluates to false)
@@ -147,7 +147,7 @@ func NLMParse(readBuffer utils.ReadBuffer, apduLength uint16) (NLM, error) {
 		}
 		_val, _err := BACnetVendorIdParse(readBuffer)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'vendorId' field")
+			return nil, errors.Wrap(_err, "Error parsing 'vendorId' field of NLM")
 		}
 		vendorId = &_val
 		if closeErr := readBuffer.CloseContext("vendorId"); closeErr != nil {
@@ -186,11 +186,10 @@ func NLMParse(readBuffer utils.ReadBuffer, apduLength uint16) (NLM, error) {
 	case messageType == 0x09: // NLMDisconnectConnectionToNetwork
 		_childTemp, typeSwitchError = NLMDisconnectConnectionToNetworkParse(readBuffer, apduLength, messageType)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [messageType=%v]", messageType)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of NLM")
 	}
 	_child = _childTemp.(NLMChildSerializeRequirement)
 

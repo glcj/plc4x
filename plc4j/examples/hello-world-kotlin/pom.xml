@@ -32,7 +32,7 @@
   <name>PLC4J: Examples: Hello-World: Kotlin</name>
 
   <properties>
-    <kotlin.version>1.6.21</kotlin.version>
+    <kotlin.version>1.7.0</kotlin.version>
     <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     <junit-jupiter.version>5.8.2</junit-jupiter.version>
     <app.main.class>org.apache.plc4x.java.examples.hellokotlin.ReadModbusPalKt</app.main.class>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.22.0</version>
+      <version>3.23.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

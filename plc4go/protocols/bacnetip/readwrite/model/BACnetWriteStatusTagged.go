@@ -126,7 +126,7 @@ func BACnetWriteStatusTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, 
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetWriteStatusTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -146,9 +146,12 @@ func BACnetWriteStatusTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, 
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGenericFailing(readBuffer, header.GetActualLength(), BACnetWriteStatus_IDLE)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetWriteStatusTagged")
 	}
-	value := _value.(BACnetWriteStatus)
+	var value BACnetWriteStatus
+	if _value != nil {
+		value = _value.(BACnetWriteStatus)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetWriteStatusTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetWriteStatusTagged")

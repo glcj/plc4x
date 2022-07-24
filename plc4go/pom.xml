@@ -323,27 +323,52 @@
         <version>2.3.10</version>
         <extensions>true</extensions>
         <executions>
-
-          <!-- Downloads the dependencies of the project -->
+          <!-- add tools required for generating code, test, etc-->
           <execution>
-            <id>default-get</id>
-            <phase>initialize</phase>
-            <goals>
-              <goal>get</goal>
-            </goals>
-          </execution>
-
-          <!-- Make sure the "stringer" extension as well als the "licenser" is downloaded -->
-          <execution>
-            <id>get-tools</id>
+            <id>get-stringer</id>
             <phase>initialize</phase>
             <goals>
               <goal>install</goal>
             </goals>
             <configuration>
               <packages>
-                <package>golang.org/x/tools/cmd/stringer</package>
-                <package>github.com/elastic/go-licenser</package>
+                <package>golang.org/x/tools/cmd/stringer@latest</package>
+              </packages>
+            </configuration>
+          </execution>
+          <execution>
+            <id>get-licenser</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+            <configuration>
+              <packages>
+                <package>github.com/elastic/go-licenser@latest</package>
+              </packages>
+            </configuration>
+          </execution>
+          <execution>
+            <id>get-goxunit</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+            <configuration>
+              <packages>
+                <package>github.com/tebeka/go2xunit@latest</package>
+              </packages>
+            </configuration>
+          </execution>
+          <execution>
+            <id>get-gotestsum</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+            <configuration>
+              <packages>
+                <package>gotest.tools/gotestsum@latest</package>
               </packages>
             </configuration>
           </execution>
@@ -479,21 +504,6 @@
             </configuration>
           </execution>
 
-          <!-- Make sure the xunit generator as well as gotestsum is installed -->
-          <execution>
-            <id>test-get</id>
-            <phase>process-test-resources</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
-            <configuration>
-              <packages>
-                <package>github.com/tebeka/go2xunit</package>
-                <package>gotest.tools/gotestsum</package>
-              </packages>
-            </configuration>
-          </execution>
-
           <!-- Check all tests with producing report file in Golang format -->
           <execution>
             <id>default-test</id>
@@ -578,7 +588,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <id>generate-sources</id>

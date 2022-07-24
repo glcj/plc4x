@@ -152,20 +152,20 @@ func APDURejectParse(readBuffer utils.ReadBuffer, apduLength uint16) (APDUReject
 	{
 		reserved, _err := readBuffer.ReadUint8("reserved", 4)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of APDUReject")
 		}
 		if reserved != uint8(0x00) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint8(0x00),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
 	// Simple Field (originalInvokeId)
 	_originalInvokeId, _originalInvokeIdErr := readBuffer.ReadUint8("originalInvokeId", 8)
 	if _originalInvokeIdErr != nil {
-		return nil, errors.Wrap(_originalInvokeIdErr, "Error parsing 'originalInvokeId' field")
+		return nil, errors.Wrap(_originalInvokeIdErr, "Error parsing 'originalInvokeId' field of APDUReject")
 	}
 	originalInvokeId := _originalInvokeId
 
@@ -175,7 +175,7 @@ func APDURejectParse(readBuffer utils.ReadBuffer, apduLength uint16) (APDUReject
 	}
 	_rejectReason, _rejectReasonErr := BACnetRejectReasonTaggedParse(readBuffer, uint32(uint32(1)))
 	if _rejectReasonErr != nil {
-		return nil, errors.Wrap(_rejectReasonErr, "Error parsing 'rejectReason' field")
+		return nil, errors.Wrap(_rejectReasonErr, "Error parsing 'rejectReason' field of APDUReject")
 	}
 	rejectReason := _rejectReason.(BACnetRejectReasonTagged)
 	if closeErr := readBuffer.CloseContext("rejectReason"); closeErr != nil {

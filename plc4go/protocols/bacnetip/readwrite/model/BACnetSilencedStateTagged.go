@@ -153,7 +153,7 @@ func BACnetSilencedStateTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetSilencedStateTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -173,9 +173,12 @@ func BACnetSilencedStateTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGeneric(readBuffer, header.GetActualLength(), BACnetSilencedState_VENDOR_PROPRIETARY_VALUE)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetSilencedStateTagged")
 	}
-	value := _value.(BACnetSilencedState)
+	var value BACnetSilencedState
+	if _value != nil {
+		value = _value.(BACnetSilencedState)
+	}
 
 	// Virtual field
 	_isProprietary := bool((value) == (BACnetSilencedState_VENDOR_PROPRIETARY_VALUE))
@@ -185,9 +188,12 @@ func BACnetSilencedStateTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8
 	// Manual Field (proprietaryValue)
 	_proprietaryValue, _proprietaryValueErr := ReadProprietaryEnumGeneric(readBuffer, header.GetActualLength(), isProprietary)
 	if _proprietaryValueErr != nil {
-		return nil, errors.Wrap(_proprietaryValueErr, "Error parsing 'proprietaryValue' field")
+		return nil, errors.Wrap(_proprietaryValueErr, "Error parsing 'proprietaryValue' field of BACnetSilencedStateTagged")
 	}
-	proprietaryValue := _proprietaryValue.(uint32)
+	var proprietaryValue uint32
+	if _proprietaryValue != nil {
+		proprietaryValue = _proprietaryValue.(uint32)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetSilencedStateTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetSilencedStateTagged")

@@ -153,7 +153,7 @@ func BACnetBinaryLightingPVTaggedParse(readBuffer utils.ReadBuffer, tagNumber ui
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetBinaryLightingPVTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -173,9 +173,12 @@ func BACnetBinaryLightingPVTaggedParse(readBuffer utils.ReadBuffer, tagNumber ui
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGeneric(readBuffer, header.GetActualLength(), BACnetBinaryLightingPV_VENDOR_PROPRIETARY_VALUE)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetBinaryLightingPVTagged")
 	}
-	value := _value.(BACnetBinaryLightingPV)
+	var value BACnetBinaryLightingPV
+	if _value != nil {
+		value = _value.(BACnetBinaryLightingPV)
+	}
 
 	// Virtual field
 	_isProprietary := bool((value) == (BACnetBinaryLightingPV_VENDOR_PROPRIETARY_VALUE))
@@ -185,9 +188,12 @@ func BACnetBinaryLightingPVTaggedParse(readBuffer utils.ReadBuffer, tagNumber ui
 	// Manual Field (proprietaryValue)
 	_proprietaryValue, _proprietaryValueErr := ReadProprietaryEnumGeneric(readBuffer, header.GetActualLength(), isProprietary)
 	if _proprietaryValueErr != nil {
-		return nil, errors.Wrap(_proprietaryValueErr, "Error parsing 'proprietaryValue' field")
+		return nil, errors.Wrap(_proprietaryValueErr, "Error parsing 'proprietaryValue' field of BACnetBinaryLightingPVTagged")
 	}
-	proprietaryValue := _proprietaryValue.(uint32)
+	var proprietaryValue uint32
+	if _proprietaryValue != nil {
+		proprietaryValue = _proprietaryValue.(uint32)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetBinaryLightingPVTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetBinaryLightingPVTagged")

@@ -126,7 +126,7 @@ func BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriorityTaggedParse
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriorityTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -146,9 +146,12 @@ func BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriorityTaggedParse
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGenericFailing(readBuffer, header.GetActualLength(), BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriority_NORMAL)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriorityTagged")
 	}
-	value := _value.(BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriority)
+	var value BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriority
+	if _value != nil {
+		value = _value.(BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriority)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriorityTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetConfirmedServiceRequestConfirmedTextMessageMessagePriorityTagged")

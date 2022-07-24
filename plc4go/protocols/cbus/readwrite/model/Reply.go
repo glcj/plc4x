@@ -30,8 +30,8 @@ import (
 type Reply interface {
 	utils.LengthAware
 	utils.Serializable
-	// GetMagicByte returns MagicByte (property field)
-	GetMagicByte() byte
+	// GetPeekedByte returns PeekedByte (property field)
+	GetPeekedByte() byte
 }
 
 // ReplyExactly can be used when we want exactly this type and not a type which fulfills Reply.
@@ -44,7 +44,12 @@ type ReplyExactly interface {
 // _Reply is the data-structure of this message
 type _Reply struct {
 	_ReplyChildRequirements
-	MagicByte byte
+	PeekedByte byte
+
+	// Arguments.
+	CBusOptions    CBusOptions
+	ReplyLength    uint16
+	RequestContext RequestContext
 }
 
 type _ReplyChildRequirements interface {
@@ -60,7 +65,7 @@ type ReplyParent interface {
 
 type ReplyChild interface {
 	utils.Serializable
-	InitializeParent(parent Reply, magicByte byte)
+	InitializeParent(parent Reply, peekedByte byte)
 	GetParent() *Reply
 
 	GetTypeName() string
@@ -72,8 +77,8 @@ type ReplyChild interface {
 /////////////////////// Accessors for property fields.
 ///////////////////////
 
-func (m *_Reply) GetMagicByte() byte {
-	return m.MagicByte
+func (m *_Reply) GetPeekedByte() byte {
+	return m.PeekedByte
 }
 
 ///////////////////////
@@ -82,8 +87,8 @@ func (m *_Reply) GetMagicByte() byte {
 ///////////////////////////////////////////////////////////
 
 // NewReply factory function for _Reply
-func NewReply(magicByte byte) *_Reply {
-	return &_Reply{MagicByte: magicByte}
+func NewReply(peekedByte byte, cBusOptions CBusOptions, replyLength uint16, requestContext RequestContext) *_Reply {
+	return &_Reply{PeekedByte: peekedByte, CBusOptions: cBusOptions, ReplyLength: replyLength, RequestContext: requestContext}
 }
 
 // Deprecated: use the interface for direct cast
@@ -111,7 +116,7 @@ func (m *_Reply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ReplyParse(readBuffer utils.ReadBuffer) (Reply, error) {
+func ReplyParse(readBuffer utils.ReadBuffer, cBusOptions CBusOptions, replyLength uint16, requestContext RequestContext) (Reply, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("Reply"); pullErr != nil {
@@ -120,11 +125,11 @@ func ReplyParse(readBuffer utils.ReadBuffer) (Reply, error) {
 	currentPos := positionAware.GetPos()
 	_ = currentPos
 
-	// Peek Field (magicByte)
+	// Peek Field (peekedByte)
 	currentPos = positionAware.GetPos()
-	magicByte, _err := readBuffer.ReadByte("magicByte")
+	peekedByte, _err := readBuffer.ReadByte("peekedByte")
 	if _err != nil {
-		return nil, errors.Wrap(_err, "Error parsing 'magicByte' field")
+		return nil, errors.Wrap(_err, "Error parsing 'peekedByte' field of Reply")
 	}
 
 	readBuffer.Reset(currentPos)
@@ -139,24 +144,19 @@ func ReplyParse(readBuffer utils.ReadBuffer) (Reply, error) {
 	var _child ReplyChildSerializeRequirement
 	var typeSwitchError error
 	switch {
-	case magicByte == 0x0: // CALReplyReply
-		_childTemp, typeSwitchError = CALReplyReplyParse(readBuffer)
-	case magicByte == 0x0: // MonitoredSALReply
-		_childTemp, typeSwitchError = MonitoredSALReplyParse(readBuffer)
-	case magicByte == 0x0: // ConfirmationReply
-		_childTemp, typeSwitchError = ConfirmationReplyParse(readBuffer)
-	case magicByte == 0x0: // PowerUpReply
-		_childTemp, typeSwitchError = PowerUpReplyParse(readBuffer)
-	case magicByte == 0x0: // ParameterChangeReply
-		_childTemp, typeSwitchError = ParameterChangeReplyParse(readBuffer)
-	case magicByte == 0x0: // ExclamationMarkReply
-		_childTemp, typeSwitchError = ExclamationMarkReplyParse(readBuffer)
+	case peekedByte == 0x2B: // PowerUpReply
+		_childTemp, typeSwitchError = PowerUpReplyParse(readBuffer, cBusOptions, replyLength, requestContext)
+	case peekedByte == 0x3D: // ParameterChangeReply
+		_childTemp, typeSwitchError = ParameterChangeReplyParse(readBuffer, cBusOptions, replyLength, requestContext)
+	case peekedByte == 0x21: // ServerErrorReply
+		_childTemp, typeSwitchError = ServerErrorReplyParse(readBuffer, cBusOptions, replyLength, requestContext)
+	case 0 == 0: // ReplyEncodedReply
+		_childTemp, typeSwitchError = ReplyEncodedReplyParse(readBuffer, cBusOptions, replyLength, requestContext)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [peekedByte=%v]", peekedByte)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of Reply")
 	}
 	_child = _childTemp.(ReplyChildSerializeRequirement)
 
@@ -165,7 +165,7 @@ func ReplyParse(readBuffer utils.ReadBuffer) (Reply, error) {
 	}
 
 	// Finish initializing
-	_child.InitializeParent(_child, magicByte)
+	_child.InitializeParent(_child, peekedByte)
 	return _child, nil
 }
 

@@ -30,9 +30,9 @@ import (
 type MonitoredSALReply interface {
 	utils.LengthAware
 	utils.Serializable
-	Reply
-	// GetIsA returns IsA (property field)
-	GetIsA() MonitoredSAL
+	EncodedReply
+	// GetMonitoredSAL returns MonitoredSAL (property field)
+	GetMonitoredSAL() MonitoredSAL
 }
 
 // MonitoredSALReplyExactly can be used when we want exactly this type and not a type which fulfills MonitoredSALReply.
@@ -44,8 +44,8 @@ type MonitoredSALReplyExactly interface {
 
 // _MonitoredSALReply is the data-structure of this message
 type _MonitoredSALReply struct {
-	*_Reply
-	IsA MonitoredSAL
+	*_EncodedReply
+	MonitoredSAL MonitoredSAL
 }
 
 ///////////////////////////////////////////////////////////
@@ -58,12 +58,12 @@ type _MonitoredSALReply struct {
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
-func (m *_MonitoredSALReply) InitializeParent(parent Reply, magicByte byte) {
-	m.MagicByte = magicByte
+func (m *_MonitoredSALReply) InitializeParent(parent EncodedReply, peekedByte byte) {
+	m.PeekedByte = peekedByte
 }
 
-func (m *_MonitoredSALReply) GetParent() Reply {
-	return m._Reply
+func (m *_MonitoredSALReply) GetParent() EncodedReply {
+	return m._EncodedReply
 }
 
 ///////////////////////////////////////////////////////////
@@ -71,8 +71,8 @@ func (m *_MonitoredSALReply) GetParent() Reply {
 /////////////////////// Accessors for property fields.
 ///////////////////////
 
-func (m *_MonitoredSALReply) GetIsA() MonitoredSAL {
-	return m.IsA
+func (m *_MonitoredSALReply) GetMonitoredSAL() MonitoredSAL {
+	return m.MonitoredSAL
 }
 
 ///////////////////////
@@ -81,12 +81,12 @@ func (m *_MonitoredSALReply) GetIsA() MonitoredSAL {
 ///////////////////////////////////////////////////////////
 
 // NewMonitoredSALReply factory function for _MonitoredSALReply
-func NewMonitoredSALReply(isA MonitoredSAL, magicByte byte) *_MonitoredSALReply {
+func NewMonitoredSALReply(monitoredSAL MonitoredSAL, peekedByte byte, cBusOptions CBusOptions, requestContext RequestContext) *_MonitoredSALReply {
 	_result := &_MonitoredSALReply{
-		IsA:    isA,
-		_Reply: NewReply(magicByte),
+		MonitoredSAL:  monitoredSAL,
+		_EncodedReply: NewEncodedReply(peekedByte, cBusOptions, requestContext),
 	}
-	_result._Reply._ReplyChildRequirements = _result
+	_result._EncodedReply._EncodedReplyChildRequirements = _result
 	return _result
 }
 
@@ -112,8 +112,8 @@ func (m *_MonitoredSALReply) GetLengthInBits() uint16 {
 func (m *_MonitoredSALReply) GetLengthInBitsConditional(lastItem bool) uint16 {
 	lengthInBits := uint16(m.GetParentLengthInBits())
 
-	// Simple field (isA)
-	lengthInBits += m.IsA.GetLengthInBits()
+	// Simple field (monitoredSAL)
+	lengthInBits += m.MonitoredSAL.GetLengthInBits()
 
 	return lengthInBits
 }
@@ -122,7 +122,7 @@ func (m *_MonitoredSALReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func MonitoredSALReplyParse(readBuffer utils.ReadBuffer) (MonitoredSALReply, error) {
+func MonitoredSALReplyParse(readBuffer utils.ReadBuffer, cBusOptions CBusOptions, requestContext RequestContext) (MonitoredSALReply, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("MonitoredSALReply"); pullErr != nil {
@@ -131,17 +131,17 @@ func MonitoredSALReplyParse(readBuffer utils.ReadBuffer) (MonitoredSALReply, err
 	currentPos := positionAware.GetPos()
 	_ = currentPos
 
-	// Simple Field (isA)
-	if pullErr := readBuffer.PullContext("isA"); pullErr != nil {
-		return nil, errors.Wrap(pullErr, "Error pulling for isA")
+	// Simple Field (monitoredSAL)
+	if pullErr := readBuffer.PullContext("monitoredSAL"); pullErr != nil {
+		return nil, errors.Wrap(pullErr, "Error pulling for monitoredSAL")
 	}
-	_isA, _isAErr := MonitoredSALParse(readBuffer)
-	if _isAErr != nil {
-		return nil, errors.Wrap(_isAErr, "Error parsing 'isA' field")
+	_monitoredSAL, _monitoredSALErr := MonitoredSALParse(readBuffer, cBusOptions)
+	if _monitoredSALErr != nil {
+		return nil, errors.Wrap(_monitoredSALErr, "Error parsing 'monitoredSAL' field of MonitoredSALReply")
 	}
-	isA := _isA.(MonitoredSAL)
-	if closeErr := readBuffer.CloseContext("isA"); closeErr != nil {
-		return nil, errors.Wrap(closeErr, "Error closing for isA")
+	monitoredSAL := _monitoredSAL.(MonitoredSAL)
+	if closeErr := readBuffer.CloseContext("monitoredSAL"); closeErr != nil {
+		return nil, errors.Wrap(closeErr, "Error closing for monitoredSAL")
 	}
 
 	if closeErr := readBuffer.CloseContext("MonitoredSALReply"); closeErr != nil {
@@ -150,10 +150,13 @@ func MonitoredSALReplyParse(readBuffer utils.ReadBuffer) (MonitoredSALReply, err
 
 	// Create a partially initialized instance
 	_child := &_MonitoredSALReply{
-		IsA:    isA,
-		_Reply: &_Reply{},
+		MonitoredSAL: monitoredSAL,
+		_EncodedReply: &_EncodedReply{
+			CBusOptions:    cBusOptions,
+			RequestContext: requestContext,
+		},
 	}
-	_child._Reply._ReplyChildRequirements = _child
+	_child._EncodedReply._EncodedReplyChildRequirements = _child
 	return _child, nil
 }
 
@@ -165,16 +168,16 @@ func (m *_MonitoredSALReply) Serialize(writeBuffer utils.WriteBuffer) error {
 			return errors.Wrap(pushErr, "Error pushing for MonitoredSALReply")
 		}
 
-		// Simple Field (isA)
-		if pushErr := writeBuffer.PushContext("isA"); pushErr != nil {
-			return errors.Wrap(pushErr, "Error pushing for isA")
+		// Simple Field (monitoredSAL)
+		if pushErr := writeBuffer.PushContext("monitoredSAL"); pushErr != nil {
+			return errors.Wrap(pushErr, "Error pushing for monitoredSAL")
 		}
-		_isAErr := writeBuffer.WriteSerializable(m.GetIsA())
-		if popErr := writeBuffer.PopContext("isA"); popErr != nil {
-			return errors.Wrap(popErr, "Error popping for isA")
+		_monitoredSALErr := writeBuffer.WriteSerializable(m.GetMonitoredSAL())
+		if popErr := writeBuffer.PopContext("monitoredSAL"); popErr != nil {
+			return errors.Wrap(popErr, "Error popping for monitoredSAL")
 		}
-		if _isAErr != nil {
-			return errors.Wrap(_isAErr, "Error serializing 'isA' field")
+		if _monitoredSALErr != nil {
+			return errors.Wrap(_monitoredSALErr, "Error serializing 'monitoredSAL' field")
 		}
 
 		if popErr := writeBuffer.PopContext("MonitoredSALReply"); popErr != nil {

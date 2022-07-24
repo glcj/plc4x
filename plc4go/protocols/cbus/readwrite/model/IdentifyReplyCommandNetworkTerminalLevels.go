@@ -31,6 +31,8 @@ type IdentifyReplyCommandNetworkTerminalLevels interface {
 	utils.LengthAware
 	utils.Serializable
 	IdentifyReplyCommand
+	// GetMinimumLevels returns MinimumLevels (property field)
+	GetMinimumLevels() []byte
 }
 
 // IdentifyReplyCommandNetworkTerminalLevelsExactly can be used when we want exactly this type and not a type which fulfills IdentifyReplyCommandNetworkTerminalLevels.
@@ -43,6 +45,7 @@ type IdentifyReplyCommandNetworkTerminalLevelsExactly interface {
 // _IdentifyReplyCommandNetworkTerminalLevels is the data-structure of this message
 type _IdentifyReplyCommandNetworkTerminalLevels struct {
 	*_IdentifyReplyCommand
+	MinimumLevels []byte
 }
 
 ///////////////////////////////////////////////////////////
@@ -65,10 +68,25 @@ func (m *_IdentifyReplyCommandNetworkTerminalLevels) GetParent() IdentifyReplyCo
 	return m._IdentifyReplyCommand
 }
 
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+/////////////////////// Accessors for property fields.
+///////////////////////
+
+func (m *_IdentifyReplyCommandNetworkTerminalLevels) GetMinimumLevels() []byte {
+	return m.MinimumLevels
+}
+
+///////////////////////
+///////////////////////
+///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+
 // NewIdentifyReplyCommandNetworkTerminalLevels factory function for _IdentifyReplyCommandNetworkTerminalLevels
-func NewIdentifyReplyCommandNetworkTerminalLevels() *_IdentifyReplyCommandNetworkTerminalLevels {
+func NewIdentifyReplyCommandNetworkTerminalLevels(minimumLevels []byte, numBytes uint8) *_IdentifyReplyCommandNetworkTerminalLevels {
 	_result := &_IdentifyReplyCommandNetworkTerminalLevels{
-		_IdentifyReplyCommand: NewIdentifyReplyCommand(),
+		MinimumLevels:         minimumLevels,
+		_IdentifyReplyCommand: NewIdentifyReplyCommand(numBytes),
 	}
 	_result._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _result
 	return _result
@@ -96,6 +114,11 @@ func (m *_IdentifyReplyCommandNetworkTerminalLevels) GetLengthInBits() uint16 {
 func (m *_IdentifyReplyCommandNetworkTerminalLevels) GetLengthInBitsConditional(lastItem bool) uint16 {
 	lengthInBits := uint16(m.GetParentLengthInBits())
 
+	// Array field
+	if len(m.MinimumLevels) > 0 {
+		lengthInBits += 8 * uint16(len(m.MinimumLevels))
+	}
+
 	return lengthInBits
 }
 
@@ -103,7 +126,7 @@ func (m *_IdentifyReplyCommandNetworkTerminalLevels) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandNetworkTerminalLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute) (IdentifyReplyCommandNetworkTerminalLevels, error) {
+func IdentifyReplyCommandNetworkTerminalLevelsParse(readBuffer utils.ReadBuffer, attribute Attribute, numBytes uint8) (IdentifyReplyCommandNetworkTerminalLevels, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandNetworkTerminalLevels"); pullErr != nil {
@@ -111,6 +134,12 @@ func IdentifyReplyCommandNetworkTerminalLevelsParse(readBuffer utils.ReadBuffer,
 	}
 	currentPos := positionAware.GetPos()
 	_ = currentPos
+	// Byte Array field (minimumLevels)
+	numberOfBytesminimumLevels := int(numBytes)
+	minimumLevels, _readArrayErr := readBuffer.ReadByteArray("minimumLevels", numberOfBytesminimumLevels)
+	if _readArrayErr != nil {
+		return nil, errors.Wrap(_readArrayErr, "Error parsing 'minimumLevels' field of IdentifyReplyCommandNetworkTerminalLevels")
+	}
 
 	if closeErr := readBuffer.CloseContext("IdentifyReplyCommandNetworkTerminalLevels"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for IdentifyReplyCommandNetworkTerminalLevels")
@@ -118,7 +147,10 @@ func IdentifyReplyCommandNetworkTerminalLevelsParse(readBuffer utils.ReadBuffer,
 
 	// Create a partially initialized instance
 	_child := &_IdentifyReplyCommandNetworkTerminalLevels{
-		_IdentifyReplyCommand: &_IdentifyReplyCommand{},
+		MinimumLevels: minimumLevels,
+		_IdentifyReplyCommand: &_IdentifyReplyCommand{
+			NumBytes: numBytes,
+		},
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil
@@ -130,6 +162,12 @@ func (m *_IdentifyReplyCommandNetworkTerminalLevels) Serialize(writeBuffer utils
 	ser := func() error {
 		if pushErr := writeBuffer.PushContext("IdentifyReplyCommandNetworkTerminalLevels"); pushErr != nil {
 			return errors.Wrap(pushErr, "Error pushing for IdentifyReplyCommandNetworkTerminalLevels")
+		}
+
+		// Array Field (minimumLevels)
+		// Byte Array field (minimumLevels)
+		if err := writeBuffer.WriteByteArray("minimumLevels", m.GetMinimumLevels()); err != nil {
+			return errors.Wrap(err, "Error serializing 'minimumLevels' field")
 		}
 
 		if popErr := writeBuffer.PopContext("IdentifyReplyCommandNetworkTerminalLevels"); popErr != nil {

@@ -111,7 +111,7 @@ func CEMIAdditionalInformationParse(readBuffer utils.ReadBuffer) (CEMIAdditional
 	// Discriminator Field (additionalInformationType) (Used as input to a switch field)
 	additionalInformationType, _additionalInformationTypeErr := readBuffer.ReadUint8("additionalInformationType", 8)
 	if _additionalInformationTypeErr != nil {
-		return nil, errors.Wrap(_additionalInformationTypeErr, "Error parsing 'additionalInformationType' field")
+		return nil, errors.Wrap(_additionalInformationTypeErr, "Error parsing 'additionalInformationType' field of CEMIAdditionalInformation")
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
@@ -129,11 +129,10 @@ func CEMIAdditionalInformationParse(readBuffer utils.ReadBuffer) (CEMIAdditional
 	case additionalInformationType == 0x04: // CEMIAdditionalInformationRelativeTimestamp
 		_childTemp, typeSwitchError = CEMIAdditionalInformationRelativeTimestampParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [additionalInformationType=%v]", additionalInformationType)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of CEMIAdditionalInformation")
 	}
 	_child = _childTemp.(CEMIAdditionalInformationChildSerializeRequirement)
 

@@ -144,7 +144,7 @@ func (m *TransportInstance) Connect() error {
 	// "connect" to the remote
 	var err error
 	if m.RemoteAddress != nil {
-		if m.udpConn, err = net.DialUDP("upd", m.LocalAddress, m.RemoteAddress); err != nil {
+		if m.udpConn, err = net.DialUDP("udp", m.LocalAddress, m.RemoteAddress); err != nil {
 			return errors.Wrap(err, "error connecting to remote address")
 		}
 	} else if m.SoReUse {
@@ -224,7 +224,16 @@ func (m *TransportInstance) Write(data []uint8) error {
 	if m.udpConn == nil {
 		return errors.New("error writing to transport. No writer available")
 	}
-	num, err := m.udpConn.WriteToUDP(data, m.RemoteAddress)
+	var num int
+	var err error
+	if m.RemoteAddress != nil {
+
+		// TODO: usually this happens on the dial port... is there a better way to catch that?
+		num, err = m.udpConn.Write(data)
+	} else {
+		num, err = m.udpConn.WriteToUDP(data, m.RemoteAddress)
+	}
+
 	if err != nil {
 		return errors.Wrap(err, "error writing")
 	}

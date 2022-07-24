@@ -166,7 +166,7 @@ func BACnetLogRecordLogDatumParse(readBuffer utils.ReadBuffer, tagNumber uint8) 
 	}
 	_openingTag, _openingTagErr := BACnetOpeningTagParse(readBuffer, uint8(tagNumber))
 	if _openingTagErr != nil {
-		return nil, errors.Wrap(_openingTagErr, "Error parsing 'openingTag' field")
+		return nil, errors.Wrap(_openingTagErr, "Error parsing 'openingTag' field of BACnetLogRecordLogDatum")
 	}
 	openingTag := _openingTag.(BACnetOpeningTag)
 	if closeErr := readBuffer.CloseContext("openingTag"); closeErr != nil {
@@ -219,11 +219,10 @@ func BACnetLogRecordLogDatumParse(readBuffer utils.ReadBuffer, tagNumber uint8) 
 	case peekedTagNumber == uint8(10): // BACnetLogRecordLogDatumAnyValue
 		_childTemp, typeSwitchError = BACnetLogRecordLogDatumAnyValueParse(readBuffer, tagNumber)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [peekedTagNumber=%v]", peekedTagNumber)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of BACnetLogRecordLogDatum")
 	}
 	_child = _childTemp.(BACnetLogRecordLogDatumChildSerializeRequirement)
 
@@ -233,7 +232,7 @@ func BACnetLogRecordLogDatumParse(readBuffer utils.ReadBuffer, tagNumber uint8) 
 	}
 	_closingTag, _closingTagErr := BACnetClosingTagParse(readBuffer, uint8(tagNumber))
 	if _closingTagErr != nil {
-		return nil, errors.Wrap(_closingTagErr, "Error parsing 'closingTag' field")
+		return nil, errors.Wrap(_closingTagErr, "Error parsing 'closingTag' field of BACnetLogRecordLogDatum")
 	}
 	closingTag := _closingTag.(BACnetClosingTag)
 	if closeErr := readBuffer.CloseContext("closingTag"); closeErr != nil {

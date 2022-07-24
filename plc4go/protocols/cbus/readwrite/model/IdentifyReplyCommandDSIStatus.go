@@ -146,7 +146,7 @@ func (m *_IdentifyReplyCommandDSIStatus) GetDimmingUCRevisionNumber() byte {
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandDSIStatus factory function for _IdentifyReplyCommandDSIStatus
-func NewIdentifyReplyCommandDSIStatus(channelStatus1 ChannelStatus, channelStatus2 ChannelStatus, channelStatus3 ChannelStatus, channelStatus4 ChannelStatus, channelStatus5 ChannelStatus, channelStatus6 ChannelStatus, channelStatus7 ChannelStatus, channelStatus8 ChannelStatus, unitStatus UnitStatus, dimmingUCRevisionNumber byte) *_IdentifyReplyCommandDSIStatus {
+func NewIdentifyReplyCommandDSIStatus(channelStatus1 ChannelStatus, channelStatus2 ChannelStatus, channelStatus3 ChannelStatus, channelStatus4 ChannelStatus, channelStatus5 ChannelStatus, channelStatus6 ChannelStatus, channelStatus7 ChannelStatus, channelStatus8 ChannelStatus, unitStatus UnitStatus, dimmingUCRevisionNumber byte, numBytes uint8) *_IdentifyReplyCommandDSIStatus {
 	_result := &_IdentifyReplyCommandDSIStatus{
 		ChannelStatus1:          channelStatus1,
 		ChannelStatus2:          channelStatus2,
@@ -158,7 +158,7 @@ func NewIdentifyReplyCommandDSIStatus(channelStatus1 ChannelStatus, channelStatu
 		ChannelStatus8:          channelStatus8,
 		UnitStatus:              unitStatus,
 		DimmingUCRevisionNumber: dimmingUCRevisionNumber,
-		_IdentifyReplyCommand:   NewIdentifyReplyCommand(),
+		_IdentifyReplyCommand:   NewIdentifyReplyCommand(numBytes),
 	}
 	_result._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _result
 	return _result
@@ -223,7 +223,7 @@ func (m *_IdentifyReplyCommandDSIStatus) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute Attribute) (IdentifyReplyCommandDSIStatus, error) {
+func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute Attribute, numBytes uint8) (IdentifyReplyCommandDSIStatus, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandDSIStatus"); pullErr != nil {
@@ -238,7 +238,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus1, _channelStatus1Err := ChannelStatusParse(readBuffer)
 	if _channelStatus1Err != nil {
-		return nil, errors.Wrap(_channelStatus1Err, "Error parsing 'channelStatus1' field")
+		return nil, errors.Wrap(_channelStatus1Err, "Error parsing 'channelStatus1' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus1 := _channelStatus1
 	if closeErr := readBuffer.CloseContext("channelStatus1"); closeErr != nil {
@@ -251,7 +251,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus2, _channelStatus2Err := ChannelStatusParse(readBuffer)
 	if _channelStatus2Err != nil {
-		return nil, errors.Wrap(_channelStatus2Err, "Error parsing 'channelStatus2' field")
+		return nil, errors.Wrap(_channelStatus2Err, "Error parsing 'channelStatus2' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus2 := _channelStatus2
 	if closeErr := readBuffer.CloseContext("channelStatus2"); closeErr != nil {
@@ -264,7 +264,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus3, _channelStatus3Err := ChannelStatusParse(readBuffer)
 	if _channelStatus3Err != nil {
-		return nil, errors.Wrap(_channelStatus3Err, "Error parsing 'channelStatus3' field")
+		return nil, errors.Wrap(_channelStatus3Err, "Error parsing 'channelStatus3' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus3 := _channelStatus3
 	if closeErr := readBuffer.CloseContext("channelStatus3"); closeErr != nil {
@@ -277,7 +277,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus4, _channelStatus4Err := ChannelStatusParse(readBuffer)
 	if _channelStatus4Err != nil {
-		return nil, errors.Wrap(_channelStatus4Err, "Error parsing 'channelStatus4' field")
+		return nil, errors.Wrap(_channelStatus4Err, "Error parsing 'channelStatus4' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus4 := _channelStatus4
 	if closeErr := readBuffer.CloseContext("channelStatus4"); closeErr != nil {
@@ -290,7 +290,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus5, _channelStatus5Err := ChannelStatusParse(readBuffer)
 	if _channelStatus5Err != nil {
-		return nil, errors.Wrap(_channelStatus5Err, "Error parsing 'channelStatus5' field")
+		return nil, errors.Wrap(_channelStatus5Err, "Error parsing 'channelStatus5' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus5 := _channelStatus5
 	if closeErr := readBuffer.CloseContext("channelStatus5"); closeErr != nil {
@@ -303,7 +303,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus6, _channelStatus6Err := ChannelStatusParse(readBuffer)
 	if _channelStatus6Err != nil {
-		return nil, errors.Wrap(_channelStatus6Err, "Error parsing 'channelStatus6' field")
+		return nil, errors.Wrap(_channelStatus6Err, "Error parsing 'channelStatus6' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus6 := _channelStatus6
 	if closeErr := readBuffer.CloseContext("channelStatus6"); closeErr != nil {
@@ -316,7 +316,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus7, _channelStatus7Err := ChannelStatusParse(readBuffer)
 	if _channelStatus7Err != nil {
-		return nil, errors.Wrap(_channelStatus7Err, "Error parsing 'channelStatus7' field")
+		return nil, errors.Wrap(_channelStatus7Err, "Error parsing 'channelStatus7' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus7 := _channelStatus7
 	if closeErr := readBuffer.CloseContext("channelStatus7"); closeErr != nil {
@@ -329,7 +329,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_channelStatus8, _channelStatus8Err := ChannelStatusParse(readBuffer)
 	if _channelStatus8Err != nil {
-		return nil, errors.Wrap(_channelStatus8Err, "Error parsing 'channelStatus8' field")
+		return nil, errors.Wrap(_channelStatus8Err, "Error parsing 'channelStatus8' field of IdentifyReplyCommandDSIStatus")
 	}
 	channelStatus8 := _channelStatus8
 	if closeErr := readBuffer.CloseContext("channelStatus8"); closeErr != nil {
@@ -342,7 +342,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	}
 	_unitStatus, _unitStatusErr := UnitStatusParse(readBuffer)
 	if _unitStatusErr != nil {
-		return nil, errors.Wrap(_unitStatusErr, "Error parsing 'unitStatus' field")
+		return nil, errors.Wrap(_unitStatusErr, "Error parsing 'unitStatus' field of IdentifyReplyCommandDSIStatus")
 	}
 	unitStatus := _unitStatus
 	if closeErr := readBuffer.CloseContext("unitStatus"); closeErr != nil {
@@ -352,7 +352,7 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 	// Simple Field (dimmingUCRevisionNumber)
 	_dimmingUCRevisionNumber, _dimmingUCRevisionNumberErr := readBuffer.ReadByte("dimmingUCRevisionNumber")
 	if _dimmingUCRevisionNumberErr != nil {
-		return nil, errors.Wrap(_dimmingUCRevisionNumberErr, "Error parsing 'dimmingUCRevisionNumber' field")
+		return nil, errors.Wrap(_dimmingUCRevisionNumberErr, "Error parsing 'dimmingUCRevisionNumber' field of IdentifyReplyCommandDSIStatus")
 	}
 	dimmingUCRevisionNumber := _dimmingUCRevisionNumber
 
@@ -372,7 +372,9 @@ func IdentifyReplyCommandDSIStatusParse(readBuffer utils.ReadBuffer, attribute A
 		ChannelStatus8:          channelStatus8,
 		UnitStatus:              unitStatus,
 		DimmingUCRevisionNumber: dimmingUCRevisionNumber,
-		_IdentifyReplyCommand:   &_IdentifyReplyCommand{},
+		_IdentifyReplyCommand: &_IdentifyReplyCommand{
+			NumBytes: numBytes,
+		},
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil

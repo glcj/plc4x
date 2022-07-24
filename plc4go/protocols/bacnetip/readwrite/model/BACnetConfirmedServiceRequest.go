@@ -139,7 +139,7 @@ func BACnetConfirmedServiceRequestParse(readBuffer utils.ReadBuffer, serviceRequ
 		return nil, errors.Wrap(closeErr, "Error closing for serviceChoice")
 	}
 	if _serviceChoiceErr != nil {
-		return nil, errors.Wrap(_serviceChoiceErr, "Error parsing 'serviceChoice' field")
+		return nil, errors.Wrap(_serviceChoiceErr, "Error parsing 'serviceChoice' field of BACnetConfirmedServiceRequest")
 	}
 
 	// Virtual field
@@ -219,14 +219,13 @@ func BACnetConfirmedServiceRequestParse(readBuffer utils.ReadBuffer, serviceRequ
 		_childTemp, typeSwitchError = BACnetConfirmedServiceRequestRequestKeyParse(readBuffer, serviceRequestLength, serviceRequestPayloadLength)
 	case serviceChoice == BACnetConfirmedServiceChoice_READ_PROPERTY_CONDITIONAL: // BACnetConfirmedServiceRequestReadPropertyConditional
 		_childTemp, typeSwitchError = BACnetConfirmedServiceRequestReadPropertyConditionalParse(readBuffer, serviceRequestLength, serviceRequestPayloadLength)
-	case true: // BACnetConfirmedServiceRequestUnknown
+	case 0 == 0: // BACnetConfirmedServiceRequestUnknown
 		_childTemp, typeSwitchError = BACnetConfirmedServiceRequestUnknownParse(readBuffer, serviceRequestLength, serviceRequestPayloadLength)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [serviceChoice=%v]", serviceChoice)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of BACnetConfirmedServiceRequest")
 	}
 	_child = _childTemp.(BACnetConfirmedServiceRequestChildSerializeRequirement)
 

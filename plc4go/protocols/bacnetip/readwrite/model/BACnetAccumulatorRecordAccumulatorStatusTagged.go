@@ -126,7 +126,7 @@ func BACnetAccumulatorRecordAccumulatorStatusTaggedParse(readBuffer utils.ReadBu
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetAccumulatorRecordAccumulatorStatusTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -146,9 +146,12 @@ func BACnetAccumulatorRecordAccumulatorStatusTaggedParse(readBuffer utils.ReadBu
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGenericFailing(readBuffer, header.GetActualLength(), BACnetAccumulatorRecordAccumulatorStatus_NORMAL)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetAccumulatorRecordAccumulatorStatusTagged")
 	}
-	value := _value.(BACnetAccumulatorRecordAccumulatorStatus)
+	var value BACnetAccumulatorRecordAccumulatorStatus
+	if _value != nil {
+		value = _value.(BACnetAccumulatorRecordAccumulatorStatus)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetAccumulatorRecordAccumulatorStatusTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetAccumulatorRecordAccumulatorStatusTagged")

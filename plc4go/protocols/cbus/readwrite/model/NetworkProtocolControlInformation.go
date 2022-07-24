@@ -124,27 +124,27 @@ func NetworkProtocolControlInformationParse(readBuffer utils.ReadBuffer) (Networ
 	{
 		reserved, _err := readBuffer.ReadUint8("reserved", 2)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of NetworkProtocolControlInformation")
 		}
 		if reserved != uint8(0x0) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint8(0x0),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
 	// Simple Field (stackCounter)
 	_stackCounter, _stackCounterErr := readBuffer.ReadUint8("stackCounter", 3)
 	if _stackCounterErr != nil {
-		return nil, errors.Wrap(_stackCounterErr, "Error parsing 'stackCounter' field")
+		return nil, errors.Wrap(_stackCounterErr, "Error parsing 'stackCounter' field of NetworkProtocolControlInformation")
 	}
 	stackCounter := _stackCounter
 
 	// Simple Field (stackDepth)
 	_stackDepth, _stackDepthErr := readBuffer.ReadUint8("stackDepth", 3)
 	if _stackDepthErr != nil {
-		return nil, errors.Wrap(_stackDepthErr, "Error parsing 'stackDepth' field")
+		return nil, errors.Wrap(_stackDepthErr, "Error parsing 'stackDepth' field of NetworkProtocolControlInformation")
 	}
 	stackDepth := _stackDepth
 

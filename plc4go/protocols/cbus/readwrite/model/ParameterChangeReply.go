@@ -58,8 +58,8 @@ type _ParameterChangeReply struct {
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
-func (m *_ParameterChangeReply) InitializeParent(parent Reply, magicByte byte) {
-	m.MagicByte = magicByte
+func (m *_ParameterChangeReply) InitializeParent(parent Reply, peekedByte byte) {
+	m.PeekedByte = peekedByte
 }
 
 func (m *_ParameterChangeReply) GetParent() Reply {
@@ -81,10 +81,10 @@ func (m *_ParameterChangeReply) GetIsA() ParameterChange {
 ///////////////////////////////////////////////////////////
 
 // NewParameterChangeReply factory function for _ParameterChangeReply
-func NewParameterChangeReply(isA ParameterChange, magicByte byte) *_ParameterChangeReply {
+func NewParameterChangeReply(isA ParameterChange, peekedByte byte, cBusOptions CBusOptions, replyLength uint16, requestContext RequestContext) *_ParameterChangeReply {
 	_result := &_ParameterChangeReply{
 		IsA:    isA,
-		_Reply: NewReply(magicByte),
+		_Reply: NewReply(peekedByte, cBusOptions, replyLength, requestContext),
 	}
 	_result._Reply._ReplyChildRequirements = _result
 	return _result
@@ -122,7 +122,7 @@ func (m *_ParameterChangeReply) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func ParameterChangeReplyParse(readBuffer utils.ReadBuffer) (ParameterChangeReply, error) {
+func ParameterChangeReplyParse(readBuffer utils.ReadBuffer, cBusOptions CBusOptions, replyLength uint16, requestContext RequestContext) (ParameterChangeReply, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("ParameterChangeReply"); pullErr != nil {
@@ -137,7 +137,7 @@ func ParameterChangeReplyParse(readBuffer utils.ReadBuffer) (ParameterChangeRepl
 	}
 	_isA, _isAErr := ParameterChangeParse(readBuffer)
 	if _isAErr != nil {
-		return nil, errors.Wrap(_isAErr, "Error parsing 'isA' field")
+		return nil, errors.Wrap(_isAErr, "Error parsing 'isA' field of ParameterChangeReply")
 	}
 	isA := _isA.(ParameterChange)
 	if closeErr := readBuffer.CloseContext("isA"); closeErr != nil {
@@ -150,8 +150,12 @@ func ParameterChangeReplyParse(readBuffer utils.ReadBuffer) (ParameterChangeRepl
 
 	// Create a partially initialized instance
 	_child := &_ParameterChangeReply{
-		IsA:    isA,
-		_Reply: &_Reply{},
+		IsA: isA,
+		_Reply: &_Reply{
+			CBusOptions:    cBusOptions,
+			ReplyLength:    replyLength,
+			RequestContext: requestContext,
+		},
 	}
 	_child._Reply._ReplyChildRequirements = _child
 	return _child, nil

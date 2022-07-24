@@ -172,27 +172,27 @@ func DF1ResponseMessageParse(readBuffer utils.ReadBuffer, payloadLength uint16) 
 	{
 		reserved, _err := readBuffer.ReadUint8("reserved", 8)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of DF1ResponseMessage")
 		}
 		if reserved != uint8(0x00) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint8(0x00),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
 	// Simple Field (destinationAddress)
 	_destinationAddress, _destinationAddressErr := readBuffer.ReadUint8("destinationAddress", 8)
 	if _destinationAddressErr != nil {
-		return nil, errors.Wrap(_destinationAddressErr, "Error parsing 'destinationAddress' field")
+		return nil, errors.Wrap(_destinationAddressErr, "Error parsing 'destinationAddress' field of DF1ResponseMessage")
 	}
 	destinationAddress := _destinationAddress
 
 	// Simple Field (sourceAddress)
 	_sourceAddress, _sourceAddressErr := readBuffer.ReadUint8("sourceAddress", 8)
 	if _sourceAddressErr != nil {
-		return nil, errors.Wrap(_sourceAddressErr, "Error parsing 'sourceAddress' field")
+		return nil, errors.Wrap(_sourceAddressErr, "Error parsing 'sourceAddress' field of DF1ResponseMessage")
 	}
 	sourceAddress := _sourceAddress
 
@@ -200,33 +200,33 @@ func DF1ResponseMessageParse(readBuffer utils.ReadBuffer, payloadLength uint16) 
 	{
 		reserved, _err := readBuffer.ReadUint8("reserved", 8)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of DF1ResponseMessage")
 		}
 		if reserved != uint8(0x00) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint8(0x00),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
 	// Discriminator Field (commandCode) (Used as input to a switch field)
 	commandCode, _commandCodeErr := readBuffer.ReadUint8("commandCode", 8)
 	if _commandCodeErr != nil {
-		return nil, errors.Wrap(_commandCodeErr, "Error parsing 'commandCode' field")
+		return nil, errors.Wrap(_commandCodeErr, "Error parsing 'commandCode' field of DF1ResponseMessage")
 	}
 
 	// Simple Field (status)
 	_status, _statusErr := readBuffer.ReadUint8("status", 8)
 	if _statusErr != nil {
-		return nil, errors.Wrap(_statusErr, "Error parsing 'status' field")
+		return nil, errors.Wrap(_statusErr, "Error parsing 'status' field of DF1ResponseMessage")
 	}
 	status := _status
 
 	// Simple Field (transactionCounter)
 	_transactionCounter, _transactionCounterErr := readBuffer.ReadUint16("transactionCounter", 16)
 	if _transactionCounterErr != nil {
-		return nil, errors.Wrap(_transactionCounterErr, "Error parsing 'transactionCounter' field")
+		return nil, errors.Wrap(_transactionCounterErr, "Error parsing 'transactionCounter' field of DF1ResponseMessage")
 	}
 	transactionCounter := _transactionCounter
 
@@ -243,11 +243,10 @@ func DF1ResponseMessageParse(readBuffer utils.ReadBuffer, payloadLength uint16) 
 	case commandCode == 0x4F: // DF1CommandResponseMessageProtectedTypedLogicalRead
 		_childTemp, typeSwitchError = DF1CommandResponseMessageProtectedTypedLogicalReadParse(readBuffer, payloadLength)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [commandCode=%v]", commandCode)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of DF1ResponseMessage")
 	}
 	_child = _childTemp.(DF1ResponseMessageChildSerializeRequirement)
 

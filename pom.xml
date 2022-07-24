@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>26</version>
+    <version>27</version>
   </parent>
 
   <groupId>org.apache.plc4x</groupId>
@@ -88,7 +88,7 @@
     <!--
       At least 3.3.3 required for camel-package-maven-plugin
     -->
-    <maven.version>3.8.5</maven.version>
+    <maven.version>3.8.6</maven.version>
 
     <java.version>11</java.version>
 
@@ -108,12 +108,12 @@
 
     <antlr.version>4.10.1</antlr.version>
     <apiguardian.version>1.1.2</apiguardian.version>
-    <assertj.version>3.22.0</assertj.version>
+    <assertj.version>3.23.1</assertj.version>
     <awaitility.version>4.2.0</awaitility.version>
     <!-- The currently available version is 2.0.5 and anything above 1.4.3 is no longer compatible with our code -->
     <bit-io.version>1.4.3</bit-io.version>
     <bouncycastle.version>1.70</bouncycastle.version>
-    <byte-buddy.version>1.12.10</byte-buddy.version>
+    <byte-buddy.version>1.12.12</byte-buddy.version>
     <!-- Be sure to keep this version set to the version of the cmake-maven-plugin -->
     <cmake-version>3.22.1</cmake-version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
@@ -121,7 +121,7 @@
     <commons-codec.version>1.15</commons-codec.version>
     <commons-collections4.version>4.4</commons-collections4.version>
     <commons-compress.version>1.21</commons-compress.version>
-    <commons-configuration2.version>2.7</commons-configuration2.version>
+    <commons-configuration2.version>2.8.0</commons-configuration2.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-logging.version>1.2</commons-logging.version>
@@ -133,7 +133,7 @@
     <dom4j.version>2.1.3</dom4j.version>
     <equalsverifier.version>3.10</equalsverifier.version>
     <freemarker.version>2.3.31</freemarker.version>
-    <groovy.version>3.0.10</groovy.version>
+    <groovy.version>3.0.11</groovy.version>
     <gson.version>2.9.0</gson.version>
     <guava.version>31.1-jre</guava.version>
     <hamcrest.version>2.2</hamcrest.version>
@@ -143,17 +143,17 @@
     <woodstox-core.version>6.2.8</woodstox-core.version>
     <!-- When updating this to the latest version, we're getting errors in the opcua server tests -->
     <jaxb.version>4.0.0</jaxb.version>
-    <jetty-util.version>11.0.9</jetty-util.version>
-    <jna.version>5.10.0</jna.version>
+    <jetty-util.version>11.0.11</jetty-util.version>
+    <jna.version>5.12.1</jna.version>
     <joda-time.version>2.10.14</joda-time.version>
     <jserialcom.version>2.9.1</jserialcom.version>
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <junit.platform.version>1.8.2</junit.platform.version>
     <logback.version>1.2.11</logback.version>
     <maven.clean.plugin.version>3.2.0</maven.clean.plugin.version>
+    <milo.version>0.6.7</milo.version>
     <milo.version>0.6.6</milo.version>
-    <milo.version>0.6.6</milo.version>
-    <mockito.version>4.5.1</mockito.version>
+    <mockito.version>4.6.1</mockito.version>
     <netty.version>4.1.77.Final</netty.version>
     <owasp-dependency-check.version>7.1.1</owasp-dependency-check.version>
     <pcap4j.version>1.8.2</pcap4j.version>
@@ -168,6 +168,7 @@
 
     <skip-code-generation-tests>true</skip-code-generation-tests>
     <skip-dependency-cve-scan>true</skip-dependency-cve-scan>
+    <enable-all-tests>false</enable-all-tests>
   </properties>
 
   <modules>
@@ -178,9 +179,6 @@
 
     <!-- Build the Java part of plc4x -->
     <module>plc4j</module>
-
-    <!-- Tools needed throughout the build -->
-    <module>tools</module>
   </modules>
 
   <dependencyManagement>
@@ -295,6 +293,11 @@
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>${gson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.googlejavaformat</groupId>
+        <artifactId>google-java-format</artifactId>
+        <version>1.15.0</version>
       </dependency>
 
       <dependency>
@@ -725,14 +728,12 @@
 
             <!-- License Files for other licenses -->
             <exclude>**/UNLICENSE</exclude>
+            <exclude>**/EPL-2.0</exclude>
+
             <!--
-              Explicitly exclude these files as I was unable
-              to add a new licenses to the configuration.
+              Files licensed under other compatible licenses.
             -->
             <exclude>**/Expression.g4</exclude>
-            <exclude>**/KeyStoreLoader.java</exclude>
-            <exclude>**/OPCUAServer.java</exclude>
-            <exclude>**/Plc4xNamespace.java</exclude>
 
             <!-- Maven related files -->
             <exclude>**/target/**</exclude>
@@ -816,6 +817,9 @@
             <exclude>**/go.sum</exclude>
 
             <exclude>.mvn/**</exclude>
+
+            <!-- Exlude core dumps-->
+            <exclude>**/hs_err_pid*</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -1048,7 +1052,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>properties-maven-plugin</artifactId>
-          <version>1.0.0</version>
+          <version>1.1.0</version>
         </plugin>
 
         <plugin>
@@ -1066,7 +1070,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>buildnumber-maven-plugin</artifactId>
-          <version>1.4</version>
+          <version>3.0.0</version>
         </plugin>
 
         <plugin>
@@ -1118,11 +1122,10 @@
           <version>0.8.8</version>
         </plugin>
 
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.10.0</version>
+          <version>3.10.1</version>
           <configuration>
             <release>${java.version}</release>
           </configuration>
@@ -1131,7 +1134,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M5</version>
+          <version>3.0.0-M7</version>
           <dependencies>
             <dependency>
               <groupId>org.junit.jupiter</groupId>
@@ -1158,7 +1161,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.2.2</version>
         </plugin>
 
         <plugin>
@@ -1319,7 +1322,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>3.0.0-M5</version>
+          <version>3.0.0-M6</version>
           <configuration>
             <!-- Tell the plugin to always release all modules using the same version -->
             <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -1571,6 +1574,7 @@
         <cmake.root>${project.build.directory}/cmake-${cmake-version}-linux-${os.arch}/bin/</cmake.root>
         <cmake.generator>Unix Makefiles</cmake.generator>
         <python.venv.bin>venv/bin/</python.venv.bin>
+        <python.venv.dir>./venv</python.venv.dir>
       </properties>
     </profile>
     <!-- Profile for mac (Self-Enabling) -->
@@ -1588,6 +1592,7 @@
         <cmake.root>${project.build.directory}/cmake-${cmake-version}-macos-universal/CMake.app/Contents/bin</cmake.root>
         <cmake.generator>Unix Makefiles</cmake.generator>
         <python.venv.bin>venv/bin/</python.venv.bin>
+        <python.venv.dir>./venv</python.venv.dir>
       </properties>
     </profile>
     <!-- profile for windows (Self-Enabling) -->
@@ -1605,6 +1610,7 @@
         <cmake.root>${project.build.directory}/cmake-${cmake-version}-windows-x86_64/bin</cmake.root>
         <cmake.generator>MinGW Makefiles</cmake.generator>
         <python.venv.bin>venv/Scripts/</python.venv.bin>
+        <python.venv.dir>./venv</python.venv.dir>
       </properties>
     </profile>
 
@@ -1646,6 +1652,7 @@
       <properties>
         <skip-code-generation-tests>false</skip-code-generation-tests>
         <skip-dependency-cve-scan>false</skip-dependency-cve-scan>
+        <enable-all-tests>true</enable-all-tests>
       </properties>
     </profile>
 
@@ -1654,6 +1661,7 @@
       <properties>
         <skip-code-generation-tests>false</skip-code-generation-tests>
         <skip-dependency-cve-scan>false</skip-dependency-cve-scan>
+        <enable-all-tests>true</enable-all-tests>
       </properties>
     </profile>
 

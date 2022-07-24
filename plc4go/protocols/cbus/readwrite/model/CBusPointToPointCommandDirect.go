@@ -59,12 +59,9 @@ type _CBusPointToPointCommandDirect struct {
 ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////
 
-func (m *_CBusPointToPointCommandDirect) InitializeParent(parent CBusPointToPointCommand, bridgeAddressCountPeek uint16, calData CALData, crc Checksum, peekAlpha byte, alpha Alpha) {
+func (m *_CBusPointToPointCommandDirect) InitializeParent(parent CBusPointToPointCommand, bridgeAddressCountPeek uint16, calData CALData) {
 	m.BridgeAddressCountPeek = bridgeAddressCountPeek
 	m.CalData = calData
-	m.Crc = crc
-	m.PeekAlpha = peekAlpha
-	m.Alpha = alpha
 }
 
 func (m *_CBusPointToPointCommandDirect) GetParent() CBusPointToPointCommand {
@@ -86,10 +83,10 @@ func (m *_CBusPointToPointCommandDirect) GetUnitAddress() UnitAddress {
 ///////////////////////////////////////////////////////////
 
 // NewCBusPointToPointCommandDirect factory function for _CBusPointToPointCommandDirect
-func NewCBusPointToPointCommandDirect(unitAddress UnitAddress, bridgeAddressCountPeek uint16, calData CALData, crc Checksum, peekAlpha byte, alpha Alpha, srchk bool) *_CBusPointToPointCommandDirect {
+func NewCBusPointToPointCommandDirect(unitAddress UnitAddress, bridgeAddressCountPeek uint16, calData CALData, cBusOptions CBusOptions) *_CBusPointToPointCommandDirect {
 	_result := &_CBusPointToPointCommandDirect{
 		UnitAddress:              unitAddress,
-		_CBusPointToPointCommand: NewCBusPointToPointCommand(bridgeAddressCountPeek, calData, crc, peekAlpha, alpha, srchk),
+		_CBusPointToPointCommand: NewCBusPointToPointCommand(bridgeAddressCountPeek, calData, cBusOptions),
 	}
 	_result._CBusPointToPointCommand._CBusPointToPointCommandChildRequirements = _result
 	return _result
@@ -130,7 +127,7 @@ func (m *_CBusPointToPointCommandDirect) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func CBusPointToPointCommandDirectParse(readBuffer utils.ReadBuffer, srchk bool) (CBusPointToPointCommandDirect, error) {
+func CBusPointToPointCommandDirectParse(readBuffer utils.ReadBuffer, cBusOptions CBusOptions) (CBusPointToPointCommandDirect, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("CBusPointToPointCommandDirect"); pullErr != nil {
@@ -145,7 +142,7 @@ func CBusPointToPointCommandDirectParse(readBuffer utils.ReadBuffer, srchk bool)
 	}
 	_unitAddress, _unitAddressErr := UnitAddressParse(readBuffer)
 	if _unitAddressErr != nil {
-		return nil, errors.Wrap(_unitAddressErr, "Error parsing 'unitAddress' field")
+		return nil, errors.Wrap(_unitAddressErr, "Error parsing 'unitAddress' field of CBusPointToPointCommandDirect")
 	}
 	unitAddress := _unitAddress.(UnitAddress)
 	if closeErr := readBuffer.CloseContext("unitAddress"); closeErr != nil {
@@ -156,13 +153,13 @@ func CBusPointToPointCommandDirectParse(readBuffer utils.ReadBuffer, srchk bool)
 	{
 		reserved, _err := readBuffer.ReadUint8("reserved", 8)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of CBusPointToPointCommandDirect")
 		}
 		if reserved != uint8(0x00) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint8(0x00),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
@@ -174,7 +171,7 @@ func CBusPointToPointCommandDirectParse(readBuffer utils.ReadBuffer, srchk bool)
 	_child := &_CBusPointToPointCommandDirect{
 		UnitAddress: unitAddress,
 		_CBusPointToPointCommand: &_CBusPointToPointCommand{
-			Srchk: srchk,
+			CBusOptions: cBusOptions,
 		},
 	}
 	_child._CBusPointToPointCommand._CBusPointToPointCommandChildRequirements = _child

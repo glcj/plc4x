@@ -126,7 +126,7 @@ func BACnetIPModeTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, tagCl
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetIPModeTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -146,9 +146,12 @@ func BACnetIPModeTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, tagCl
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGenericFailing(readBuffer, header.GetActualLength(), BACnetIPMode_NORMAL)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetIPModeTagged")
 	}
-	value := _value.(BACnetIPMode)
+	var value BACnetIPMode
+	if _value != nil {
+		value = _value.(BACnetIPMode)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetIPModeTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetIPModeTagged")

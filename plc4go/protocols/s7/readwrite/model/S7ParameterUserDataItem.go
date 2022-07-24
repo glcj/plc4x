@@ -111,7 +111,7 @@ func S7ParameterUserDataItemParse(readBuffer utils.ReadBuffer) (S7ParameterUserD
 	// Discriminator Field (itemType) (Used as input to a switch field)
 	itemType, _itemTypeErr := readBuffer.ReadUint8("itemType", 8)
 	if _itemTypeErr != nil {
-		return nil, errors.Wrap(_itemTypeErr, "Error parsing 'itemType' field")
+		return nil, errors.Wrap(_itemTypeErr, "Error parsing 'itemType' field of S7ParameterUserDataItem")
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
@@ -127,11 +127,10 @@ func S7ParameterUserDataItemParse(readBuffer utils.ReadBuffer) (S7ParameterUserD
 	case itemType == 0x12: // S7ParameterUserDataItemCPUFunctions
 		_childTemp, typeSwitchError = S7ParameterUserDataItemCPUFunctionsParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [itemType=%v]", itemType)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of S7ParameterUserDataItem")
 	}
 	_child = _childTemp.(S7ParameterUserDataItemChildSerializeRequirement)
 

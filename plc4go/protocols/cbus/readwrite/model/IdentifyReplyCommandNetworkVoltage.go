@@ -112,11 +112,11 @@ func (m *_IdentifyReplyCommandNetworkVoltage) GetV() byte {
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandNetworkVoltage factory function for _IdentifyReplyCommandNetworkVoltage
-func NewIdentifyReplyCommandNetworkVoltage(volts string, voltsDecimalPlace string) *_IdentifyReplyCommandNetworkVoltage {
+func NewIdentifyReplyCommandNetworkVoltage(volts string, voltsDecimalPlace string, numBytes uint8) *_IdentifyReplyCommandNetworkVoltage {
 	_result := &_IdentifyReplyCommandNetworkVoltage{
 		Volts:                 volts,
 		VoltsDecimalPlace:     voltsDecimalPlace,
-		_IdentifyReplyCommand: NewIdentifyReplyCommand(),
+		_IdentifyReplyCommand: NewIdentifyReplyCommand(numBytes),
 	}
 	_result._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _result
 	return _result
@@ -163,7 +163,7 @@ func (m *_IdentifyReplyCommandNetworkVoltage) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attribute Attribute) (IdentifyReplyCommandNetworkVoltage, error) {
+func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attribute Attribute, numBytes uint8) (IdentifyReplyCommandNetworkVoltage, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandNetworkVoltage"); pullErr != nil {
@@ -175,14 +175,14 @@ func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attrib
 	// Simple Field (volts)
 	_volts, _voltsErr := readBuffer.ReadString("volts", uint32(2))
 	if _voltsErr != nil {
-		return nil, errors.Wrap(_voltsErr, "Error parsing 'volts' field")
+		return nil, errors.Wrap(_voltsErr, "Error parsing 'volts' field of IdentifyReplyCommandNetworkVoltage")
 	}
 	volts := _volts
 
 	// Const Field (dot)
 	dot, _dotErr := readBuffer.ReadByte("dot")
 	if _dotErr != nil {
-		return nil, errors.Wrap(_dotErr, "Error parsing 'dot' field")
+		return nil, errors.Wrap(_dotErr, "Error parsing 'dot' field of IdentifyReplyCommandNetworkVoltage")
 	}
 	if dot != IdentifyReplyCommandNetworkVoltage_DOT {
 		return nil, errors.New("Expected constant value " + fmt.Sprintf("%d", IdentifyReplyCommandNetworkVoltage_DOT) + " but got " + fmt.Sprintf("%d", dot))
@@ -191,14 +191,14 @@ func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attrib
 	// Simple Field (voltsDecimalPlace)
 	_voltsDecimalPlace, _voltsDecimalPlaceErr := readBuffer.ReadString("voltsDecimalPlace", uint32(2))
 	if _voltsDecimalPlaceErr != nil {
-		return nil, errors.Wrap(_voltsDecimalPlaceErr, "Error parsing 'voltsDecimalPlace' field")
+		return nil, errors.Wrap(_voltsDecimalPlaceErr, "Error parsing 'voltsDecimalPlace' field of IdentifyReplyCommandNetworkVoltage")
 	}
 	voltsDecimalPlace := _voltsDecimalPlace
 
 	// Const Field (v)
 	v, _vErr := readBuffer.ReadByte("v")
 	if _vErr != nil {
-		return nil, errors.Wrap(_vErr, "Error parsing 'v' field")
+		return nil, errors.Wrap(_vErr, "Error parsing 'v' field of IdentifyReplyCommandNetworkVoltage")
 	}
 	if v != IdentifyReplyCommandNetworkVoltage_V {
 		return nil, errors.New("Expected constant value " + fmt.Sprintf("%d", IdentifyReplyCommandNetworkVoltage_V) + " but got " + fmt.Sprintf("%d", v))
@@ -210,9 +210,11 @@ func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attrib
 
 	// Create a partially initialized instance
 	_child := &_IdentifyReplyCommandNetworkVoltage{
-		Volts:                 volts,
-		VoltsDecimalPlace:     voltsDecimalPlace,
-		_IdentifyReplyCommand: &_IdentifyReplyCommand{},
+		Volts:             volts,
+		VoltsDecimalPlace: voltsDecimalPlace,
+		_IdentifyReplyCommand: &_IdentifyReplyCommand{
+			NumBytes: numBytes,
+		},
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil

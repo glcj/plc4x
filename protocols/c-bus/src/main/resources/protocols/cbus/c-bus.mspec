@@ -17,40 +17,150 @@
  * under the License.
  */
 
-[discriminatedType CBusCommand(bit srchk)
-    [const  byte       initiator 0x5C   ] // 0x5C == "/"
-    [simple CBusHeader header           ]
+[type CBusConstants
+    [const    uint 16     cbusTcpDefaultPort 10001]
+]
+
+[type RequestContext
+    // Useful for response parsing: Set this to true if you send a CAL before. This will change the way the response will be parsed
+    [simple   bit       sendCalCommandBefore        ]
+    // Useful for response parsing: Set this to true if you send a SAL status request before. This will change the way the response will be parsed
+    [simple   bit       sendSALStatusRequestBefore  ]
+    // Useful for response parsing: Set this to true if you send a identify request before. This will change the way the response will be parsed
+    [simple   bit       sendIdentifyRequestBefore   ]
+]
+
+[type CBusOptions
+    // Defines that SAL messages can occur at any time
+    [simple bit connect]
+    // Disable echo of characters. When used with connect SAL have a long option. Select long from of most CAL replies
+    [simple bit smart  ]
+    // only works with smart. Select long form of CAL messages
+    [simple bit idmon  ]
+    // useful with smart. Select long form, extended format for all monitored and initiated status requests
+    [simple bit exstat ]
+    // monitors all traffic for status requests. Status requests will be returned as CAL. Replies are modified by exstat. Usually used in conjunction with connect.
+    [simple bit monitor]
+    // Same as connect. In addition it will return remote network SAL
+    [simple bit monall ]
+    // Serial interface will emit a power up notification
+    [simple bit pun    ]
+    // causes parameter change notifications to be emitted.
+    [simple bit pcn    ]
+    // enabled the checksum checks
+    [simple bit srchk ]
+]
+
+[type CBusMessage(bit isResponse, RequestContext requestContext, CBusOptions cBusOptions, uint 16 messageLength)
+    [validation 'requestContext != null' "requestContext required"  ]
+    [validation 'cBusOptions != null'    "cBusOptions required"     ]
+    [typeSwitch isResponse
+       ['false' *ToServer
+            [simple   Request('cBusOptions', 'messageLength')         request         ]
+       ]
+       ['true' *ToClient
+            [simple   ReplyOrConfirmation('cBusOptions', 'messageLength', 'requestContext')  reply           ]
+       ]
+    ]
+]
+
+[type Request(CBusOptions cBusOptions, uint 16 messageLength)
+    [peek     RequestType peekedByte                                        ]
+    [optional RequestType startingCR       'peekedByte == RequestType.EMPTY']
+    [optional RequestType resetMode        'peekedByte == RequestType.RESET']
+    [peek     RequestType secondPeek                                        ]
+    [virtual  RequestType actualPeek       '(startingCR==null&&resetMode==null)||(startingCR==null&&resetMode!=null&&secondPeek==RequestType.EMPTY)?peekedByte:secondPeek'  ]
+    [virtual uint 16 payloadLength         '(messageLength-2)-((resetMode!=null)?(1):(0))'                                                                                  ] // We subtract the command itself and the termination
+    [typeSwitch actualPeek
+        ['SMART_CONNECT_SHORTCUT' *SmartConnectShortcut
+            [const    byte        pipe      0x7C                            ]
+            [peek     RequestType pipePeek                                  ]
+            [optional byte        secondPipe 'pipePeek == RequestType.SMART_CONNECT_SHORTCUT']
+        ]
+        ['RESET' *Reset
+            [peek     RequestType tildePeek                                     ]
+            [optional byte        secondTilde 'tildePeek == RequestType.RESET'  ]
+            [peek     RequestType tildePeek2                                    ]
+            [optional byte        thirdTilde 'tildePeek2 == RequestType.RESET'  ]
+        ]
+        ['DIRECT_COMMAND' *DirectCommandAccess(uint 16 payloadLength)
+            [const    byte    at        0x40                                ]
+            [manual   CALData
+                              calData
+                        'STATIC_CALL("readCALData", readBuffer, payloadLength)'
+                        'STATIC_CALL("writeCALData", writeBuffer, calData)'
+                        '(_value.lengthInBytes*2)*8'                        ]
+        ]
+        ['REQUEST_COMMAND' *Command(uint 16 payloadLength)
+            [const    byte  initiator 0x5C                                  ] // 0x5C == "/"
+            [manual   CBusCommand
+                              cbusCommand
+                        'STATIC_CALL("readCBusCommand", readBuffer, payloadLength, cBusOptions, cBusOptions.srchk)'
+                        'STATIC_CALL("writeCBusCommand", writeBuffer, cbusCommand)'
+                        '(_value.lengthInBytes*2)*8'                        ]
+            [manual   Checksum
+                              chksum
+                        'STATIC_CALL("readAndValidateChecksum", readBuffer, cbusCommand, cBusOptions.srchk)'
+                        'STATIC_CALL("calculateChecksum", writeBuffer, cbusCommand, cBusOptions.srchk)'
+                        '8'                                                 ]
+            [optional Alpha         alpha                                   ]
+        ]
+        ['NULL' *Null
+            [const    uint 32             nullIndicator        0x6E756C6C   ] // "null"
+        ]
+        ['EMPTY' *Empty
+        ]
+        // TODO: we should check if we are in basic mode
+        [* *Obsolete(uint 16 payloadLength)
+            [virtual  uint 16 obsoletePayloadLength 'payloadLength+1'       ]
+            [manual   CALData
+                              calData
+                        'STATIC_CALL("readCALData", readBuffer, obsoletePayloadLength)'
+                        'STATIC_CALL("writeCALData", writeBuffer, calData)'
+                        '(_value.lengthInBytes*2)*8'                        ]
+            [optional Alpha   alpha                                         ]
+        ]
+    ]
+    [simple   RequestTermination  termination                               ]
+]
+
+[enum uint 8 RequestType(uint 8 controlChar)
+    ['0x00' UNKNOWN                 ['0x00']]
+    ['0x7C' SMART_CONNECT_SHORTCUT  ['0x7C']] // control char = '|'
+    ['0x7E' RESET                   ['0x7E']] // control char = '~'
+    ['0x40' DIRECT_COMMAND          ['0x40']] // control char = '@'
+    ['0x5C' REQUEST_COMMAND         ['0x5C']] // control char = '/'
+    ['0x6E' NULL                    ['0x00']] // null doesn't have a "control char" so we just consume the rest
+    ['0x0D' EMPTY                   ['0x00']] // empty doesn't have a "control char" so we just consume the rest
+]
+
+[discriminatedType CBusCommand(CBusOptions cBusOptions)
+    [simple  CBusHeader header           ]
+    [virtual bit        isDeviceManagement 'header.dp']
     // TODO: header.destinationAddressType could be used directly but for this we need source type resolving to work (WIP)
     [virtual DestinationAddressType destinationAddressType 'header.destinationAddressType']
-    [typeSwitch destinationAddressType
-        ['PointToPointToMultiPoint' CBusCommandPointToPointToMultiPoint
-            [simple CBusPointToPointToMultipointCommand('srchk') command]
+    [typeSwitch destinationAddressType, isDeviceManagement
+        [*, 'true' *DeviceManagement
+            [simple     Parameter paramNo                                 ]
+            [const      byte      delimiter       0x0                     ]
+            [simple     byte      parameterValue                          ]
         ]
-        ['PointToMultiPoint'        CBusCommandPointToMultiPoint
-            [simple CBusPointToMultiPointCommand('srchk')        command]
+        ['PointToPointToMultiPoint' *PointToPointToMultiPoint
+            [simple CBusPointToPointToMultiPointCommand('cBusOptions') command]
         ]
-        ['PointToPoint'             CBusCommandPointToPoint
-            [simple CBusPointToPointCommand('srchk')             command]
+        ['PointToMultiPoint'        *PointToMultiPoint
+            [simple CBusPointToMultiPointCommand('cBusOptions')        command]
+        ]
+        ['PointToPoint'             *PointToPoint
+            [simple CBusPointToPointCommand('cBusOptions')             command]
         ]
     ]
 ]
 
-// TODO: check if that can be used in combination with srchk
-[type CBusOptions
-    [simple bit connect]
-    [simple bit smart  ]
-    [simple bit idmon  ]
-    [simple bit exstat ]
-    [simple bit monitor]
-    [simple bit monall ]
-    [simple bit pun    ]
-    [simple bit pcn    ]
-]
-
 [type CBusHeader
     [simple   PriorityClass          priorityClass         ]
-    [reserved bit                    'false'               ] // Reserved for internal C-Bus management purposes
-    [reserved uint 2                 '0'                   ] // Reserved for internal C-Bus management purposes
+    [simple   bit                    dp                    ] // Reserved for internal C-Bus management purposes (Referred to as special packet attribute)
+    [simple   uint 2                 rc                    ] // Reserved for internal C-Bus management purposes (Referred to as special packet attribute)
     [simple   DestinationAddressType destinationAddressType]
 ]
 
@@ -81,24 +191,36 @@
 
 [type Alpha
     [simple byte character]
+    [validation '(character >= 0x67) && (character <= 0x7A)' "character not in alpha space" shouldFail=false] // Read if the peeked byte is between 'g' and 'z'
 ]
 
 [type NetworkRoute
+    [reserved uint 2      '0x00'                                                       ]
+    [simple RouteType     reverseRouteType                                             ]
     [simple RouteType     routeType                                                    ]
     [array  BridgeAddress additionalBridgeAddresses count 'routeType.additionalBridges']
 ]
 
-[enum byte RouteType(uint 3 additionalBridges)
-    ['0x00' NoBridgeAtAll         ['0']]
-    ['0x09' NoAdditionalBridge    ['0']]
-    ['0x12' OneAdditionalBridge   ['1']]
-    ['0x1B' TwoAdditionalBridge   ['2']]
-    ['0x24' ThreeAdditionalBridge ['3']]
-    ['0x2D' FourAdditionalBridge  ['4']]
-    ['0x36' FiveAdditionalBridge  ['5']]
+// The last 3 bits are the total number of bridges ... subtracting 1 results in the number of additional bridges.
+// It also seems as if these are generally 2 empty bits and then twice the number of bridges as 3-bit numbers.
+// The block of 3 in bit's 3..5 seem to be the reverse route.
+//
+// Observations on failing packets:
+// - In the first case the first two bits are not empty, but 01 ... the first block of bridges is then increased by one.
+// - In another packet the first two bits are 0, but the first group ist set to 111 and the number of bridges is set to 000.
+// - In another packet the first two bits are 0, the first group is set to 001 and the second to 101
+[enum uint 3 RouteType(uint 3 additionalBridges)
+    ['0x0' NoBridgeAtAll         ['0']]
+    ['0x1' NoAdditionalBridge    ['0']]
+    ['0x2' OneAdditionalBridge   ['1']]
+    ['0x3' TwoAdditionalBridge   ['2']]
+    ['0x4' ThreeAdditionalBridge ['3']]
+    ['0x5' FourAdditionalBridge  ['4']]
+    ['0x6' FiveAdditionalBridge  ['5']]
+    ['0x7' SixAdditionalBridge   ['6']]
 ]
 
-[discriminatedType CBusPointToPointCommand(bit srchk)
+[discriminatedType CBusPointToPointCommand(CBusOptions cBusOptions)
     [peek    uint 16     bridgeAddressCountPeek ]
     [virtual bit         isDirect  '(bridgeAddressCountPeek & 0x00FF) == 0x0000']
     [typeSwitch isDirect
@@ -112,57 +234,37 @@
             [simple UnitAddress   unitAddress                                                   ]
         ]
     ]
-    [simple   CALData calData                                                                   ]
-    [optional Checksum      crc      'srchk'                                                    ] // checksum is optional but mspec checksum isn't
-    [peek     byte          peekAlpha                                                           ]
-    [optional Alpha         alpha    '(peekAlpha >= 0x67) && (peekAlpha <= 0x7A)'               ] // Read if the peeked byte is between 'g' and 'z'
-    [const    byte          cr       0xD                                                        ] // 0xD == "<cr>"
+    [simple   CALData('null') calData                                                           ]
 ]
 
-[discriminatedType CBusPointToMultiPointCommand(bit srchk)
+[discriminatedType CBusPointToMultiPointCommand(CBusOptions cBusOptions)
     [peek    byte     peekedApplication                                                                ]
     [typeSwitch peekedApplication
-        ['0xFF'   CBusPointToMultiPointCommandStatus
+        ['0xFF'   *Status
             [reserved byte          '0xFF'                                                             ]
             [reserved byte          '0x00'                                                             ]
             [simple   StatusRequest statusRequest                                                      ]
-            [optional Checksum      crc           'srchk'                                              ] // checksum is optional but mspec checksum isn't
-            [peek     byte          peekAlpha                                                          ]
-            [optional Alpha         alpha         '(peekAlpha >= 0x67) && (peekAlpha <= 0x7A)'         ] // Read if the peeked byte is between 'g' and 'z'
-            [const    byte          cr            0xD                                                  ] // 0xD == "<cr>"
         ]
-        [         CBusPointToMultiPointCommandNormal
-            [simple   ApplicationIdContainer   application                                             ]
-            [reserved byte                     '0x00'                                                  ]
-            [simple   SALData                  salData                                                 ]
-            [optional Checksum                 crc         'srchk'                                     ] // crc      is optional but mspec crc      isn't
-            [peek     byte                     peekAlpha                                               ]
-            [optional Alpha                    alpha       '(peekAlpha >= 0x67) && (peekAlpha <= 0x7A)'] // Read if the peeked byte is between 'g' and 'z'
-            [const    byte                     cr          0xD                                         ] // 0xD == "<cr>"
+        [         *Normal
+            [simple   ApplicationIdContainer                application                                ]
+            [reserved byte                                  '0x00'                                     ]
+            [simple   SALData('application.applicationId')  salData                                    ]
         ]
     ]
 ]
 
-[discriminatedType CBusPointToPointToMultipointCommand(bit srchk)
+[discriminatedType CBusPointToPointToMultiPointCommand(CBusOptions cBusOptions)
     [simple BridgeAddress bridgeAddress                                                              ]
     [simple NetworkRoute  networkRoute                                                               ]
     [peek    byte       peekedApplication                                                            ]
     [typeSwitch peekedApplication
-        ['0xFF'   CBusCommandPointToPointToMultiPointStatus
+        ['0xFF'   *Status
             [reserved byte        '0xFF'                                                             ]
             [simple StatusRequest statusRequest                                                      ]
-            [optional Checksum    crc           'srchk'                                              ] // crc      is optional but mspec crc      isn't
-            [peek     byte        peekAlpha                                                          ]
-            [optional Alpha       alpha         '(peekAlpha >= 0x67) && (peekAlpha <= 0x7A)'         ] // Read if the peeked byte is between 'g' and 'z'
-            [const    byte        cr            0xD                                                  ] // 0xD == "<cr>"
         ]
-        [         CBusCommandPointToPointToMultiPointNormal
-            [simple   ApplicationIdContainer application                                             ]
-            [simple   SALData                salData                                                 ]
-            [optional Checksum               crc         'srchk'                                     ] // crc      is optional but mspec crc      isn't
-            [peek     byte                   peekAlpha                                               ]
-            [optional Alpha                  alpha       '(peekAlpha >= 0x67) && (peekAlpha <= 0x7A)'] // Read if the peeked byte is between 'g' and 'z'
-            [const    byte                   cr          0xD                                         ] // 0xD == "<cr>"
+        [*        *Normal
+            [simple   ApplicationIdContainer                application                              ]
+            [simple   SALData('application.applicationId')  salData                                  ]
         ]
     ]
 ]
@@ -192,6 +294,9 @@
     ['0x11' TELEPHONY_STATUS_AND_CONTROL      ]
     ['0x12' MEASUREMENT                       ]
     ['0x13' TESTING                           ]
+    ['0x14' MEDIA_TRANSPORT_CONTROL           ]
+    ['0x15' ERROR_REPORTING                   ]
+    ['0x16' HVAC_ACTUATOR                     ]
 ]
 
 [enum uint 4 LightingCompatible
@@ -317,8 +422,8 @@
     ['0x70' VENTILATION_70                        ['VENTILATION'                       , 'YES'                 ]]
     ['0x71' IRRIGATION_CONTROL_71                 ['IRRIGATION_CONTROL'                , 'YES'                 ]]
     ['0x72' POOLS_SPAS_PONDS_FOUNTAINS_CONTROL_72 ['POOLS_SPAS_PONDS_FOUNTAINS_CONTROL', 'YES'                 ]]
-    ['0x73' RESERVED_73                           ['RESERVED'                          , 'NA'                  ]] // HVAC_ACTUATOR
-    ['0x74' RESERVED_74                           ['RESERVED'                          , 'NA'                  ]] // HVAC_ACTUATOR
+    ['0x73' RESERVED_73                           ['HVAC_ACTUATOR'                     , 'NA'                  ]] // HVAC_ACTUATOR
+    ['0x74' RESERVED_74                           ['HVAC_ACTUATOR'                     , 'NA'                  ]] // HVAC_ACTUATOR
     ['0x75' RESERVED_75                           ['RESERVED'                          , 'NA'                  ]]
     ['0x76' RESERVED_76                           ['RESERVED'                          , 'NA'                  ]]
     ['0x77' RESERVED_77                           ['RESERVED'                          , 'NA'                  ]]
@@ -394,7 +499,7 @@
     ['0xBD' RESERVED_BD                           ['RESERVED'                          , 'NA'                  ]]
     ['0xBE' RESERVED_BE                           ['RESERVED'                          , 'NA'                  ]]
     ['0xBF' RESERVED_BF                           ['RESERVED'                          , 'NA'                  ]]
-    ['0xC0' RESERVED_C0                           ['RESERVED'                          , 'NA'                  ]] // MEDIA_TRANSPORT
+    ['0xC0' MEDIA_TRANSPORT_CONTROL_C0            ['MEDIA_TRANSPORT_CONTROL'           , 'NA'                  ]] // MEDIA_TRANSPORT_CONTROL
     ['0xC1' RESERVED_C1                           ['RESERVED'                          , 'NA'                  ]]
     ['0xC2' RESERVED_C2                           ['RESERVED'                          , 'NA'                  ]]
     ['0xC3' RESERVED_C3                           ['RESERVED'                          , 'NA'                  ]]
@@ -408,7 +513,7 @@
     ['0xCB' ENABLE_CONTROL_CB                     ['ENABLE_CONTROL'                    , 'YES_BUT_RESTRICTIONS']]
     ['0xCC' I_HAVE_NO_IDEA_CC                     ['RESERVED'                          , 'NA'                  ]] // This is the only value actually not defined in the spec.
     ['0xCD' AUDIO_AND_VIDEO_CD                    ['AUDIO_AND_VIDEO'                   , 'YES_BUT_RESTRICTIONS']]
-    ['0xCE' RESERVED_CE                           ['RESERVED'                          , 'NA'                  ]] // ERROR_REPORTING
+    ['0xCE' ERROR_REPORTING_CE                    ['ERROR_REPORTING'                   , 'NA'                  ]] // ERROR_REPORTING
     ['0xCF' RESERVED_CF                           ['RESERVED'                          , 'NA'                  ]]
     ['0xD0' SECURITY_D0                           ['SECURITY'                          , 'NO'                  ]]
     ['0xD1' METERING_D1                           ['METERING'                          , 'NO'                  ]]
@@ -460,43 +565,405 @@
     ['0xFF' RESERVED_FF                           ['RESERVED'                          , 'NO'                  ]] // NETWORK_CONTROL
 ]
 
-[type CALData
+[type CALData(RequestContext requestContext)
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsCALCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
     [simple  CALCommandTypeContainer commandTypeContainer                                   ]
     [virtual CALCommandType          commandType          'commandTypeContainer.commandType']
-    [typeSwitch commandType
-        ['RESET' CALDataRequestReset
+    [virtual bit  sendIdentifyRequestBefore       'requestContext!=null?requestContext.sendIdentifyRequestBefore:false']
+    [typeSwitch commandType, sendIdentifyRequestBefore
+        ['RESET'            *Reset                                                              // Request
         ]
-        ['RECALL' CALDataRequestRecall
-            [simple uint 8 paramNo                                                          ]
-            [simple uint 8 count                                                            ]
+        ['RECALL'           *Recall                                                             // Request
+            [simple Parameter paramNo                                                       ]
+            [simple uint 8    count                                                         ]
         ]
-        ['IDENTIFY' CALDataRequestIdentify
+        ['IDENTIFY'         *Identify                                                           // Request
             [simple Attribute attribute                                                     ]
         ]
-        ['GET_STATUS' CALDataRequestGetStatus
-            [simple uint 8 paramNo                                                          ]
-            [simple uint 8 count                                                            ]
+        ['GET_STATUS'       *GetStatus // Request
+            [simple Parameter paramNo                                                       ]
+            [simple uint 8    count                                                         ]
         ]
-        ['REPLY' CALDataReplyReply(CALCommandTypeContainer commandTypeContainer)
-            [simple uint 8 paramNumber                                                      ]
-            [array  byte   data        count 'commandTypeContainer.numBytes'                ]
+        ['WRITE'            *Write(CALCommandTypeContainer commandTypeContainer)                // Request
+            [simple Parameter paramNo                                                       ]
+            [simple byte      code                                                          ]
+            // TODO: we can decode this with the parametert above... e.g. INTERFACE_OPTIONS_1 is defined below
+            [array  byte      data        count 'commandTypeContainer.numBytes - 2'         ]
         ]
-        ['ACKNOWLEDGE' CALDataReplyAcknowledge
-            [simple uint 8 paramNo                                                          ]
-            [simple uint 8 code                                                             ]
+        ['REPLY', 'true'    *IdentifyReply(CALCommandTypeContainer commandTypeContainer)        // Reply
+            [simple Attribute   attribute                                                   ]
+            [simple IdentifyReplyCommand('attribute', 'commandTypeContainer.numBytes - 1')
+                                identifyReplyCommand                                        ]
         ]
-        ['STATUS' CALDataReplyStatus(CALCommandTypeContainer commandTypeContainer)
+        ['REPLY'            *Reply(CALCommandTypeContainer commandTypeContainer)                // Reply
+            [simple Parameter paramNo                                                       ]
+            [array  byte      data        count 'commandTypeContainer.numBytes-1'           ]
+        ]
+        ['ACKNOWLEDGE'      *Acknowledge // Reply
+            [simple Parameter paramNo                                                       ]
+            [simple uint 8    code                                                          ]
+        ]
+        ['STATUS'           *Status(CALCommandTypeContainer commandTypeContainer)               // Reply
             [simple ApplicationIdContainer application                                                 ]
             [simple uint 8                 blockStart                                                  ]
-            [array  byte                   data        count 'commandTypeContainer.numBytes'           ]
+            [array  byte                   data        count 'commandTypeContainer.numBytes - 2'       ]
         ]
-        ['STATUS_EXTENDED' CALDataReplyStatusExtended(CALCommandTypeContainer commandTypeContainer)
-            [simple uint 8                 encoding                                                    ]
+        ['STATUS_EXTENDED'  *StatusExtended(CALCommandTypeContainer commandTypeContainer)       // Reply
+            [simple uint 8                 coding                                                      ]
+            [virtual bit                   isBinaryBySerialInterface 'coding == 0x00'                  ]
+            [virtual bit                   isBinaryByElsewhere       'coding == 0x40'                  ]
+            [virtual bit                   isLevelBySerialInterface  'coding == 0x07'                  ]
+            [virtual bit                   isLevelByElsewhere        'coding == 0x47'                  ]
+            [virtual bit                   isReserved                '!isBinaryBySerialInterface && !isBinaryByElsewhere && !isLevelBySerialInterface && !isLevelByElsewhere']
             [simple ApplicationIdContainer application                                                 ]
             [simple uint 8                 blockStart                                                  ]
-            [array  byte                   data        count 'commandTypeContainer.numBytes'           ]
+            [array  byte                   data        count 'commandTypeContainer.numBytes - 2'       ] // TODO: this should be -3 but somehow it is -2 with the examples
         ]
     ]
+    // Note: we omit the request context as it is only useful for the first element
+    [optional CALData('null') additionalData]
+]
+
+[enum uint 8 Parameter(vstring group, vstring parameterDescription, vstring form, bit isVolatile, ProtectionLevel protectionLevel)
+    ['0x00' UNKNOWN_01                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x01' UNKNOWN_02                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x02' UNKNOWN_03                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x03' UNKNOWN_04                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x04' UNKNOWN_05                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x05' UNKNOWN_06                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x06' UNKNOWN_07                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x07' UNKNOWN_08                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x08' UNKNOWN_09                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x09' UNKNOWN_10                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x0A' UNKNOWN_11                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x0B' UNKNOWN_12                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x0C' UNKNOWN_13                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x0D' UNKNOWN_14                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x0E' UNKNOWN_15                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x0F' UNKNOWN_16                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x10' UNKNOWN_17                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x11' UNKNOWN_18                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x12' UNKNOWN_19                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x13' UNKNOWN_20                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x14' UNKNOWN_21                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x15' UNKNOWN_22                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x16' UNKNOWN_23                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x17' UNKNOWN_24                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x18' UNKNOWN_25                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x19' UNKNOWN_26                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x1A' UNKNOWN_27                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x1B' UNKNOWN_28                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x1C' UNKNOWN_29                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x1D' UNKNOWN_30                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x1E' UNKNOWN_31                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x1F' UNKNOWN_32                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x20' UNKNOWN_33                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x21' APPLICATION_ADDRESS_1                   ['"Mgmt"', '"Application Address 1"',                   '"Byte (Note 1)"',          'false', 'UNLOCK_REQUIRED']]
+    ['0x22' APPLICATION_ADDRESS_2                   ['"Mgmt"', '"Application Address 2"',                   '"Byte (Note 1)"',          'false', 'UNLOCK_REQUIRED']]
+    ['0x23' UNKOWN_35                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x24' UNKOWN_36                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x25' UNKOWN_37                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x26' UNKOWN_38                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x27' UNKOWN_39                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x28' UNKOWN_40                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x29' UNKOWN_41                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x2A' UNKOWN_42                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x2B' UNKOWN_43                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x2C' UNKOWN_44                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x2D' UNKOWN_45                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x2E' UNKOWN_46                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x2F' UNKOWN_47                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x30' INTERFACE_OPTIONS_1                     ['"Unit"', '"Interface options 1"',                     '"8 Bits (Note 2)"',        'true',  'NO_WRITE_ACCESS']]
+    ['0x31' UNKOWN_49                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x32' UNKOWN_50                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x33' UNKOWN_51                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x34' UNKOWN_52                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x35' UNKOWN_53                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x36' UNKOWN_54                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x37' UNKOWN_55                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x38' UNKOWN_56                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x39' UNKOWN_57                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x3A' UNKOWN_58                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x3B' UNKOWN_59                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x3C' UNKOWN_60                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x3D' BAUD_RATE_SELECTOR                      ['"Unit"', '"Baud rate selector"',                      '"Byte (Note 3)"',          'false', 'NO_WRITE_ACCESS']]
+    ['0x3E' INTERFACE_OPTIONS_2                     ['"Unit"', '"Interface options 2"',                     '"Byte (Note 4)"',          'false', 'NONE'           ]]
+    ['0x3F' UNKOWN_63                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x40' UNKOWN_64                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x41' INTERFACE_OPTIONS_1_POWER_UP_SETTINGS   ['"Unit"', '"Interface options 2 power up settings"',   '"8 Bits (Note 5)"',        'false', 'UNLOCK_REQUIRED']]
+    ['0x42' INTERFACE_OPTIONS_3                     ['"Unit"', '"Interface options 3"',                     '"Byte (Note 6)"',          'false', 'UNLOCK_REQUIRED']]
+    ['0x43' UNKOWN_67                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x44' UNKOWN_68                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x45' UNKOWN_69                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x46' UNKOWN_70                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x47' UNKOWN_71                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x48' UNKOWN_72                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x49' UNKOWN_73                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x4A' UNKOWN_74                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x4B' UNKOWN_75                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x4C' UNKOWN_76                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x4D' UNKOWN_77                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x4E' UNKOWN_78                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x4F' UNKOWN_79                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x50' UNKOWN_80                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x51' UNKOWN_81                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x52' UNKOWN_82                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x53' UNKOWN_83                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x54' UNKOWN_84                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x55' UNKOWN_85                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x56' UNKOWN_86                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x57' UNKOWN_87                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x58' UNKOWN_88                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x59' UNKOWN_89                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x5A' UNKOWN_90                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x5B' UNKOWN_91                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x5C' UNKOWN_92                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x5D' UNKOWN_93                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x5E' UNKOWN_94                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x5F' UNKOWN_95                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x60' UNKOWN_96                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x61' UNKOWN_97                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x62' UNKOWN_98                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x63' UNKOWN_99                               ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x64' UNKOWN_100                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x65' UNKOWN_101                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x66' UNKOWN_102                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x67' UNKOWN_103                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x68' UNKOWN_104                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x69' UNKOWN_105                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x6A' UNKOWN_106                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x6B' UNKOWN_107                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x6C' UNKOWN_108                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x6D' UNKOWN_109                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x6E' UNKOWN_110                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x6F' UNKOWN_111                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x70' UNKOWN_112                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x71' UNKOWN_113                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x72' UNKOWN_114                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x73' UNKOWN_115                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x74' UNKOWN_116                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x75' UNKOWN_117                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x76' UNKOWN_118                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x77' UNKOWN_119                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x78' UNKOWN_120                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x79' UNKOWN_121                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x7A' UNKOWN_122                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x7B' UNKOWN_123                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x7C' UNKOWN_124                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x7D' UNKOWN_125                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x7E' UNKOWN_126                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x7F' UNKOWN_127                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x80' UNKOWN_128                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x81' UNKOWN_129                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x82' UNKOWN_130                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x83' UNKOWN_131                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x84' UNKOWN_132                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x85' UNKOWN_133                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x86' UNKOWN_134                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x87' UNKOWN_135                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x88' UNKOWN_136                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x89' UNKOWN_137                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x8A' UNKOWN_138                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x8B' UNKOWN_139                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x8C' UNKOWN_140                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x8D' UNKOWN_141                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x8E' UNKOWN_142                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x8F' UNKOWN_143                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x90' UNKOWN_144                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x91' UNKOWN_145                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x92' UNKOWN_146                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x93' UNKOWN_147                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x94' UNKOWN_148                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x95' UNKOWN_149                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x96' UNKOWN_150                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x97' UNKOWN_151                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x98' UNKOWN_152                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x99' UNKOWN_153                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x9A' UNKOWN_154                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x9B' UNKOWN_155                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x9C' UNKOWN_156                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x9D' UNKOWN_157                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x9E' UNKOWN_158                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0x9F' UNKOWN_159                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA0' UNKOWN_160                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA1' UNKOWN_161                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA2' UNKOWN_162                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA3' UNKOWN_163                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA4' UNKOWN_164                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA5' UNKOWN_165                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA6' UNKOWN_166                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA7' UNKOWN_167                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA8' UNKOWN_168                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xA9' UNKOWN_169                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xAA' UNKOWN_170                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xAB' UNKOWN_171                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xAC' UNKOWN_172                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xAD' UNKOWN_173                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xAE' UNKOWN_174                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xAF' UNKOWN_175                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB0' UNKOWN_176                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB1' UNKOWN_177                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB2' UNKOWN_178                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB3' UNKOWN_179                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB4' UNKOWN_180                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB5' UNKOWN_181                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB6' UNKOWN_182                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB7' UNKOWN_183                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB8' UNKOWN_184                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xB9' UNKOWN_185                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xBA' UNKOWN_186                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xBB' UNKOWN_187                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xBC' UNKOWN_188                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xBD' UNKOWN_189                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xBE' UNKOWN_190                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xBF' UNKOWN_191                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC0' UNKOWN_192                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC1' UNKOWN_193                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC2' UNKOWN_194                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC3' UNKOWN_195                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC4' UNKOWN_196                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC5' UNKOWN_197                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC6' UNKOWN_198                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC7' UNKOWN_199                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC8' UNKOWN_200                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xC9' UNKOWN_201                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xCA' UNKOWN_202                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xCB' UNKOWN_203                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xCC' UNKOWN_204                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xCD' UNKOWN_205                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xCE' UNKOWN_206                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xCF' UNKOWN_207                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD0' UNKOWN_208                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD1' UNKOWN_209                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD2' UNKOWN_210                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD3' UNKOWN_211                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD4' UNKOWN_212                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD5' UNKOWN_213                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD6' UNKOWN_214                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD7' UNKOWN_215                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD8' UNKOWN_216                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xD9' UNKOWN_217                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xDA' UNKOWN_218                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xDB' UNKOWN_219                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xDC' UNKOWN_220                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xDD' UNKOWN_221                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xDE' UNKOWN_222                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xDF' UNKOWN_223                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE0' UNKOWN_224                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE1' UNKOWN_225                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE2' UNKOWN_226                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE3' UNKOWN_227                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE4' UNKOWN_228                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE5' UNKOWN_229                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE6' UNKOWN_230                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE7' UNKOWN_231                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE8' UNKOWN_232                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xE9' UNKOWN_233                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xEA' UNKOWN_234                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+    ['0xEB' CUSTOM_MANUFACTURER_1                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'UNLOCK_REQUIRED']]
+    ['0xEC' CUSTOM_MANUFACTURER_2                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'UNLOCK_REQUIRED']]
+    ['0xED' CUSTOM_MANUFACTURER_3                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'UNLOCK_REQUIRED']]
+    ['0xEE' CUSTOM_MANUFACTURER_4                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'UNLOCK_REQUIRED']]
+    ['0xEF' CUSTOM_MANUFACTURER_5                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'UNLOCK_REQUIRED']]
+    ['0xF0' CUSTOM_MANUFACTURER_6                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'UNLOCK_REQUIRED']]
+    ['0xF1' CUSTOM_MANUFACTURER_7                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'UNLOCK_REQUIRED']]
+    ['0xF2' CUSTOM_MANUFACTURER_8                   ['"Mgmt"', '"Custom Manufacturer (8 bytes)"',           '"ASCII Chars (Note 7)"',   'false', 'READ_ONLY'      ]]
+    ['0xF3' SERIAL_NUMBER_1                         ['"Mgmt"', '"Serial Number"',                           '"Bytes (Note 8)"',         'false', 'READ_ONLY'      ]]
+    ['0xF4' SERIAL_NUMBER_2                         ['"Mgmt"', '"Serial Number"',                           '"Bytes (Note 8)"',         'false', 'READ_ONLY'      ]]
+    ['0xF5' SERIAL_NUMBER_3                         ['"Mgmt"', '"Serial Number"',                           '"Bytes (Note 8)"',         'false', 'READ_ONLY'      ]]
+    ['0xF6' SERIAL_NUMBER_4                         ['"Mgmt"', '"Serial Number"',                           '"Bytes (Note 8)"',         'false', 'READ_ONLY'      ]]
+    ['0xF7' CUSTOM_TYPE_1                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xF8' CUSTOM_TYPE_2                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xF9' CUSTOM_TYPE_3                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xFA' CUSTOM_TYPE_4                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xFB' CUSTOM_TYPE_5                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xFC' CUSTOM_TYPE_6                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xFD' CUSTOM_TYPE_7                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xFE' CUSTOM_TYPE_8                           ['"Mgmt"', '"Custom Type (8 bytes)"',                   '"ASCII Chars (Note 9)"',   'false', 'READ_ONLY'      ]]
+    ['0xFF' UNKOWN_255                              ['""',     '""',                                        '""',                       'false', 'NONE'           ]]
+]
+
+[enum uint 4 ProtectionLevel(vstring description)
+    ['0' UNLOCK_REQUIRED    ['"Unlock required from C-BUS port"']]
+    ['1' NO_WRITE_ACCESS    ['"No write access via C-BUS port"' ]]
+    ['2' NONE               ['"None"'                           ]]
+    ['3' READ_ONLY          ['"Read only"'                      ]]
+]
+
+[type ApplicationAddress1 // Note 1
+    [simple  byte address                       ]
+    // if wildcard is set address 2 should set to wildcard as well
+    [virtual bit  isWildcard 'address == 0xFF'  ]
+]
+
+[type ApplicationAddress2 // Note 1
+    [simple  byte address                       ]
+    [virtual bit  isWildcard 'address == 0xFF'  ]
+]
+
+[type InterfaceOptions1 // Note 2
+    [reserved bit  'false'                       ]
+    [simple   bit  idmon                         ]
+    [simple   bit  monitor                       ]
+    [simple   bit  smart                         ]
+    [simple   bit  srchk                         ]
+    [simple   bit  xonXoff                       ]
+    [reserved bit  'false'                       ]
+    [simple   bit  connect                       ]
+]
+
+// Undefined values default to 0xFF
+[enum uint 8 BaudRateSelector
+    ['0x01' SELECTED_4800_BAUD]
+    ['0x02' SELECTED_2400_BAUD]
+    ['0x03' SELECTED_1200_BAUD]
+    ['0x04' SELECTED_600_BAUD ]
+    ['0x05' SELECTED_300_BAUD ]
+    ['0xFF' SELECTED_9600_BAUD]
+]
+
+[type InterfaceOptions2 // Note 4
+    [reserved bit  'false'                       ]
+    [simple   bit  burden                        ]
+    [reserved bit  'false'                       ]
+    [reserved bit  'false'                       ]
+    [reserved bit  'false'                       ]
+    [reserved bit  'false'                       ]
+    [reserved bit  'false'                       ]
+    [simple   bit  clockGen                      ]
+]
+
+[type InterfaceOptions1PowerUpSettings // Note 5
+    [simple InterfaceOptions1 interfaceOptions1  ]
+]
+
+[type InterfaceOptions3 // Note 6
+    [reserved bit  'false'                       ]
+    [reserved bit  'false'                       ]
+    [reserved bit  'false'                       ]
+    [reserved bit  'false'                       ]
+    [simple   bit  exstat                        ]
+    [simple   bit  pun                           ]
+    [simple   bit  localSal                      ]
+    [simple   bit  pcn                           ]
+]
+
+[type CustomManufacturer // Note 7
+    // TODO: 8 is a placeholder at the moment
+    [simple vstring '8' customString                 ]
+]
+
+[type SerialNumber // Note 8
+    [simple byte octet1]
+    [simple byte octet2]
+    [simple byte octet3]
+    [simple byte octet4]
+]
+
+[type CustomTypes // Note 9
+    // TODO: 8 is a placeholder at the moment
+    [simple vstring '8' customString                 ]
 ]
 
 [enum uint 8 Attribute(uint 8 bytesReturned)
@@ -520,7 +987,7 @@
     ['0x11' DSIStatus                 ['10']]
 ]
 
-[type IdentifyReplyCommand(Attribute attribute)
+[type IdentifyReplyCommand(Attribute attribute, uint 5 numBytes)
     [typeSwitch attribute
         ['Manufacturer'                 IdentifyReplyCommandManufacturer
             [simple string 64  manufacturerName ]
@@ -537,34 +1004,35 @@
             [simple string 32  version          ]
         ]
         ['ExtendedDiagnosticSummary'    IdentifyReplyCommandExtendedDiagnosticSummary
-            [simple ApplicationIdContainer  lowApplication         ]
-            [simple ApplicationIdContainer  highApplication        ]
-            [simple byte                    area                   ]
-            [simple uint 16                 crc                    ]
-            [simple uint 32                 serialNumber           ]
-            [simple byte                    networkVoltage         ]
-            [simple bit                     outputUnit             ]
-            [simple bit                     enableChecksumAlarm    ]
-            [reserved uint 1                '0'                    ]
-            [reserved uint 1                '0'                    ]
-            [reserved uint 1                '0'                    ]
-            [simple bit                     networkVoltageMarginal ]
-            [simple bit                     networkVoltageLow      ]
-            [simple bit                     unitInLearnMode        ]
-            [simple bit                     microPowerReset        ]
-            [simple bit                     internalStackOverflow  ]
-            [simple bit                     commsTxError           ]
-            [simple bit                     microReset             ]
-            [simple bit                     EEDataError            ]
-            [simple bit                     EEChecksumError        ]
-            [simple bit                     EEWriteError           ]
-            [simple bit                     installationMMIError   ]
+            [simple   ApplicationIdContainer  lowApplication         ]
+            [simple   ApplicationIdContainer  highApplication        ]
+            [simple   byte                    area                   ]
+            [simple   uint 16                 crc                    ]
+            [simple   uint 32                 serialNumber           ]
+            [simple   byte                    networkVoltage         ]
+            [virtual  float 32                networkVoltageInVolts 'networkVoltage/6.375']
+            [simple   bit                     unitInLearnMode        ]
+            [simple   bit                     networkVoltageLow      ]
+            [simple   bit                     networkVoltageMarginal ]
+            [reserved uint 1                  '0'                    ]
+            [reserved uint 1                  '0'                    ]
+            [reserved uint 1                  '0'                    ]
+            [simple   bit                     enableChecksumAlarm    ]
+            [simple   bit                     outputUnit             ]
+            [simple   bit                     installationMMIError   ]
+            [simple   bit                     EEWriteError           ]
+            [simple   bit                     EEChecksumError        ]
+            [simple   bit                     EEDataError            ]
+            [simple   bit                     microReset             ]
+            [simple   bit                     commsTxError           ]
+            [simple   bit                     internalStackOverflow  ]
+            [simple   bit                     microPowerReset        ]
         ]
         ['NetworkTerminalLevels'        IdentifyReplyCommandNetworkTerminalLevels
-            //TODO: read dynamic
+            [array  byte        minimumLevels        count 'numBytes'       ] // TODO: check datatype
         ]
         ['TerminalLevel'                IdentifyReplyCommandTerminalLevels
-            //TODO: read dynamic
+            [array  byte        terminalLevels        count 'numBytes'       ] // TODO: check datatype
         ]
         ['NetworkVoltage'               IdentifyReplyCommandNetworkVoltage
            [simple string 2     volts                   ]
@@ -573,31 +1041,37 @@
            [const  byte         v       0x56            ]
         ]
         ['GAVValuesCurrent'             IdentifyReplyCommandGAVValuesCurrent
-           [array  byte         values  count   '16'    ] // TODO: check datatype
+            [array  byte        values  count   'numBytes'    ] // TODO: check datatype
         ]
         ['GAVValuesStored'              IdentifyReplyCommandGAVValuesStored
-           [array  byte         values  count   '16'    ] // TODO: check datatype
+            [array  byte        values  count   'numBytes'    ] // TODO: check datatype
         ]
         ['GAVPhysicalAddresses'         IdentifyReplyCommandGAVPhysicalAddresses
-           [array  byte         values  count   '16'    ] // TODO: check datatype
+            [array  byte        values  count   'numBytes'    ] // TODO: check datatype
         ]
         ['LogicalAssignment'            IdentifyReplyCommandLogicalAssignment
-            //TODO: read dynamic
+            [array  LogicAssignment   logicAssigment        count 'numBytes'       ]
         ]
         ['Delays'                       IdentifyReplyCommandDelays
-            //TODO: read dynamic
+            [array  byte        terminalLevels        count 'numBytes-1'       ]
+            [simple byte        reStrikeDelay                   ]
         ]
         ['MinimumLevels'                IdentifyReplyCommandMinimumLevels
-            //TODO: read dynamic
+            [array  byte        minimumLevels       count 'numBytes'       ]
         ]
         ['MaximumLevels'                IdentifyReplyCommandMaximumLevels
-            //TODO: read dynamic
+            [array  byte        maximumLevels       count 'numBytes'       ]
         ]
         ['CurrentSenseLevels'           IdentifyReplyCommandCurrentSenseLevels
-            //TODO: read dynamic
+            [array  byte        currentSenseLevels  count 'numBytes'       ]
         ]
         ['OutputUnitSummary'            IdentifyReplyCommandOutputUnitSummary
-            //TODO: read dynamic
+            // TODO: we can use the bytes from above, but how is that dynamic? repeat the complete block here?
+            [simple   IdentifyReplyCommandUnitSummary
+                             unitFlags                              ]
+            [simple   byte   gavStoreEnabledByte1                   ]
+            [simple   byte   gavStoreEnabledByte2                   ]
+            [simple   uint 8 timeFromLastRecoverOfMainsInSeconds    ]
         ]
         ['DSIStatus'                    IdentifyReplyCommandDSIStatus
             [simple ChannelStatus   channelStatus1          ]
@@ -614,6 +1088,28 @@
     ]
 ]
 
+[type IdentifyReplyCommandUnitSummary
+    [simple bit assertingNetworkBurden  ]
+    [simple bit restrikeTimingActive    ]
+    [simple bit remoteOFFInputAsserted  ]
+    [simple bit remoteONInputAsserted   ]
+    [simple bit localToggleEnabled      ]
+    [simple bit localToggleActiveState  ]
+    [simple bit clockGenerationEnabled  ]
+    [simple bit unitGeneratingClock     ]
+]
+
+[type LogicAssignment
+    [simple   bit greaterOfOrLogic  ]
+    [simple   bit reStrikeDelay     ]
+    [reserved bit 'false'           ]
+    [reserved bit 'false'           ]
+    [simple   bit assignedToGav16   ]
+    [simple   bit assignedToGav15   ]
+    [simple   bit assignedToGav14   ]
+    [simple   bit assignedToGav13   ]
+]
+
 [enum uint 8 ChannelStatus
     ['0'    OK                      ]
     ['2'    LAMP_FAULT              ]
@@ -626,11 +1122,16 @@
     ['2'    NO_RESPONSE             ]
 ]
 
+// 1------: Long Form Command (Length is in the 5 least significant bits)
+// 0------: Short Form Command (Length is in the 3 least significant bits)
+// The invalid packets are receiving a value of 13 / 0x0D -> Short form command: length = 5 (no idea what the bit number 4 means, which is set)
 [enum uint 8 CALCommandTypeContainer(CALCommandType commandType, uint 5 numBytes)
     ['0x08' CALCommandReset                  ['RESET',            '0']]
     ['0x1A' CALCommandRecall                 ['RECALL',           '0']]
     ['0x21' CALCommandIdentify               ['IDENTIFY',         '0']]
     ['0x2A' CALCommandGetStatus              ['GET_STATUS',       '0']]
+    ['0x32' CALCommandAcknowledge            ['ACKNOWLEDGE',      '0']]
+    ['0x80' CALCommandReply_0Bytes           ['REPLY',            '0']]
     ['0x81' CALCommandReply_1Bytes           ['REPLY',            '1']]
     ['0x82' CALCommandReply_2Bytes           ['REPLY',            '2']]
     ['0x83' CALCommandReply_3Bytes           ['REPLY',            '3']]
@@ -662,7 +1163,23 @@
     ['0x9D' CALCommandReply_29Bytes          ['REPLY',           '29']]
     ['0x9E' CALCommandReply_30Bytes          ['REPLY',           '30']]
     ['0x9F' CALCommandReply_31Bytes          ['REPLY',           '31']]
-    ['0x32' CALCommandAcknowledge            ['ACKNOWLEDGE',      '0']]
+    ['0xA0' CALCommandWrite_0Bytes           ['WRITE',            '0']]
+    ['0xA1' CALCommandWrite_1Bytes           ['WRITE',            '1']]
+    ['0xA2' CALCommandWrite_2Bytes           ['WRITE',            '2']]
+    ['0xA3' CALCommandWrite_3Bytes           ['WRITE',            '3']]
+    ['0xA4' CALCommandWrite_4Bytes           ['WRITE',            '4']]
+    ['0xA5' CALCommandWrite_5Bytes           ['WRITE',            '5']]
+    ['0xA6' CALCommandWrite_6Bytes           ['WRITE',            '6']]
+    ['0xA7' CALCommandWrite_7Bytes           ['WRITE',            '7']]
+    ['0xA8' CALCommandWrite_8Bytes           ['WRITE',            '8']]
+    ['0xA9' CALCommandWrite_9Bytes           ['WRITE',            '9']]
+    ['0xAA' CALCommandWrite_10Bytes          ['WRITE',           '10']]
+    ['0xAB' CALCommandWrite_11Bytes          ['WRITE',           '11']]
+    ['0xAC' CALCommandWrite_12Bytes          ['WRITE',           '12']]
+    ['0xAD' CALCommandWrite_13Bytes          ['WRITE',           '13']]
+    ['0xAE' CALCommandWrite_14Bytes          ['WRITE',           '14']]
+    ['0xAF' CALCommandWrite_15Bytes          ['WRITE',           '15']]
+    ['0xC0' CALCommandStatus_0Bytes          ['STATUS',           '0']]
     ['0xC1' CALCommandStatus_1Bytes          ['STATUS',           '1']]
     ['0xC2' CALCommandStatus_2Bytes          ['STATUS',           '2']]
     ['0xC3' CALCommandStatus_3Bytes          ['STATUS',           '3']]
@@ -694,8 +1211,9 @@
     ['0xDD' CALCommandStatus_29Bytes         ['STATUS',          '29']]
     ['0xDE' CALCommandStatus_30Bytes         ['STATUS',          '30']]
     ['0xDF' CALCommandStatus_31Bytes         ['STATUS',          '31']]
+    ['0xE0' CALCommandStatusExtended_0Bytes  ['STATUS_EXTENDED',  '0']]
     ['0xE1' CALCommandStatusExtended_1Bytes  ['STATUS_EXTENDED',  '1']]
-    ['0xE1' CALCommandStatusExtended_2Bytes  ['STATUS_EXTENDED',  '2']]
+    ['0xE2' CALCommandStatusExtended_2Bytes  ['STATUS_EXTENDED',  '2']]
     ['0xE3' CALCommandStatusExtended_3Bytes  ['STATUS_EXTENDED',  '3']]
     ['0xE4' CALCommandStatusExtended_4Bytes  ['STATUS_EXTENDED',  '4']]
     ['0xE5' CALCommandStatusExtended_5Bytes  ['STATUS_EXTENDED',  '5']]
@@ -727,28 +1245,34 @@
     ['0xFF' CALCommandStatusExtended_31Bytes ['STATUS_EXTENDED', '31']]
 ]
 
-[enum uint 4 CALCommandType
+[enum uint 8 CALCommandType
     // Request
-    ['0x0' RESET          ] //00001000
-    ['0x0' RECALL         ] //00011010
-    ['0x1' IDENTIFY       ] //00100001
-    ['0x2' GET_STATUS     ] //01000001
+    ['0x00' RESET          ]
+    ['0x01' RECALL         ]
+    ['0x02' IDENTIFY       ]
+    ['0x03' GET_STATUS     ]
+    ['0x04' WRITE          ]
     // Response
-    ['0x3' REPLY          ] //100xxxxx
-    ['0x4' ACKNOWLEDGE    ] //00110010
-    ['0x5' STATUS         ] //110xxxxx
-    ['0x5' STATUS_EXTENDED] //111xxxxx
+    ['0x0F' REPLY          ]
+    ['0x10' ACKNOWLEDGE    ]
+    ['0x11' STATUS         ]
+    ['0x12' STATUS_EXTENDED]
 ]
 
 [type StatusRequest
     [peek    byte     statusType           ]
     [typeSwitch statusType
-        ['0x7A' StatusRequestBinaryState
+        ['0x7A' *BinaryState
             [reserved   byte      '0x7A'                                              ]
             [simple     byte      application                                         ]
             [reserved   byte      '0x00'                                              ]
         ]
-        ['0x73' StatusRequestLevel
+        ['0xFA' *BinaryStateDeprecated
+            [reserved   byte      '0xFA'                                              ]
+            [simple     byte      application                                         ]
+            [reserved   byte      '0x00'                                              ]
+        ]
+        ['0x73' *Level
             [reserved   byte      '0x73'                                              ]
             [reserved   byte      '0x07'                                              ]
             [simple     byte      application                                         ]
@@ -765,86 +1289,2320 @@
     ]
 ]
 
-[type SALData
-    [simple  SALCommandTypeContainer commandTypeContainer                                   ]
-    [virtual SALCommandType          commandType          'commandTypeContainer.commandType']
+// TODO: this is currently lightning only so we need more typeSwitched based on the applicationid
+[type SALData(ApplicationId applicationId)
+    [typeSwitch applicationId
+        ['RESERVED'                             *Reserved
+            [validation '1==2' "RESERVED Not yet implemented"] // TODO: implement me
+        ]
+        ['FREE_USAGE'                           *FreeUsage
+            [validation '1==2' "FREE_USAGE Not yet implemented"] // TODO: implement me
+        ]
+        ['TEMPERATURE_BROADCAST'                *TemperatureBroadcast
+            [simple TemperatureBroadcastData temperatureBroadcastData]
+        ]
+        ['ROOM_CONTROL_SYSTEM'                  *RoomControlSystem
+            [validation '1==2' "ROOM_CONTROL_SYSTEM Not yet implemented"] // TODO: implement me
+        ]
+        ['LIGHTING'                             *Lighting
+            [simple LightingData lightingData]
+        ]
+        ['VENTILATION'                          *Ventilation
+            // Note: the documentation states that the data for ventilation uses LightingData
+            [simple LightingData ventilationData]
+        ]
+        ['IRRIGATION_CONTROL'                   *IrrigationControl
+             // Note: the documentation states that the data for irrigation control uses LightingData
+            [simple LightingData irrigationControlData]
+        ]
+        ['POOLS_SPAS_PONDS_FOUNTAINS_CONTROL'   *PoolsSpasPondsFountainsControl
+             // Note: the documentation states that the data for pools spas ponds fountains uses LightingData
+            [simple LightingData poolsSpaPondsFountainsData]
+        ]
+        ['HEATING'                              *Heating
+            // Note: the documentation states that the data for ventilation uses LightingData
+            [simple LightingData heatingData]
+        ]
+        ['AIR_CONDITIONING'                     *AirConditioning
+            [simple AirConditioningData airConditioningData]
+        ]
+        ['TRIGGER_CONTROL'                      *TriggerControl
+            [simple TriggerControlData triggerControlData]
+        ]
+        ['ENABLE_CONTROL'                       *EnableControl
+            [simple EnableControlData enableControlData]
+        ]
+        ['AUDIO_AND_VIDEO'                      *AudioAndVideo
+             // Note: the documentation states that the data for ventilation uses LightingData
+            [simple LightingData audioVideoData]
+        ]
+        ['SECURITY'                             *Security
+            [simple SecurityData securityData]
+        ]
+        ['METERING'                             *Metering
+            [simple MeteringData meteringData]
+        ]
+        ['ACCESS_CONTROL'                       *AccessControl
+            [simple AccessControlData accessControlData]
+        ]
+        ['CLOCK_AND_TIMEKEEPING'                *ClockAndTimekeeping
+            [simple ClockAndTimekeepingData clockAndTimekeepingData]
+        ]
+        ['TELEPHONY_STATUS_AND_CONTROL'         *TelephonyStatusAndControl
+            [simple TelephonyData telephonyData]
+        ]
+        ['MEASUREMENT'                          *Measurement
+            [simple MeasurementData measurementData]
+        ]
+        ['TESTING'                              *Testing
+            [validation '1==2' "TESTING Not yet implemented"] // TODO: implement me
+        ]
+        ['MEDIA_TRANSPORT_CONTROL'              *MediaTransport
+            [simple MediaTransportControlData   mediaTransportControlData]
+        ]
+        ['ERROR_REPORTING'                      *ErrorReporting
+            [simple ErrorReportingData   errorReportingData]
+        ]
+        ['HVAC_ACTUATOR'                        *HvacActuator
+             // Note: the documentation states that the data for hvac actuator uses LightingData
+            [simple LightingData ventilationData]
+        ]
+    ]
+    [optional SALData('applicationId') salData                                  ]
+]
+
+[type LightingData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsLightingCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  LightingCommandTypeContainer commandTypeContainer                                   ]
+    [virtual LightingCommandType          commandType          'commandTypeContainer.commandType']
     [typeSwitch commandType
-        ['OFF'            SALDataOff
+        ['OFF'            *Off
             [simple byte group                                                              ]
         ]
-        ['ON'             SALDataOn
+        ['ON'             *On
             [simple byte group                                                              ]
         ]
-        ['RAMP_TO_LEVEL'  SALDataRampToLevel
+        ['RAMP_TO_LEVEL'  *RampToLevel
             [simple byte group                                                              ]
             [simple byte level                                                              ]
         ]
-        ['TERMINATE_RAMP' SALDataTerminateRamp
+        ['TERMINATE_RAMP' *TerminateRamp
             [simple byte group                                                              ]
         ]
+        ['LABEL'          *Label(LightingCommandTypeContainer commandTypeContainer)
+            [simple   byte                  group                                                   ]
+            [simple   LightingLabelOptions  labelOptions                                            ]
+            [optional Language              language      'labelOptions.labelType != LightingLabelType.LOAD_DYNAMIC_ICON']
+            [array    byte                  data        count '(commandTypeContainer.numBytes-((labelOptions.labelType != LightingLabelType.LOAD_DYNAMIC_ICON)?(3):(2)))'           ]
+        ]
     ]
-    // TODO: According to spec this could be recursive
-    //[optional SALData salData 'what decides if this is present?']
 ]
 
-[enum uint 8 SALCommandTypeContainer(SALCommandType commandType)
-    ['0x01' SALCommandOff                       ['OFF'           ]]
-    ['0x79' SALCommandOn                        ['ON'            ]]
-    ['0x02' SALCommandRampToLevel_Instantaneous ['RAMP_TO_LEVEL' ]]
-    ['0x0A' SALCommandRampToLevel_4Second       ['RAMP_TO_LEVEL' ]]
-    ['0x12' SALCommandRampToLevel_8Second       ['RAMP_TO_LEVEL' ]]
-    ['0x1A' SALCommandRampToLevel_12Second      ['RAMP_TO_LEVEL' ]]
-    ['0x22' SALCommandRampToLevel_20Second      ['RAMP_TO_LEVEL' ]]
-    ['0x2A' SALCommandRampToLevel_30Second      ['RAMP_TO_LEVEL' ]]
-    ['0x32' SALCommandRampToLevel_40Second      ['RAMP_TO_LEVEL' ]]
-    ['0x3A' SALCommandRampToLevel_60Second      ['RAMP_TO_LEVEL' ]]
-    ['0x42' SALCommandRampToLevel_90Second      ['RAMP_TO_LEVEL' ]]
-    ['0x4A' SALCommandRampToLevel_120Second     ['RAMP_TO_LEVEL' ]]
-    ['0x52' SALCommandRampToLevel_180Second     ['RAMP_TO_LEVEL' ]]
-    ['0x5A' SALCommandRampToLevel_300Second     ['RAMP_TO_LEVEL' ]]
-    ['0x62' SALCommandRampToLevel_420Second     ['RAMP_TO_LEVEL' ]]
-    ['0x6A' SALCommandRampToLevel_600Second     ['RAMP_TO_LEVEL' ]]
-    ['0x72' SALCommandRampToLevel_900Second     ['RAMP_TO_LEVEL' ]]
-    ['0x7A' SALCommandRampToLevel_1020Second    ['RAMP_TO_LEVEL' ]]
-    ['0x09' SALCommandTerminateRamp             ['TERMINATE_RAMP']]
+[type LightingLabelOptions
+    [simple   bit                   reservedBit7] // only for dynamic icon loading can switch to 1 (note this could use mspec reserved field but sadly this discards data)
+    [simple   LightingLabelFlavour  labelFlavour]
+    [reserved bit                   'false'     ]
+    [simple   bit                   reservedBit3] // For Lighting, this bit must be 0 (note this could use mspec reserved field but sadly this discards data)
+    [simple   LightingLabelType     labelType   ]
+    [simple   bit                   reservedBit0] // For Lighting, this bit must be 0 (note this could use mspec reserved field but sadly this discards data)
 ]
 
-[enum uint 4 SALCommandType
+[enum uint 2 LightingLabelFlavour
+    ['0' FLAVOUR_0              ]
+    ['1' FLAVOUR_1              ]
+    ['2' FLAVOUR_2              ]
+    ['3' FLAVOUR_3              ]
+]
+
+[enum uint 2 LightingLabelType
+    ['0' TEXT_LABEL             ]
+    ['1' PREDEFINED_ICON        ]
+    ['2' LOAD_DYNAMIC_ICON      ]
+    ['3' SET_PREFERRED_LANGUAGE ]
+]
+
+[enum uint 8 Language
+    ['0x00' NO_LANGUAGE                 ]
+    ['0x01' ENGLISH                     ]
+    ['0x02' ENGLISH_AUSTRALIA           ]
+    ['0x03' ENGLISH_BELIZE              ]
+    ['0x04' ENGLISH_CANADA              ]
+    ['0x05' ENGLISH_CARRIBEAN           ]
+    ['0x06' ENGLISH_IRELAND             ]
+    ['0x07' ENGLISH_JAMAICA             ]
+    ['0x08' ENGLISH_NEW_ZEALAND         ]
+    ['0x09' ENGLISH_PHILIPPINES         ]
+    ['0x0A' ENGLISH_SOUTH_AFRICA        ]
+    ['0x0B' ENGLISH_TRINIDAD            ]
+    ['0x0C' ENGLISH_UK                  ]
+    ['0x0D' ENGLISH_USA                 ]
+    ['0x0E' ENGLISH_ZIMBABWE            ]
+    ['0x40' AFRIKAANS                   ]
+    ['0x41' BASQUE                      ]
+    ['0x42' CATALAN                     ]
+    ['0x43' DANISH                      ]
+    ['0x44' DUTCH_BELGIUM               ]
+    ['0x45' DUTCH_NETHERLANDS           ]
+    ['0x46' FAEROESE                    ]
+    ['0x47' FINNISH                     ]
+    ['0x48' FRENCH_BELGIUM              ]
+    ['0x49' FRENCH_CANADA               ]
+    ['0x4A' FRENCH                      ]
+    ['0x4B' FRENCH_LUXEMBOURG           ]
+    ['0x4C' FRENCH_MONACO               ]
+    ['0x4D' FRENCH_SWITZERLAND          ]
+    ['0x4E' GALICIAN                    ]
+    ['0x4F' GERMAN_AUSTRIA              ]
+    ['0x50' GERMAN                      ]
+    ['0x51' GERMAN_LIECHTENSTEIN        ]
+    ['0x52' GERMAN_LUXEMBOURG           ]
+    ['0x53' GERMAN_SWITZERLAND          ]
+    ['0x54' ICELANDIC                   ]
+    ['0x55' INDONESIAN                  ]
+    ['0x56' ITALIAN                     ]
+    ['0x57' ITALIAN_SWITZERLAND         ]
+    ['0x58' MALAY_BRUNEI                ]
+    ['0x59' MALAY                       ]
+    ['0x5A' NORWEGIAN                   ]
+    ['0x5B' NORWEGIAN_NYNORSK           ]
+    ['0x5C' PORTUGUESE_BRAZIL           ]
+    ['0x5D' PORTUGUESE                  ]
+    ['0x5E' SPANISH_ARGENTINE           ]
+    ['0x5F' SPANISH_BOLIVIA             ]
+    ['0x60' SPANISH_CHILE               ]
+    ['0x61' SPANISH_COLOMBIA            ]
+    ['0x62' SPANISH_COSTA_RICA          ]
+    ['0x63' SPANISH_DOMINICAN_REPUBLIC  ]
+    ['0x64' SPANISH_ECUADOR             ]
+    ['0x65' SPANISH_EL_SALVADOR         ]
+    ['0x66' SPANISH_GUATEMALA           ]
+    ['0x67' SPANISH_HONDURAS            ]
+    ['0x68' SPANISH                     ]
+    ['0x69' SPANISH_MEXICO              ]
+    ['0x6A' SPANISH_NICARAGUA           ]
+    ['0x6B' SPANISH_PANAMA              ]
+    ['0x6C' SPANISH_PARAGUAY            ]
+    ['0x6D' SPANISH_PERU                ]
+    ['0x6E' SPANISH_PERTO_RICO          ]
+    ['0x6F' SPANISH_TRADITIONAL         ]
+    ['0x70' SPANISH_URUGUAY             ]
+    ['0x71' SPANISH_VENEZUELA           ]
+    ['0x72' SWAHILI                     ]
+    ['0x73' SWEDISH                     ]
+    ['0x74' SWEDISH_FINLAND             ]
+    ['0xCA' CHINESE_CP936               ]
+]
+
+[enum uint 8 LightingCommandTypeContainer(LightingCommandType commandType, uint 5 numBytes)
+    ['0x01' LightingCommandOff                       ['OFF',             '1' ]]
+    ['0x79' LightingCommandOn                        ['ON',              '1' ]]
+    ['0x02' LightingCommandRampToLevel_Instantaneous ['RAMP_TO_LEVEL',   '1' ]]
+    ['0x0A' LightingCommandRampToLevel_4Second       ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x12' LightingCommandRampToLevel_8Second       ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x1A' LightingCommandRampToLevel_12Second      ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x22' LightingCommandRampToLevel_20Second      ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x2A' LightingCommandRampToLevel_30Second      ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x32' LightingCommandRampToLevel_40Second      ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x3A' LightingCommandRampToLevel_60Second      ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x42' LightingCommandRampToLevel_90Second      ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x4A' LightingCommandRampToLevel_120Second     ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x52' LightingCommandRampToLevel_180Second     ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x5A' LightingCommandRampToLevel_300Second     ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x62' LightingCommandRampToLevel_420Second     ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x6A' LightingCommandRampToLevel_600Second     ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x72' LightingCommandRampToLevel_900Second     ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x7A' LightingCommandRampToLevel_1020Second    ['RAMP_TO_LEVEL',   '2' ]]
+    ['0x09' LightingCommandTerminateRamp             ['TERMINATE_RAMP',  '1' ]]
+    ['0xA0' LightingCommandLabel_0Bytes              ['LABEL',           '0' ]]
+    ['0xA1' LightingCommandLabel_1Bytes              ['LABEL',           '1' ]]
+    ['0xA2' LightingCommandLabel_2Bytes              ['LABEL',           '2' ]]
+    ['0xA3' LightingCommandLabel_3Bytes              ['LABEL',           '3' ]]
+    ['0xA4' LightingCommandLabel_4Bytes              ['LABEL',           '4' ]]
+    ['0xA5' LightingCommandLabel_5Bytes              ['LABEL',           '5' ]]
+    ['0xA6' LightingCommandLabel_6Bytes              ['LABEL',           '6' ]]
+    ['0xA7' LightingCommandLabel_7Bytes              ['LABEL',           '7' ]]
+    ['0xA8' LightingCommandLabel_8Bytes              ['LABEL',           '8' ]]
+    ['0xA9' LightingCommandLabel_9Bytes              ['LABEL',           '9' ]]
+    ['0xAA' LightingCommandLabel_10Bytes             ['LABEL',          '10' ]]
+    ['0xAB' LightingCommandLabel_11Bytes             ['LABEL',          '11' ]]
+    ['0xAC' LightingCommandLabel_12Bytes             ['LABEL',          '12' ]]
+    ['0xAD' LightingCommandLabel_13Bytes             ['LABEL',          '13' ]]
+    ['0xAE' LightingCommandLabel_14Bytes             ['LABEL',          '14' ]]
+    ['0xAF' LightingCommandLabel_15Bytes             ['LABEL',          '15' ]]
+    ['0xB0' LightingCommandLabel_16Bytes             ['LABEL',          '16' ]]
+    ['0xB1' LightingCommandLabel_17Bytes             ['LABEL',          '17' ]]
+    ['0xB2' LightingCommandLabel_18Bytes             ['LABEL',          '18' ]]
+    ['0xB3' LightingCommandLabel_19Bytes             ['LABEL',          '19' ]]
+    ['0xB4' LightingCommandLabel_20Bytes             ['LABEL',          '20' ]]
+    ['0xB5' LightingCommandLabel_21Bytes             ['LABEL',          '21' ]]
+    ['0xB6' LightingCommandLabel_22Bytes             ['LABEL',          '22' ]]
+    ['0xB7' LightingCommandLabel_23Bytes             ['LABEL',          '23' ]]
+    ['0xB8' LightingCommandLabel_24Bytes             ['LABEL',          '24' ]]
+    ['0xB9' LightingCommandLabel_25Bytes             ['LABEL',          '25' ]]
+    ['0xBA' LightingCommandLabel_26Bytes             ['LABEL',          '26' ]]
+    ['0xBB' LightingCommandLabel_27Bytes             ['LABEL',          '27' ]]
+    ['0xBC' LightingCommandLabel_28Bytes             ['LABEL',          '28' ]]
+    ['0xBD' LightingCommandLabel_29Bytes             ['LABEL',          '29' ]]
+    ['0xBE' LightingCommandLabel_30Bytes             ['LABEL',          '30' ]]
+    ['0xBF' LightingCommandLabel_32Bytes             ['LABEL',          '31' ]]
+]
+
+[enum uint 4 LightingCommandType
     ['0x00' OFF           ]
     ['0x01' ON            ]
     ['0x02' RAMP_TO_LEVEL ]
     ['0x03' TERMINATE_RAMP]
+    ['0x04' LABEL         ]
 ]
 
-[type CommandHeader
-    [simple byte value]
-]
-
-[type Reply
-    [peek   byte magicByte]
-    [typeSwitch magicByte
-        ['0x0' CALReplyReply
-            [simple CALReply isA]
+[type SecurityData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsSecurityCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  SecurityCommandTypeContainer commandTypeContainer                                   ]
+    [virtual SecurityCommandType          commandType          'commandTypeContainer.commandType']
+    [simple byte argument                                                               ]
+    [typeSwitch commandType, argument
+        ['ON', '0x80'       *SystemArmedDisarmed
+            [simple SecurityArmCode armCodeType ]
         ]
-        ['0x0' MonitoredSALReply
-            [simple MonitoredSAL isA]
+        ['OFF', '0x80'      *SystemDisarmed
         ]
-        ['0x0' ConfirmationReply
-            [simple Confirmation isA]
+        ['EVENT', '0x81'    *ExitDelayStarted
         ]
-        ['0x0' PowerUpReply
-            [simple PowerUp isA]
+        ['EVENT', '0x82'    *EntryDelayStarted
         ]
-        ['0x0' ParameterChangeReply
-            [simple ParameterChange isA]
+        ['ON', '0x83'       *AlarmOn
         ]
-        ['0x0' ExclamationMarkReply
-            [simple ExclamationMark isA]
+        ['OFF', '0x83'      *AlarmOff
+        ]
+        ['ON', '0x84'       *TamperOn
+        ]
+        ['OFF', '0x84'      *TamperOff
+        ]
+        ['ON', '0x85'       *PanicActivated
+        ]
+        ['OFF', '0x85'      *PanicCleared
+        ]
+        ['EVENT', '0x86'    *ZoneUnsealed
+            [simple uint 8 zoneNumber]
+        ]
+        ['EVENT', '0x87'    *ZoneSealed
+            [simple uint 8 zoneNumber]
+        ]
+        ['EVENT', '0x88'    *ZoneOpen
+            [simple uint 8 zoneNumber]
+        ]
+        ['EVENT', '0x89'    *ZoneShort
+            [simple uint 8 zoneNumber]
+        ]
+        ['EVENT', '0x89'    *ZoneIsolated
+            [simple uint 8 zoneNumber]
+        ]
+        ['ON', '0x8B'       *LowBatteryDetected
+        ]
+        ['OFF', '0x8B'      *LowBatteryCorrected
+        ]
+        ['EVENT', '0x8C'    *LowBatteryCharging
+            [simple  byte startStop                     ]
+            [virtual bit  chargeStopped 'startStop==0x00'    ]
+            [virtual bit  chargeStarted 'startStop>0xFE'     ]
+        ]
+        ['EVENT', '0x8D'    *ZoneName
+            [simple uint 8      zoneNumber  ]
+            [simple string 88   zoneName    ]
+        ]
+        ['EVENT', '0x8E'    *StatusReport1
+            [simple  SecurityArmCode    armCodeType                                                 ]
+            [simple  TamperStatus       tamperStatus                                                ]
+            [simple  PanicStatus        panicStatus                                                 ]
+            [array   ZoneStatus         zoneStatus        count '32'                                ]
+        ]
+        ['EVENT', '0x8F'    *StatusReport2
+            [array   ZoneStatus         zoneStatus        count '48'                                ]
+        ]
+        ['EVENT', '0x90'    *PasswordEntryStatus
+            [simple  byte code  ]
+            [virtual bit  isPasswordEntrySucceeded      'code == 0x01']
+            [virtual bit  isPasswordEntryFailed         'code == 0x02']
+            [virtual bit  isPasswordEntryDisabled       'code == 0x03']
+            [virtual bit  isPasswordEntryEnabledAgain   'code == 0x04']
+            [virtual bit  isReserved                    'code >= 0x05']
+        ]
+        ['ON', '0x91'       *MainsFailure
+        ]
+        ['OFF', '0x91'      *MainsRestoredOrApplied
+        ]
+        ['EVENT', '0x92'    *ArmReadyNotReady
+            [simple uint 8      zoneNumber  ]
+        ]
+        ['EVENT', '0x93'    *CurrentAlarmType
+        ]
+        ['ON', '0x94'       *LineCutAlarmRaised
+        ]
+        ['OFF', '0x94'      *LineCutAlarmCleared
+        ]
+        ['ON', '0x95'       *ArmFailedRaised
+        ]
+        ['OFF', '0x95'      *ArmFailedCleared
+        ]
+        ['ON', '0x96'       *FireAlarmRaised
+        ]
+        ['OFF', '0x96'      *FireAlarmCleared
+        ]
+        ['ON', '0x97'       *GasAlarmRaised
+        ]
+        ['OFF', '0x97'      *GasAlarmCleared
+        ]
+        ['ON', '0x98'       *OtherAlarmRaised
+        ]
+        ['OFF', '0x98'      *OtherAlarmCleared
+        ]
+        ['EVENT', '0xA0'    *Status1Request
+        ]
+        ['EVENT', '0xA1'    *Status2Request
+        ]
+        ['EVENT', '0xA2'    *ArmSystem
+            [simple  byte armMode                                   ]
+            [virtual bit  isReserved            'armMode == 0x00 || (armMode >= 0x05 && armMode <= 0xFE)'      ]
+            [virtual bit  isArmToAwayMode       'armMode == 0x01'   ]
+            [virtual bit  isArmToNightMode      'armMode == 0x02'   ]
+            [virtual bit  isArmToDayMode        'armMode == 0x03'   ]
+            [virtual bit  isArmToVacationMode   'armMode == 0x04'   ]
+            [virtual bit  isArmToHighestLevelOfProtection   'armMode > 0xFE'   ]
+        ]
+        ['ON', '0xA3'       *RaiseTamper
+        ]
+        ['OFF', '0xA3'      *DropTamper
+        ]
+        ['ON', '0xA4'       *RaiseAlarm
+        ]
+        ['EVENT', '0xA5'    *EmulatedKeypad
+            [simple  byte key                                        ]
+            [virtual bit  isAscii       'key >= 0x00 && key <= 0x7F' ]
+            [virtual bit  isCustom      'key >= 0x80'                ]
+            [virtual bit  isEnter       'key == 0x0D'                ]
+            [virtual bit  isShift       'key == 0x80'                ]
+            [virtual bit  isPanic       'key == 0x81'                ]
+            [virtual bit  isFire        'key == 0x82'                ]
+            [virtual bit  isARM         'key == 0x83'                ]
+            [virtual bit  isAway        'key == 0x84'                ]
+            [virtual bit  isNight       'key == 0x85'                ]
+            [virtual bit  isDay         'key == 0x86'                ]
+            [virtual bit  isVacation    'key == 0x87'                ]
+        ]
+        ['ON', '0xA6'       *DisplayMessage(SecurityCommandTypeContainer commandTypeContainer)
+            [simple vstring '(commandTypeContainer.numBytes-1)*8' message                           ]
+        ]
+        ['EVENT', '0xA7'    *RequestZoneName
+            [simple uint 8      zoneNumber  ]
+        ]
+        ['OFF'                                  *Off(SecurityCommandTypeContainer commandTypeContainer)
+            [array  byte data        count 'commandTypeContainer.numBytes-1'                    ]
+        ]
+        ['ON'                                   *On(SecurityCommandTypeContainer commandTypeContainer)
+            [array  byte data        count 'commandTypeContainer.numBytes-1'                    ]
+        ]
+        ['EVENT'                                *Event(SecurityCommandTypeContainer commandTypeContainer)
+            [array  byte data        count 'commandTypeContainer.numBytes-1'                    ]
         ]
     ]
 ]
 
-[type CALReply
+[enum uint 8 SecurityCommandTypeContainer(SecurityCommandType commandType, uint 5 numBytes)
+    ['0x00' SecurityCommandOff_0Bytes                    ['OFF',    '0']]
+    ['0x01' SecurityCommandOff_1Bytes                    ['OFF',    '1']]
+    ['0x02' SecurityCommandOff_2Bytes                    ['OFF',    '2']]
+    ['0x03' SecurityCommandOff_3Bytes                    ['OFF',    '3']]
+    ['0x04' SecurityCommandOff_4Bytes                    ['OFF',    '4']]
+    ['0x05' SecurityCommandOff_5Bytes                    ['OFF',    '5']]
+    ['0x06' SecurityCommandOff_6Bytes                    ['OFF',    '6']]
+    ['0x07' SecurityCommandOff_7Bytes                    ['OFF',    '7']]
+    ['0x08' SecurityCommandEvent_0Bytes                  ['EVENT',  '0']]
+    ['0x09' SecurityCommandEvent_1Bytes                  ['EVENT',  '1']]
+    ['0x0A' SecurityCommandEvent_2Bytes                  ['EVENT',  '2']]
+    ['0x0B' SecurityCommandEvent_3Bytes                  ['EVENT',  '3']]
+    ['0x0C' SecurityCommandEvent_4Bytes                  ['EVENT',  '4']]
+    ['0x0D' SecurityCommandEvent_5Bytes                  ['EVENT',  '5']]
+    ['0x0E' SecurityCommandEvent_6Bytes                  ['EVENT',  '6']]
+    ['0x0F' SecurityCommandEvent_7Bytes                  ['EVENT',  '7']]
+    ['0x78' SecurityCommandOn_0Bytes                     ['ON',     '0']]
+    ['0x79' SecurityCommandOn_1Bytes                     ['ON',     '1']]
+    ['0x7A' SecurityCommandOn_2Bytes                     ['ON',     '2']]
+    ['0x7B' SecurityCommandOn_3Bytes                     ['ON',     '3']]
+    ['0x7C' SecurityCommandOn_4Bytes                     ['ON',     '4']]
+    ['0x7D' SecurityCommandOn_5Bytes                     ['ON',     '5']]
+    ['0x7E' SecurityCommandOn_6Bytes                     ['ON',     '6']]
+    ['0x7F' SecurityCommandOn_7Bytes                     ['ON',     '7']]
+    ['0x80' SecurityCommandLongOff_0Bytes                ['OFF',    '8']]
+    ['0x81' SecurityCommandLongOff_1Bytes                ['OFF',    '1']]
+    ['0x82' SecurityCommandLongOff_2Bytes                ['OFF',    '2']]
+    ['0x83' SecurityCommandLongOff_3Bytes                ['OFF',    '3']]
+    ['0x84' SecurityCommandLongOff_4Bytes                ['OFF',    '4']]
+    ['0x85' SecurityCommandLongOff_5Bytes                ['OFF',    '5']]
+    ['0x86' SecurityCommandLongOff_6Bytes                ['OFF',    '6']]
+    ['0x87' SecurityCommandLongOff_7Bytes                ['OFF',    '7']]
+    ['0x88' SecurityCommandLongOff_8Bytes                ['OFF',    '8']]
+    ['0x89' SecurityCommandLongOff_9Bytes                ['OFF',    '9']]
+    ['0x8A' SecurityCommandLongOff_10Bytes               ['OFF',   '10']]
+    ['0x8B' SecurityCommandLongOff_11Bytes               ['OFF',   '11']]
+    ['0x8C' SecurityCommandLongOff_12Bytes               ['OFF',   '12']]
+    ['0x8D' SecurityCommandLongOff_13Bytes               ['OFF',   '13']]
+    ['0x8E' SecurityCommandLongOff_14Bytes               ['OFF',   '14']]
+    ['0x8F' SecurityCommandLongOff_15Bytes               ['OFF',   '15']]
+    ['0x90' SecurityCommandLongOff_16Bytes               ['OFF',   '16']]
+    ['0x91' SecurityCommandLongOff_17Bytes               ['OFF',   '17']]
+    ['0x92' SecurityCommandLongOff_18Bytes               ['OFF',   '18']]
+    ['0x93' SecurityCommandLongOff_19Bytes               ['OFF',   '19']]
+    ['0x94' SecurityCommandLongOff_20Bytes               ['OFF',   '20']]
+    ['0x95' SecurityCommandLongOff_21Bytes               ['OFF',   '21']]
+    ['0x96' SecurityCommandLongOff_22Bytes               ['OFF',   '22']]
+    ['0x97' SecurityCommandLongOff_23Bytes               ['OFF',   '23']]
+    ['0x98' SecurityCommandLongOff_24Bytes               ['OFF',   '24']]
+    ['0x99' SecurityCommandLongOff_25Bytes               ['OFF',   '25']]
+    ['0x9A' SecurityCommandLongOff_26Bytes               ['OFF',   '26']]
+    ['0x9B' SecurityCommandLongOff_27Bytes               ['OFF',   '27']]
+    ['0x9C' SecurityCommandLongOff_28Bytes               ['OFF',   '28']]
+    ['0x9D' SecurityCommandLongOff_29Bytes               ['OFF',   '29']]
+    ['0x9E' SecurityCommandLongOff_30Bytes               ['OFF',   '30']]
+    ['0x9F' SecurityCommandLongOff_31Bytes               ['OFF',   '31']]
+    ['0xA0' SecurityCommandLongEvent_0Bytes              ['EVENT',  '0']]
+    ['0xA1' SecurityCommandLongEvent_1Bytes              ['EVENT',  '1']]
+    ['0xA2' SecurityCommandLongEvent_2Bytes              ['EVENT',  '2']]
+    ['0xA3' SecurityCommandLongEvent_3Bytes              ['EVENT',  '3']]
+    ['0xA4' SecurityCommandLongEvent_4Bytes              ['EVENT',  '4']]
+    ['0xA5' SecurityCommandLongEvent_5Bytes              ['EVENT',  '5']]
+    ['0xA6' SecurityCommandLongEvent_6Bytes              ['EVENT',  '6']]
+    ['0xA7' SecurityCommandLongEvent_7Bytes              ['EVENT',  '7']]
+    ['0xA8' SecurityCommandLongEvent_8Bytes              ['EVENT',  '8']]
+    ['0xA9' SecurityCommandLongEvent_9Bytes              ['EVENT',  '9']]
+    ['0xAA' SecurityCommandLongEvent_10Bytes             ['EVENT', '10']]
+    ['0xAB' SecurityCommandLongEvent_11Bytes             ['EVENT', '11']]
+    ['0xAC' SecurityCommandLongEvent_12Bytes             ['EVENT', '12']]
+    ['0xAD' SecurityCommandLongEvent_13Bytes             ['EVENT', '13']]
+    ['0xAE' SecurityCommandLongEvent_14Bytes             ['EVENT', '14']]
+    ['0xAF' SecurityCommandLongEvent_15Bytes             ['EVENT', '15']]
+    ['0xB0' SecurityCommandLongEvent_16Bytes             ['EVENT', '16']]
+    ['0xB1' SecurityCommandLongEvent_17Bytes             ['EVENT', '17']]
+    ['0xB2' SecurityCommandLongEvent_18Bytes             ['EVENT', '18']]
+    ['0xB3' SecurityCommandLongEvent_19Bytes             ['EVENT', '19']]
+    ['0xB4' SecurityCommandLongEvent_20Bytes             ['EVENT', '20']]
+    ['0xB5' SecurityCommandLongEvent_21Bytes             ['EVENT', '21']]
+    ['0xB6' SecurityCommandLongEvent_22Bytes             ['EVENT', '22']]
+    ['0xB7' SecurityCommandLongEvent_23Bytes             ['EVENT', '23']]
+    ['0xB8' SecurityCommandLongEvent_24Bytes             ['EVENT', '24']]
+    ['0xB9' SecurityCommandLongEvent_25Bytes             ['EVENT', '25']]
+    ['0xBA' SecurityCommandLongEvent_26Bytes             ['EVENT', '26']]
+    ['0xBB' SecurityCommandLongEvent_27Bytes             ['EVENT', '27']]
+    ['0xBC' SecurityCommandLongEvent_28Bytes             ['EVENT', '28']]
+    ['0xBD' SecurityCommandLongEvent_29Bytes             ['EVENT', '29']]
+    ['0xBE' SecurityCommandLongEvent_30Bytes             ['EVENT', '30']]
+    ['0xBF' SecurityCommandLongEvent_31Bytes             ['EVENT', '31']]
+    ['0xE0' SecurityCommandLongOn_0Bytes                 ['ON',     '0']]
+    ['0xE1' SecurityCommandLongOn_1Bytes                 ['ON',     '1']]
+    ['0xE2' SecurityCommandLongOn_2Bytes                 ['ON',     '2']]
+    ['0xE3' SecurityCommandLongOn_3Bytes                 ['ON',     '3']]
+    ['0xE4' SecurityCommandLongOn_4Bytes                 ['ON',     '4']]
+    ['0xE5' SecurityCommandLongOn_5Bytes                 ['ON',     '5']]
+    ['0xE6' SecurityCommandLongOn_6Bytes                 ['ON',     '6']]
+    ['0xE7' SecurityCommandLongOn_7Bytes                 ['ON',     '7']]
+    ['0xE8' SecurityCommandLongOn_8Bytes                 ['ON',     '8']]
+    ['0xE9' SecurityCommandLongOn_9Bytes                 ['ON',     '9']]
+    ['0xEA' SecurityCommandLongOn_10Bytes                ['ON',    '10']]
+    ['0xEB' SecurityCommandLongOn_11Bytes                ['ON',    '11']]
+    ['0xEC' SecurityCommandLongOn_12Bytes                ['ON',    '12']]
+    ['0xED' SecurityCommandLongOn_13Bytes                ['ON',    '13']]
+    ['0xEE' SecurityCommandLongOn_14Bytes                ['ON',    '14']]
+    ['0xEF' SecurityCommandLongOn_15Bytes                ['ON',    '15']]
+    ['0xF0' SecurityCommandLongOn_16Bytes                ['ON',    '16']]
+    ['0xF1' SecurityCommandLongOn_17Bytes                ['ON',    '17']]
+    ['0xF2' SecurityCommandLongOn_18Bytes                ['ON',    '18']]
+    ['0xF3' SecurityCommandLongOn_19Bytes                ['ON',    '19']]
+    ['0xF4' SecurityCommandLongOn_20Bytes                ['ON',    '20']]
+    ['0xF5' SecurityCommandLongOn_21Bytes                ['ON',    '21']]
+    ['0xF6' SecurityCommandLongOn_22Bytes                ['ON',    '22']]
+    ['0xF7' SecurityCommandLongOn_23Bytes                ['ON',    '23']]
+    ['0xF8' SecurityCommandLongOn_24Bytes                ['ON',    '24']]
+    ['0xF9' SecurityCommandLongOn_25Bytes                ['ON',    '25']]
+    ['0xFA' SecurityCommandLongOn_26Bytes                ['ON',    '26']]
+    ['0xFB' SecurityCommandLongOn_27Bytes                ['ON',    '27']]
+    ['0xFC' SecurityCommandLongOn_28Bytes                ['ON',    '28']]
+    ['0xFD' SecurityCommandLongOn_29Bytes                ['ON',    '29']]
+    ['0xFE' SecurityCommandLongOn_30Bytes                ['ON',    '30']]
+    ['0xFF' SecurityCommandLongOn_31Bytes                ['ON',    '31']]
+]
+
+[enum uint 4 SecurityCommandType
+    ['0x00' OFF     ]
+    ['0x01' ON      ]
+    ['0x02' EVENT   ]
+]
+
+[type SecurityArmCode
+    [simple  uint 8 code                                 ]
+    [virtual bit    isDisarmed          'code == 0x00'   ]
+    [virtual bit    isFullyArmed        'code == 0x01'   ]
+    [virtual bit    isPartiallyArmed    'code == 0x02'   ]
+    [virtual bit    isArmSubtype        'code >= 0x03 && code <= 0x7F'   ]
+    [virtual bit    isReserved          'code > 0x7F'    ]
+]
+
+[type TamperStatus
+    [simple  uint 8 status                                          ]
+    [virtual bit    isNoTamper 'status == 0x00'                     ]
+    [virtual bit    isReserved 'status >= 0x01 && status <= 0xFE']
+    [virtual bit    isTamperActive 'status > 0xFE'                  ]
+]
+
+[type PanicStatus
+    [simple  uint 8 status                                          ]
+    [virtual bit    isNoPanic  'status == 0x00'                     ]
+    [virtual bit    isReserved 'status >= 0x01 && status <= 0xFE'    ]
+    [virtual bit    isPanicCurrentlyActive 'status > 0xFE'          ]
+]
+
+[type ZoneStatus
+    [simple ZoneStatusTemp value]
+]
+
+// TODO: we can't use ZoneStatus directly as nobody used enums in list till now so we just wrap it
+[enum uint 2 ZoneStatusTemp
+    ['0x0' ZONE_SEALED      ]
+    ['0x1' ZONE_UNSEALED    ]
+    ['0x2' ZONE_OPEN        ]
+    ['0x3' ZONE_SHORT       ]
+]
+
+[type MeteringData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsMeteringCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  MeteringCommandTypeContainer commandTypeContainer                                   ]
+    [virtual MeteringCommandType          commandType          'commandTypeContainer.commandType']
+    [simple byte argument                                                               ]
+    [typeSwitch commandType, argument
+        ['EVENT', '0x01'       *MeasureElectricity
+        ]
+        ['EVENT', '0x02'       *MeasureGas
+        ]
+        ['EVENT', '0x03'       *MeasureDrinkingWater
+        ]
+        ['EVENT', '0x04'       *MeasureOtherWater
+        ]
+        ['EVENT', '0x05'       *MeasureOil
+        ]
+        ['EVENT', '0x81'       *ElectricityConsumption
+            [simple uint 32 kWhr      ] // kilo watt hours
+        ]
+        ['EVENT', '0x82'       *GasConsumption
+            [simple uint 32 mJ        ] // mega joule
+        ]
+        ['EVENT', '0x83'       *DrinkingWaterConsumption
+            [simple uint 32 kL        ] // kilo litre
+        ]
+        ['EVENT', '0x84'       *OtherWaterConsumption
+            [simple uint 32 kL        ] // kilo litre
+        ]
+        ['EVENT', '0x85'       *OilConsumption
+            [simple uint 32 L         ] // litre
+        ]
+    ]
+]
+
+[enum uint 8 MeteringCommandTypeContainer(MeteringCommandType commandType, uint 5 numBytes)
+    ['0x08' MeteringCommandEvent_0Bytes                    ['EVENT',  '0']]
+    ['0x09' MeteringCommandEvent_1Bytes                    ['EVENT',  '1']]
+    ['0x0A' MeteringCommandEvent_2Bytes                    ['EVENT',  '2']]
+    ['0x0B' MeteringCommandEvent_3Bytes                    ['EVENT',  '3']]
+    ['0x0C' MeteringCommandEvent_4Bytes                    ['EVENT',  '4']]
+    ['0x0D' MeteringCommandEvent_5Bytes                    ['EVENT',  '5']]
+    ['0x0E' MeteringCommandEvent_6Bytes                    ['EVENT',  '6']]
+    ['0x0F' MeteringCommandEvent_7Bytes                    ['EVENT',  '7']]
+]
+
+[enum uint 4 MeteringCommandType
+    ['0x00' EVENT     ]
+]
+
+[type TriggerControlData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsTriggerControlCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  TriggerControlCommandTypeContainer commandTypeContainer                                   ]
+    [virtual TriggerControlCommandType          commandType          'commandTypeContainer.commandType']
+    [simple  byte triggerGroup                                                                         ]
+    [virtual bit  isUnused 'triggerGroup > 0xFE'                                                       ]
+    [typeSwitch commandType
+        ['TRIGGER_EVENT'       *TriggerEvent
+            [simple byte actionSelector]
+        ]
+        ['TRIGGER_MIN'          *TriggerMin
+        ]
+        ['TRIGGER_MAX'          *TriggerMin
+        ]
+        ['INDICATOR_KILL'       *IndicatorKill
+        ]
+        ['LABEL'                *Label(TriggerControlCommandTypeContainer commandTypeContainer)
+           [simple   TriggerControlLabelOptions triggerControlOptions                                   ]
+           [simple   byte                       actionSelector                                          ]
+           [optional Language                   language      'triggerControlOptions.labelType != TriggerControlLabelType.LOAD_DYNAMIC_ICON']
+           [array    byte                       data          count '(commandTypeContainer.numBytes-((triggerControlOptions.labelType != TriggerControlLabelType.LOAD_DYNAMIC_ICON)?(4):(3)))'           ]
+        ]
+    ]
+]
+
+[enum uint 8 TriggerControlCommandTypeContainer(TriggerControlCommandType commandType, uint 5 numBytes)
+    ['0x01' TriggerControlCommandTriggerMin_1Bytes          ['TRIGGER_MIN',     '1']]
+    ['0x09' TriggerControlCommandIndicatorKill_1Bytes       ['INDICATOR_KILL',  '1']]
+    ['0x79' TriggerControlCommandTriggerMax_1Bytes          ['TRIGGER_MAX',     '1']]
+    ['0x02' TriggerControlCommandTriggerEvent0_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x0A' TriggerControlCommandTriggerEvent1_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x12' TriggerControlCommandTriggerEvent2_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x1A' TriggerControlCommandTriggerEvent3_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x22' TriggerControlCommandTriggerEvent4_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x2A' TriggerControlCommandTriggerEvent5_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x32' TriggerControlCommandTriggerEvent6_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x3A' TriggerControlCommandTriggerEvent7_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x42' TriggerControlCommandTriggerEvent8_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x4A' TriggerControlCommandTriggerEvent9_2Bytes       ['TRIGGER_EVENT',   '2']]
+    ['0x52' TriggerControlCommandTriggerEvent10_2Bytes      ['TRIGGER_EVENT',   '2']]
+    ['0x5A' TriggerControlCommandTriggerEvent11_2Bytes      ['TRIGGER_EVENT',   '2']]
+    ['0x62' TriggerControlCommandTriggerEvent12_2Bytes      ['TRIGGER_EVENT',   '2']]
+    ['0x6A' TriggerControlCommandTriggerEvent13_2Bytes      ['TRIGGER_EVENT',   '2']]
+    ['0x72' TriggerControlCommandTriggerEvent14_2Bytes      ['TRIGGER_EVENT',   '2']]
+    ['0x7A' TriggerControlCommandTriggerEvent15_2Bytes      ['TRIGGER_EVENT',   '2']]
+    ['0xA0' TriggerControlCommandLabel_0Bytes               ['LABEL',           '0']]
+    ['0xA1' TriggerControlCommandLabel_1Bytes               ['LABEL',           '1']]
+    ['0xA2' TriggerControlCommandLabel_2Bytes               ['LABEL',           '2']]
+    ['0xA3' TriggerControlCommandLabel_3Bytes               ['LABEL',           '3']]
+    ['0xA4' TriggerControlCommandLabel_4Bytes               ['LABEL',           '4']]
+    ['0xA5' TriggerControlCommandLabel_5Bytes               ['LABEL',           '5']]
+    ['0xA6' TriggerControlCommandLabel_6Bytes               ['LABEL',           '6']]
+    ['0xA7' TriggerControlCommandLabel_7Bytes               ['LABEL',           '7']]
+    ['0xA8' TriggerControlCommandLabel_8Bytes               ['LABEL',           '8']]
+    ['0xA9' TriggerControlCommandLabel_9Bytes               ['LABEL',           '9']]
+    ['0xAA' TriggerControlCommandLabel_10Bytes              ['LABEL',          '10']]
+    ['0xAB' TriggerControlCommandLabel_11Bytes              ['LABEL',          '11']]
+    ['0xAC' TriggerControlCommandLabel_12Bytes              ['LABEL',          '12']]
+    ['0xAD' TriggerControlCommandLabel_13Bytes              ['LABEL',          '13']]
+    ['0xAE' TriggerControlCommandLabel_14Bytes              ['LABEL',          '14']]
+    ['0xAF' TriggerControlCommandLabel_15Bytes              ['LABEL',          '15']]
+    ['0xB0' TriggerControlCommandLabel_16Bytes              ['LABEL',          '16']]
+    ['0xB1' TriggerControlCommandLabel_17Bytes              ['LABEL',          '17']]
+    ['0xB2' TriggerControlCommandLabel_18Bytes              ['LABEL',          '18']]
+    ['0xB3' TriggerControlCommandLabel_19Bytes              ['LABEL',          '19']]
+    ['0xB4' TriggerControlCommandLabel_20Bytes              ['LABEL',          '20']]
+    ['0xB5' TriggerControlCommandLabel_21Bytes              ['LABEL',          '21']]
+    ['0xB6' TriggerControlCommandLabel_22Bytes              ['LABEL',          '22']]
+    ['0xB7' TriggerControlCommandLabel_23Bytes              ['LABEL',          '23']]
+    ['0xB8' TriggerControlCommandLabel_24Bytes              ['LABEL',          '24']]
+    ['0xB9' TriggerControlCommandLabel_25Bytes              ['LABEL',          '25']]
+    ['0xBA' TriggerControlCommandLabel_26Bytes              ['LABEL',          '26']]
+    ['0xBB' TriggerControlCommandLabel_27Bytes              ['LABEL',          '27']]
+    ['0xBC' TriggerControlCommandLabel_28Bytes              ['LABEL',          '28']]
+    ['0xBD' TriggerControlCommandLabel_29Bytes              ['LABEL',          '29']]
+    ['0xBE' TriggerControlCommandLabel_30Bytes              ['LABEL',          '30']]
+    ['0xBF' TriggerControlCommandLabel_31Bytes              ['LABEL',          '31']]
+]
+
+[enum uint 4 TriggerControlCommandType
+    ['0x00' TRIGGER_EVENT   ]
+    ['0x01' TRIGGER_MIN     ]
+    ['0x02' TRIGGER_MAX     ]
+    ['0x03' INDICATOR_KILL  ]
+    ['0x04' LABEL           ]
+]
+
+// TODO: maybe can be merged with lightning labels
+[type TriggerControlLabelOptions
+    [simple   bit                           reservedBit7] // only for dynamic icon loading can switch to 1 (note this could use mspec reserved field but sadly this discards data)
+    [simple   TriggerControlLabelFlavour    labelFlavour]
+    [reserved bit                           'false'     ]
+    [simple   bit                           reservedBit3] // For Control Trigger, this bit must be 0 (note this could use mspec reserved field but sadly this discards data)
+    [simple   TriggerControlLabelType       labelType   ]
+    [simple   bit                           reservedBit0] // For Control Trigger, this bit must be 1 (note this could use mspec reserved field but sadly this discards data)
+]
+
+// TODO: maybe can be merged with lightning labels
+[enum uint 2 TriggerControlLabelFlavour
+    ['0' FLAVOUR_0              ]
+    ['1' FLAVOUR_1              ]
+    ['2' FLAVOUR_2              ]
+    ['3' FLAVOUR_3              ]
+]
+
+[enum uint 2 TriggerControlLabelType
+    ['0' TEXT_LABEL             ]
+    ['1' PREDEFINED_ICON        ]
+    ['2' LOAD_DYNAMIC_ICON      ]
+    ['3' SET_PREFERRED_LANGUAGE ]
+]
+
+[type EnableControlData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsEnableControlCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  EnableControlCommandTypeContainer commandTypeContainer                                   ]
+    [virtual EnableControlCommandType          commandType          'commandTypeContainer.commandType']
+    [simple  byte                              enableNetworkVariable                                  ]
+    [simple  byte                              value                                                  ]
+]
+
+[enum uint 8 EnableControlCommandTypeContainer(EnableControlCommandType commandType, uint 5 numBytes)
+    ['0x02' EnableControlCommandSetNetworkVariable0_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x0A' EnableControlCommandSetNetworkVariable1_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x12' EnableControlCommandSetNetworkVariable2_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x1A' EnableControlCommandSetNetworkVariable3_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x22' EnableControlCommandSetNetworkVariable4_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x2A' EnableControlCommandSetNetworkVariable5_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x32' EnableControlCommandSetNetworkVariable6_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x3A' EnableControlCommandSetNetworkVariable7_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x42' EnableControlCommandSetNetworkVariable8_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x4A' EnableControlCommandSetNetworkVariable9_2Bytes       ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x52' EnableControlCommandSetNetworkVariable10_2Bytes      ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x5A' EnableControlCommandSetNetworkVariable11_2Bytes      ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x62' EnableControlCommandSetNetworkVariable12_2Bytes      ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x6A' EnableControlCommandSetNetworkVariable13_2Bytes      ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x72' EnableControlCommandSetNetworkVariable14_2Bytes      ['SET_NETWORK_VARIABLE',   '2']]
+    ['0x7A' EnableControlCommandSetNetworkVariable15_2Bytes      ['SET_NETWORK_VARIABLE',   '2']]
+]
+
+[enum uint 4 EnableControlCommandType
+    ['0x00' SET_NETWORK_VARIABLE   ]
+]
+
+[type TemperatureBroadcastData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsTemperatureBroadcastCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  TemperatureBroadcastCommandTypeContainer   commandTypeContainer                                   ]
+    [virtual TemperatureBroadcastCommandType            commandType          'commandTypeContainer.commandType']
+    [simple  byte                                       temperatureGroup                                       ]
+    [simple  byte                                       temperatureByte                                        ]
+    [virtual float 32                                   temperatureInCelsius 'temperatureByte/4'               ]
+]
+
+[enum uint 8 TemperatureBroadcastCommandTypeContainer(TemperatureBroadcastCommandType commandType, uint 5 numBytes)
+    ['0x02' TemperatureBroadcastCommandSetBroadcastEvent0_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x0A' TemperatureBroadcastCommandSetBroadcastEvent1_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x12' TemperatureBroadcastCommandSetBroadcastEvent2_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x1A' TemperatureBroadcastCommandSetBroadcastEvent3_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x22' TemperatureBroadcastCommandSetBroadcastEvent4_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x2A' TemperatureBroadcastCommandSetBroadcastEvent5_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x32' TemperatureBroadcastCommandSetBroadcastEvent6_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x3A' TemperatureBroadcastCommandSetBroadcastEvent7_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x42' TemperatureBroadcastCommandSetBroadcastEvent8_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x4A' TemperatureBroadcastCommandSetBroadcastEvent9_2Bytes       ['BROADCAST_EVENT',   '2']]
+    ['0x52' TemperatureBroadcastCommandSetBroadcastEvent10_2Bytes      ['BROADCAST_EVENT',   '2']]
+    ['0x5A' TemperatureBroadcastCommandSetBroadcastEvent11_2Bytes      ['BROADCAST_EVENT',   '2']]
+    ['0x62' TemperatureBroadcastCommandSetBroadcastEvent12_2Bytes      ['BROADCAST_EVENT',   '2']]
+    ['0x6A' TemperatureBroadcastCommandSetBroadcastEvent13_2Bytes      ['BROADCAST_EVENT',   '2']]
+    ['0x72' TemperatureBroadcastCommandSetBroadcastEvent14_2Bytes      ['BROADCAST_EVENT',   '2']]
+    ['0x7A' TemperatureBroadcastCommandSetBroadcastEvent15_2Bytes      ['BROADCAST_EVENT',   '2']]
+]
+
+[enum uint 4 TemperatureBroadcastCommandType
+    ['0x00' BROADCAST_EVENT   ]
+]
+
+[type AccessControlData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsAccessControlCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  AccessControlCommandTypeContainer          commandTypeContainer                                   ]
+    [virtual AccessControlCommandType                   commandType          'commandTypeContainer.commandType']
+    [simple  byte                                       networkId                                              ]
+    [simple  byte                                       accessPointId                                          ]
+    [typeSwitch commandType
+        ['VALID_ACCESS'             *ValidAccessRequest(AccessControlCommandTypeContainer commandTypeContainer)
+            [simple   AccessControlDirection    accessControlDirection]
+            [array    byte                      data          count 'commandTypeContainer.numBytes-3'          ]
+        ]
+        ['INVALID_ACCESS'           *InvalidAccessRequest(AccessControlCommandTypeContainer commandTypeContainer)
+            [simple   AccessControlDirection    accessControlDirection]
+            [array    byte                      data          count 'commandTypeContainer.numBytes-3'          ]
+        ]
+        ['ACCESS_POINT_LEFT_OPEN'   *AccessPointLeftOpen
+        ]
+        ['ACCESS_POINT_FORCED_OPEN' *AccessPointForcedOpen
+        ]
+        ['ACCESS_POINT_CLOSED'      *AccessPointClosed
+        ]
+        ['REQUEST_TO_EXIT'          *RequestToExit
+        ]
+        ['CLOSE_ACCESS_POINT'       *CloseAccessPoint
+        ]
+        ['LOCK_ACCESS_POINT'        *LockAccessPoint
+        ]
+    ]
+]
+
+[enum uint 8 AccessControlCommandTypeContainer(AccessControlCategory category,AccessControlCommandType commandType, uint 5 numBytes)
+    ['0x02' AccessControlCommandCloseAccessPoint                ['SYSTEM_REQUEST',  'CLOSE_ACCESS_POINT',       '2']]
+    ['0x0A' AccessControlCommandLockAccessPoint                 ['SYSTEM_REQUEST',  'LOCK_ACCESS_POINT',        '2']]
+    ['0x12' AccessControlCommandAccessPointLeftOpen             ['SYSTEM_ACTIVITY', 'ACCESS_POINT_LEFT_OPEN',   '2']]
+    ['0x1A' AccessControlCommandAccessPointForcedOpen           ['SYSTEM_ACTIVITY', 'ACCESS_POINT_FORCED_OPEN', '2']]
+    ['0x22' AccessControlCommandAccessPointClosed               ['SYSTEM_ACTIVITY', 'ACCESS_POINT_CLOSED',      '2']]
+    ['0x32' AccessControlCommandRequestToExit                   ['SYSTEM_ACTIVITY', 'REQUEST_TO_EXIT',          '2']]
+    ['0xA0' AccessControlCommandValidAccessRequest_0Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '0']]
+    ['0xA1' AccessControlCommandValidAccessRequest_1Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '1']]
+    ['0xA2' AccessControlCommandValidAccessRequest_2Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '2']]
+    ['0xA3' AccessControlCommandValidAccessRequest_3Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '3']]
+    ['0xA4' AccessControlCommandValidAccessRequest_4Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '4']]
+    ['0xA5' AccessControlCommandValidAccessRequest_5Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '5']]
+    ['0xA6' AccessControlCommandValidAccessRequest_6Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '6']]
+    ['0xA7' AccessControlCommandValidAccessRequest_7Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '7']]
+    ['0xA8' AccessControlCommandValidAccessRequest_8Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '8']]
+    ['0xA9' AccessControlCommandValidAccessRequest_9Bytes       ['SYSTEM_ACTIVITY', 'VALID_ACCESS',             '9']]
+    ['0xAA' AccessControlCommandValidAccessRequest_10Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '10']]
+    ['0xAB' AccessControlCommandValidAccessRequest_11Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '11']]
+    ['0xAC' AccessControlCommandValidAccessRequest_12Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '12']]
+    ['0xAD' AccessControlCommandValidAccessRequest_13Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '13']]
+    ['0xAE' AccessControlCommandValidAccessRequest_14Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '14']]
+    ['0xAF' AccessControlCommandValidAccessRequest_15Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '15']]
+    ['0xB0' AccessControlCommandValidAccessRequest_16Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '16']]
+    ['0xB1' AccessControlCommandValidAccessRequest_17Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '17']]
+    ['0xB2' AccessControlCommandValidAccessRequest_18Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '18']]
+    ['0xB3' AccessControlCommandValidAccessRequest_19Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '19']]
+    ['0xB4' AccessControlCommandValidAccessRequest_20Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '20']]
+    ['0xB5' AccessControlCommandValidAccessRequest_21Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '21']]
+    ['0xB6' AccessControlCommandValidAccessRequest_22Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '22']]
+    ['0xB7' AccessControlCommandValidAccessRequest_23Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '23']]
+    ['0xB8' AccessControlCommandValidAccessRequest_24Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '24']]
+    ['0xB9' AccessControlCommandValidAccessRequest_25Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '25']]
+    ['0xBA' AccessControlCommandValidAccessRequest_26Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '26']]
+    ['0xBB' AccessControlCommandValidAccessRequest_27Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '27']]
+    ['0xBC' AccessControlCommandValidAccessRequest_28Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '28']]
+    ['0xBD' AccessControlCommandValidAccessRequest_29Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '29']]
+    ['0xBE' AccessControlCommandValidAccessRequest_30Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '30']]
+    ['0xBF' AccessControlCommandValidAccessRequest_31Bytes      ['SYSTEM_ACTIVITY', 'VALID_ACCESS',            '31']]
+    ['0xC0' AccessControlCommandInvalidAccessRequest_0Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '0']]
+    ['0xC1' AccessControlCommandInvalidAccessRequest_1Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '1']]
+    ['0xC2' AccessControlCommandInvalidAccessRequest_2Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '2']]
+    ['0xC3' AccessControlCommandInvalidAccessRequest_3Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '3']]
+    ['0xC4' AccessControlCommandInvalidAccessRequest_4Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '4']]
+    ['0xC5' AccessControlCommandInvalidAccessRequest_5Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '5']]
+    ['0xC6' AccessControlCommandInvalidAccessRequest_6Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '6']]
+    ['0xC7' AccessControlCommandInvalidAccessRequest_7Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '7']]
+    ['0xC8' AccessControlCommandInvalidAccessRequest_8Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '8']]
+    ['0xC9' AccessControlCommandInvalidAccessRequest_9Bytes     ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',           '9']]
+    ['0xCA' AccessControlCommandInvalidAccessRequest_10Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '10']]
+    ['0xCB' AccessControlCommandInvalidAccessRequest_11Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '11']]
+    ['0xCC' AccessControlCommandInvalidAccessRequest_12Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '12']]
+    ['0xCD' AccessControlCommandInvalidAccessRequest_13Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '13']]
+    ['0xCE' AccessControlCommandInvalidAccessRequest_14Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '14']]
+    ['0xCF' AccessControlCommandInvalidAccessRequest_15Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '15']]
+    ['0xD0' AccessControlCommandInvalidAccessRequest_16Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '16']]
+    ['0xD1' AccessControlCommandInvalidAccessRequest_17Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '17']]
+    ['0xD2' AccessControlCommandInvalidAccessRequest_18Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '18']]
+    ['0xD3' AccessControlCommandInvalidAccessRequest_19Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '19']]
+    ['0xD4' AccessControlCommandInvalidAccessRequest_20Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '20']]
+    ['0xD5' AccessControlCommandInvalidAccessRequest_21Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '21']]
+    ['0xD6' AccessControlCommandInvalidAccessRequest_22Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '22']]
+    ['0xD7' AccessControlCommandInvalidAccessRequest_23Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '23']]
+    ['0xD8' AccessControlCommandInvalidAccessRequest_24Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '24']]
+    ['0xD9' AccessControlCommandInvalidAccessRequest_25Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '25']]
+    ['0xDA' AccessControlCommandInvalidAccessRequest_26Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '26']]
+    ['0xDB' AccessControlCommandInvalidAccessRequest_27Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '27']]
+    ['0xDC' AccessControlCommandInvalidAccessRequest_28Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '28']]
+    ['0xDD' AccessControlCommandInvalidAccessRequest_29Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '29']]
+    ['0xDE' AccessControlCommandInvalidAccessRequest_30Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '30']]
+    ['0xDF' AccessControlCommandInvalidAccessRequest_31Bytes    ['SYSTEM_ACTIVITY', 'INVALID_ACCESS',          '31']]
+]
+
+[enum uint 4 AccessControlCommandType
+    ['0x00' CLOSE_ACCESS_POINT          ]
+    ['0x01' LOCK_ACCESS_POINT           ]
+    ['0x02' ACCESS_POINT_LEFT_OPEN      ]
+    ['0x03' ACCESS_POINT_FORCED_OPEN    ]
+    ['0x04' ACCESS_POINT_CLOSED         ]
+    ['0x05' REQUEST_TO_EXIT             ]
+    ['0x06' VALID_ACCESS                ]
+    ['0x07' INVALID_ACCESS              ]
+]
+
+[enum uint 4 AccessControlCategory
+    ['0x00' SYSTEM_ACTIVITY   ]
+    ['0x01' SYSTEM_REQUEST    ]
+]
+
+[enum uint 8 AccessControlDirection
+    ['0x00' NOT_USED    ]
+    ['0x01' IN          ]
+    ['0x02' OUT         ]
+]
+
+[type MediaTransportControlData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsMediaTransportControlCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  MediaTransportControlCommandTypeContainer  commandTypeContainer                                   ]
+    [virtual MediaTransportControlCommandType           commandType          'commandTypeContainer.commandType']
+    [simple  byte                                       mediaLinkGroup                                         ]
+    [typeSwitch commandType
+        ['STOP'             *Stop
+        ]
+        ['PLAY'             *Play
+        ]
+        ['PAUSE_RESUME'     *PauseResume
+            [simple  byte   operation                       ]
+            [virtual bit    isPause   'operation == 0x00'   ]
+            [virtual bit    isResume  'operation > 0xFE'    ]
+        ]
+        ['SELECT_CATEGORY'  *SetCategory
+            [simple  uint 8 categoryNumber                  ]
+        ]
+        ['SELECT_SELECTION'  *SetSelection
+            [simple  byte   selectionHi                     ]
+            [simple  byte   selectionLo                     ]
+        ]
+        ['SELECT_TRACK'     *SetTrack
+            [simple  byte   trackMSB                        ]
+            [simple  byte   trackMMSB                       ]
+            [simple  byte   trackMLSB                       ]
+            [simple  byte   trackLSB                        ]
+        ]
+        ['SHUFFLE_ON_OFF'   *ShuffleOnOff
+            [simple  byte   state                           ]
+            [virtual bit    isOff     'state == 0x00'       ]
+            [virtual bit    isOn      'state > 0xFE'        ]
+        ]
+        ['REPEAT_ON_OFF'    *RepeatOnOff
+            [simple  byte   repeatType                            ]
+            [virtual bit    isOff     'repeatType == 0x00'        ]
+            [virtual bit    isRepeatCurrent     'repeatType > 0x00 && repeatType <= 0xFE'   ]
+            [virtual bit    isRepeatTracks      'repeatType >= 0xFE'                        ]
+        ]
+        ['NEXT_PREVIOUS_CATEGORY'   *NextPreviousCategory
+            [simple  byte   operation                       ]
+            [virtual bit    isSetThePreviousCategory    'operation == 0x00'     ]
+            [virtual bit    isSetTheNextCategory        'operation != 0x00'     ]
+        ]
+        ['NEXT_PREVIOUS_SELECTION'  *NextPreviousSelection
+            [simple  byte   operation                       ]
+            [virtual bit    isSetThePreviousSelection   'operation == 0x00'     ]
+            [virtual bit    isSetTheNextSelection       'operation != 0x00'     ]
+        ]
+        ['NEXT_PREVIOUS_TRACK'      *NextPreviousTrack
+            [simple  byte   operation                       ]
+            [virtual bit    isSetThePreviousTrack       'operation == 0x00'     ]
+            [virtual bit    isSetTheNextTrack           'operation != 0x00'     ]
+        ]
+        ['FAST_FORWARD'             *FastForward
+            [simple  byte   operation                       ]
+            [virtual bit    isCeaseFastForward          'operation == 0x00'     ]
+            [virtual bit    is2x                        'operation == 0x02'     ]
+            [virtual bit    is4x                        'operation == 0x04'     ]
+            [virtual bit    is8x                        'operation == 0x06'     ]
+            [virtual bit    is16x                       'operation == 0x08'     ]
+            [virtual bit    is32x                       'operation == 0x0A'     ]
+            [virtual bit    is64x                       'operation == 0x0C'     ]
+            [virtual bit    isReserved                  '!isCeaseFastForward && !is2x && !is4x && !is8x && !is16x && !is32x && !is64x'     ]
+        ]
+        ['REWIND'                   *Rewind
+            [simple  byte   operation                       ]
+            [virtual bit    isCeaseRewind               'operation == 0x00'     ]
+            [virtual bit    is2x                        'operation == 0x02'     ]
+            [virtual bit    is4x                        'operation == 0x04'     ]
+            [virtual bit    is8x                        'operation == 0x06'     ]
+            [virtual bit    is16x                       'operation == 0x08'     ]
+            [virtual bit    is32x                       'operation == 0x0A'     ]
+            [virtual bit    is64x                       'operation == 0x0C'     ]
+            [virtual bit    isReserved                  '!isCeaseRewind && !is2x && !is4x && !is8x && !is16x && !is32x && !is64x'     ]
+        ]
+        ['SOURCE_POWER_CONTROL'     *SourcePowerControl
+            [simple  byte   state                                           ]
+            [virtual bit    isShouldPowerOn             'state == 0x00'     ]
+            [virtual bit    isShouldPowerOff            'state != 0x00'     ]
+        ]
+        ['TOTAL_TRACKS'     *TotalTracks
+            [simple  byte   totalTracksMSB      ]
+            [simple  byte   totalTracksMMSB     ]
+            [simple  byte   totalTracksMLSB     ]
+            [simple  byte   totalTracksLSB      ]
+        ]
+        ['STATUS_REQUEST'   *StatusRequest
+        ]
+        ['ENUMERATE_CATEGORIES_SELECTIONS_TRACKS' *EnumerateCategoriesSelectionTracks
+            [simple  byte   enumerateType                                  ]
+            [virtual bit    isListCategories    'enumerateType == 0x00'    ]
+            [virtual bit    isListSelections    'enumerateType == 0x01'    ]
+            [virtual bit    isListTracks        'enumerateType == 0x02'    ]
+            [virtual bit    isReserved          '!isListCategories && !isListSelections && !isListTracks'      ]
+            [simple  uint 8 start                                       ]
+        ]
+        ['ENUMERATION_SIZE' *EnumerationsSize
+            [simple  byte   sizeType                                    ]
+            [virtual bit    isListCategories    'sizeType == 0x00'      ]
+            [virtual bit    isListSelections    'sizeType == 0x01'      ]
+            [virtual bit    isListTracks        'sizeType == 0x02'      ]
+            [virtual bit    isReserved          '!isListCategories && !isListSelections && !isListTracks'      ]
+            [simple  uint 8 start                                       ]
+            [simple  uint 8 size                                        ]
+        ]
+        ['TRACK_NAME'       *TrackName(MediaTransportControlCommandTypeContainer commandTypeContainer)
+             [simple vstring '(commandTypeContainer.numBytes-1)*8' trackName                                    ]
+        ]
+        ['SELECTION_NAME'   *SelectionName(MediaTransportControlCommandTypeContainer commandTypeContainer)
+             [simple vstring '(commandTypeContainer.numBytes-1)*8' selectionName                                ]
+        ]
+    ]
+]
+
+[enum uint 8 MediaTransportControlCommandTypeContainer(MediaTransportControlCommandType commandType, uint 5 numBytes)
+    ['0x01' MediaTransportControlCommandStop                                ['STOP',                                    '1']]
+    ['0x79' MediaTransportControlCommandPlay                                ['PLAY',                                    '1']]
+    ['0x0A' MediaTransportControlCommandPauseResume                         ['PAUSE_RESUME',                            '2']]
+    ['0x12' MediaTransportControlCommandSelectCategory                      ['SELECT_CATEGORY',                         '2']]
+    ['0x1B' MediaTransportControlCommandSelectSelection                     ['SELECT_SELECTION',                        '3']]
+    ['0x25' MediaTransportControlCommandSelectTrack                         ['SELECT_TRACK',                            '5']]
+    ['0x2A' MediaTransportControlCommandShuffleOnOff                        ['SHUFFLE_ON_OFF',                          '2']]
+    ['0x32' MediaTransportControlCommandRepeatOnOff                         ['REPEAT_ON_OFF',                           '2']]
+    ['0x3A' MediaTransportControlCommandNextPreviousCategory                ['NEXT_PREVIOUS_CATEGORY',                  '2']]
+    ['0x42' MediaTransportControlCommandNextPreviousSelection               ['NEXT_PREVIOUS_SELECTION',                 '2']]
+    ['0x4A' MediaTransportControlCommandNextPreviousTrack                   ['NEXT_PREVIOUS_TRACK',                     '2']]
+    ['0x52' MediaTransportControlCommandFastForward                         ['FAST_FORWARD',                            '2']]
+    ['0x5A' MediaTransportControlCommandRewind                              ['REWIND',                                  '2']]
+    ['0x62' MediaTransportControlCommandSourcePowerControl                  ['SOURCE_POWER_CONTROL',                    '2']]
+    ['0x6D' MediaTransportControlCommandTotalTracks                         ['TOTAL_TRACKS',                            '5']]
+    ['0x71' MediaTransportControlCommandStatusRequest                       ['STATUS_REQUEST',                          '1']]
+    ['0x73' MediaTransportControlCommandEnumerateCategoriesSelectionsTracks ['ENUMERATE_CATEGORIES_SELECTIONS_TRACKS',  '3']]
+    ['0x74' MediaTransportControlCommandEnumerationSize                     ['ENUMERATION_SIZE',                        '4']]
+    ['0x80' MediaTransportControlCommandTrackName_0Bytes                    ['TRACK_NAME',                              '0']]
+    ['0x81' MediaTransportControlCommandTrackName_1Bytes                    ['TRACK_NAME',                              '1']]
+    ['0x82' MediaTransportControlCommandTrackName_2Bytes                    ['TRACK_NAME',                              '2']]
+    ['0x83' MediaTransportControlCommandTrackName_3Bytes                    ['TRACK_NAME',                              '3']]
+    ['0x84' MediaTransportControlCommandTrackName_4Bytes                    ['TRACK_NAME',                              '4']]
+    ['0x85' MediaTransportControlCommandTrackName_5Bytes                    ['TRACK_NAME',                              '5']]
+    ['0x86' MediaTransportControlCommandTrackName_6Bytes                    ['TRACK_NAME',                              '6']]
+    ['0x87' MediaTransportControlCommandTrackName_7Bytes                    ['TRACK_NAME',                              '7']]
+    ['0x88' MediaTransportControlCommandTrackName_8Bytes                    ['TRACK_NAME',                              '8']]
+    ['0x89' MediaTransportControlCommandTrackName_9Bytes                    ['TRACK_NAME',                              '9']]
+    ['0x8A' MediaTransportControlCommandTrackName_10Bytes                   ['TRACK_NAME',                             '10']]
+    ['0x8B' MediaTransportControlCommandTrackName_11Bytes                   ['TRACK_NAME',                             '11']]
+    ['0x8C' MediaTransportControlCommandTrackName_12Bytes                   ['TRACK_NAME',                             '12']]
+    ['0x8D' MediaTransportControlCommandTrackName_13Bytes                   ['TRACK_NAME',                             '13']]
+    ['0x8E' MediaTransportControlCommandTrackName_14Bytes                   ['TRACK_NAME',                             '14']]
+    ['0x8F' MediaTransportControlCommandTrackName_15Bytes                   ['TRACK_NAME',                             '15']]
+    ['0x90' MediaTransportControlCommandTrackName_16Bytes                   ['TRACK_NAME',                             '16']]
+    ['0x91' MediaTransportControlCommandTrackName_17Bytes                   ['TRACK_NAME',                             '17']]
+    ['0x92' MediaTransportControlCommandTrackName_18Bytes                   ['TRACK_NAME',                             '18']]
+    ['0x93' MediaTransportControlCommandTrackName_19Bytes                   ['TRACK_NAME',                             '19']]
+    ['0x94' MediaTransportControlCommandTrackName_20Bytes                   ['TRACK_NAME',                             '20']]
+    ['0x95' MediaTransportControlCommandTrackName_21Bytes                   ['TRACK_NAME',                             '21']]
+    ['0x96' MediaTransportControlCommandTrackName_22Bytes                   ['TRACK_NAME',                             '22']]
+    ['0x97' MediaTransportControlCommandTrackName_23Bytes                   ['TRACK_NAME',                             '23']]
+    ['0x98' MediaTransportControlCommandTrackName_24Bytes                   ['TRACK_NAME',                             '24']]
+    ['0x99' MediaTransportControlCommandTrackName_25Bytes                   ['TRACK_NAME',                             '25']]
+    ['0x9A' MediaTransportControlCommandTrackName_26Bytes                   ['TRACK_NAME',                             '26']]
+    ['0x9B' MediaTransportControlCommandTrackName_27Bytes                   ['TRACK_NAME',                             '27']]
+    ['0x9C' MediaTransportControlCommandTrackName_28Bytes                   ['TRACK_NAME',                             '28']]
+    ['0x9D' MediaTransportControlCommandTrackName_29Bytes                   ['TRACK_NAME',                             '29']]
+    ['0x9E' MediaTransportControlCommandTrackName_30Bytes                   ['TRACK_NAME',                             '30']]
+    ['0x9F' MediaTransportControlCommandTrackName_31Bytes                   ['TRACK_NAME',                             '31']]
+    ['0xA0' MediaTransportControlCommandSelectionName_0Bytes                ['SELECTION_NAME',                          '0']]
+    ['0xA1' MediaTransportControlCommandSelectionName_1Bytes                ['SELECTION_NAME',                          '1']]
+    ['0xA2' MediaTransportControlCommandSelectionName_2Bytes                ['SELECTION_NAME',                          '2']]
+    ['0xA3' MediaTransportControlCommandSelectionName_3Bytes                ['SELECTION_NAME',                          '3']]
+    ['0xA4' MediaTransportControlCommandSelectionName_4Bytes                ['SELECTION_NAME',                          '4']]
+    ['0xA5' MediaTransportControlCommandSelectionName_5Bytes                ['SELECTION_NAME',                          '5']]
+    ['0xA6' MediaTransportControlCommandSelectionName_6Bytes                ['SELECTION_NAME',                          '6']]
+    ['0xA7' MediaTransportControlCommandSelectionName_7Bytes                ['SELECTION_NAME',                          '7']]
+    ['0xA8' MediaTransportControlCommandSelectionName_8Bytes                ['SELECTION_NAME',                          '8']]
+    ['0xA9' MediaTransportControlCommandSelectionName_9Bytes                ['SELECTION_NAME',                          '9']]
+    ['0xAA' MediaTransportControlCommandSelectionName_10Bytes               ['SELECTION_NAME',                         '10']]
+    ['0xAB' MediaTransportControlCommandSelectionName_11Bytes               ['SELECTION_NAME',                         '11']]
+    ['0xAC' MediaTransportControlCommandSelectionName_12Bytes               ['SELECTION_NAME',                         '12']]
+    ['0xAD' MediaTransportControlCommandSelectionName_13Bytes               ['SELECTION_NAME',                         '13']]
+    ['0xAE' MediaTransportControlCommandSelectionName_14Bytes               ['SELECTION_NAME',                         '14']]
+    ['0xAF' MediaTransportControlCommandSelectionName_15Bytes               ['SELECTION_NAME',                         '15']]
+    ['0xB0' MediaTransportControlCommandSelectionName_16Bytes               ['SELECTION_NAME',                         '16']]
+    ['0xB1' MediaTransportControlCommandSelectionName_17Bytes               ['SELECTION_NAME',                         '17']]
+    ['0xB2' MediaTransportControlCommandSelectionName_18Bytes               ['SELECTION_NAME',                         '18']]
+    ['0xB3' MediaTransportControlCommandSelectionName_19Bytes               ['SELECTION_NAME',                         '19']]
+    ['0xB4' MediaTransportControlCommandSelectionName_20Bytes               ['SELECTION_NAME',                         '20']]
+    ['0xB5' MediaTransportControlCommandSelectionName_21Bytes               ['SELECTION_NAME',                         '21']]
+    ['0xB6' MediaTransportControlCommandSelectionName_22Bytes               ['SELECTION_NAME',                         '22']]
+    ['0xB7' MediaTransportControlCommandSelectionName_23Bytes               ['SELECTION_NAME',                         '23']]
+    ['0xB8' MediaTransportControlCommandSelectionName_24Bytes               ['SELECTION_NAME',                         '24']]
+    ['0xB9' MediaTransportControlCommandSelectionName_25Bytes               ['SELECTION_NAME',                         '25']]
+    ['0xBA' MediaTransportControlCommandSelectionName_26Bytes               ['SELECTION_NAME',                         '26']]
+    ['0xBB' MediaTransportControlCommandSelectionName_27Bytes               ['SELECTION_NAME',                         '27']]
+    ['0xBC' MediaTransportControlCommandSelectionName_28Bytes               ['SELECTION_NAME',                         '28']]
+    ['0xBD' MediaTransportControlCommandSelectionName_29Bytes               ['SELECTION_NAME',                         '29']]
+    ['0xBE' MediaTransportControlCommandSelectionName_30Bytes               ['SELECTION_NAME',                         '30']]
+    ['0xBF' MediaTransportControlCommandSelectionName_31Bytes               ['SELECTION_NAME',                         '31']]
+    ['0xC0' MediaTransportControlCommandCategoryName_0Bytes                 ['CATEGORY_NAME',                           '0']]
+    ['0xC1' MediaTransportControlCommandCategoryName_1Bytes                 ['CATEGORY_NAME',                           '1']]
+    ['0xC2' MediaTransportControlCommandCategoryName_2Bytes                 ['CATEGORY_NAME',                           '2']]
+    ['0xC3' MediaTransportControlCommandCategoryName_3Bytes                 ['CATEGORY_NAME',                           '3']]
+    ['0xC4' MediaTransportControlCommandCategoryName_4Bytes                 ['CATEGORY_NAME',                           '4']]
+    ['0xC5' MediaTransportControlCommandCategoryName_5Bytes                 ['CATEGORY_NAME',                           '5']]
+    ['0xC6' MediaTransportControlCommandCategoryName_6Bytes                 ['CATEGORY_NAME',                           '6']]
+    ['0xC7' MediaTransportControlCommandCategoryName_7Bytes                 ['CATEGORY_NAME',                           '7']]
+    ['0xC8' MediaTransportControlCommandCategoryName_8Bytes                 ['CATEGORY_NAME',                           '8']]
+    ['0xC9' MediaTransportControlCommandCategoryName_9Bytes                 ['CATEGORY_NAME',                           '9']]
+    ['0xCA' MediaTransportControlCommandCategoryName_10Bytes                ['CATEGORY_NAME',                          '10']]
+    ['0xCB' MediaTransportControlCommandCategoryName_11Bytes                ['CATEGORY_NAME',                          '11']]
+    ['0xCC' MediaTransportControlCommandCategoryName_12Bytes                ['CATEGORY_NAME',                          '12']]
+    ['0xCD' MediaTransportControlCommandCategoryName_13Bytes                ['CATEGORY_NAME',                          '13']]
+    ['0xCE' MediaTransportControlCommandCategoryName_14Bytes                ['CATEGORY_NAME',                          '14']]
+    ['0xCF' MediaTransportControlCommandCategoryName_15Bytes                ['CATEGORY_NAME',                          '15']]
+    ['0xD0' MediaTransportControlCommandCategoryName_16Bytes                ['CATEGORY_NAME',                          '16']]
+    ['0xD1' MediaTransportControlCommandCategoryName_17Bytes                ['CATEGORY_NAME',                          '17']]
+    ['0xD2' MediaTransportControlCommandCategoryName_18Bytes                ['CATEGORY_NAME',                          '18']]
+    ['0xD3' MediaTransportControlCommandCategoryName_19Bytes                ['CATEGORY_NAME',                          '19']]
+    ['0xD4' MediaTransportControlCommandCategoryName_20Bytes                ['CATEGORY_NAME',                          '20']]
+    ['0xD5' MediaTransportControlCommandCategoryName_21Bytes                ['CATEGORY_NAME',                          '21']]
+    ['0xD6' MediaTransportControlCommandCategoryName_22Bytes                ['CATEGORY_NAME',                          '22']]
+    ['0xD7' MediaTransportControlCommandCategoryName_23Bytes                ['CATEGORY_NAME',                          '23']]
+    ['0xD8' MediaTransportControlCommandCategoryName_24Bytes                ['CATEGORY_NAME',                          '24']]
+    ['0xD9' MediaTransportControlCommandCategoryName_25Bytes                ['CATEGORY_NAME',                          '25']]
+    ['0xDA' MediaTransportControlCommandCategoryName_26Bytes                ['CATEGORY_NAME',                          '26']]
+    ['0xDB' MediaTransportControlCommandCategoryName_27Bytes                ['CATEGORY_NAME',                          '27']]
+    ['0xDC' MediaTransportControlCommandCategoryName_28Bytes                ['CATEGORY_NAME',                          '28']]
+    ['0xDD' MediaTransportControlCommandCategoryName_29Bytes                ['CATEGORY_NAME',                          '29']]
+    ['0xDE' MediaTransportControlCommandCategoryName_30Bytes                ['CATEGORY_NAME',                          '30']]
+    ['0xDF' MediaTransportControlCommandCategoryName_31Bytes                ['CATEGORY_NAME',                          '31']]
+]
+
+[enum uint 4 MediaTransportControlCommandType
+    ['0x00' STOP                                    ]
+    ['0x01' PLAY                                    ]
+    ['0x02' PAUSE_RESUME                            ]
+    ['0x03' SELECT_CATEGORY                         ]
+    ['0x04' SELECT_SELECTION                        ]
+    ['0x05' SELECT_TRACK                            ]
+    ['0x06' SHUFFLE_ON_OFF                          ]
+    ['0x07' REPEAT_ON_OFF                           ]
+    ['0x08' NEXT_PREVIOUS_CATEGORY                  ]
+    ['0x09' NEXT_PREVIOUS_SELECTION                 ]
+    ['0x09' NEXT_PREVIOUS_TRACK                     ]
+    ['0x09' FAST_FORWARD                            ]
+    ['0x09' REWIND                                  ]
+    ['0x09' SOURCE_POWER_CONTROL                    ]
+    ['0x09' TOTAL_TRACKS                            ]
+    ['0x09' STATUS_REQUEST                          ]
+    ['0x09' ENUMERATE_CATEGORIES_SELECTIONS_TRACKS  ]
+    ['0x0A' ENUMERATION_SIZE                        ]
+    ['0x0B' TRACK_NAME                              ]
+    ['0x0C' SELECTION_NAME                          ]
+    ['0x0D' CATEGORY_NAME                           ]
+]
+
+[type ClockAndTimekeepingData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsClockAndTimekeepingCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  ClockAndTimekeepingCommandTypeContainer    commandTypeContainer                                   ]
+    [virtual ClockAndTimekeepingCommandType             commandType          'commandTypeContainer.commandType']
+    [simple  byte   argument]
+    [typeSwitch commandType, argument
+        ['UPDATE_NETWORK_VARIABLE', '0x01'  *UpdateTime
+            [simple   uint 8 hours          ]
+            [simple   uint 8 minute         ]
+            [simple   uint 8 second         ]
+            [simple   byte   daylightSaving ]
+            [virtual  bit    isNoDaylightSavings 'daylightSaving == 0x00']
+            [virtual  bit    isAdvancedBy1Hour   'daylightSaving == 0x01']
+            [virtual  bit    isReserved          'daylightSaving > 0x01 && daylightSaving <= 0xFE']
+            [virtual  bit    isUnknown           'daylightSaving > 0xFE']
+        ]
+        ['UPDATE_NETWORK_VARIABLE', '0x02'  *UpdateDate
+            [simple   byte   yearHigh       ]
+            [simple   byte   yearLow        ]
+            [simple   uint 8 month          ]
+            [simple   uint 8 day            ]
+            [simple   uint 8 dayOfWeek      ]
+        ]
+        ['REQUEST_REFRESH', '0x03'          *RequestRefresh
+        ]
+    ]
+]
+
+[enum uint 8 ClockAndTimekeepingCommandTypeContainer(ClockAndTimekeepingCommandType commandType, uint 5 numBytes)
+    ['0x08' MediaTransportControlCommandUpdateNetworkVariable_0Bytes    ['UPDATE_NETWORK_VARIABLE', '0']]
+    ['0x09' MediaTransportControlCommandUpdateNetworkVariable_1Bytes    ['UPDATE_NETWORK_VARIABLE', '1']]
+    ['0x0A' MediaTransportControlCommandUpdateNetworkVariable_2Bytes    ['UPDATE_NETWORK_VARIABLE', '2']]
+    ['0x0B' MediaTransportControlCommandUpdateNetworkVariable_3Bytes    ['UPDATE_NETWORK_VARIABLE', '3']]
+    ['0x0C' MediaTransportControlCommandUpdateNetworkVariable_4Bytes    ['UPDATE_NETWORK_VARIABLE', '4']]
+    ['0x0D' MediaTransportControlCommandUpdateNetworkVariable_5Bytes    ['UPDATE_NETWORK_VARIABLE', '5']]
+    ['0x0E' MediaTransportControlCommandUpdateNetworkVariable_6Bytes    ['UPDATE_NETWORK_VARIABLE', '6']]
+    ['0x0F' MediaTransportControlCommandUpdateNetworkVariable_7Bytes    ['UPDATE_NETWORK_VARIABLE', '7']]
+    ['0x11' MediaTransportControlCommandRequestRefresh                  ['REQUEST_REFRESH',         '1']]
+]
+
+[enum uint 4 ClockAndTimekeepingCommandType
+    ['0x00' UPDATE_NETWORK_VARIABLE ]
+    ['0x01' REQUEST_REFRESH         ]
+]
+
+[type TelephonyData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsTelephonyCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  TelephonyCommandTypeContainer      commandTypeContainer                                   ]
+    [virtual TelephonyCommandType               commandType          'commandTypeContainer.commandType']
+    [simple  byte   argument]
+    [typeSwitch commandType, argument
+        ['EVENT', '0x01'  *LineOnHook
+        ]
+        ['EVENT', '0x02'  *LineOffHook(TelephonyCommandTypeContainer commandTypeContainer)
+            [simple   LineOffHookReason     reason]
+            [simple   vstring '(commandTypeContainer.numBytes-2)*8' number ]
+        ]
+        ['EVENT', '0x03'  *DialOutFailure
+            [simple   DialOutFailureReason  reason]
+        ]
+        ['EVENT', '0x04'  *DialOutFailure
+            [simple   DialInFailureReason   reason]
+        ]
+        ['EVENT', '0x05'  *Ringing(TelephonyCommandTypeContainer commandTypeContainer)
+            [reserved byte    '0x01'              ]
+            [simple   vstring '(commandTypeContainer.numBytes-2)*8' number ]
+        ]
+        ['EVENT', '0x06'  *RecallLastNumber(TelephonyCommandTypeContainer commandTypeContainer)
+            [simple   byte    recallLastNumberType  ]
+            [virtual  bit     isNumberOfLastOutgoingCall    'recallLastNumberType == 0x01'  ]
+            [virtual  bit     isNumberOfLastIncomingCall    'recallLastNumberType == 0x02'  ]
+            [simple   vstring '(commandTypeContainer.numBytes-2)*8' number ]
+        ]
+        ['EVENT', '0x07'  *InternetConnectionRequestMade
+        ]
+        ['EVENT', '0x80'  *IsolateSecondaryOutlet
+            [simple   byte    isolateStatus]
+            [virtual  bit     isBehaveNormal 'isolateStatus == 0x00']
+            [virtual  bit     isToBeIsolated 'isolateStatus == 0x01']
+        ]
+        ['EVENT', '0x81'  *RecallLastNumberRequest
+            [simple   byte    recallLastNumberType  ]
+            [virtual  bit     isNumberOfLastOutgoingCall    'recallLastNumberType == 0x01'  ]
+            [virtual  bit     isNumberOfLastIncomingCall    'recallLastNumberType == 0x02'  ]
+        ]
+        ['EVENT', '0x82'  *RejectIncomingCall
+        ]
+        ['EVENT', '0x83'  *Divert(TelephonyCommandTypeContainer commandTypeContainer)
+            [simple   vstring '(commandTypeContainer.numBytes-1)*8' number ]
+        ]
+        ['EVENT', '0x84'  *ClearDiversion
+        ]
+    ]
+]
+
+[enum uint 8 TelephonyCommandTypeContainer(TelephonyCommandType commandType, uint 5 numBytes)
+    ['0x09' TelephonyCommandLineOnHook            ['EVENT',  '1']]
+    ['0xA0' TelephonyCommandLineOffHook_0Bytes    ['EVENT',  '0']]
+    ['0xA1' TelephonyCommandLineOffHook_1Bytes    ['EVENT',  '1']]
+    ['0xA2' TelephonyCommandLineOffHook_2Bytes    ['EVENT',  '2']]
+    ['0xA3' TelephonyCommandLineOffHook_3Bytes    ['EVENT',  '3']]
+    ['0xA4' TelephonyCommandLineOffHook_4Bytes    ['EVENT',  '4']]
+    ['0xA5' TelephonyCommandLineOffHook_5Bytes    ['EVENT',  '5']]
+    ['0xA6' TelephonyCommandLineOffHook_6Bytes    ['EVENT',  '6']]
+    ['0xA7' TelephonyCommandLineOffHook_7Bytes    ['EVENT',  '7']]
+    ['0xA8' TelephonyCommandLineOffHook_8Bytes    ['EVENT',  '8']]
+    ['0xA9' TelephonyCommandLineOffHook_9Bytes    ['EVENT',  '9']]
+    ['0xAA' TelephonyCommandLineOffHook_10Bytes   ['EVENT', '10']]
+    ['0xAB' TelephonyCommandLineOffHook_11Bytes   ['EVENT', '11']]
+    ['0xAC' TelephonyCommandLineOffHook_12Bytes   ['EVENT', '12']]
+    ['0xAD' TelephonyCommandLineOffHook_13Bytes   ['EVENT', '13']]
+    ['0xAE' TelephonyCommandLineOffHook_14Bytes   ['EVENT', '14']]
+    ['0xAF' TelephonyCommandLineOffHook_15Bytes   ['EVENT', '15']]
+    ['0xB0' TelephonyCommandLineOffHook_16Bytes   ['EVENT', '16']]
+    ['0xB1' TelephonyCommandLineOffHook_17Bytes   ['EVENT', '17']]
+    ['0xB2' TelephonyCommandLineOffHook_18Bytes   ['EVENT', '18']]
+    ['0xB3' TelephonyCommandLineOffHook_19Bytes   ['EVENT', '19']]
+    ['0xB4' TelephonyCommandLineOffHook_20Bytes   ['EVENT', '20']]
+    ['0xB5' TelephonyCommandLineOffHook_21Bytes   ['EVENT', '21']]
+    ['0xB6' TelephonyCommandLineOffHook_22Bytes   ['EVENT', '22']]
+    ['0xB7' TelephonyCommandLineOffHook_23Bytes   ['EVENT', '23']]
+    ['0xB8' TelephonyCommandLineOffHook_24Bytes   ['EVENT', '24']]
+    ['0xB9' TelephonyCommandLineOffHook_25Bytes   ['EVENT', '25']]
+    ['0xBA' TelephonyCommandLineOffHook_26Bytes   ['EVENT', '26']]
+    ['0xBB' TelephonyCommandLineOffHook_27Bytes   ['EVENT', '27']]
+    ['0xBC' TelephonyCommandLineOffHook_28Bytes   ['EVENT', '28']]
+    ['0xBD' TelephonyCommandLineOffHook_29Bytes   ['EVENT', '29']]
+    ['0xBE' TelephonyCommandLineOffHook_30Bytes   ['EVENT', '30']]
+    ['0xBF' TelephonyCommandLineOffHook_31Bytes   ['EVENT', '31']]
+]
+
+[enum uint 4 TelephonyCommandType
+    ['0x00' EVENT ]
+]
+
+[enum uint 8 LineOffHookReason
+    ['0x01' INCOMING_VOICE_CALL ]
+    ['0x02' INCOMING_DATA_CALL  ]
+    ['0x03' INCOMING_CALL       ]
+    ['0x10' OUTGOING_VOICE_CALL ]
+    ['0x20' OUTGOING_DATA_CALL  ]
+    ['0x30' OUTGOING_CALL       ]
+    ['0x40' CBTI_IS_SETTING     ]
+    ['0x50' CBTI_IS_CLEARING    ]
+]
+
+[enum uint 8 DialOutFailureReason
+    ['0x01' NO_DIAL_TONE                            ]
+    ['0x02' NO_ANSWER                               ]
+    ['0x03' NO_VALID_ACKNOWLEDGEMENT_OF_PROMPTS     ]
+    ['0x04' NUMBER_WAS_UNOBTAINABLE_DOES_NOT_EXIST  ]
+    ['0x05' NUMBER_WAS_BUSY                         ]
+    ['0x06' INTERNAL_FAILURE                        ]
+]
+
+[enum uint 8 DialInFailureReason
+    ['0x01' PHONE_STOPPED_RINGING                   ]
+]
+
+[type AirConditioningData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsAirConditioningCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  AirConditioningCommandTypeContainer      commandTypeContainer                                   ]
+    [virtual AirConditioningCommandType               commandType          'commandTypeContainer.commandType']
+    [typeSwitch commandType
+        ['HVAC_SCHEDULE_ENTRY'              *HvacScheduleEntry
+            [simple   byte                zoneGroup           ]
+            [simple   HVACZoneList        zoneList            ]
+            [simple   uint 8              entry               ]
+            [simple   byte                format              ]
+            [simple   HVACModeAndFlags    hvacModeAndFlags    ]
+            [simple   HVACStartTime       startTime           ]
+            [optional HVACTemperature     level 'hvacModeAndFlags.isLevelTemperature'   ]
+            [optional HVACRawLevels       rawLevel 'hvacModeAndFlags.isLevelRaw'        ]
+        ]
+        ['HUMIDITY_SCHEDULE_ENTRY'          *HvacScheduleEntry
+            [simple   byte                      zoneGroup               ]
+            [simple   HVACZoneList              zoneList                ]
+            [simple   uint 8                    entry                   ]
+            [simple   byte                      format                  ]
+            [simple   HVACHumidityModeAndFlags  humidityModeAndFlags    ]
+            [simple   HVACStartTime             startTime               ]
+            [optional HVACHumidity              level    'humidityModeAndFlags.isLevelHumidity'   ]
+            [optional HVACRawLevels             rawLevel 'humidityModeAndFlags.isLevelRaw'        ]
+        ]
+        ['REFRESH'                          *Refresh
+            [simple   byte                      zoneGroup               ]
+        ]
+        ['ZONE_HVAC_PLANT_STATUS'           *ZoneHvacPlantStatus
+            [simple   byte                      zoneGroup               ]
+            [simple   HVACZoneList              zoneList                ]
+            [simple   HVACType                  hvacType                ]
+            [simple   HVACStatusFlags           hvacStatus              ]
+            [simple   HVACError                 hvacErrorCode           ]
+        ]
+        ['ZONE_HUMIDITY_PLANT_STATUS'       *ZoneHumidityPlantStatus
+            [simple   byte                      zoneGroup               ]
+            [simple   HVACZoneList              zoneList                ]
+            [simple   HVACHumidityType          humidityType            ]
+            [simple   HVACHumidityStatusFlags   humidityStatus          ]
+            [simple   HVACHumidityError         humidityErrorCode       ]
+        ]
+        ['ZONE_TEMPERATURE'                 *ZoneTemperature
+            [simple   byte                      zoneGroup               ]
+            [simple   HVACZoneList              zoneList                ]
+            [simple   HVACTemperature           temperature             ]
+            [simple   HVACSensorStatus          sensorStatus            ]
+        ]
+        ['ZONE_HUMIDITY'                    *ZoneHumidity
+            [simple   byte                      zoneGroup               ]
+            [simple   HVACZoneList              zoneList                ]
+            [simple   HVACHumidity              humidity                ]
+            [simple   HVACSensorStatus          sensorStatus            ]
+        ]
+        ['SET_ZONE_GROUP_OFF'               *SetZoneGroupOff
+            [simple   byte                      zoneGroup               ]
+        ]
+        ['SET_ZONE_GROUP_ON'                *SetZoneGroupOn
+            [simple   byte                      zoneGroup               ]
+        ]
+        ['SET_ZONE_HVAC_MODE'               *SetZoneHvacMode
+            [simple   byte                zoneGroup           ]
+            [simple   HVACZoneList        zoneList            ]
+            [simple   HVACModeAndFlags    hvacModeAndFlags    ]
+            [simple   HVACType            hvacType            ]
+            [optional HVACTemperature     level     'hvacModeAndFlags.isLevelTemperature']
+            [optional HVACRawLevels       rawLevel  'hvacModeAndFlags.isLevelRaw'        ]
+            [optional HVACAuxiliaryLevel  auxLevel  'hvacModeAndFlags.isAuxLevelUsed'    ]
+        ]
+        ['SET_PLANT_HVAC_LEVEL'             *SetPlantHvacLevel
+            [simple   byte                zoneGroup           ]
+            [simple   HVACZoneList        zoneList            ]
+            [simple   HVACModeAndFlags    hvacModeAndFlags    ]
+            [simple   HVACType            hvacType            ]
+            [optional HVACTemperature     level     'hvacModeAndFlags.isLevelTemperature']
+            [optional HVACRawLevels       rawLevel  'hvacModeAndFlags.isLevelRaw'        ]
+            [optional HVACAuxiliaryLevel  auxLevel  'hvacModeAndFlags.isAuxLevelUsed'    ]
+        ]
+        ['SET_ZONE_HUMIDITY_MODE'           *SetZoneHumidityMode
+            [simple   byte                      zoneGroup               ]
+            [simple   HVACZoneList              zoneList                ]
+            [simple   HVACHumidityModeAndFlags  humidityModeAndFlags    ]
+            [simple   HVACHumidityType          humidityType            ]
+            [optional HVACHumidity              level    'humidityModeAndFlags.isLevelHumidity']
+            [optional HVACRawLevels             rawLevel 'humidityModeAndFlags.isLevelRaw'     ]
+            [optional HVACAuxiliaryLevel        auxLevel 'humidityModeAndFlags.isAuxLevelUsed' ]
+        ]
+        ['SET_PLANT_HUMIDITY_LEVEL'         *SetPlantHumidityLevel
+            [simple   byte                      zoneGroup               ]
+            [simple   HVACZoneList              zoneList                ]
+            [simple   HVACHumidityModeAndFlags  humidityModeAndFlags    ]
+            [simple   HVACHumidityType          humidityType            ]
+            [optional HVACHumidity              level    'humidityModeAndFlags.isLevelHumidity']
+            [optional HVACRawLevels             rawLevel 'humidityModeAndFlags.isLevelRaw'     ]
+            [optional HVACAuxiliaryLevel        auxLevel 'humidityModeAndFlags.isAuxLevelUsed' ]
+        ]
+        ['SET_HVAC_UPPER_GUARD_LIMIT'       *SetHvacUpperGuardLimit
+            [simple   byte                zoneGroup           ]
+            [simple   HVACZoneList        zoneList            ]
+            [simple   HVACTemperature     limit               ]
+            [simple   HVACModeAndFlags    hvacModeAndFlags    ]
+        ]
+        ['SET_HVAC_LOWER_GUARD_LIMIT'       *SetHvacLowerGuardLimit
+            [simple   byte                zoneGroup           ]
+            [simple   HVACZoneList        zoneList            ]
+            [simple   HVACTemperature     limit               ]
+            [simple   HVACModeAndFlags    hvacModeAndFlags    ]
+        ]
+        ['SET_HVAC_SETBACK_LIMIT'           *SetHvacSetbackLimit
+            [simple   byte                zoneGroup           ]
+            [simple   HVACZoneList        zoneList            ]
+            [simple   HVACTemperature     limit               ]
+            [simple   HVACModeAndFlags    hvacModeAndFlags    ]
+        ]
+        ['SET_HUMIDITY_UPPER_GUARD_LIMIT'   *SetHumidityUpperGuardLimit
+            [simple   byte                      zoneGroup           ]
+            [simple   HVACZoneList              zoneList            ]
+            [simple   HVACHumidity              limit               ]
+            [simple   HVACHumidityModeAndFlags  hvacModeAndFlags    ]
+        ]
+        ['SET_HUMIDITY_LOWER_GUARD_LIMIT'   *SetHumidityLowerGuardLimit
+            [simple   byte                      zoneGroup           ]
+            [simple   HVACZoneList              zoneList            ]
+            [simple   HVACHumidity              limit               ]
+            [simple   HVACHumidityModeAndFlags  hvacModeAndFlags    ]
+        ]
+        ['SET_HUMIDITY_SETBACK_LIMIT'       *SetHumiditySetbackLimit
+            [simple   byte                      zoneGroup           ]
+            [simple   HVACZoneList              zoneList            ]
+            [simple   HVACHumidity              limit               ]
+            [simple   HVACHumidityModeAndFlags  hvacModeAndFlags    ]
+        ]
+    ]
+]
+
+[enum uint 8 AirConditioningCommandTypeContainer(AirConditioningCommandType commandType, uint 5 numBytes)
+    ['0x01' AirConditioningCommandSetZoneGroupOff               ['SET_ZONE_GROUP_OFF',              '1']]
+    ['0x05' AirConditioningCommandZoneHvacPlantStatus           ['ZONE_HVAC_PLANT_STATUS',          '5']]
+    ['0x0D' AirConditioningCommandZoneHumidityPlantStatus       ['ZONE_HUMIDITY_PLANT_STATUS',      '5']]
+    ['0x15' AirConditioningCommandZoneTemperature               ['ZONE_TEMPERATURE',                '5']]
+    ['0x1D' AirConditioningCommandZoneHumidity                  ['ZONE_HUMIDITY',                   '5']]
+    ['0x21' AirConditioningCommandRefresh                       ['REFRESH',                         '1']]
+    ['0x2F' AirConditioningCommandSetZoneHvacMode               ['SET_ZONE_HVAC_MODE',              '7']]
+    ['0x36' AirConditioningCommandSetPlantHvacLevel             ['SET_PLANT_HVAC_LEVEL',            '6']]
+    ['0x47' AirConditioningCommandSetZoneHumidityMode           ['SET_ZONE_HUMIDITY_MODE',          '7']]
+    ['0x4E' AirConditioningCommandSetPlantHumidityLevel         ['SET_PLANT_HUMIDITY_LEVEL',        '6']]
+    ['0x55' AirConditioningCommandSetHvacUpperGuardLimit        ['SET_HVAC_UPPER_GUARD_LIMIT',      '5']]
+    ['0x5D' AirConditioningCommandSetHvacLowerGuardLimit        ['SET_HVAC_LOWER_GUARD_LIMIT',      '5']]
+    ['0x65' AirConditioningCommandSetHvacSetbackLimit           ['SET_HVAC_SETBACK_LIMIT',          '5']]
+    ['0x6D' AirConditioningCommandSetHumidityUpperGuardLimit    ['SET_HUMIDITY_UPPER_GUARD_LIMIT',  '5']]
+    ['0x75' AirConditioningCommandSetHumidityLowerGuardLimit    ['SET_HUMIDITY_LOWER_GUARD_LIMIT',  '5']]
+    ['0x79' AirConditioningCommandSetZoneGroupOn                ['SET_ZONE_GROUP_ON',               '1']]
+    ['0x7D' AirConditioningCommandSetHumiditySetbackLimit       ['SET_HUMIDITY_SETBACK_LIMIT',      '5']]
+    ['0x89' AirConditioningCommandHvacScheduleEntry             ['HVAC_SCHEDULE_ENTRY',             '9']]
+    ['0xA9' AirConditioningCommandHumidityScheduleEntry         ['HUMIDITY_SCHEDULE_ENTRY',         '9']]
+]
+
+[enum uint 4 AirConditioningCommandType
+    ['0x00' SET_ZONE_GROUP_OFF              ]
+    ['0x01' ZONE_HVAC_PLANT_STATUS          ]
+    ['0x02' ZONE_HUMIDITY_PLANT_STATUS      ]
+    ['0x03' ZONE_TEMPERATURE                ]
+    ['0x04' ZONE_HUMIDITY                   ]
+    ['0x05' REFRESH                         ]
+    ['0x06' SET_ZONE_HVAC_MODE              ]
+    ['0x07' SET_PLANT_HVAC_LEVEL            ]
+    ['0x08' SET_ZONE_HUMIDITY_MODE          ]
+    ['0x09' SET_PLANT_HUMIDITY_LEVEL        ]
+    ['0x0A' SET_HVAC_UPPER_GUARD_LIMIT      ]
+    ['0x0B' SET_HVAC_LOWER_GUARD_LIMIT      ]
+    ['0x0C' SET_HVAC_SETBACK_LIMIT          ]
+    ['0x0D' SET_HUMIDITY_UPPER_GUARD_LIMIT  ]
+    ['0x0E' SET_HUMIDITY_LOWER_GUARD_LIMIT  ]
+    ['0x0F' SET_ZONE_GROUP_ON               ]
+    ['0x10' SET_HUMIDITY_SETBACK_LIMIT      ]
+    ['0x11' HVAC_SCHEDULE_ENTRY             ]
+    ['0x12' HUMIDITY_SCHEDULE_ENTRY         ]
+]
+
+[type HVACTemperature
+    // TODO: check values from Air Conditioning Application 25.5.1
+    [simple   int 16    temperatureValue                            ]
+    [virtual  float 32  temperatureInCelcius 'temperatureValue/256' ]
+]
+
+[type HVACHumidity
+    // TODO: check values from Air Conditioning Application 25.5.2
+    [simple   uint 16   humidityValue                               ]
+    [virtual  float 32  humidityInPercent 'humidityValue/65535'     ]
+]
+
+[type HVACRawLevels
+    // TODO: check values from Air Conditioning Application 25.5.3
+    [simple   int 16    rawValue                                    ]
+    [virtual  float 32  valueInPercent 'rawValue/32767'             ]
+]
+
+[type HVACModeAndFlags
+    [reserved bit   'false'                                     ]
+    [simple   bit   auxiliaryLevel                              ]
+    [virtual  bit   isAuxLevelUnused '!auxiliaryLevel'          ]
+    [virtual  bit   isAuxLevelUsed   'auxiliaryLevel'           ]
+    [simple   bit   guard                                       ]
+    [virtual  bit   isGuardDisabled '!guard'                    ]
+    [virtual  bit   isGuardEnabled   'guard'                    ]
+    [simple   bit   setback                                     ]
+    [virtual  bit   isSetbackDisabled '!setback'                ]
+    [virtual  bit   isSetbackEnabled   'setback'                ]
+    [simple   bit   level                                       ]
+    [virtual  bit   isLevelTemperature '!level'                 ]
+    [virtual  bit   isLevelRaw         'level'                  ]
+    [simple   HVACModeAndFlagsMode  mode                        ]
+]
+
+[enum uint 3 HVACModeAndFlagsMode
+    ['0x0' OFF              ]
+    ['0x1' HEAT_ONLY        ]
+    ['0x2' COOL_ONLY        ]
+    ['0x3' HEAT_AND_COOL    ]
+    ['0x4' VENT_FAN_ONLY    ]
+]
+
+[enum uint 8 HVACType
+    ['0x00' NONE                            ]
+    ['0x01' FURNACE_GAS_OIL_ELECTRIC        ]
+    ['0x02' EVAPORATIVE                     ]
+    ['0x03' HEAT_PUMP_REVERSE_CYCLE         ]
+    ['0x04' HEAT_PUMP_HEATING_ONLY          ]
+    ['0x05' HEAT_PUMP_COOLING_ONLY          ]
+    ['0x06' FURNANCE_EVAP_COOLING           ]
+    ['0x07' FURNANCE_HEAT_PUMP_COOLING_ONLY ]
+    ['0x08' HYDRONIC                        ]
+    ['0x09' HYDRONIC_HEAT_PUMP_COOLING_ONLY ]
+    ['0x0A' HYDRONIC_EVAPORATIVE            ]
+    ['0xFF' ANY                             ]
+]
+
+[enum uint 8 HVACError
+    ['0x00' NO_ERROR                    ]
+    ['0x01' HEATER_TOTAL_FAILURE        ]
+    ['0x02' COOLER_TOTAL_FAILURE        ]
+    ['0x03' FAN_TOTAL_FAILURE           ]
+    ['0x04' TEMPERATURE_SENSOR_FAILURE  ]
+    ['0x05' HEATER_TEMPORARY_PROBLEM    ]
+    ['0x06' COOLER_TEMPORARY_PROBLEM    ]
+    ['0x07' FAN_TEMPORARY_PROBLEM       ]
+    ['0x08' HEATER_SERVICE_REQUIRED     ]
+    ['0x09' COOLER_SERVICE_REQUIRED     ]
+    ['0x0A' FAN_SERVICE_REQUIRED        ]
+    ['0x0B' FILTER_REPLACEMENT_REQUIRED ]
+    ['0x80' CUSTOM_ERROR_0              ]
+    ['0x81' CUSTOM_ERROR_1              ]
+    ['0x82' CUSTOM_ERROR_2              ]
+    ['0x83' CUSTOM_ERROR_3              ]
+    ['0x84' CUSTOM_ERROR_4              ]
+    ['0x85' CUSTOM_ERROR_5              ]
+    ['0x86' CUSTOM_ERROR_6              ]
+    ['0x87' CUSTOM_ERROR_7              ]
+    ['0x88' CUSTOM_ERROR_8              ]
+    ['0x89' CUSTOM_ERROR_9              ]
+    ['0x8A' CUSTOM_ERROR_10             ]
+    ['0x8B' CUSTOM_ERROR_11             ]
+    ['0x8C' CUSTOM_ERROR_12             ]
+    ['0x8D' CUSTOM_ERROR_13             ]
+    ['0x8E' CUSTOM_ERROR_14             ]
+    ['0x8F' CUSTOM_ERROR_15             ]
+    ['0x90' CUSTOM_ERROR_16             ]
+    ['0x91' CUSTOM_ERROR_17             ]
+    ['0x92' CUSTOM_ERROR_18             ]
+    ['0x93' CUSTOM_ERROR_19             ]
+    ['0x94' CUSTOM_ERROR_20             ]
+    ['0x95' CUSTOM_ERROR_21             ]
+    ['0x96' CUSTOM_ERROR_22             ]
+    ['0x97' CUSTOM_ERROR_23             ]
+    ['0x98' CUSTOM_ERROR_24             ]
+    ['0x99' CUSTOM_ERROR_25             ]
+    ['0x9A' CUSTOM_ERROR_26             ]
+    ['0x9B' CUSTOM_ERROR_27             ]
+    ['0x9C' CUSTOM_ERROR_28             ]
+    ['0x9D' CUSTOM_ERROR_29             ]
+    ['0x9E' CUSTOM_ERROR_30             ]
+    ['0x9F' CUSTOM_ERROR_31             ]
+    ['0xA0' CUSTOM_ERROR_32             ]
+    ['0xA1' CUSTOM_ERROR_33             ]
+    ['0xA2' CUSTOM_ERROR_34             ]
+    ['0xA3' CUSTOM_ERROR_35             ]
+    ['0xA4' CUSTOM_ERROR_36             ]
+    ['0xA5' CUSTOM_ERROR_37             ]
+    ['0xA6' CUSTOM_ERROR_38             ]
+    ['0xA7' CUSTOM_ERROR_39             ]
+    ['0xA8' CUSTOM_ERROR_40             ]
+    ['0xA9' CUSTOM_ERROR_41             ]
+    ['0xAA' CUSTOM_ERROR_42             ]
+    ['0xAB' CUSTOM_ERROR_43             ]
+    ['0xAC' CUSTOM_ERROR_44             ]
+    ['0xAD' CUSTOM_ERROR_45             ]
+    ['0xAE' CUSTOM_ERROR_46             ]
+    ['0xAF' CUSTOM_ERROR_47             ]
+    ['0xB0' CUSTOM_ERROR_48             ]
+    ['0xB1' CUSTOM_ERROR_49             ]
+    ['0xB2' CUSTOM_ERROR_50             ]
+    ['0xB3' CUSTOM_ERROR_51             ]
+    ['0xB4' CUSTOM_ERROR_52             ]
+    ['0xB5' CUSTOM_ERROR_53             ]
+    ['0xB6' CUSTOM_ERROR_54             ]
+    ['0xB7' CUSTOM_ERROR_55             ]
+    ['0xB8' CUSTOM_ERROR_56             ]
+    ['0xB9' CUSTOM_ERROR_57             ]
+    ['0xBA' CUSTOM_ERROR_58             ]
+    ['0xBB' CUSTOM_ERROR_59             ]
+    ['0xBC' CUSTOM_ERROR_60             ]
+    ['0xBD' CUSTOM_ERROR_61             ]
+    ['0xBE' CUSTOM_ERROR_62             ]
+    ['0xBF' CUSTOM_ERROR_63             ]
+    ['0xC0' CUSTOM_ERROR_64             ]
+    ['0xC1' CUSTOM_ERROR_65             ]
+    ['0xC2' CUSTOM_ERROR_66             ]
+    ['0xC3' CUSTOM_ERROR_67             ]
+    ['0xC4' CUSTOM_ERROR_68             ]
+    ['0xC5' CUSTOM_ERROR_69             ]
+    ['0xC6' CUSTOM_ERROR_70             ]
+    ['0xC7' CUSTOM_ERROR_71             ]
+    ['0xC8' CUSTOM_ERROR_72             ]
+    ['0xC9' CUSTOM_ERROR_73             ]
+    ['0xCA' CUSTOM_ERROR_74             ]
+    ['0xCB' CUSTOM_ERROR_75             ]
+    ['0xCC' CUSTOM_ERROR_76             ]
+    ['0xCD' CUSTOM_ERROR_77             ]
+    ['0xCE' CUSTOM_ERROR_78             ]
+    ['0xCF' CUSTOM_ERROR_79             ]
+    ['0xD0' CUSTOM_ERROR_80             ]
+    ['0xD1' CUSTOM_ERROR_81             ]
+    ['0xD2' CUSTOM_ERROR_82             ]
+    ['0xD3' CUSTOM_ERROR_83             ]
+    ['0xD4' CUSTOM_ERROR_84             ]
+    ['0xD5' CUSTOM_ERROR_85             ]
+    ['0xD6' CUSTOM_ERROR_86             ]
+    ['0xD7' CUSTOM_ERROR_87             ]
+    ['0xD8' CUSTOM_ERROR_88             ]
+    ['0xD9' CUSTOM_ERROR_89             ]
+    ['0xDA' CUSTOM_ERROR_90             ]
+    ['0xDB' CUSTOM_ERROR_91             ]
+    ['0xDC' CUSTOM_ERROR_92             ]
+    ['0xDD' CUSTOM_ERROR_93             ]
+    ['0xDE' CUSTOM_ERROR_94             ]
+    ['0xDF' CUSTOM_ERROR_95             ]
+    ['0xE0' CUSTOM_ERROR_96             ]
+    ['0xE1' CUSTOM_ERROR_97             ]
+    ['0xE2' CUSTOM_ERROR_98             ]
+    ['0xE3' CUSTOM_ERROR_99             ]
+    ['0xE4' CUSTOM_ERROR_100            ]
+    ['0xE5' CUSTOM_ERROR_101            ]
+    ['0xE6' CUSTOM_ERROR_102            ]
+    ['0xE7' CUSTOM_ERROR_103            ]
+    ['0xE8' CUSTOM_ERROR_104            ]
+    ['0xE9' CUSTOM_ERROR_105            ]
+    ['0xEA' CUSTOM_ERROR_106            ]
+    ['0xEB' CUSTOM_ERROR_107            ]
+    ['0xEC' CUSTOM_ERROR_108            ]
+    ['0xED' CUSTOM_ERROR_109            ]
+    ['0xEE' CUSTOM_ERROR_110            ]
+    ['0xEF' CUSTOM_ERROR_111            ]
+    ['0xF0' CUSTOM_ERROR_112            ]
+    ['0xF1' CUSTOM_ERROR_113            ]
+    ['0xF2' CUSTOM_ERROR_114            ]
+    ['0xF3' CUSTOM_ERROR_115            ]
+    ['0xF4' CUSTOM_ERROR_116            ]
+    ['0xF5' CUSTOM_ERROR_117            ]
+    ['0xF6' CUSTOM_ERROR_118            ]
+    ['0xF7' CUSTOM_ERROR_119            ]
+    ['0xF8' CUSTOM_ERROR_120            ]
+    ['0xF9' CUSTOM_ERROR_121            ]
+    ['0xFA' CUSTOM_ERROR_122            ]
+    ['0xFB' CUSTOM_ERROR_123            ]
+    ['0xFC' CUSTOM_ERROR_124            ]
+    ['0xFD' CUSTOM_ERROR_125            ]
+    ['0xFE' CUSTOM_ERROR_126            ]
+    ['0xFF' CUSTOM_ERROR_127            ]
+]
+
+[type HVACStatusFlags
+    [simple   bit expansion     ]
+    [simple   bit error         ]
+    [simple   bit busy          ]
+    [reserved bit 'false'       ]
+    [simple   bit damperState   ]
+    [virtual  bit isDamperStateClosed '!damperState']
+    [virtual  bit isDamperStateOpen   'damperState' ]
+    [simple   bit fanActive     ]
+    [simple   bit heatingPlant  ]
+    [simple   bit coolingPlant  ]
+]
+
+[type HVACHumidityModeAndFlags
+    [reserved bit   'false'                                     ]
+    [simple   bit   auxiliaryLevel                              ]
+    [virtual  bit   isAuxLevelUnused '!auxiliaryLevel'          ]
+    [virtual  bit   isAuxLevelUsed   'auxiliaryLevel'           ]
+    [simple   bit   guard                                       ]
+    [virtual  bit   isGuardDisabled '!guard'                    ]
+    [virtual  bit   isGuardEnabled   'guard'                    ]
+    [simple   bit   setback                                     ]
+    [virtual  bit   isSetbackDisabled '!setback'                ]
+    [virtual  bit   isSetbackEnabled   'setback'                ]
+    [simple   bit   level                                       ]
+    [virtual  bit   isLevelHumidity   '!level'                  ]
+    [virtual  bit   isLevelRaw        'level'                   ]
+    [simple   HVACHumidityModeAndFlagsMode  mode                ]
+]
+
+[enum uint 3 HVACHumidityModeAndFlagsMode
+    ['0x0' OFF              ]
+    ['0x1' HUMIDIFY_ONLY    ]
+    ['0x2' DEHUMIDIFY_ONLY  ]
+    ['0x3' HUMIDITY_CONTROL ]
+]
+
+[enum uint 8 HVACHumidityType
+    ['0x00' NONE                        ]
+    ['0x01' EVAPORATOR                  ]
+    ['0x02' REFRIGERATIVE               ]
+    ['0x03' EVAPORATOR_REFRIGERATIVE    ]
+]
+
+[enum uint 8 HVACHumidityError
+    ['0x00' NO_ERROR                        ]
+    ['0x01' HUMIDIFIER_TOTAL_FAILURE        ]
+    ['0x02' DEHUMIDIFIER_TOTAL_FAILURE      ]
+    ['0x03' FAN_TOTAL_FAILURE               ]
+    ['0x04' HUMIDITY_SENSOR_FAILURE         ]
+    ['0x05' HUMIDIFIER_TEMPORARY_PROBLEM    ]
+    ['0x06' DEHUMIDIFIER_TEMPORARY_PROBLEM  ]
+    ['0x07' FAN_TEMPORARY_PROBLEM           ]
+    ['0x08' HUMIDIFIER_SERVICE_REQUIRED     ]
+    ['0x09' DEHUMIDIFIER_SERVICE_REQUIRED   ]
+    ['0x0A' FAN_SERVICE_REQUIRED            ]
+    ['0x0B' FILTER_REPLACEMENT_REQUIRED     ]
+    ['0x80' CUSTOM_ERROR_0                  ]
+    ['0x81' CUSTOM_ERROR_1                  ]
+    ['0x82' CUSTOM_ERROR_2                  ]
+    ['0x83' CUSTOM_ERROR_3                  ]
+    ['0x84' CUSTOM_ERROR_4                  ]
+    ['0x85' CUSTOM_ERROR_5                  ]
+    ['0x86' CUSTOM_ERROR_6                  ]
+    ['0x87' CUSTOM_ERROR_7                  ]
+    ['0x88' CUSTOM_ERROR_8                  ]
+    ['0x89' CUSTOM_ERROR_9                  ]
+    ['0x8A' CUSTOM_ERROR_10                 ]
+    ['0x8B' CUSTOM_ERROR_11                 ]
+    ['0x8C' CUSTOM_ERROR_12                 ]
+    ['0x8D' CUSTOM_ERROR_13                 ]
+    ['0x8E' CUSTOM_ERROR_14                 ]
+    ['0x8F' CUSTOM_ERROR_15                 ]
+    ['0x90' CUSTOM_ERROR_16                 ]
+    ['0x91' CUSTOM_ERROR_17                 ]
+    ['0x92' CUSTOM_ERROR_18                 ]
+    ['0x93' CUSTOM_ERROR_19                 ]
+    ['0x94' CUSTOM_ERROR_20                 ]
+    ['0x95' CUSTOM_ERROR_21                 ]
+    ['0x96' CUSTOM_ERROR_22                 ]
+    ['0x97' CUSTOM_ERROR_23                 ]
+    ['0x98' CUSTOM_ERROR_24                 ]
+    ['0x99' CUSTOM_ERROR_25                 ]
+    ['0x9A' CUSTOM_ERROR_26                 ]
+    ['0x9B' CUSTOM_ERROR_27                 ]
+    ['0x9C' CUSTOM_ERROR_28                 ]
+    ['0x9D' CUSTOM_ERROR_29                 ]
+    ['0x9E' CUSTOM_ERROR_30                 ]
+    ['0x9F' CUSTOM_ERROR_31                 ]
+    ['0xA0' CUSTOM_ERROR_32                 ]
+    ['0xA1' CUSTOM_ERROR_33                 ]
+    ['0xA2' CUSTOM_ERROR_34                 ]
+    ['0xA3' CUSTOM_ERROR_35                 ]
+    ['0xA4' CUSTOM_ERROR_36                 ]
+    ['0xA5' CUSTOM_ERROR_37                 ]
+    ['0xA6' CUSTOM_ERROR_38                 ]
+    ['0xA7' CUSTOM_ERROR_39                 ]
+    ['0xA8' CUSTOM_ERROR_40                 ]
+    ['0xA9' CUSTOM_ERROR_41                 ]
+    ['0xAA' CUSTOM_ERROR_42                 ]
+    ['0xAB' CUSTOM_ERROR_43                 ]
+    ['0xAC' CUSTOM_ERROR_44                 ]
+    ['0xAD' CUSTOM_ERROR_45                 ]
+    ['0xAE' CUSTOM_ERROR_46                 ]
+    ['0xAF' CUSTOM_ERROR_47                 ]
+    ['0xB0' CUSTOM_ERROR_48                 ]
+    ['0xB1' CUSTOM_ERROR_49                 ]
+    ['0xB2' CUSTOM_ERROR_50                 ]
+    ['0xB3' CUSTOM_ERROR_51                 ]
+    ['0xB4' CUSTOM_ERROR_52                 ]
+    ['0xB5' CUSTOM_ERROR_53                 ]
+    ['0xB6' CUSTOM_ERROR_54                 ]
+    ['0xB7' CUSTOM_ERROR_55                 ]
+    ['0xB8' CUSTOM_ERROR_56                 ]
+    ['0xB9' CUSTOM_ERROR_57                 ]
+    ['0xBA' CUSTOM_ERROR_58                 ]
+    ['0xBB' CUSTOM_ERROR_59                 ]
+    ['0xBC' CUSTOM_ERROR_60                 ]
+    ['0xBD' CUSTOM_ERROR_61                 ]
+    ['0xBE' CUSTOM_ERROR_62                 ]
+    ['0xBF' CUSTOM_ERROR_63                 ]
+    ['0xC0' CUSTOM_ERROR_64                 ]
+    ['0xC1' CUSTOM_ERROR_65                 ]
+    ['0xC2' CUSTOM_ERROR_66                 ]
+    ['0xC3' CUSTOM_ERROR_67                 ]
+    ['0xC4' CUSTOM_ERROR_68                 ]
+    ['0xC5' CUSTOM_ERROR_69                 ]
+    ['0xC6' CUSTOM_ERROR_70                 ]
+    ['0xC7' CUSTOM_ERROR_71                 ]
+    ['0xC8' CUSTOM_ERROR_72                 ]
+    ['0xC9' CUSTOM_ERROR_73                 ]
+    ['0xCA' CUSTOM_ERROR_74                 ]
+    ['0xCB' CUSTOM_ERROR_75                 ]
+    ['0xCC' CUSTOM_ERROR_76                 ]
+    ['0xCD' CUSTOM_ERROR_77                 ]
+    ['0xCE' CUSTOM_ERROR_78                 ]
+    ['0xCF' CUSTOM_ERROR_79                 ]
+    ['0xD0' CUSTOM_ERROR_80                 ]
+    ['0xD1' CUSTOM_ERROR_81                 ]
+    ['0xD2' CUSTOM_ERROR_82                 ]
+    ['0xD3' CUSTOM_ERROR_83                 ]
+    ['0xD4' CUSTOM_ERROR_84                 ]
+    ['0xD5' CUSTOM_ERROR_85                 ]
+    ['0xD6' CUSTOM_ERROR_86                 ]
+    ['0xD7' CUSTOM_ERROR_87                 ]
+    ['0xD8' CUSTOM_ERROR_88                 ]
+    ['0xD9' CUSTOM_ERROR_89                 ]
+    ['0xDA' CUSTOM_ERROR_90                 ]
+    ['0xDB' CUSTOM_ERROR_91                 ]
+    ['0xDC' CUSTOM_ERROR_92                 ]
+    ['0xDD' CUSTOM_ERROR_93                 ]
+    ['0xDE' CUSTOM_ERROR_94                 ]
+    ['0xDF' CUSTOM_ERROR_95                 ]
+    ['0xE0' CUSTOM_ERROR_96                 ]
+    ['0xE1' CUSTOM_ERROR_97                 ]
+    ['0xE2' CUSTOM_ERROR_98                 ]
+    ['0xE3' CUSTOM_ERROR_99                 ]
+    ['0xE4' CUSTOM_ERROR_100                ]
+    ['0xE5' CUSTOM_ERROR_101                ]
+    ['0xE6' CUSTOM_ERROR_102                ]
+    ['0xE7' CUSTOM_ERROR_103                ]
+    ['0xE8' CUSTOM_ERROR_104                ]
+    ['0xE9' CUSTOM_ERROR_105                ]
+    ['0xEA' CUSTOM_ERROR_106                ]
+    ['0xEB' CUSTOM_ERROR_107                ]
+    ['0xEC' CUSTOM_ERROR_108                ]
+    ['0xED' CUSTOM_ERROR_109                ]
+    ['0xEE' CUSTOM_ERROR_110                ]
+    ['0xEF' CUSTOM_ERROR_111                ]
+    ['0xF0' CUSTOM_ERROR_112                ]
+    ['0xF1' CUSTOM_ERROR_113                ]
+    ['0xF2' CUSTOM_ERROR_114                ]
+    ['0xF3' CUSTOM_ERROR_115                ]
+    ['0xF4' CUSTOM_ERROR_116                ]
+    ['0xF5' CUSTOM_ERROR_117                ]
+    ['0xF6' CUSTOM_ERROR_118                ]
+    ['0xF7' CUSTOM_ERROR_119                ]
+    ['0xF8' CUSTOM_ERROR_120                ]
+    ['0xF9' CUSTOM_ERROR_121                ]
+    ['0xFA' CUSTOM_ERROR_122                ]
+    ['0xFB' CUSTOM_ERROR_123                ]
+    ['0xFC' CUSTOM_ERROR_124                ]
+    ['0xFD' CUSTOM_ERROR_125                ]
+    ['0xFE' CUSTOM_ERROR_126                ]
+    ['0xFF' CUSTOM_ERROR_127                ]
+]
+
+[type HVACHumidityStatusFlags
+    [simple   bit expansion             ]
+    [simple   bit error                 ]
+    [simple   bit busy                  ]
+    [reserved bit 'false'               ]
+    [simple   bit damperState           ]
+    [virtual  bit isDamperStateClosed '!damperState']
+    [virtual  bit isDamperStateOpen   'damperState' ]
+    [simple   bit fanActive             ]
+    [simple   bit dehumidifyingPlant    ]
+    [simple   bit humidifyingPlant      ]
+]
+
+[type HVACAuxiliaryLevel
+    [reserved bit 'false'               ]
+    [simple   bit fanMode               ]
+    [virtual  bit isFanModeAutomatic  '!fanMode']
+    [virtual  bit isFanModeContinuous 'fanMode' ]
+    [simple   uint 6 mode               ]
+    [virtual  bit isFanSpeedAtDefaultSpeed 'mode == 0x00'   ]
+    [virtual  uint 6 speedSettings  'mode'                  ]
+]
+
+[enum uint 8 HVACSensorStatus
+    ['0x00' NO_ERROR_OPERATING_NORMALLY                 ]
+    ['0x01' SENSOR_OPERATING_IN_RELAXED_ACCURACY_BAND   ]
+    ['0x02' SENSOR_OUT_OF_CALIBRATION                   ]
+    ['0x03' SENSOR_TOTAL_FAILURE                        ]
+]
+
+[type HVACZoneList
+    [simple  bit expansion              ]
+    [simple  bit zone6                  ]
+    [simple  bit zone5                  ]
+    [simple  bit zone4                  ]
+    [simple  bit zone3                  ]
+    [simple  bit zone2                  ]
+    [simple  bit zone1                  ]
+    [simple  bit zone0                  ]
+    [virtual bit unswitchedZone 'zone0' ]
+]
+
+[type HVACStartTime
+    [simple  uint  16 minutesSinceSunday12AM                                    ]
+    [virtual float 32 hoursSinceSunday12AM      'minutesSinceSunday12AM/60'     ]
+    [virtual float 32 daysSinceSunday12AM       'hoursSinceSunday12AM/24'       ]
+    [virtual uint  8  dayOfWeek                 'daysSinceSunday12AM+1'         ]
+    [virtual uint  8  hour                      'hoursSinceSunday12AM%24'       ]
+    [virtual uint  8  minute                    'minutesSinceSunday12AM%60'     ]
+]
+
+[type MeasurementData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsMeasurementCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  MeasurementCommandTypeContainer      commandTypeContainer                                   ]
+    [virtual MeasurementCommandType               commandType          'commandTypeContainer.commandType']
+    [typeSwitch commandType
+        ['MEASUREMENT_EVENT'              *ChannelMeasurementData
+            [simple   uint 8            deviceId   ]
+            [simple   uint 8            channel    ]
+            [simple   MeasurementUnits  units      ]
+            [simple    int 8            multiplier ]
+            [simple   uint 8            msb        ]
+            [simple   uint 8            lsb        ]
+            [virtual  uint 16           rawValue    'msb<<8|lsb'            ]
+            [virtual  float 64          value       'rawValue*multiplier*10']
+        ]
+    ]
+]
+
+[enum uint 8 MeasurementCommandTypeContainer(MeasurementCommandType commandType, uint 5 numBytes)
+    ['0x0E' MeasurementCommandChannelMeasurementData    ['MEASUREMENT_EVENT',  '6']]
+]
+
+[enum uint 4 MeasurementCommandType
+    ['0x00' MEASUREMENT_EVENT              ]
+]
+
+[enum uint 8 MeasurementUnits
+    ['0x00' CELSIUS                 ]
+    ['0x01' AMPS                    ]
+    ['0x02' ANGLE_DEGREES           ]
+    ['0x03' COULOMB                 ]
+    ['0x04' BOOLEANLOGIC            ]
+    ['0x05' FARADS                  ]
+    ['0x06' HENRYS                  ]
+    ['0x07' HERTZ                   ]
+    ['0x08' JOULES                  ]
+    ['0x09' KATAL                   ]
+    ['0x0A' KG_PER_M3               ]
+    ['0x0B' KILOGRAMS               ]
+    ['0x0C' LITRES                  ]
+    ['0x0D' LITRES_PER_HOUR         ]
+    ['0x0E' LITRES_PER_MINUTE       ]
+    ['0x0F' LITRES_PER_SECOND       ]
+    ['0x10' LUX                     ]
+    ['0x11' METRES                  ]
+    ['0x12' METRES_PER_MINUTE       ]
+    ['0x13' METRES_PER_SECOND       ]
+    ['0x14' METRES_PER_S_SQUARED    ]
+    ['0x15' MOLE                    ]
+    ['0x16' NEWTON_METRE            ]
+    ['0x17' NEWTONS                 ]
+    ['0x18' OHMS                    ]
+    ['0x19' PASCAL                  ]
+    ['0x1A' PERCENT                 ]
+    ['0x1B' DECIBELS                ]
+    ['0x1C' PPM                     ]
+    ['0x1D' RPM                     ]
+    ['0x1E' SECOND                  ]
+    ['0x1F' MINUTES                 ]
+    ['0x20' HOURS                   ]
+    ['0x21' SIEVERTS                ]
+    ['0x22' STERADIAN               ]
+    ['0x23' TESLA                   ]
+    ['0x24' VOLTS                   ]
+    ['0x25' WATT_HOURS              ]
+    ['0x26' WATTS                   ]
+    ['0x27' WEBERS                  ]
+    ['0xFE' NO_UNITS                ]
+    ['0xFF' CUSTOM                  ]
+]
+
+[type ErrorReportingData
+    //TODO: golang doesn't like checking for null so we use that static call to check that the enum is known
+    [validation 'STATIC_CALL("knowsErrorReportingCommandTypeContainer", readBuffer)' "no command type could be found" shouldFail=false]
+    [simple  ErrorReportingCommandTypeContainer      commandTypeContainer                                   ]
+    [virtual ErrorReportingCommandType               commandType          'commandTypeContainer.commandType']
+    [typeSwitch commandType
+        [*              *Generic
+            [simple   ErrorReportingSystemCategory  systemCategory    ]
+            [simple   bit                           mostRecent        ]
+            [simple   bit                           acknowledge       ]
+            [simple   bit                           mostSevere        ]
+            [validation 'mostRecent || mostSevere' "Invalid Error condition"]
+            [virtual  bit                           isMostSevereError 'mostSevere']
+            [virtual  bit                           isMostRecentError 'mostRecent']
+            [virtual  bit                           isMostRecentAndMostSevere 'isMostRecentError && isMostSevereError']
+            [simple   ErrorReportingSeverity        severity          ]
+            [simple   uint 8                        deviceId          ]
+            // TODO: maybe split them up according to appendix A
+            [simple   uint 8                        errorData1        ]
+            [simple   uint 8                        errorData2        ]
+        ]
+    ]
+]
+
+[enum uint 8 ErrorReportingCommandTypeContainer(ErrorReportingCommandType commandType, uint 5 numBytes)
+    ['0x05' ErrorReportingCommandDeprecated         ['DEPRECATED',        '5']]
+    ['0x15' ErrorReportingCommandErrorReport        ['ERROR_REPORT',      '5']]
+    ['0x25' ErrorReportingCommandAcknowledge        ['ACKNOWLEDGE',       '5']]
+    ['0x35' ErrorReportingCommandClearMostSevere    ['CLEAR_MOST_SEVERE', '5']]
+]
+
+[enum uint 4 ErrorReportingCommandType
+    ['0x00' DEPRECATED          ]
+    ['0x01' ERROR_REPORT        ]
+    ['0x02' ACKNOWLEDGE         ]
+    ['0x03' CLEAR_MOST_SEVERE   ]
+]
+
+[enum uint 3 ErrorReportingSeverity
+    ['0x0' ALL_OK           ]
+    ['0x1' OK               ]
+    ['0x2' MINOR_FAILURE    ]
+    ['0x3' GENERAL_FAILURE  ]
+    ['0x4' EXTREME_FAILURE  ]
+    ['0x5' RESERVED_1       ]
+    ['0x6' RESERVED_2       ]
+    ['0x7' RESERVED_3       ]
+]
+
+[type ErrorReportingSystemCategory
+    [simple ErrorReportingSystemCategoryClass                       systemCategoryClass     ]
+    [simple ErrorReportingSystemCategoryType('systemCategoryClass') systemCategoryType      ]
+    [simple ErrorReportingSystemCategoryVariant                     systemCategoryVariant   ]
+]
+
+[enum uint 4 ErrorReportingSystemCategoryClass
+    ['0x0'  RESERVED_0                  ]
+    ['0x1'  RESERVED_1                  ]
+    ['0x2'  RESERVED_2                  ]
+    ['0x3'  RESERVED_3                  ]
+    ['0x4'  RESERVED_4                  ]
+    ['0x5'  INPUT_UNITS                 ]
+    ['0x6'  RESERVED_6                  ]
+    ['0x7'  RESERVED_7                  ]
+    ['0x8'  RESERVED_8                  ]
+    ['0x9'  SUPPORT_UNITS               ]
+    ['0xA'  RESERVED_10                 ]
+    ['0xB'  BUILDING_MANAGEMENT_SYSTEMS ]
+    ['0xC'  RESERVED_12                 ]
+    ['0xD'  OUTPUT_UNITS                ]
+    ['0xE'  RESERVED_14                 ]
+    ['0xF'  CLIMATE_CONTROLLERS         ]
+]
+
+[type ErrorReportingSystemCategoryType(ErrorReportingSystemCategoryClass errorReportingSystemCategoryClass)
+    [typeSwitch errorReportingSystemCategoryClass
+        ['INPUT_UNITS'                  *InputUnits
+            [simple ErrorReportingSystemCategoryTypeForInputUnits                   categoryForType ]
+        ]
+        ['SUPPORT_UNITS'                *SupportUnits
+            [simple ErrorReportingSystemCategoryTypeForSupportUnits                 categoryForType ]
+        ]
+        ['BUILDING_MANAGEMENT_SYSTEMS'  *BuildingManagementSystems
+            [simple ErrorReportingSystemCategoryTypeForBuildingManagementSystems    categoryForType ]
+        ]
+        ['OUTPUT_UNITS'                 *OutputUnits
+            [simple ErrorReportingSystemCategoryTypeForOutputUnits                  categoryForType ]
+        ]
+        ['CLIMATE_CONTROLLERS'          *ClimateControllers
+            [simple ErrorReportingSystemCategoryTypeForClimateControllers           categoryForType ]
+        ]
+        [*                              *Reserved
+            [simple uint 4  reservedValue]
+        ]
+    ]
+]
+
+[enum uint 4 ErrorReportingSystemCategoryTypeForInputUnits
+    ['0x0'  KEY_UNITS                   ]
+    ['0x1'  TELECOMMAND_AND_REMOTE_ENTRY]
+    ['0x2'  RESERVED_2                  ]
+    ['0x3'  RESERVED_3                  ]
+    ['0x4'  RESERVED_4                  ]
+    ['0x5'  RESERVED_5                  ]
+    ['0x6'  RESERVED_6                  ]
+    ['0x7'  RESERVED_7                  ]
+    ['0x8'  RESERVED_8                  ]
+    ['0x9'  RESERVED_9                  ]
+    ['0xA'  RESERVED_10                 ]
+    ['0xB'  RESERVED_11                 ]
+    ['0xC'  RESERVED_12                 ]
+    ['0xD'  RESERVED_13                 ]
+    ['0xE'  RESERVED_14                 ]
+    ['0xF'  RESERVED_15                 ]
+]
+
+[enum uint 4 ErrorReportingSystemCategoryTypeForSupportUnits
+    ['0x0'  POWER_SUPPLIES              ]
+    ['0x1'  RESERVED_1                  ]
+    ['0x2'  RESERVED_2                  ]
+    ['0x3'  RESERVED_3                  ]
+    ['0x4'  RESERVED_4                  ]
+    ['0x5'  RESERVED_5                  ]
+    ['0x6'  RESERVED_6                  ]
+    ['0x7'  RESERVED_7                  ]
+    ['0x8'  RESERVED_8                  ]
+    ['0x9'  RESERVED_9                  ]
+    ['0xA'  RESERVED_10                 ]
+    ['0xB'  RESERVED_11                 ]
+    ['0xC'  RESERVED_12                 ]
+    ['0xD'  RESERVED_13                 ]
+    ['0xE'  RESERVED_14                 ]
+    ['0xF'  RESERVED_15                 ]
+]
+
+[enum uint 4 ErrorReportingSystemCategoryTypeForBuildingManagementSystems
+    ['0x0'  BMS_DIAGNOSTIC_REPORTING    ]
+    ['0x1'  RESERVED_1                  ]
+    ['0x2'  RESERVED_2                  ]
+    ['0x3'  RESERVED_3                  ]
+    ['0x4'  RESERVED_4                  ]
+    ['0x5'  RESERVED_5                  ]
+    ['0x6'  RESERVED_6                  ]
+    ['0x7'  RESERVED_7                  ]
+    ['0x8'  RESERVED_8                  ]
+    ['0x9'  RESERVED_9                  ]
+    ['0xA'  RESERVED_10                 ]
+    ['0xB'  RESERVED_11                 ]
+    ['0xC'  RESERVED_12                 ]
+    ['0xD'  RESERVED_13                 ]
+    ['0xE'  RESERVED_14                 ]
+    ['0xF'  RESERVED_15                 ]
+]
+
+[enum uint 4 ErrorReportingSystemCategoryTypeForOutputUnits
+    ['0x0'  LE_MONOBLOCK_DIMMERS                        ]
+    ['0x1'  TE_MONOBLOCK_DIMMERS                        ]
+    ['0x2'  RESERVED_2                                  ]
+    ['0x3'  RESERVED_3                                  ]
+    ['0x4'  RELAYS_AND_OTHER_ON_OFF_SWITCHING_DEVICES   ]
+    ['0x5'  RESERVED_5                                  ]
+    ['0x6'  PWM_DIMMERS_INCLUDES_LED_CONTROL            ]
+    ['0x7'  SINEWAVE_MONOBLOCK_DIMMERS                  ]
+    ['0x8'  RESERVED_8                                  ]
+    ['0x9'  RESERVED_9                                  ]
+    ['0xA'  DALI_DSI_AND_OTHER_BALLAST_CONTROL_GATEWAYS ]
+    ['0xB'  MODULAR_DIMMERS                             ]
+    ['0xC'  RESERVED_12                                 ]
+    ['0xD'  UNIVERSAL_MONOBLOCK_DIMMERS                 ]
+    ['0xE'  DEVICE_CONTROLLERS_IR_RS_232_etc            ]
+    ['0xF'  RESERVED_15                                 ]
+]
+
+[enum uint 4 ErrorReportingSystemCategoryTypeForClimateControllers
+    ['0x0'  AIR_CONDITIONING_SYSTEM     ]
+    ['0x1'  RESERVED_1                  ]
+    ['0x2'  RESERVED_2                  ]
+    ['0x3'  RESERVED_3                  ]
+    ['0x4'  RESERVED_4                  ]
+    ['0x5'  RESERVED_5                  ]
+    ['0x6'  RESERVED_6                  ]
+    ['0x7'  RESERVED_7                  ]
+    ['0x8'  RESERVED_8                  ]
+    ['0x9'  RESERVED_9                  ]
+    ['0xA'  RESERVED_10                 ]
+    ['0xB'  RESERVED_11                 ]
+    ['0xC'  GLOBAL_WARMING_MODULATOR    ]
+    ['0xD'  RESERVED_13                 ]
+    ['0xE'  RESERVED_14                 ]
+    ['0xF'  RESERVED_15                 ]
+]
+
+[enum uint 2 ErrorReportingSystemCategoryVariant
+    ['0x0' RESERVED_0   ]
+    ['0x1' RESERVED_1   ]
+    ['0x2' RESERVED_2   ]
+    ['0x3' RESERVED_3   ]
+]
+
+[type ReplyOrConfirmation(CBusOptions cBusOptions, uint 16 messageLength, RequestContext requestContext)
+    [peek    byte peekedByte                                                ]
+    [virtual bit  isAlpha '(peekedByte >= 0x67) && (peekedByte <= 0x7A)'    ]
+    [typeSwitch isAlpha
+        ['true' *Confirmation
+            [simple   Confirmation                      confirmation        ]
+            [optional ReplyOrConfirmation('cBusOptions','messageLength-confirmation.lengthInBytes', 'requestContext') embeddedReply]
+        ]
+        ['false' *Reply
+            [virtual  uint 16                       replyLength 'messageLength-2'] // remove the termination \r\n
+            [simple   Reply('cBusOptions', 'replyLength', 'requestContext')    reply               ]
+            [simple   ResponseTermination               termination         ]
+        ]
+    ]
+]
+
+[type Reply(CBusOptions cBusOptions, uint 16 replyLength, RequestContext requestContext)
+    [peek    byte peekedByte                                                                ]
+    [typeSwitch peekedByte
+        ['0x2B' PowerUpReply // is a +
+            [simple PowerUp isA]
+        ]
+        ['0x3D' ParameterChangeReply // is a =
+            [simple ParameterChange isA                 ]
+        ]
+        ['0x21' ServerErrorReply // is a !
+            [const  byte    errorMarker     0x21        ]
+        ]
+        [*      *EncodedReply
+            [virtual uint 16 payloadLength 'replyLength']
+            [manual   EncodedReply
+                              encodedReply
+                                    'STATIC_CALL("readEncodedReply", readBuffer, payloadLength, cBusOptions, requestContext, cBusOptions.srchk)'
+                                    'STATIC_CALL("writeEncodedReply", writeBuffer, encodedReply)'
+                                    '(_value.lengthInBytes*2)*8'                                     ]
+            [manual   Checksum
+                              chksum
+                        'STATIC_CALL("readAndValidateChecksum", readBuffer, encodedReply, cBusOptions.srchk)'
+                        'STATIC_CALL("calculateChecksum", writeBuffer, encodedReply, cBusOptions.srchk)'
+                        '8'                   ]
+        ]
+    ]
+]
+
+[type EncodedReply(CBusOptions cBusOptions, RequestContext requestContext)
+    [peek    byte peekedByte                                                                ]
+    // TODO: if we reliable can detect this with the mask we don't need the request context anymore
+    [virtual bit  isCalCommand              '(peekedByte & 0x3F) == 0x06 || requestContext.sendCalCommandBefore'       ]
+    [virtual bit  isSALStatusRequest        '(peekedByte & 0xE0) == 0xC0 || requestContext.sendSALStatusRequestBefore' ]
+    [virtual bit  isMonitoredSAL            '(peekedByte & 0x3F) == 0x05'         ]
+    [virtual bit  exstat                    'cBusOptions.exstat'                  ]
+    [typeSwitch isMonitoredSAL, isCalCommand, isSALStatusRequest, exstat
+        ['true', 'false', 'false'   MonitoredSALReply
+            [simple   MonitoredSAL('cBusOptions') monitoredSAL    ]
+        ]
+        [*, *, 'true', 'false'      *StandardFormatStatusReply
+            [simple   StandardFormatStatusReply                     reply           ]
+        ]
+        [*, *, 'true', 'true'       *ExtendedFormatStatusReply
+            [simple   ExtendedFormatStatusReply                     reply           ]
+        ]
+        [*, 'true', *, *            *CALReply
+            [simple   CALReply('cBusOptions', 'requestContext')     calReply        ]
+        ]
+    ]
+]
+
+[type CALReply(CBusOptions cBusOptions, RequestContext requestContext)
     [peek    byte     calType                                                                    ]
     [typeSwitch calType
         ['0x86' CALReplyLong
@@ -862,10 +3620,7 @@
         [       CALReplyShort
         ]
     ]
-    [simple   CALData   calData                                                                  ]
-    //[checksum byte crc   '0x00'                                                                ] // TODO: Fix this
-    [const    byte      cr      0x0D                                                             ] // 0xD == "<cr>"
-    [const    byte      lf      0x0A                                                             ] // 0xA == "<lf>"
+    [simple   CALData('requestContext')   calData                                                ]
 ]
 
 [type BridgeCount
@@ -876,77 +3631,71 @@
     [simple uint 8 number]
 ]
 
-[type MonitoredSAL
+[type MonitoredSAL(CBusOptions cBusOptions)
     [peek    byte     salType             ]
     [typeSwitch salType
-        ['0x05' MonitoredSALLongFormSmartMode
+        ['0x05' *LongFormSmartMode
             [reserved byte '0x05']
-            [peek    uint 24     terminatingByte                        ]
+            [peek    uint 24     terminatingByte                                ]
             // TODO: this should be subSub type but mspec doesn't support that yet directly
-            [virtual bit isUnitAddress '(terminatingByte & 0xff) == 0x00' ]
-            [optional   UnitAddress
-                         unitAddress     'isUnitAddress'                ]
-            [optional   BridgeAddress
-                         bridgeAddress   '!isUnitAddress'               ]
-            [simple     SerialInterfaceAddress
-                         serialInterfaceAddress                         ]
-            [optional   byte    reservedByte    'isUnitAddress'         ]
+            [virtual  bit isUnitAddress '(terminatingByte & 0xff) == 0x00'      ]
+            [optional UnitAddress            unitAddress     'isUnitAddress'    ]
+            [optional BridgeAddress          bridgeAddress   '!isUnitAddress'   ]
+            [simple   ApplicationIdContainer application                        ]
+            [optional byte                   reservedByte    'isUnitAddress'    ]
             [validation 'isUnitAddress && reservedByte == 0x00 || !isUnitAddress' "invalid unit address"]
-            [optional   ReplyNetwork     replyNetwork       '!isUnitAddress'        ]
+            [optional ReplyNetwork           replyNetwork       '!isUnitAddress']
+            [optional SALData('application.applicationId')   salData            ]
         ]
-        [    MonitoredSALShortFormBasicMode
-            [peek    byte                  counts                                  ]
-            [optional BridgeCount          bridgeCount     'counts != 0x00'        ]
-            [optional NetworkNumber        networkNumber   'counts != 0x00'        ]
-            [optional byte                 noCounts        'counts == 0x00'        ] // TODO: add validation that this is 0x00 when no bridge and network number are set
-            [simple ApplicationIdContainer application                             ]
+        [*      *ShortFormBasicMode
+            [peek     byte                   counts                             ]
+            [optional BridgeCount            bridgeCount     'counts != 0x00'   ]
+            [optional NetworkNumber          networkNumber   'counts != 0x00'   ]
+            [optional byte                   noCounts        'counts == 0x00'   ] // TODO: add validation that this is 0x00 when no bridge and network number are set
+            [simple   ApplicationIdContainer application                        ]
+            [optional SALData('application.applicationId')  salData             ]
         ]
     ]
-    [optional SALData salData                                               ]
-    //[checksum byte crc   '0x00'                                                                ] // TODO: Fix this
-    [const    byte        cr 0x0D                                                     ] // 0xD == "<cr>"
-    [const    byte        lf 0x0A                                                     ] // 0xA == "<lf>"
 ]
 
 [type Confirmation
-    [simple Alpha alpha]
-    [discriminator   byte confirmationType]
-    [typeSwitch confirmationType
-        ['0x2E'    ConfirmationSuccessful              ] // "."
-        ['0x23'    NotTransmittedToManyReTransmissions ] // "#"
-        ['0x24'    NotTransmittedCorruption            ] // "$"
-        ['0x25'    NotTransmittedSyncLoss              ] // "%"
-        ['0x27'    NotTransmittedTooLong               ] // "'"
-    ]
+    [simple   Alpha           alpha                                                     ]
+    // TODO: seem like sometimes there are two alphas in a confirmation... check that
+    [optional Alpha           secondAlpha                                               ]
+    [simple  ConfirmationType confirmationType                                          ]
+    [virtual bit              isSuccess 'confirmationType == ConfirmationType.CONFIRMATION_SUCCESSFUL'   ]
+]
+
+[enum byte ConfirmationType
+    ['0x2E'    CONFIRMATION_SUCCESSFUL                  ] // "."
+    ['0x23'    NOT_TRANSMITTED_TO_MANY_RE_TRANSMISSIONS ] // "#"
+    ['0x24'    NOT_TRANSMITTED_CORRUPTION               ] // "$"
+    ['0x25'    NOT_TRANSMITTED_SYNC_LOSS                ] // "%"
+    ['0x27'    NOT_TRANSMITTED_TOO_LONG                 ] // "'"
 ]
 
 [type PowerUp
-// TODO: implement garbage reading
-//    [array    byte        garbage   terminated  '0x2B'                              ] // "+"
-    [const    byte        plus 0x02B                                                  ] // 0xD == "<cr>"
-    [const    byte        cr   0x0D                                                   ] // 0xD == "<cr>"
-    [const    byte        lf   0x0A                                                   ] // 0xA == "<lf>"
+    [const    byte        powerUpIndicator       0x2B                  ] // "+"
+    // TODO: do we really need a static helper to peek for terminated?=
+    //[array    uint 8        garbage   terminated  '0x0D'                 ] // read all following +
+    [simple   RequestTermination  reqTermination                       ] // TODO: maybe should be externalized
 ]
 
 [type ParameterChange
-    [const    byte        specialChar1      0x3D                                    ] // "="
-    [const    byte        specialChar2      0x3D                                    ] // "="
-    [const    byte        cr 0x0D                                                   ] // 0xD == "<cr>"
-    [const    byte        lf 0x0A                                                   ] // 0xA == "<lf>"
-]
-
-[type ExclamationMark
-    // TODO: implement me
+    [const    byte        specialChar1      0x3D                    ] // "="
+    [const    byte        specialChar2      0x3D                    ] // "="
 ]
 
 [type ReplyNetwork
-     [simple RouteType     routeType                                                    ]
-     [array  BridgeAddress additionalBridgeAddresses count 'routeType.additionalBridges']
-     [simple UnitAddress   unitAddress                                                  ]
+    [reserved uint 2      '0x00'                                                       ]
+    [simple RouteType     reverseRouteType                                             ]
+    [simple RouteType     routeType                                                    ]
+    [array  BridgeAddress additionalBridgeAddresses count 'routeType.additionalBridges']
+    [simple UnitAddress   unitAddress                                                  ]
 ]
 
 [type Checksum
-    [simple byte crc]
+    [simple byte value]
 ]
 
 [type StandardFormatStatusReply
@@ -959,10 +3708,6 @@
                         statusBytes
                         count
                         'statusHeader.numberOfCharacterPairs - 2'   ]
-    [simple     Checksum
-                        crc                                         ]
-    [const      byte    cr  0x0D                                    ] // 0xD == "<cr>"
-    [const      byte    lf  0x0A                                    ] // 0xA == "<lf>"
 ]
 
 [type StatusHeader
@@ -982,10 +3727,6 @@
                         statusBytes
                         count
                         'statusHeader.numberOfCharacterPairs - 3'   ]
-    [simple     Checksum
-                        crc                                         ]
-    [const      byte    cr  0x0D                                    ] // 0xD == "<cr>"
-    [const      byte    lf  0x0A                                    ] // 0xA == "<lf>"
 ]
 
 [type ExtendedStatusHeader
@@ -1018,4 +3759,13 @@
     [reserved   uint 2  '0x0'           ]
     [simple     uint 3  stackCounter    ]
     [simple     uint 3  stackDepth      ]
+]
+
+[type RequestTermination
+    [const      byte    cr  0x0D                                    ] // 0xD == "<cr>"
+]
+
+[type ResponseTermination
+    [const      byte    cr  0x0D                                    ] // 0xD == "<cr>"
+    [const      byte    lf  0x0A                                    ] // 0xA == "<lf>"
 ]

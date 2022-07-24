@@ -83,10 +83,10 @@ func (m *_IdentifyReplyCommandGAVValuesStored) GetValues() []byte {
 ///////////////////////////////////////////////////////////
 
 // NewIdentifyReplyCommandGAVValuesStored factory function for _IdentifyReplyCommandGAVValuesStored
-func NewIdentifyReplyCommandGAVValuesStored(values []byte) *_IdentifyReplyCommandGAVValuesStored {
+func NewIdentifyReplyCommandGAVValuesStored(values []byte, numBytes uint8) *_IdentifyReplyCommandGAVValuesStored {
 	_result := &_IdentifyReplyCommandGAVValuesStored{
 		Values:                values,
-		_IdentifyReplyCommand: NewIdentifyReplyCommand(),
+		_IdentifyReplyCommand: NewIdentifyReplyCommand(numBytes),
 	}
 	_result._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _result
 	return _result
@@ -126,7 +126,7 @@ func (m *_IdentifyReplyCommandGAVValuesStored) GetLengthInBytes() uint16 {
 	return m.GetLengthInBits() / 8
 }
 
-func IdentifyReplyCommandGAVValuesStoredParse(readBuffer utils.ReadBuffer, attribute Attribute) (IdentifyReplyCommandGAVValuesStored, error) {
+func IdentifyReplyCommandGAVValuesStoredParse(readBuffer utils.ReadBuffer, attribute Attribute, numBytes uint8) (IdentifyReplyCommandGAVValuesStored, error) {
 	positionAware := readBuffer
 	_ = positionAware
 	if pullErr := readBuffer.PullContext("IdentifyReplyCommandGAVValuesStored"); pullErr != nil {
@@ -135,10 +135,10 @@ func IdentifyReplyCommandGAVValuesStoredParse(readBuffer utils.ReadBuffer, attri
 	currentPos := positionAware.GetPos()
 	_ = currentPos
 	// Byte Array field (values)
-	numberOfBytesvalues := int(uint16(16))
+	numberOfBytesvalues := int(numBytes)
 	values, _readArrayErr := readBuffer.ReadByteArray("values", numberOfBytesvalues)
 	if _readArrayErr != nil {
-		return nil, errors.Wrap(_readArrayErr, "Error parsing 'values' field")
+		return nil, errors.Wrap(_readArrayErr, "Error parsing 'values' field of IdentifyReplyCommandGAVValuesStored")
 	}
 
 	if closeErr := readBuffer.CloseContext("IdentifyReplyCommandGAVValuesStored"); closeErr != nil {
@@ -147,8 +147,10 @@ func IdentifyReplyCommandGAVValuesStoredParse(readBuffer utils.ReadBuffer, attri
 
 	// Create a partially initialized instance
 	_child := &_IdentifyReplyCommandGAVValuesStored{
-		Values:                values,
-		_IdentifyReplyCommand: &_IdentifyReplyCommand{},
+		Values: values,
+		_IdentifyReplyCommand: &_IdentifyReplyCommand{
+			NumBytes: numBytes,
+		},
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil

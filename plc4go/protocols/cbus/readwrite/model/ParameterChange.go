@@ -30,8 +30,6 @@ import (
 // Constant values.
 const ParameterChange_SPECIALCHAR1 byte = 0x3D
 const ParameterChange_SPECIALCHAR2 byte = 0x3D
-const ParameterChange_CR byte = 0x0D
-const ParameterChange_LF byte = 0x0A
 
 // ParameterChange is the corresponding interface of ParameterChange
 type ParameterChange interface {
@@ -61,14 +59,6 @@ func (m *_ParameterChange) GetSpecialChar1() byte {
 
 func (m *_ParameterChange) GetSpecialChar2() byte {
 	return ParameterChange_SPECIALCHAR2
-}
-
-func (m *_ParameterChange) GetCr() byte {
-	return ParameterChange_CR
-}
-
-func (m *_ParameterChange) GetLf() byte {
-	return ParameterChange_LF
 }
 
 ///////////////////////
@@ -109,12 +99,6 @@ func (m *_ParameterChange) GetLengthInBitsConditional(lastItem bool) uint16 {
 	// Const Field (specialChar2)
 	lengthInBits += 8
 
-	// Const Field (cr)
-	lengthInBits += 8
-
-	// Const Field (lf)
-	lengthInBits += 8
-
 	return lengthInBits
 }
 
@@ -134,7 +118,7 @@ func ParameterChangeParse(readBuffer utils.ReadBuffer) (ParameterChange, error) 
 	// Const Field (specialChar1)
 	specialChar1, _specialChar1Err := readBuffer.ReadByte("specialChar1")
 	if _specialChar1Err != nil {
-		return nil, errors.Wrap(_specialChar1Err, "Error parsing 'specialChar1' field")
+		return nil, errors.Wrap(_specialChar1Err, "Error parsing 'specialChar1' field of ParameterChange")
 	}
 	if specialChar1 != ParameterChange_SPECIALCHAR1 {
 		return nil, errors.New("Expected constant value " + fmt.Sprintf("%d", ParameterChange_SPECIALCHAR1) + " but got " + fmt.Sprintf("%d", specialChar1))
@@ -143,28 +127,10 @@ func ParameterChangeParse(readBuffer utils.ReadBuffer) (ParameterChange, error) 
 	// Const Field (specialChar2)
 	specialChar2, _specialChar2Err := readBuffer.ReadByte("specialChar2")
 	if _specialChar2Err != nil {
-		return nil, errors.Wrap(_specialChar2Err, "Error parsing 'specialChar2' field")
+		return nil, errors.Wrap(_specialChar2Err, "Error parsing 'specialChar2' field of ParameterChange")
 	}
 	if specialChar2 != ParameterChange_SPECIALCHAR2 {
 		return nil, errors.New("Expected constant value " + fmt.Sprintf("%d", ParameterChange_SPECIALCHAR2) + " but got " + fmt.Sprintf("%d", specialChar2))
-	}
-
-	// Const Field (cr)
-	cr, _crErr := readBuffer.ReadByte("cr")
-	if _crErr != nil {
-		return nil, errors.Wrap(_crErr, "Error parsing 'cr' field")
-	}
-	if cr != ParameterChange_CR {
-		return nil, errors.New("Expected constant value " + fmt.Sprintf("%d", ParameterChange_CR) + " but got " + fmt.Sprintf("%d", cr))
-	}
-
-	// Const Field (lf)
-	lf, _lfErr := readBuffer.ReadByte("lf")
-	if _lfErr != nil {
-		return nil, errors.Wrap(_lfErr, "Error parsing 'lf' field")
-	}
-	if lf != ParameterChange_LF {
-		return nil, errors.New("Expected constant value " + fmt.Sprintf("%d", ParameterChange_LF) + " but got " + fmt.Sprintf("%d", lf))
 	}
 
 	if closeErr := readBuffer.CloseContext("ParameterChange"); closeErr != nil {
@@ -192,18 +158,6 @@ func (m *_ParameterChange) Serialize(writeBuffer utils.WriteBuffer) error {
 	_specialChar2Err := writeBuffer.WriteByte("specialChar2", 0x3D)
 	if _specialChar2Err != nil {
 		return errors.Wrap(_specialChar2Err, "Error serializing 'specialChar2' field")
-	}
-
-	// Const Field (cr)
-	_crErr := writeBuffer.WriteByte("cr", 0x0D)
-	if _crErr != nil {
-		return errors.Wrap(_crErr, "Error serializing 'cr' field")
-	}
-
-	// Const Field (lf)
-	_lfErr := writeBuffer.WriteByte("lf", 0x0A)
-	if _lfErr != nil {
-		return errors.Wrap(_lfErr, "Error serializing 'lf' field")
 	}
 
 	if popErr := writeBuffer.PopContext("ParameterChange"); popErr != nil {

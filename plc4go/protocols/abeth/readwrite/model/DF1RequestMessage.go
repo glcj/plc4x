@@ -165,14 +165,14 @@ func DF1RequestMessageParse(readBuffer utils.ReadBuffer) (DF1RequestMessage, err
 	// Simple Field (destinationAddress)
 	_destinationAddress, _destinationAddressErr := readBuffer.ReadUint8("destinationAddress", 8)
 	if _destinationAddressErr != nil {
-		return nil, errors.Wrap(_destinationAddressErr, "Error parsing 'destinationAddress' field")
+		return nil, errors.Wrap(_destinationAddressErr, "Error parsing 'destinationAddress' field of DF1RequestMessage")
 	}
 	destinationAddress := _destinationAddress
 
 	// Simple Field (sourceAddress)
 	_sourceAddress, _sourceAddressErr := readBuffer.ReadUint8("sourceAddress", 8)
 	if _sourceAddressErr != nil {
-		return nil, errors.Wrap(_sourceAddressErr, "Error parsing 'sourceAddress' field")
+		return nil, errors.Wrap(_sourceAddressErr, "Error parsing 'sourceAddress' field of DF1RequestMessage")
 	}
 	sourceAddress := _sourceAddress
 
@@ -180,33 +180,33 @@ func DF1RequestMessageParse(readBuffer utils.ReadBuffer) (DF1RequestMessage, err
 	{
 		reserved, _err := readBuffer.ReadUint16("reserved", 16)
 		if _err != nil {
-			return nil, errors.Wrap(_err, "Error parsing 'reserved' field")
+			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of DF1RequestMessage")
 		}
 		if reserved != uint16(0x0000) {
 			log.Info().Fields(map[string]interface{}{
 				"expected value": uint16(0x0000),
 				"got value":      reserved,
-			}).Msg("Got unexpected response.")
+			}).Msg("Got unexpected response for reserved field.")
 		}
 	}
 
 	// Discriminator Field (commandCode) (Used as input to a switch field)
 	commandCode, _commandCodeErr := readBuffer.ReadUint8("commandCode", 8)
 	if _commandCodeErr != nil {
-		return nil, errors.Wrap(_commandCodeErr, "Error parsing 'commandCode' field")
+		return nil, errors.Wrap(_commandCodeErr, "Error parsing 'commandCode' field of DF1RequestMessage")
 	}
 
 	// Simple Field (status)
 	_status, _statusErr := readBuffer.ReadUint8("status", 8)
 	if _statusErr != nil {
-		return nil, errors.Wrap(_statusErr, "Error parsing 'status' field")
+		return nil, errors.Wrap(_statusErr, "Error parsing 'status' field of DF1RequestMessage")
 	}
 	status := _status
 
 	// Simple Field (transactionCounter)
 	_transactionCounter, _transactionCounterErr := readBuffer.ReadUint16("transactionCounter", 16)
 	if _transactionCounterErr != nil {
-		return nil, errors.Wrap(_transactionCounterErr, "Error parsing 'transactionCounter' field")
+		return nil, errors.Wrap(_transactionCounterErr, "Error parsing 'transactionCounter' field of DF1RequestMessage")
 	}
 	transactionCounter := _transactionCounter
 
@@ -223,11 +223,10 @@ func DF1RequestMessageParse(readBuffer utils.ReadBuffer) (DF1RequestMessage, err
 	case commandCode == 0x0F: // DF1CommandRequestMessage
 		_childTemp, typeSwitchError = DF1CommandRequestMessageParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [commandCode=%v]", commandCode)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of DF1RequestMessage")
 	}
 	_child = _childTemp.(DF1RequestMessageChildSerializeRequirement)
 

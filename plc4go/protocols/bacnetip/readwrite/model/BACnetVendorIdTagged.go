@@ -153,7 +153,7 @@ func BACnetVendorIdTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, tag
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetVendorIdTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -173,9 +173,12 @@ func BACnetVendorIdTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, tag
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGeneric(readBuffer, header.GetActualLength(), BACnetVendorId_UNKNOWN_VENDOR)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetVendorIdTagged")
 	}
-	value := _value.(BACnetVendorId)
+	var value BACnetVendorId
+	if _value != nil {
+		value = _value.(BACnetVendorId)
+	}
 
 	// Virtual field
 	_isUnknownId := bool((value) == (BACnetVendorId_UNKNOWN_VENDOR))
@@ -185,9 +188,12 @@ func BACnetVendorIdTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8, tag
 	// Manual Field (unknownId)
 	_unknownId, _unknownIdErr := ReadProprietaryEnumGeneric(readBuffer, header.GetActualLength(), isUnknownId)
 	if _unknownIdErr != nil {
-		return nil, errors.Wrap(_unknownIdErr, "Error parsing 'unknownId' field")
+		return nil, errors.Wrap(_unknownIdErr, "Error parsing 'unknownId' field of BACnetVendorIdTagged")
 	}
-	unknownId := _unknownId.(uint32)
+	var unknownId uint32
+	if _unknownId != nil {
+		unknownId = _unknownId.(uint32)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetVendorIdTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetVendorIdTagged")

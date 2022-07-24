@@ -162,14 +162,13 @@ func BACnetProcessIdSelectionParse(readBuffer utils.ReadBuffer) (BACnetProcessId
 	switch {
 	case peekedTagNumber == uint8(0): // BACnetProcessIdSelectionNull
 		_childTemp, typeSwitchError = BACnetProcessIdSelectionNullParse(readBuffer)
-	case true: // BACnetProcessIdSelectionValue
+	case 0 == 0: // BACnetProcessIdSelectionValue
 		_childTemp, typeSwitchError = BACnetProcessIdSelectionValueParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [peekedTagNumber=%v]", peekedTagNumber)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of BACnetProcessIdSelection")
 	}
 	_child = _childTemp.(BACnetProcessIdSelectionChildSerializeRequirement)
 

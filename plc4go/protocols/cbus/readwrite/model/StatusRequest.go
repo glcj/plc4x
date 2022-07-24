@@ -124,7 +124,7 @@ func StatusRequestParse(readBuffer utils.ReadBuffer) (StatusRequest, error) {
 	currentPos = positionAware.GetPos()
 	statusType, _err := readBuffer.ReadByte("statusType")
 	if _err != nil {
-		return nil, errors.Wrap(_err, "Error parsing 'statusType' field")
+		return nil, errors.Wrap(_err, "Error parsing 'statusType' field of StatusRequest")
 	}
 
 	readBuffer.Reset(currentPos)
@@ -141,14 +141,15 @@ func StatusRequestParse(readBuffer utils.ReadBuffer) (StatusRequest, error) {
 	switch {
 	case statusType == 0x7A: // StatusRequestBinaryState
 		_childTemp, typeSwitchError = StatusRequestBinaryStateParse(readBuffer)
+	case statusType == 0xFA: // StatusRequestBinaryStateDeprecated
+		_childTemp, typeSwitchError = StatusRequestBinaryStateDeprecatedParse(readBuffer)
 	case statusType == 0x73: // StatusRequestLevel
 		_childTemp, typeSwitchError = StatusRequestLevelParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [statusType=%v]", statusType)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of StatusRequest")
 	}
 	_child = _childTemp.(StatusRequestChildSerializeRequirement)
 

@@ -160,7 +160,7 @@ func BACnetContextTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetContextTag")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -231,11 +231,10 @@ func BACnetContextTagParse(readBuffer utils.ReadBuffer, tagNumberArgument uint8,
 	case dataType == BACnetDataType_UNKNOWN: // BACnetContextTagUnknown
 		_childTemp, typeSwitchError = BACnetContextTagUnknownParse(readBuffer, tagNumberArgument, dataType, actualLength)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [dataType=%v]", dataType)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of BACnetContextTag")
 	}
 	_child = _childTemp.(BACnetContextTagChildSerializeRequirement)
 

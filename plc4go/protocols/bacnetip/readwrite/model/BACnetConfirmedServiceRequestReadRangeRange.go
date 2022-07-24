@@ -171,7 +171,7 @@ func BACnetConfirmedServiceRequestReadRangeRangeParse(readBuffer utils.ReadBuffe
 	}
 	_openingTag, _openingTagErr := BACnetOpeningTagParse(readBuffer, uint8(peekedTagHeader.GetActualTagNumber()))
 	if _openingTagErr != nil {
-		return nil, errors.Wrap(_openingTagErr, "Error parsing 'openingTag' field")
+		return nil, errors.Wrap(_openingTagErr, "Error parsing 'openingTag' field of BACnetConfirmedServiceRequestReadRangeRange")
 	}
 	openingTag := _openingTag.(BACnetOpeningTag)
 	if closeErr := readBuffer.CloseContext("openingTag"); closeErr != nil {
@@ -200,11 +200,10 @@ func BACnetConfirmedServiceRequestReadRangeRangeParse(readBuffer utils.ReadBuffe
 	case peekedTagNumber == 0x7: // BACnetConfirmedServiceRequestReadRangeRangeByTime
 		_childTemp, typeSwitchError = BACnetConfirmedServiceRequestReadRangeRangeByTimeParse(readBuffer)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [peekedTagNumber=%v]", peekedTagNumber)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of BACnetConfirmedServiceRequestReadRangeRange")
 	}
 	_child = _childTemp.(BACnetConfirmedServiceRequestReadRangeRangeChildSerializeRequirement)
 
@@ -214,7 +213,7 @@ func BACnetConfirmedServiceRequestReadRangeRangeParse(readBuffer utils.ReadBuffe
 	}
 	_closingTag, _closingTagErr := BACnetClosingTagParse(readBuffer, uint8(peekedTagHeader.GetActualTagNumber()))
 	if _closingTagErr != nil {
-		return nil, errors.Wrap(_closingTagErr, "Error parsing 'closingTag' field")
+		return nil, errors.Wrap(_closingTagErr, "Error parsing 'closingTag' field of BACnetConfirmedServiceRequestReadRangeRange")
 	}
 	closingTag := _closingTag.(BACnetClosingTag)
 	if closeErr := readBuffer.CloseContext("closingTag"); closeErr != nil {

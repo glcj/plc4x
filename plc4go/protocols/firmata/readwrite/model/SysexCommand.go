@@ -114,7 +114,7 @@ func SysexCommandParse(readBuffer utils.ReadBuffer, response bool) (SysexCommand
 	// Discriminator Field (commandType) (Used as input to a switch field)
 	commandType, _commandTypeErr := readBuffer.ReadUint8("commandType", 8)
 	if _commandTypeErr != nil {
-		return nil, errors.Wrap(_commandTypeErr, "Error parsing 'commandType' field")
+		return nil, errors.Wrap(_commandTypeErr, "Error parsing 'commandType' field of SysexCommand")
 	}
 
 	// Switch Field (Depending on the discriminator values, passes the instantiation to a sub-type)
@@ -158,11 +158,10 @@ func SysexCommandParse(readBuffer utils.ReadBuffer, response bool) (SysexCommand
 	case commandType == 0x7F: // SysexCommandSysexRealtime
 		_childTemp, typeSwitchError = SysexCommandSysexRealtimeParse(readBuffer, response)
 	default:
-		// TODO: return actual type
-		typeSwitchError = errors.New("Unmapped type")
+		typeSwitchError = errors.Errorf("Unmapped type for parameters [commandType=%v, response=%v]", commandType, response)
 	}
 	if typeSwitchError != nil {
-		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch.")
+		return nil, errors.Wrap(typeSwitchError, "Error parsing sub-type for type-switch of SysexCommand")
 	}
 	_child = _childTemp.(SysexCommandChildSerializeRequirement)
 

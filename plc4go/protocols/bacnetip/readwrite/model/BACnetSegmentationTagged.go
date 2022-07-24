@@ -126,7 +126,7 @@ func BACnetSegmentationTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8,
 	}
 	_header, _headerErr := BACnetTagHeaderParse(readBuffer)
 	if _headerErr != nil {
-		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field")
+		return nil, errors.Wrap(_headerErr, "Error parsing 'header' field of BACnetSegmentationTagged")
 	}
 	header := _header.(BACnetTagHeader)
 	if closeErr := readBuffer.CloseContext("header"); closeErr != nil {
@@ -146,9 +146,12 @@ func BACnetSegmentationTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint8,
 	// Manual Field (value)
 	_value, _valueErr := ReadEnumGenericFailing(readBuffer, header.GetActualLength(), BACnetSegmentation_SEGMENTED_BOTH)
 	if _valueErr != nil {
-		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field")
+		return nil, errors.Wrap(_valueErr, "Error parsing 'value' field of BACnetSegmentationTagged")
 	}
-	value := _value.(BACnetSegmentation)
+	var value BACnetSegmentation
+	if _value != nil {
+		value = _value.(BACnetSegmentation)
+	}
 
 	if closeErr := readBuffer.CloseContext("BACnetSegmentationTagged"); closeErr != nil {
 		return nil, errors.Wrap(closeErr, "Error closing for BACnetSegmentationTagged")
