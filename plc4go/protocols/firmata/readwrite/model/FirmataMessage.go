@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -182,6 +182,16 @@ func (pm *_FirmataMessage) SerializeParent(writeBuffer utils.WriteBuffer, child 
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_FirmataMessage) GetResponse() bool {
+	return m.Response
+}
+
+//
+////
 
 func (m *_FirmataMessage) isFirmataMessage() bool {
 	return true

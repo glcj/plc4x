@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -186,10 +186,10 @@ func SysexCommandPinStateResponseParse(readBuffer utils.ReadBuffer, response boo
 
 	// Create a partially initialized instance
 	_child := &_SysexCommandPinStateResponse{
+		_SysexCommand: &_SysexCommand{},
 		Pin:           pin,
 		PinMode:       pinMode,
 		PinState:      pinState,
-		_SysexCommand: &_SysexCommand{},
 	}
 	_child._SysexCommand._SysexCommandChildRequirements = _child
 	return _child, nil

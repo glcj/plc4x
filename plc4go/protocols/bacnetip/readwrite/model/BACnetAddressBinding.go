@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -147,7 +147,10 @@ func BACnetAddressBindingParse(readBuffer utils.ReadBuffer) (BACnetAddressBindin
 	}
 
 	// Create the instance
-	return NewBACnetAddressBinding(deviceIdentifier, deviceAddress), nil
+	return &_BACnetAddressBinding{
+		DeviceIdentifier: deviceIdentifier,
+		DeviceAddress:    deviceAddress,
+	}, nil
 }
 
 func (m *_BACnetAddressBinding) Serialize(writeBuffer utils.WriteBuffer) error {

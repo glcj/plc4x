@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -147,7 +147,10 @@ func BACnetDateRangeParse(readBuffer utils.ReadBuffer) (BACnetDateRange, error) 
 	}
 
 	// Create the instance
-	return NewBACnetDateRange(startDate, endDate), nil
+	return &_BACnetDateRange{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}, nil
 }
 
 func (m *_BACnetDateRange) Serialize(writeBuffer utils.WriteBuffer) error {

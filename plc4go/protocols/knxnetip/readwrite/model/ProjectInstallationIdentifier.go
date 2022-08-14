@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -135,7 +135,10 @@ func ProjectInstallationIdentifierParse(readBuffer utils.ReadBuffer) (ProjectIns
 	}
 
 	// Create the instance
-	return NewProjectInstallationIdentifier(projectNumber, installationNumber), nil
+	return &_ProjectInstallationIdentifier{
+		ProjectNumber:      projectNumber,
+		InstallationNumber: installationNumber,
+	}, nil
 }
 
 func (m *_ProjectInstallationIdentifier) Serialize(writeBuffer utils.WriteBuffer) error {

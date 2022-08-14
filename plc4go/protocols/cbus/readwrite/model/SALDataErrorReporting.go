@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -154,8 +154,8 @@ func SALDataErrorReportingParse(readBuffer utils.ReadBuffer, applicationId Appli
 
 	// Create a partially initialized instance
 	_child := &_SALDataErrorReporting{
-		ErrorReportingData: errorReportingData,
 		_SALData:           &_SALData{},
+		ErrorReportingData: errorReportingData,
 	}
 	_child._SALData._SALDataChildRequirements = _child
 	return _child, nil

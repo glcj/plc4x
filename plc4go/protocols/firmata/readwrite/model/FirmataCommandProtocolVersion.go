@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -164,11 +164,11 @@ func FirmataCommandProtocolVersionParse(readBuffer utils.ReadBuffer, response bo
 
 	// Create a partially initialized instance
 	_child := &_FirmataCommandProtocolVersion{
-		MajorVersion: majorVersion,
-		MinorVersion: minorVersion,
 		_FirmataCommand: &_FirmataCommand{
 			Response: response,
 		},
+		MajorVersion: majorVersion,
+		MinorVersion: minorVersion,
 	}
 	_child._FirmataCommand._FirmataCommandChildRequirements = _child
 	return _child, nil

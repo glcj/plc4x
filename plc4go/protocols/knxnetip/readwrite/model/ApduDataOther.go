@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -152,10 +152,10 @@ func ApduDataOtherParse(readBuffer utils.ReadBuffer, dataLength uint8) (ApduData
 
 	// Create a partially initialized instance
 	_child := &_ApduDataOther{
-		ExtendedApdu: extendedApdu,
 		_ApduData: &_ApduData{
 			DataLength: dataLength,
 		},
+		ExtendedApdu: extendedApdu,
 	}
 	_child._ApduData._ApduDataChildRequirements = _child
 	return _child, nil

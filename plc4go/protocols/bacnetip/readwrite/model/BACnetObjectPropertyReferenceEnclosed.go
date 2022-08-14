@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -173,7 +173,12 @@ func BACnetObjectPropertyReferenceEnclosedParse(readBuffer utils.ReadBuffer, tag
 	}
 
 	// Create the instance
-	return NewBACnetObjectPropertyReferenceEnclosed(openingTag, objectPropertyReference, closingTag, tagNumber), nil
+	return &_BACnetObjectPropertyReferenceEnclosed{
+		TagNumber:               tagNumber,
+		OpeningTag:              openingTag,
+		ObjectPropertyReference: objectPropertyReference,
+		ClosingTag:              closingTag,
+	}, nil
 }
 
 func (m *_BACnetObjectPropertyReferenceEnclosed) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -224,6 +229,16 @@ func (m *_BACnetObjectPropertyReferenceEnclosed) Serialize(writeBuffer utils.Wri
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetObjectPropertyReferenceEnclosed) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetObjectPropertyReferenceEnclosed) isBACnetObjectPropertyReferenceEnclosed() bool {
 	return true

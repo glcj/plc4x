@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetEventParameterChangeOfCharacterStringListOfAlarmValuesParse(readBuffe
 	}
 
 	// Create the instance
-	return NewBACnetEventParameterChangeOfCharacterStringListOfAlarmValues(openingTag, listOfAlarmValues, closingTag, tagNumber), nil
+	return &_BACnetEventParameterChangeOfCharacterStringListOfAlarmValues{
+		TagNumber:         tagNumber,
+		OpeningTag:        openingTag,
+		ListOfAlarmValues: listOfAlarmValues,
+		ClosingTag:        closingTag,
+	}, nil
 }
 
 func (m *_BACnetEventParameterChangeOfCharacterStringListOfAlarmValues) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetEventParameterChangeOfCharacterStringListOfAlarmValues) Serializ
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetEventParameterChangeOfCharacterStringListOfAlarmValues) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetEventParameterChangeOfCharacterStringListOfAlarmValues) isBACnetEventParameterChangeOfCharacterStringListOfAlarmValues() bool {
 	return true

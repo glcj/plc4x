@@ -21,7 +21,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -182,8 +182,8 @@ func CEMIAdditionalInformationRelativeTimestampParse(readBuffer utils.ReadBuffer
 
 	// Create a partially initialized instance
 	_child := &_CEMIAdditionalInformationRelativeTimestamp{
-		RelativeTimestamp:          relativeTimestamp,
 		_CEMIAdditionalInformation: &_CEMIAdditionalInformation{},
+		RelativeTimestamp:          relativeTimestamp,
 	}
 	_child._CEMIAdditionalInformation._CEMIAdditionalInformationChildRequirements = _child
 	return _child, nil

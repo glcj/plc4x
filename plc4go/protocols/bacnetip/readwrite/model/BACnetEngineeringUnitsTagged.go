@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -124,12 +124,12 @@ func (m *_BACnetEngineeringUnitsTagged) GetLengthInBitsConditional(lastItem bool
 	lengthInBits += m.Header.GetLengthInBits()
 
 	// Manual Field (value)
-	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32(int32(0)) }, func() interface{} { return int32(int32(int32(m.GetHeader().GetActualLength()) * int32(int32(8)))) }).(int32))
+	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32(int32(0)) }, func() interface{} { return int32((int32(m.GetHeader().GetActualLength()) * int32(int32(8)))) }).(int32))
 
 	// A virtual field doesn't have any in- or output.
 
 	// Manual Field (proprietaryValue)
-	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32(int32(int32(m.GetHeader().GetActualLength()) * int32(int32(8)))) }, func() interface{} { return int32(int32(0)) }).(int32))
+	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32((int32(m.GetHeader().GetActualLength()) * int32(int32(8)))) }, func() interface{} { return int32(int32(0)) }).(int32))
 
 	return lengthInBits
 }
@@ -166,7 +166,7 @@ func BACnetEngineeringUnitsTaggedParse(readBuffer utils.ReadBuffer, tagNumber ui
 	}
 
 	// Validation
-	if !(bool(bool(bool((header.GetTagClass()) == (TagClass_APPLICATION_TAGS)))) || bool(bool(bool((header.GetActualTagNumber()) == (tagNumber))))) {
+	if !(bool((bool((header.GetTagClass()) == (TagClass_APPLICATION_TAGS)))) || bool((bool((header.GetActualTagNumber()) == (tagNumber))))) {
 		return nil, errors.WithStack(utils.ParseAssertError{"tagnumber doesn't match"})
 	}
 
@@ -200,7 +200,13 @@ func BACnetEngineeringUnitsTaggedParse(readBuffer utils.ReadBuffer, tagNumber ui
 	}
 
 	// Create the instance
-	return NewBACnetEngineeringUnitsTagged(header, value, proprietaryValue, tagNumber, tagClass), nil
+	return &_BACnetEngineeringUnitsTagged{
+		TagNumber:        tagNumber,
+		TagClass:         tagClass,
+		Header:           header,
+		Value:            value,
+		ProprietaryValue: proprietaryValue,
+	}, nil
 }
 
 func (m *_BACnetEngineeringUnitsTagged) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -243,6 +249,19 @@ func (m *_BACnetEngineeringUnitsTagged) Serialize(writeBuffer utils.WriteBuffer)
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetEngineeringUnitsTagged) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+func (m *_BACnetEngineeringUnitsTagged) GetTagClass() TagClass {
+	return m.TagClass
+}
+
+//
+////
 
 func (m *_BACnetEngineeringUnitsTagged) isBACnetEngineeringUnitsTagged() bool {
 	return true

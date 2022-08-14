@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -113,12 +113,12 @@ func (m *_BACnetRejectReasonTagged) GetLengthInBitsConditional(lastItem bool) ui
 	lengthInBits := uint16(0)
 
 	// Manual Field (value)
-	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32(int32(0)) }, func() interface{} { return int32(int32(int32(m.ActualLength) * int32(int32(8)))) }).(int32))
+	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32(int32(0)) }, func() interface{} { return int32((int32(m.ActualLength) * int32(int32(8)))) }).(int32))
 
 	// A virtual field doesn't have any in- or output.
 
 	// Manual Field (proprietaryValue)
-	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32(int32(int32(m.ActualLength) * int32(int32(8)))) }, func() interface{} { return int32(int32(0)) }).(int32))
+	lengthInBits += uint16(utils.InlineIf(m.GetIsProprietary(), func() interface{} { return int32((int32(m.ActualLength) * int32(int32(8)))) }, func() interface{} { return int32(int32(0)) }).(int32))
 
 	return lengthInBits
 }
@@ -166,7 +166,11 @@ func BACnetRejectReasonTaggedParse(readBuffer utils.ReadBuffer, actualLength uin
 	}
 
 	// Create the instance
-	return NewBACnetRejectReasonTagged(value, proprietaryValue, actualLength), nil
+	return &_BACnetRejectReasonTagged{
+		ActualLength:     actualLength,
+		Value:            value,
+		ProprietaryValue: proprietaryValue,
+	}, nil
 }
 
 func (m *_BACnetRejectReasonTagged) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -197,6 +201,16 @@ func (m *_BACnetRejectReasonTagged) Serialize(writeBuffer utils.WriteBuffer) err
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetRejectReasonTagged) GetActualLength() uint32 {
+	return m.ActualLength
+}
+
+//
+////
 
 func (m *_BACnetRejectReasonTagged) isBACnetRejectReasonTagged() bool {
 	return true

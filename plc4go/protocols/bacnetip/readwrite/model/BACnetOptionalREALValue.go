@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetOptionalREALValueParse(readBuffer utils.ReadBuffer) (BACnetOptionalRE
 
 	// Create a partially initialized instance
 	_child := &_BACnetOptionalREALValue{
-		RealValue:           realValue,
 		_BACnetOptionalREAL: &_BACnetOptionalREAL{},
+		RealValue:           realValue,
 	}
 	_child._BACnetOptionalREAL._BACnetOptionalREALChildRequirements = _child
 	return _child, nil

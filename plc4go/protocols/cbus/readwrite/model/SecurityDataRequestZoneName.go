@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -145,8 +145,8 @@ func SecurityDataRequestZoneNameParse(readBuffer utils.ReadBuffer) (SecurityData
 
 	// Create a partially initialized instance
 	_child := &_SecurityDataRequestZoneName{
-		ZoneNumber:    zoneNumber,
 		_SecurityData: &_SecurityData{},
+		ZoneNumber:    zoneNumber,
 	}
 	_child._SecurityData._SecurityDataChildRequirements = _child
 	return _child, nil

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -222,11 +222,11 @@ func BACnetEventParameterChangeOfStateParse(readBuffer utils.ReadBuffer) (BACnet
 
 	// Create a partially initialized instance
 	_child := &_BACnetEventParameterChangeOfState{
+		_BACnetEventParameter: &_BACnetEventParameter{},
 		OpeningTag:            openingTag,
 		TimeDelay:             timeDelay,
 		ListOfValues:          listOfValues,
 		ClosingTag:            closingTag,
-		_BACnetEventParameter: &_BACnetEventParameter{},
 	}
 	_child._BACnetEventParameter._BACnetEventParameterChildRequirements = _child
 	return _child, nil

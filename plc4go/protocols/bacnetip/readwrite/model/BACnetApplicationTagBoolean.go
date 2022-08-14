@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -172,8 +172,8 @@ func BACnetApplicationTagBooleanParse(readBuffer utils.ReadBuffer, header BACnet
 
 	// Create a partially initialized instance
 	_child := &_BACnetApplicationTagBoolean{
-		Payload:               payload,
 		_BACnetApplicationTag: &_BACnetApplicationTag{},
+		Payload:               payload,
 	}
 	_child._BACnetApplicationTag._BACnetApplicationTagChildRequirements = _child
 	return _child, nil

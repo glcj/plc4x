@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -195,7 +195,10 @@ func BACnetAddressParse(readBuffer utils.ReadBuffer) (BACnetAddress, error) {
 	}
 
 	// Create the instance
-	return NewBACnetAddress(networkNumber, macAddress), nil
+	return &_BACnetAddress{
+		NetworkNumber: networkNumber,
+		MacAddress:    macAddress,
+	}, nil
 }
 
 func (m *_BACnetAddress) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -183,7 +183,11 @@ func BACnetObjectPropertyReferenceParse(readBuffer utils.ReadBuffer) (BACnetObje
 	}
 
 	// Create the instance
-	return NewBACnetObjectPropertyReference(objectIdentifier, propertyIdentifier, arrayIndex), nil
+	return &_BACnetObjectPropertyReference{
+		ObjectIdentifier:   objectIdentifier,
+		PropertyIdentifier: propertyIdentifier,
+		ArrayIndex:         arrayIndex,
+	}, nil
 }
 
 func (m *_BACnetObjectPropertyReference) Serialize(writeBuffer utils.WriteBuffer) error {

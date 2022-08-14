@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -186,6 +186,16 @@ func (pm *_CipService) SerializeParent(writeBuffer utils.WriteBuffer, child CipS
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_CipService) GetServiceLen() uint16 {
+	return m.ServiceLen
+}
+
+//
+////
 
 func (m *_CipService) isCipService() bool {
 	return true

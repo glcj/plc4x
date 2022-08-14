@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetChannelValueBooleanParse(readBuffer utils.ReadBuffer) (BACnetChannelV
 
 	// Create a partially initialized instance
 	_child := &_BACnetChannelValueBoolean{
-		BooleanValue:        booleanValue,
 		_BACnetChannelValue: &_BACnetChannelValue{},
+		BooleanValue:        booleanValue,
 	}
 	_child._BACnetChannelValue._BACnetChannelValueChildRequirements = _child
 	return _child, nil

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -185,7 +185,11 @@ func EnableControlDataParse(readBuffer utils.ReadBuffer) (EnableControlData, err
 	}
 
 	// Create the instance
-	return NewEnableControlData(commandTypeContainer, enableNetworkVariable, value), nil
+	return &_EnableControlData{
+		CommandTypeContainer:  commandTypeContainer,
+		EnableNetworkVariable: enableNetworkVariable,
+		Value:                 value,
+	}, nil
 }
 
 func (m *_EnableControlData) Serialize(writeBuffer utils.WriteBuffer) error {

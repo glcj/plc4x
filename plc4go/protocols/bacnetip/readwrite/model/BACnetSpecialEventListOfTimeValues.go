@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetSpecialEventListOfTimeValuesParse(readBuffer utils.ReadBuffer, tagNum
 	}
 
 	// Create the instance
-	return NewBACnetSpecialEventListOfTimeValues(openingTag, listOfTimeValues, closingTag, tagNumber), nil
+	return &_BACnetSpecialEventListOfTimeValues{
+		TagNumber:        tagNumber,
+		OpeningTag:       openingTag,
+		ListOfTimeValues: listOfTimeValues,
+		ClosingTag:       closingTag,
+	}, nil
 }
 
 func (m *_BACnetSpecialEventListOfTimeValues) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetSpecialEventListOfTimeValues) Serialize(writeBuffer utils.WriteB
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetSpecialEventListOfTimeValues) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetSpecialEventListOfTimeValues) isBACnetSpecialEventListOfTimeValues() bool {
 	return true

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -140,7 +140,9 @@ func HVACTemperatureParse(readBuffer utils.ReadBuffer) (HVACTemperature, error) 
 	}
 
 	// Create the instance
-	return NewHVACTemperature(temperatureValue), nil
+	return &_HVACTemperature{
+		TemperatureValue: temperatureValue,
+	}, nil
 }
 
 func (m *_HVACTemperature) Serialize(writeBuffer utils.WriteBuffer) error {

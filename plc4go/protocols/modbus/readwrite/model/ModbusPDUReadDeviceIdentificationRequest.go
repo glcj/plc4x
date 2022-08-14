@@ -21,7 +21,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -207,9 +207,9 @@ func ModbusPDUReadDeviceIdentificationRequestParse(readBuffer utils.ReadBuffer, 
 
 	// Create a partially initialized instance
 	_child := &_ModbusPDUReadDeviceIdentificationRequest{
+		_ModbusPDU: &_ModbusPDU{},
 		Level:      level,
 		ObjectId:   objectId,
-		_ModbusPDU: &_ModbusPDU{},
 	}
 	_child._ModbusPDU._ModbusPDUChildRequirements = _child
 	return _child, nil

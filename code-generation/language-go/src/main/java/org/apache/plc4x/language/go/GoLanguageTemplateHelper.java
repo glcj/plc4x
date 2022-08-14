@@ -633,6 +633,16 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                 String aExpression = toExpression(field, null, a, parserArguments, serializerArguments, serialize, suppressPointerAccessOverride);
                 String bExpression = toExpression(field, null, b, parserArguments, serializerArguments, serialize, suppressPointerAccessOverride);
                 return tracer + "bool((" + aExpression + ") " + operation + " (" + bExpression + "))";
+            case ">>":
+            case "<<":
+            case "|":
+            case "&":
+                tracer = tracer.dive("bitwise");
+                // We don't want casts here
+                return tracer +
+                    toExpression(field, fieldType, a, parserArguments, serializerArguments, serialize, false) +
+                    operation + " " +
+                    toExpression(field, fieldType, b, parserArguments, serializerArguments, serialize, false);
             default:
                 tracer = tracer.dive("default");
                 if (fieldType instanceof StringTypeReference) {
@@ -657,10 +667,10 @@ public class GoLanguageTemplateHelper extends BaseFreemarkerLanguageTemplateHelp
                 return tracer + "!(" + toExpression(field, fieldType, a, parserArguments, serializerArguments, serialize, false) + ")";
             case "-":
                 tracer = tracer.dive("case -");
-                return tracer + "-(" + getCastExpressionForTypeReference(fieldType) + "(" + toExpression(field, fieldType, a, parserArguments, serializerArguments, serialize, false) + "))";
+                return tracer + "-(" + toExpression(field, fieldType, a, parserArguments, serializerArguments, serialize, false) + ")";
             case "()":
                 tracer = tracer.dive("case ()");
-                return tracer + getCastExpressionForTypeReference(fieldType) + "(" + toExpression(field, fieldType, a, parserArguments, serializerArguments, serialize, false) + ")";
+                return tracer + "(" + toExpression(field, fieldType, a, parserArguments, serializerArguments, serialize, false) + ")";
             default:
                 throw new RuntimeException("Unsupported unary operation type " + unaryTerm.getOperation());
         }

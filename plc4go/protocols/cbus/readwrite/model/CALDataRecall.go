@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -169,11 +169,11 @@ func CALDataRecallParse(readBuffer utils.ReadBuffer, requestContext RequestConte
 
 	// Create a partially initialized instance
 	_child := &_CALDataRecall{
-		ParamNo: paramNo,
-		Count:   count,
 		_CALData: &_CALData{
 			RequestContext: requestContext,
 		},
+		ParamNo: paramNo,
+		Count:   count,
 	}
 	_child._CALData._CALDataChildRequirements = _child
 	return _child, nil

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -171,7 +171,10 @@ func BACnetVMACEntryParse(readBuffer utils.ReadBuffer) (BACnetVMACEntry, error) 
 	}
 
 	// Create the instance
-	return NewBACnetVMACEntry(virtualMacAddress, nativeMacAddress), nil
+	return &_BACnetVMACEntry{
+		VirtualMacAddress: virtualMacAddress,
+		NativeMacAddress:  nativeMacAddress,
+	}, nil
 }
 
 func (m *_BACnetVMACEntry) Serialize(writeBuffer utils.WriteBuffer) error {

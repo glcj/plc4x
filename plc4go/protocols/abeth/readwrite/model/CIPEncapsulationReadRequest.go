@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -157,8 +157,8 @@ func CIPEncapsulationReadRequestParse(readBuffer utils.ReadBuffer) (CIPEncapsula
 
 	// Create a partially initialized instance
 	_child := &_CIPEncapsulationReadRequest{
-		Request:                 request,
 		_CIPEncapsulationPacket: &_CIPEncapsulationPacket{},
+		Request:                 request,
 	}
 	_child._CIPEncapsulationPacket._CIPEncapsulationPacketChildRequirements = _child
 	return _child, nil

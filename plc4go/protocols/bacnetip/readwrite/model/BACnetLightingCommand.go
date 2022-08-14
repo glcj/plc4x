@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -296,7 +296,14 @@ func BACnetLightingCommandParse(readBuffer utils.ReadBuffer) (BACnetLightingComm
 	}
 
 	// Create the instance
-	return NewBACnetLightingCommand(lightningOperation, targetLevel, rampRate, stepIncrement, fadeTime, priority), nil
+	return &_BACnetLightingCommand{
+		LightningOperation: lightningOperation,
+		TargetLevel:        targetLevel,
+		RampRate:           rampRate,
+		StepIncrement:      stepIncrement,
+		FadeTime:           fadeTime,
+		Priority:           priority,
+	}, nil
 }
 
 func (m *_BACnetLightingCommand) Serialize(writeBuffer utils.WriteBuffer) error {

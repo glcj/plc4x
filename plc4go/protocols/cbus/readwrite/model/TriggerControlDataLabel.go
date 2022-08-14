@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -205,7 +205,7 @@ func TriggerControlDataLabelParse(readBuffer utils.ReadBuffer, commandTypeContai
 		}
 	}
 	// Byte Array field (data)
-	numberOfBytesdata := int(uint16(uint16(commandTypeContainer.NumBytes()) - uint16(uint16(utils.InlineIf(bool(bool((triggerControlOptions.GetLabelType()) != (TriggerControlLabelType_LOAD_DYNAMIC_ICON))), func() interface{} { return uint16(uint16(uint16(4))) }, func() interface{} { return uint16(uint16(uint16(3))) }).(uint16)))))
+	numberOfBytesdata := int((uint16(commandTypeContainer.NumBytes()) - uint16((utils.InlineIf((bool((triggerControlOptions.GetLabelType()) != (TriggerControlLabelType_LOAD_DYNAMIC_ICON))), func() interface{} { return uint16((uint16(4))) }, func() interface{} { return uint16((uint16(3))) }).(uint16)))))
 	data, _readArrayErr := readBuffer.ReadByteArray("data", numberOfBytesdata)
 	if _readArrayErr != nil {
 		return nil, errors.Wrap(_readArrayErr, "Error parsing 'data' field of TriggerControlDataLabel")
@@ -217,11 +217,11 @@ func TriggerControlDataLabelParse(readBuffer utils.ReadBuffer, commandTypeContai
 
 	// Create a partially initialized instance
 	_child := &_TriggerControlDataLabel{
+		_TriggerControlData:   &_TriggerControlData{},
 		TriggerControlOptions: triggerControlOptions,
 		ActionSelector:        actionSelector,
 		Language:              language,
 		Data:                  data,
-		_TriggerControlData:   &_TriggerControlData{},
 	}
 	_child._TriggerControlData._TriggerControlDataChildRequirements = _child
 	return _child, nil

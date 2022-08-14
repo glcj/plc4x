@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -68,6 +68,8 @@ type _MonitoredSALLongFormSmartMode struct {
 	ReservedByte    *byte
 	ReplyNetwork    ReplyNetwork
 	SalData         SALData
+	// Reserved Fields
+	reservedField0 *byte
 }
 
 ///////////////////////////////////////////////////////////
@@ -141,7 +143,7 @@ func (m *_MonitoredSALLongFormSmartMode) GetIsUnitAddress() bool {
 	_ = replyNetwork
 	salData := m.SalData
 	_ = salData
-	return bool(bool(((m.GetTerminatingByte()) & (0xff)) == (0x00)))
+	return bool(bool((m.GetTerminatingByte() & 0xff) == (0x00)))
 }
 
 ///////////////////////
@@ -236,6 +238,7 @@ func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer, cBusOptions
 	currentPos := positionAware.GetPos()
 	_ = currentPos
 
+	var reservedField0 *byte
 	// Reserved Field (Compartmentalized so the "reserved" variable can't leak)
 	{
 		reserved, _err := readBuffer.ReadByte("reserved")
@@ -247,6 +250,8 @@ func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer, cBusOptions
 				"expected value": byte(0x05),
 				"got value":      reserved,
 			}).Msg("Got unexpected response for reserved field.")
+			// We save the value, so it can be re-serialized
+			reservedField0 = &reserved
 		}
 	}
 
@@ -260,7 +265,7 @@ func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer, cBusOptions
 	readBuffer.Reset(currentPos)
 
 	// Virtual field
-	_isUnitAddress := bool(((terminatingByte) & (0xff)) == (0x00))
+	_isUnitAddress := bool((terminatingByte & 0xff) == (0x00))
 	isUnitAddress := bool(_isUnitAddress)
 	_ = isUnitAddress
 
@@ -386,6 +391,9 @@ func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer, cBusOptions
 
 	// Create a partially initialized instance
 	_child := &_MonitoredSALLongFormSmartMode{
+		_MonitoredSAL: &_MonitoredSAL{
+			CBusOptions: cBusOptions,
+		},
 		TerminatingByte: terminatingByte,
 		UnitAddress:     unitAddress,
 		BridgeAddress:   bridgeAddress,
@@ -393,9 +401,7 @@ func MonitoredSALLongFormSmartModeParse(readBuffer utils.ReadBuffer, cBusOptions
 		ReservedByte:    reservedByte,
 		ReplyNetwork:    replyNetwork,
 		SalData:         salData,
-		_MonitoredSAL: &_MonitoredSAL{
-			CBusOptions: cBusOptions,
-		},
+		reservedField0:  reservedField0,
 	}
 	_child._MonitoredSAL._MonitoredSALChildRequirements = _child
 	return _child, nil
@@ -411,7 +417,15 @@ func (m *_MonitoredSALLongFormSmartMode) Serialize(writeBuffer utils.WriteBuffer
 
 		// Reserved Field (reserved)
 		{
-			_err := writeBuffer.WriteByte("reserved", byte(0x05))
+			var reserved byte = byte(0x05)
+			if m.reservedField0 != nil {
+				log.Info().Fields(map[string]interface{}{
+					"expected value": byte(0x05),
+					"got value":      reserved,
+				}).Msg("Overriding reserved field with unexpected value.")
+				reserved = *m.reservedField0
+			}
+			_err := writeBuffer.WriteByte("reserved", reserved)
 			if _err != nil {
 				return errors.Wrap(_err, "Error serializing 'reserved' field")
 			}

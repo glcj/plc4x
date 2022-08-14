@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -154,8 +154,8 @@ func SALDataTelephonyStatusAndControlParse(readBuffer utils.ReadBuffer, applicat
 
 	// Create a partially initialized instance
 	_child := &_SALDataTelephonyStatusAndControl{
-		TelephonyData: telephonyData,
 		_SALData:      &_SALData{},
+		TelephonyData: telephonyData,
 	}
 	_child._SALData._SALDataChildRequirements = _child
 	return _child, nil

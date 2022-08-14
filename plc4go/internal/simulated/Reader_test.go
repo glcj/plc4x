@@ -20,13 +20,13 @@
 package simulated
 
 import (
-	s72 "github.com/apache/plc4x/plc4go/internal/s7"
-	model3 "github.com/apache/plc4x/plc4go/internal/spi/model"
-	values2 "github.com/apache/plc4x/plc4go/internal/spi/values"
+	s7 "github.com/apache/plc4x/plc4go/internal/s7"
 	"github.com/apache/plc4x/plc4go/pkg/api/model"
 	"github.com/apache/plc4x/plc4go/pkg/api/values"
 	model4 "github.com/apache/plc4x/plc4go/protocols/s7/readwrite/model"
 	model2 "github.com/apache/plc4x/plc4go/protocols/simulated/readwrite/model"
+	model3 "github.com/apache/plc4x/plc4go/spi/model"
+	values2 "github.com/apache/plc4x/plc4go/spi/values"
 	"reflect"
 	"testing"
 	"time"
@@ -142,15 +142,7 @@ func TestReader_Read(t *testing.T) {
 			},
 			args: args{
 				fields: map[string]model.PlcField{
-					"test": s72.PlcField{
-						FieldType:   s72.S7Field,
-						MemoryArea:  model4.MemoryArea_DATA_BLOCKS,
-						BlockNumber: 1,
-						ByteOffset:  1,
-						BitOffset:   0,
-						NumElements: 1,
-						Datatype:    model4.TransportSize_BOOL,
-					},
+					"test": s7.NewField(model4.MemoryArea_DATA_BLOCKS, 1, 1, 0, 1, model4.TransportSize_BOOL),
 				},
 				fieldNames: []string{"test"},
 			},

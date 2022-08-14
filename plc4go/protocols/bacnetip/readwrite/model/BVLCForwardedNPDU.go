@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -209,10 +209,10 @@ func BVLCForwardedNPDUParse(readBuffer utils.ReadBuffer, bvlcPayloadLength uint1
 
 	// Create a partially initialized instance
 	_child := &_BVLCForwardedNPDU{
+		_BVLC: &_BVLC{},
 		Ip:    ip,
 		Port:  port,
 		Npdu:  npdu,
-		_BVLC: &_BVLC{},
 	}
 	_child._BVLC._BVLCChildRequirements = _child
 	return _child, nil
@@ -266,6 +266,16 @@ func (m *_BVLCForwardedNPDU) Serialize(writeBuffer utils.WriteBuffer) error {
 	}
 	return m.SerializeParent(writeBuffer, m, ser)
 }
+
+////
+// Arguments Getter
+
+func (m *_BVLCForwardedNPDU) GetBvlcPayloadLength() uint16 {
+	return m.BvlcPayloadLength
+}
+
+//
+////
 
 func (m *_BVLCForwardedNPDU) isBVLCForwardedNPDU() bool {
 	return true

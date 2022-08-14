@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -147,7 +147,10 @@ func BACnetAssignedAccessRightsParse(readBuffer utils.ReadBuffer) (BACnetAssigne
 	}
 
 	// Create the instance
-	return NewBACnetAssignedAccessRights(assignedAccessRights, enable), nil
+	return &_BACnetAssignedAccessRights{
+		AssignedAccessRights: assignedAccessRights,
+		Enable:               enable,
+	}, nil
 }
 
 func (m *_BACnetAssignedAccessRights) Serialize(writeBuffer utils.WriteBuffer) error {

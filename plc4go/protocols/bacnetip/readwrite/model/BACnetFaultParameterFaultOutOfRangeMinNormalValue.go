@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -287,6 +287,16 @@ func (pm *_BACnetFaultParameterFaultOutOfRangeMinNormalValue) SerializeParent(wr
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetFaultParameterFaultOutOfRangeMinNormalValue) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetFaultParameterFaultOutOfRangeMinNormalValue) isBACnetFaultParameterFaultOutOfRangeMinNormalValue() bool {
 	return true

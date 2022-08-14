@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -183,7 +183,11 @@ func BACnetGroupChannelValueParse(readBuffer utils.ReadBuffer) (BACnetGroupChann
 	}
 
 	// Create the instance
-	return NewBACnetGroupChannelValue(channel, overridingPriority, value), nil
+	return &_BACnetGroupChannelValue{
+		Channel:            channel,
+		OverridingPriority: overridingPriority,
+		Value:              value,
+	}, nil
 }
 
 func (m *_BACnetGroupChannelValue) Serialize(writeBuffer utils.WriteBuffer) error {

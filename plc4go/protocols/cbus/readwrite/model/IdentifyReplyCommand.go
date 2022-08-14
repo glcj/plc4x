@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -192,6 +192,16 @@ func (pm *_IdentifyReplyCommand) SerializeParent(writeBuffer utils.WriteBuffer, 
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_IdentifyReplyCommand) GetNumBytes() uint8 {
+	return m.NumBytes
+}
+
+//
+////
 
 func (m *_IdentifyReplyCommand) isIdentifyReplyCommand() bool {
 	return true

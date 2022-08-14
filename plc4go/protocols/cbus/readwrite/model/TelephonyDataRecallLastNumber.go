@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,7 +150,7 @@ func (m *_TelephonyDataRecallLastNumber) GetLengthInBitsConditional(lastItem boo
 	// A virtual field doesn't have any in- or output.
 
 	// Simple field (number)
-	lengthInBits += uint16(int32(int32(int32(m.GetCommandTypeContainer().NumBytes())-int32(int32(2)))) * int32(int32(8)))
+	lengthInBits += uint16(int32((int32(m.GetCommandTypeContainer().NumBytes()) - int32(int32(2)))) * int32(int32(8)))
 
 	return lengthInBits
 }
@@ -198,9 +198,9 @@ func TelephonyDataRecallLastNumberParse(readBuffer utils.ReadBuffer, commandType
 
 	// Create a partially initialized instance
 	_child := &_TelephonyDataRecallLastNumber{
+		_TelephonyData:       &_TelephonyData{},
 		RecallLastNumberType: recallLastNumberType,
 		Number:               number,
-		_TelephonyData:       &_TelephonyData{},
 	}
 	_child._TelephonyData._TelephonyDataChildRequirements = _child
 	return _child, nil

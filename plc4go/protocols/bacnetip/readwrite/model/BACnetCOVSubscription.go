@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -229,7 +229,13 @@ func BACnetCOVSubscriptionParse(readBuffer utils.ReadBuffer) (BACnetCOVSubscript
 	}
 
 	// Create the instance
-	return NewBACnetCOVSubscription(recipient, monitoredPropertyReference, issueConfirmedNotifications, timeRemaining, covIncrement), nil
+	return &_BACnetCOVSubscription{
+		Recipient:                   recipient,
+		MonitoredPropertyReference:  monitoredPropertyReference,
+		IssueConfirmedNotifications: issueConfirmedNotifications,
+		TimeRemaining:               timeRemaining,
+		CovIncrement:                covIncrement,
+	}, nil
 }
 
 func (m *_BACnetCOVSubscription) Serialize(writeBuffer utils.WriteBuffer) error {

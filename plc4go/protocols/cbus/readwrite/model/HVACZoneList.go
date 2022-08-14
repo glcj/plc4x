@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -259,7 +259,16 @@ func HVACZoneListParse(readBuffer utils.ReadBuffer) (HVACZoneList, error) {
 	}
 
 	// Create the instance
-	return NewHVACZoneList(expansion, zone6, zone5, zone4, zone3, zone2, zone1, zone0), nil
+	return &_HVACZoneList{
+		Expansion: expansion,
+		Zone6:     zone6,
+		Zone5:     zone5,
+		Zone4:     zone4,
+		Zone3:     zone3,
+		Zone2:     zone2,
+		Zone1:     zone1,
+		Zone0:     zone0,
+	}, nil
 }
 
 func (m *_HVACZoneList) Serialize(writeBuffer utils.WriteBuffer) error {

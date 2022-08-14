@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -114,7 +114,7 @@ func (m *_SecurityDataDisplayMessage) GetLengthInBitsConditional(lastItem bool) 
 	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (message)
-	lengthInBits += uint16(int32(int32(int32(m.GetCommandTypeContainer().NumBytes())-int32(int32(1)))) * int32(int32(8)))
+	lengthInBits += uint16(int32((int32(m.GetCommandTypeContainer().NumBytes()) - int32(int32(1)))) * int32(int32(8)))
 
 	return lengthInBits
 }
@@ -145,8 +145,8 @@ func SecurityDataDisplayMessageParse(readBuffer utils.ReadBuffer, commandTypeCon
 
 	// Create a partially initialized instance
 	_child := &_SecurityDataDisplayMessage{
-		Message:       message,
 		_SecurityData: &_SecurityData{},
+		Message:       message,
 	}
 	_child._SecurityData._SecurityDataChildRequirements = _child
 	return _child, nil

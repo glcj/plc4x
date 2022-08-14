@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -210,6 +210,22 @@ func (pm *_BACnetPropertyAccessResultAccessResult) SerializeParent(writeBuffer u
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetPropertyAccessResultAccessResult) GetObjectTypeArgument() BACnetObjectType {
+	return m.ObjectTypeArgument
+}
+func (m *_BACnetPropertyAccessResultAccessResult) GetPropertyIdentifierArgument() BACnetPropertyIdentifier {
+	return m.PropertyIdentifierArgument
+}
+func (m *_BACnetPropertyAccessResultAccessResult) GetPropertyArrayIndexArgument() BACnetTagPayloadUnsignedInteger {
+	return m.PropertyArrayIndexArgument
+}
+
+//
+////
 
 func (m *_BACnetPropertyAccessResultAccessResult) isBACnetPropertyAccessResultAccessResult() bool {
 	return true

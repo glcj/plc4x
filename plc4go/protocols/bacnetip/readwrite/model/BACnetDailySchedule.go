@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -181,7 +181,11 @@ func BACnetDailyScheduleParse(readBuffer utils.ReadBuffer) (BACnetDailySchedule,
 	}
 
 	// Create the instance
-	return NewBACnetDailySchedule(openingTag, daySchedule, closingTag), nil
+	return &_BACnetDailySchedule{
+		OpeningTag:  openingTag,
+		DaySchedule: daySchedule,
+		ClosingTag:  closingTag,
+	}, nil
 }
 
 func (m *_BACnetDailySchedule) Serialize(writeBuffer utils.WriteBuffer) error {

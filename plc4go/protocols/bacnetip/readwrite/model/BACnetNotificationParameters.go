@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -315,6 +315,19 @@ func (pm *_BACnetNotificationParameters) SerializeParent(writeBuffer utils.Write
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetNotificationParameters) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+func (m *_BACnetNotificationParameters) GetObjectTypeArgument() BACnetObjectType {
+	return m.ObjectTypeArgument
+}
+
+//
+////
 
 func (m *_BACnetNotificationParameters) isBACnetNotificationParameters() bool {
 	return true

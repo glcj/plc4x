@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -137,7 +137,9 @@ func BACnetSetpointReferenceParse(readBuffer utils.ReadBuffer) (BACnetSetpointRe
 	}
 
 	// Create the instance
-	return NewBACnetSetpointReference(setPointReference), nil
+	return &_BACnetSetpointReference{
+		SetPointReference: setPointReference,
+	}, nil
 }
 
 func (m *_BACnetSetpointReference) Serialize(writeBuffer utils.WriteBuffer) error {

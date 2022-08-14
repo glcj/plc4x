@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetPropertyStatesUnitsParse(readBuffer utils.ReadBuffer, peekedTagNumber
 
 	// Create a partially initialized instance
 	_child := &_BACnetPropertyStatesUnits{
-		Units:                 units,
 		_BACnetPropertyStates: &_BACnetPropertyStates{},
+		Units:                 units,
 	}
 	_child._BACnetPropertyStates._BACnetPropertyStatesChildRequirements = _child
 	return _child, nil

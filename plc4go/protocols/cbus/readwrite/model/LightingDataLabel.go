@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -204,7 +204,7 @@ func LightingDataLabelParse(readBuffer utils.ReadBuffer, commandTypeContainer Li
 		}
 	}
 	// Byte Array field (data)
-	numberOfBytesdata := int(uint16(uint16(commandTypeContainer.NumBytes()) - uint16(uint16(utils.InlineIf(bool(bool((labelOptions.GetLabelType()) != (LightingLabelType_LOAD_DYNAMIC_ICON))), func() interface{} { return uint16(uint16(uint16(3))) }, func() interface{} { return uint16(uint16(uint16(2))) }).(uint16)))))
+	numberOfBytesdata := int((uint16(commandTypeContainer.NumBytes()) - uint16((utils.InlineIf((bool((labelOptions.GetLabelType()) != (LightingLabelType_LOAD_DYNAMIC_ICON))), func() interface{} { return uint16((uint16(3))) }, func() interface{} { return uint16((uint16(2))) }).(uint16)))))
 	data, _readArrayErr := readBuffer.ReadByteArray("data", numberOfBytesdata)
 	if _readArrayErr != nil {
 		return nil, errors.Wrap(_readArrayErr, "Error parsing 'data' field of LightingDataLabel")
@@ -216,11 +216,11 @@ func LightingDataLabelParse(readBuffer utils.ReadBuffer, commandTypeContainer Li
 
 	// Create a partially initialized instance
 	_child := &_LightingDataLabel{
+		_LightingData: &_LightingData{},
 		Group:         group,
 		LabelOptions:  labelOptions,
 		Language:      language,
 		Data:          data,
-		_LightingData: &_LightingData{},
 	}
 	_child._LightingData._LightingDataChildRequirements = _child
 	return _child, nil

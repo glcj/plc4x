@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -160,7 +160,10 @@ func BACnetBDTEntryParse(readBuffer utils.ReadBuffer) (BACnetBDTEntry, error) {
 	}
 
 	// Create the instance
-	return NewBACnetBDTEntry(bbmdAddress, broadcastMask), nil
+	return &_BACnetBDTEntry{
+		BbmdAddress:   bbmdAddress,
+		BroadcastMask: broadcastMask,
+	}, nil
 }
 
 func (m *_BACnetBDTEntry) Serialize(writeBuffer utils.WriteBuffer) error {

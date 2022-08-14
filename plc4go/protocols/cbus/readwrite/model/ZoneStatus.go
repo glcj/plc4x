@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -124,7 +124,9 @@ func ZoneStatusParse(readBuffer utils.ReadBuffer) (ZoneStatus, error) {
 	}
 
 	// Create the instance
-	return NewZoneStatus(value), nil
+	return &_ZoneStatus{
+		Value: value,
+	}, nil
 }
 
 func (m *_ZoneStatus) Serialize(writeBuffer utils.WriteBuffer) error {

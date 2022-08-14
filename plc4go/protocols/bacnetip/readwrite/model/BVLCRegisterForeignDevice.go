@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -146,8 +146,8 @@ func BVLCRegisterForeignDeviceParse(readBuffer utils.ReadBuffer) (BVLCRegisterFo
 
 	// Create a partially initialized instance
 	_child := &_BVLCRegisterForeignDevice{
-		Ttl:   ttl,
 		_BVLC: &_BVLC{},
+		Ttl:   ttl,
 	}
 	_child._BVLC._BVLCChildRequirements = _child
 	return _child, nil

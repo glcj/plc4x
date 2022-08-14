@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -226,14 +226,14 @@ func CipWriteRequestParse(readBuffer utils.ReadBuffer, serviceLen uint16) (CipWr
 
 	// Create a partially initialized instance
 	_child := &_CipWriteRequest{
+		_CipService: &_CipService{
+			ServiceLen: serviceLen,
+		},
 		RequestPathSize: requestPathSize,
 		Tag:             tag,
 		DataType:        dataType,
 		ElementNb:       elementNb,
 		Data:            data,
-		_CipService: &_CipService{
-			ServiceLen: serviceLen,
-		},
 	}
 	_child._CipService._CipServiceChildRequirements = _child
 	return _child, nil

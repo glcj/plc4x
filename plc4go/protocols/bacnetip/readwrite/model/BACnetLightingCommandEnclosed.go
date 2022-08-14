@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -173,7 +173,12 @@ func BACnetLightingCommandEnclosedParse(readBuffer utils.ReadBuffer, tagNumber u
 	}
 
 	// Create the instance
-	return NewBACnetLightingCommandEnclosed(openingTag, lightingCommand, closingTag, tagNumber), nil
+	return &_BACnetLightingCommandEnclosed{
+		TagNumber:       tagNumber,
+		OpeningTag:      openingTag,
+		LightingCommand: lightingCommand,
+		ClosingTag:      closingTag,
+	}, nil
 }
 
 func (m *_BACnetLightingCommandEnclosed) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -224,6 +229,16 @@ func (m *_BACnetLightingCommandEnclosed) Serialize(writeBuffer utils.WriteBuffer
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetLightingCommandEnclosed) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetLightingCommandEnclosed) isBACnetLightingCommandEnclosed() bool {
 	return true

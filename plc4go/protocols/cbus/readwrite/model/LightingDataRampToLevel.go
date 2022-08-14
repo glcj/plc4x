@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -162,9 +162,9 @@ func LightingDataRampToLevelParse(readBuffer utils.ReadBuffer) (LightingDataRamp
 
 	// Create a partially initialized instance
 	_child := &_LightingDataRampToLevel{
+		_LightingData: &_LightingData{},
 		Group:         group,
 		Level:         level,
-		_LightingData: &_LightingData{},
 	}
 	_child._LightingData._LightingDataChildRequirements = _child
 	return _child, nil

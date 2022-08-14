@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -144,8 +144,8 @@ func CBusPointToMultiPointCommandParse(readBuffer utils.ReadBuffer, cBusOptions 
 	switch {
 	case peekedApplication == 0xFF: // CBusPointToMultiPointCommandStatus
 		_childTemp, typeSwitchError = CBusPointToMultiPointCommandStatusParse(readBuffer, cBusOptions)
-	case 0 == 0: // Normal
-		_childTemp, typeSwitchError = NormalParse(readBuffer, cBusOptions)
+	case 0 == 0: // CBusPointToMultiPointCommandNormal
+		_childTemp, typeSwitchError = CBusPointToMultiPointCommandNormalParse(readBuffer, cBusOptions)
 	default:
 		typeSwitchError = errors.Errorf("Unmapped type for parameters [peekedApplication=%v]", peekedApplication)
 	}
@@ -183,6 +183,16 @@ func (pm *_CBusPointToMultiPointCommand) SerializeParent(writeBuffer utils.Write
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_CBusPointToMultiPointCommand) GetCBusOptions() CBusOptions {
+	return m.CBusOptions
+}
+
+//
+////
 
 func (m *_CBusPointToMultiPointCommand) isCBusPointToMultiPointCommand() bool {
 	return true

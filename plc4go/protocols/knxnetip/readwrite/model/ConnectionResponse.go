@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -242,11 +242,11 @@ func ConnectionResponseParse(readBuffer utils.ReadBuffer) (ConnectionResponse, e
 
 	// Create a partially initialized instance
 	_child := &_ConnectionResponse{
+		_KnxNetIpMessage:            &_KnxNetIpMessage{},
 		CommunicationChannelId:      communicationChannelId,
 		Status:                      status,
 		HpaiDataEndpoint:            hpaiDataEndpoint,
 		ConnectionResponseDataBlock: connectionResponseDataBlock,
-		_KnxNetIpMessage:            &_KnxNetIpMessage{},
 	}
 	_child._KnxNetIpMessage._KnxNetIpMessageChildRequirements = _child
 	return _child, nil

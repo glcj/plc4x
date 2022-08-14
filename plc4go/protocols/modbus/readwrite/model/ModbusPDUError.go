@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -160,8 +160,8 @@ func ModbusPDUErrorParse(readBuffer utils.ReadBuffer, response bool) (ModbusPDUE
 
 	// Create a partially initialized instance
 	_child := &_ModbusPDUError{
-		ExceptionCode: exceptionCode,
 		_ModbusPDU:    &_ModbusPDU{},
+		ExceptionCode: exceptionCode,
 	}
 	_child._ModbusPDU._ModbusPDUChildRequirements = _child
 	return _child, nil

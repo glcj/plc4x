@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -174,7 +174,11 @@ func HPAIDataEndpointParse(readBuffer utils.ReadBuffer) (HPAIDataEndpoint, error
 	}
 
 	// Create the instance
-	return NewHPAIDataEndpoint(hostProtocolCode, ipAddress, ipPort), nil
+	return &_HPAIDataEndpoint{
+		HostProtocolCode: hostProtocolCode,
+		IpAddress:        ipAddress,
+		IpPort:           ipPort,
+	}, nil
 }
 
 func (m *_HPAIDataEndpoint) Serialize(writeBuffer utils.WriteBuffer) error {

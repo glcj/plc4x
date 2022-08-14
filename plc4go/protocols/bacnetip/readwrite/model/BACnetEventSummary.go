@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -262,7 +262,15 @@ func BACnetEventSummaryParse(readBuffer utils.ReadBuffer) (BACnetEventSummary, e
 	}
 
 	// Create the instance
-	return NewBACnetEventSummary(objectIdentifier, eventState, acknowledgedTransitions, eventTimestamps, notifyType, eventEnable, eventPriorities), nil
+	return &_BACnetEventSummary{
+		ObjectIdentifier:        objectIdentifier,
+		EventState:              eventState,
+		AcknowledgedTransitions: acknowledgedTransitions,
+		EventTimestamps:         eventTimestamps,
+		NotifyType:              notifyType,
+		EventEnable:             eventEnable,
+		EventPriorities:         eventPriorities,
+	}, nil
 }
 
 func (m *_BACnetEventSummary) Serialize(writeBuffer utils.WriteBuffer) error {

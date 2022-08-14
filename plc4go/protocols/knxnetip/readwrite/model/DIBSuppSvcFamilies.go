@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -163,7 +163,10 @@ func DIBSuppSvcFamiliesParse(readBuffer utils.ReadBuffer) (DIBSuppSvcFamilies, e
 	}
 
 	// Create the instance
-	return NewDIBSuppSvcFamilies(descriptionType, serviceIds), nil
+	return &_DIBSuppSvcFamilies{
+		DescriptionType: descriptionType,
+		ServiceIds:      serviceIds,
+	}, nil
 }
 
 func (m *_DIBSuppSvcFamilies) Serialize(writeBuffer utils.WriteBuffer) error {

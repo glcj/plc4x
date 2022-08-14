@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -174,9 +174,9 @@ func AdsAddDeviceNotificationResponseParse(readBuffer utils.ReadBuffer, commandI
 
 	// Create a partially initialized instance
 	_child := &_AdsAddDeviceNotificationResponse{
+		_AdsData:           &_AdsData{},
 		Result:             result,
 		NotificationHandle: notificationHandle,
-		_AdsData:           &_AdsData{},
 	}
 	_child._AdsData._AdsDataChildRequirements = _child
 	return _child, nil

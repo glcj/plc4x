@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -125,7 +125,7 @@ func (m *_TelephonyDataLineOffHook) GetLengthInBitsConditional(lastItem bool) ui
 	lengthInBits += 8
 
 	// Simple field (number)
-	lengthInBits += uint16(int32(int32(int32(m.GetCommandTypeContainer().NumBytes())-int32(int32(2)))) * int32(int32(8)))
+	lengthInBits += uint16(int32((int32(m.GetCommandTypeContainer().NumBytes()) - int32(int32(2)))) * int32(int32(8)))
 
 	return lengthInBits
 }
@@ -169,9 +169,9 @@ func TelephonyDataLineOffHookParse(readBuffer utils.ReadBuffer, commandTypeConta
 
 	// Create a partially initialized instance
 	_child := &_TelephonyDataLineOffHook{
+		_TelephonyData: &_TelephonyData{},
 		Reason:         reason,
 		Number:         number,
-		_TelephonyData: &_TelephonyData{},
 	}
 	_child._TelephonyData._TelephonyDataChildRequirements = _child
 	return _child, nil

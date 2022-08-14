@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -152,7 +152,11 @@ func KnxAddressParse(readBuffer utils.ReadBuffer) (KnxAddress, error) {
 	}
 
 	// Create the instance
-	return NewKnxAddress(mainGroup, middleGroup, subGroup), nil
+	return &_KnxAddress{
+		MainGroup:   mainGroup,
+		MiddleGroup: middleGroup,
+		SubGroup:    subGroup,
+	}, nil
 }
 
 func (m *_KnxAddress) Serialize(writeBuffer utils.WriteBuffer) error {

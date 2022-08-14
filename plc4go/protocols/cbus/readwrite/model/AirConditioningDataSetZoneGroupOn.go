@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -144,8 +144,8 @@ func AirConditioningDataSetZoneGroupOnParse(readBuffer utils.ReadBuffer) (AirCon
 
 	// Create a partially initialized instance
 	_child := &_AirConditioningDataSetZoneGroupOn{
-		ZoneGroup:            zoneGroup,
 		_AirConditioningData: &_AirConditioningData{},
+		ZoneGroup:            zoneGroup,
 	}
 	_child._AirConditioningData._AirConditioningDataChildRequirements = _child
 	return _child, nil

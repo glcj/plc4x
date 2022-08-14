@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -152,8 +152,8 @@ func BVLCResultParse(readBuffer utils.ReadBuffer) (BVLCResult, error) {
 
 	// Create a partially initialized instance
 	_child := &_BVLCResult{
-		Code:  code,
 		_BVLC: &_BVLC{},
+		Code:  code,
 	}
 	_child._BVLC._BVLCChildRequirements = _child
 	return _child, nil

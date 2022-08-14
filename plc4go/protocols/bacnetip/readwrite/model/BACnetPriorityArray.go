@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -475,7 +475,13 @@ func BACnetPriorityArrayParse(readBuffer utils.ReadBuffer, objectTypeArgument BA
 	}
 
 	// Create the instance
-	return NewBACnetPriorityArray(numberOfDataElements, data, objectTypeArgument, tagNumber, arrayIndexArgument), nil
+	return &_BACnetPriorityArray{
+		ObjectTypeArgument:   objectTypeArgument,
+		TagNumber:            tagNumber,
+		ArrayIndexArgument:   arrayIndexArgument,
+		NumberOfDataElements: numberOfDataElements,
+		Data:                 data,
+	}, nil
 }
 
 func (m *_BACnetPriorityArray) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -596,6 +602,22 @@ func (m *_BACnetPriorityArray) Serialize(writeBuffer utils.WriteBuffer) error {
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetPriorityArray) GetObjectTypeArgument() BACnetObjectType {
+	return m.ObjectTypeArgument
+}
+func (m *_BACnetPriorityArray) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+func (m *_BACnetPriorityArray) GetArrayIndexArgument() BACnetTagPayloadUnsignedInteger {
+	return m.ArrayIndexArgument
+}
+
+//
+////
 
 func (m *_BACnetPriorityArray) isBACnetPriorityArray() bool {
 	return true

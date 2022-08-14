@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -167,10 +167,10 @@ func BACnetServiceAckReadPropertyMultipleParse(readBuffer utils.ReadBuffer, serv
 
 	// Create a partially initialized instance
 	_child := &_BACnetServiceAckReadPropertyMultiple{
-		Data: data,
 		_BACnetServiceAck: &_BACnetServiceAck{
 			ServiceAckLength: serviceAckLength,
 		},
+		Data: data,
 	}
 	_child._BACnetServiceAck._BACnetServiceAckChildRequirements = _child
 	return _child, nil
@@ -205,6 +205,16 @@ func (m *_BACnetServiceAckReadPropertyMultiple) Serialize(writeBuffer utils.Writ
 	}
 	return m.SerializeParent(writeBuffer, m, ser)
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetServiceAckReadPropertyMultiple) GetServiceAckPayloadLength() uint16 {
+	return m.ServiceAckPayloadLength
+}
+
+//
+////
 
 func (m *_BACnetServiceAckReadPropertyMultiple) isBACnetServiceAckReadPropertyMultiple() bool {
 	return true

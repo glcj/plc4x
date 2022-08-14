@@ -21,7 +21,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -121,7 +121,7 @@ func CBusConstantsParse(readBuffer utils.ReadBuffer) (CBusConstants, error) {
 	}
 
 	// Create the instance
-	return NewCBusConstants(), nil
+	return &_CBusConstants{}, nil
 }
 
 func (m *_CBusConstants) Serialize(writeBuffer utils.WriteBuffer) error {

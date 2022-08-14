@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -166,11 +166,11 @@ func NLMEstablishConnectionToNetworkParse(readBuffer utils.ReadBuffer, apduLengt
 
 	// Create a partially initialized instance
 	_child := &_NLMEstablishConnectionToNetwork{
-		DestinationNetworkAddress: destinationNetworkAddress,
-		TerminationTime:           terminationTime,
 		_NLM: &_NLM{
 			ApduLength: apduLength,
 		},
+		DestinationNetworkAddress: destinationNetworkAddress,
+		TerminationTime:           terminationTime,
 	}
 	_child._NLM._NLMChildRequirements = _child
 	return _child, nil

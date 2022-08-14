@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -154,8 +154,8 @@ func SALDataAirConditioningParse(readBuffer utils.ReadBuffer, applicationId Appl
 
 	// Create a partially initialized instance
 	_child := &_SALDataAirConditioning{
-		AirConditioningData: airConditioningData,
 		_SALData:            &_SALData{},
+		AirConditioningData: airConditioningData,
 	}
 	_child._SALData._SALDataChildRequirements = _child
 	return _child, nil

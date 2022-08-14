@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -775,7 +775,26 @@ func BACnetEventParameterExtendedParametersParse(readBuffer utils.ReadBuffer, ta
 	}
 
 	// Create the instance
-	return NewBACnetEventParameterExtendedParameters(openingTag, peekedTagHeader, nullValue, realValue, unsignedValue, booleanValue, integerValue, doubleValue, octetStringValue, characterStringValue, bitStringValue, enumeratedValue, dateValue, timeValue, objectIdentifier, reference, closingTag, tagNumber), nil
+	return &_BACnetEventParameterExtendedParameters{
+		TagNumber:            tagNumber,
+		OpeningTag:           openingTag,
+		PeekedTagHeader:      peekedTagHeader,
+		NullValue:            nullValue,
+		RealValue:            realValue,
+		UnsignedValue:        unsignedValue,
+		BooleanValue:         booleanValue,
+		IntegerValue:         integerValue,
+		DoubleValue:          doubleValue,
+		OctetStringValue:     octetStringValue,
+		CharacterStringValue: characterStringValue,
+		BitStringValue:       bitStringValue,
+		EnumeratedValue:      enumeratedValue,
+		DateValue:            dateValue,
+		TimeValue:            timeValue,
+		ObjectIdentifier:     objectIdentifier,
+		Reference:            reference,
+		ClosingTag:           closingTag,
+	}, nil
 }
 
 func (m *_BACnetEventParameterExtendedParameters) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -1050,6 +1069,16 @@ func (m *_BACnetEventParameterExtendedParameters) Serialize(writeBuffer utils.Wr
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetEventParameterExtendedParameters) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetEventParameterExtendedParameters) isBACnetEventParameterExtendedParameters() bool {
 	return true

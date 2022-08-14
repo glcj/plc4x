@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -180,8 +180,8 @@ func TelephonyDataIsolateSecondaryOutletParse(readBuffer utils.ReadBuffer) (Tele
 
 	// Create a partially initialized instance
 	_child := &_TelephonyDataIsolateSecondaryOutlet{
-		IsolateStatus:  isolateStatus,
 		_TelephonyData: &_TelephonyData{},
+		IsolateStatus:  isolateStatus,
 	}
 	_child._TelephonyData._TelephonyDataChildRequirements = _child
 	return _child, nil

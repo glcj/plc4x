@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValuesParse(read
 	}
 
 	// Create the instance
-	return NewBACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValues(openingTag, listOfLifeSavetyAlarmValues, closingTag, tagNumber), nil
+	return &_BACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValues{
+		TagNumber:                   tagNumber,
+		OpeningTag:                  openingTag,
+		ListOfLifeSavetyAlarmValues: listOfLifeSavetyAlarmValues,
+		ClosingTag:                  closingTag,
+	}, nil
 }
 
 func (m *_BACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValues) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValues) Ser
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValues) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValues) isBACnetEventParameterChangeOfLifeSavetyListOfLifeSavetyAlarmValues() bool {
 	return true

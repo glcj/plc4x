@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -297,8 +297,8 @@ func SecurityDataEmulatedKeypadParse(readBuffer utils.ReadBuffer) (SecurityDataE
 
 	// Create a partially initialized instance
 	_child := &_SecurityDataEmulatedKeypad{
-		Key:           key,
 		_SecurityData: &_SecurityData{},
+		Key:           key,
 	}
 	_child._SecurityData._SecurityDataChildRequirements = _child
 	return _child, nil

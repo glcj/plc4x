@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -152,8 +152,8 @@ func DeviceConfigurationAckParse(readBuffer utils.ReadBuffer) (DeviceConfigurati
 
 	// Create a partially initialized instance
 	_child := &_DeviceConfigurationAck{
-		DeviceConfigurationAckDataBlock: deviceConfigurationAckDataBlock,
 		_KnxNetIpMessage:                &_KnxNetIpMessage{},
+		DeviceConfigurationAckDataBlock: deviceConfigurationAckDataBlock,
 	}
 	_child._KnxNetIpMessage._KnxNetIpMessageChildRequirements = _child
 	return _child, nil

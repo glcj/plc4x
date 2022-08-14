@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -147,7 +147,10 @@ func BACnetKeyIdentifierParse(readBuffer utils.ReadBuffer) (BACnetKeyIdentifier,
 	}
 
 	// Create the instance
-	return NewBACnetKeyIdentifier(algorithm, keyId), nil
+	return &_BACnetKeyIdentifier{
+		Algorithm: algorithm,
+		KeyId:     keyId,
+	}, nil
 }
 
 func (m *_BACnetKeyIdentifier) Serialize(writeBuffer utils.WriteBuffer) error {

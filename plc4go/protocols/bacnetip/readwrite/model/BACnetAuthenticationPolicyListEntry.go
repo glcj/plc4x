@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -147,7 +147,10 @@ func BACnetAuthenticationPolicyListEntryParse(readBuffer utils.ReadBuffer) (BACn
 	}
 
 	// Create the instance
-	return NewBACnetAuthenticationPolicyListEntry(credentialDataInput, index), nil
+	return &_BACnetAuthenticationPolicyListEntry{
+		CredentialDataInput: credentialDataInput,
+		Index:               index,
+	}, nil
 }
 
 func (m *_BACnetAuthenticationPolicyListEntry) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -278,6 +278,16 @@ func (pm *_BACnetEventParameterChangeOfValueCivCriteria) SerializeParent(writeBu
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetEventParameterChangeOfValueCivCriteria) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetEventParameterChangeOfValueCivCriteria) isBACnetEventParameterChangeOfValueCivCriteria() bool {
 	return true

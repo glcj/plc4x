@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -122,7 +122,10 @@ func BACnetTagPayloadOctetStringParse(readBuffer utils.ReadBuffer, actualLength 
 	}
 
 	// Create the instance
-	return NewBACnetTagPayloadOctetString(octets, actualLength), nil
+	return &_BACnetTagPayloadOctetString{
+		ActualLength: actualLength,
+		Octets:       octets,
+	}, nil
 }
 
 func (m *_BACnetTagPayloadOctetString) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -143,6 +146,16 @@ func (m *_BACnetTagPayloadOctetString) Serialize(writeBuffer utils.WriteBuffer) 
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetTagPayloadOctetString) GetActualLength() uint32 {
+	return m.ActualLength
+}
+
+//
+////
 
 func (m *_BACnetTagPayloadOctetString) isBACnetTagPayloadOctetString() bool {
 	return true

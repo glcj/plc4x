@@ -21,7 +21,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -121,7 +121,7 @@ func ModbusConstantsParse(readBuffer utils.ReadBuffer) (ModbusConstants, error) 
 	}
 
 	// Create the instance
-	return NewModbusConstants(), nil
+	return &_ModbusConstants{}, nil
 }
 
 func (m *_ModbusConstants) Serialize(writeBuffer utils.WriteBuffer) error {

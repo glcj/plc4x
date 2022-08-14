@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -275,7 +275,7 @@ func BACnetActionCommandParse(readBuffer utils.ReadBuffer) (BACnetActionCommand,
 		if pullErr := readBuffer.PullContext("propertyValue"); pullErr != nil {
 			return nil, errors.Wrap(pullErr, "Error pulling for propertyValue")
 		}
-		_val, _err := BACnetConstructedDataParse(readBuffer, uint8(4), objectIdentifier.GetObjectType(), propertyIdentifier.GetValue(), CastBACnetTagPayloadUnsignedInteger(CastBACnetTagPayloadUnsignedInteger(utils.InlineIf(bool((arrayIndex) != (nil)), func() interface{} { return CastBACnetTagPayloadUnsignedInteger((arrayIndex).GetPayload()) }, func() interface{} { return CastBACnetTagPayloadUnsignedInteger(nil) }))))
+		_val, _err := BACnetConstructedDataParse(readBuffer, uint8(4), objectIdentifier.GetObjectType(), propertyIdentifier.GetValue(), (CastBACnetTagPayloadUnsignedInteger(utils.InlineIf(bool((arrayIndex) != (nil)), func() interface{} { return CastBACnetTagPayloadUnsignedInteger((arrayIndex).GetPayload()) }, func() interface{} { return CastBACnetTagPayloadUnsignedInteger(nil) }))))
 		switch {
 		case errors.Is(_err, utils.ParseAssertError{}) || errors.Is(_err, io.EOF):
 			log.Debug().Err(_err).Msg("Resetting position because optional threw an error")
@@ -365,7 +365,17 @@ func BACnetActionCommandParse(readBuffer utils.ReadBuffer) (BACnetActionCommand,
 	}
 
 	// Create the instance
-	return NewBACnetActionCommand(deviceIdentifier, objectIdentifier, propertyIdentifier, arrayIndex, propertyValue, priority, postDelay, quitOnFailure, writeSuccessful), nil
+	return &_BACnetActionCommand{
+		DeviceIdentifier:   deviceIdentifier,
+		ObjectIdentifier:   objectIdentifier,
+		PropertyIdentifier: propertyIdentifier,
+		ArrayIndex:         arrayIndex,
+		PropertyValue:      propertyValue,
+		Priority:           priority,
+		PostDelay:          postDelay,
+		QuitOnFailure:      quitOnFailure,
+		WriteSuccessful:    writeSuccessful,
+	}, nil
 }
 
 func (m *_BACnetActionCommand) Serialize(writeBuffer utils.WriteBuffer) error {

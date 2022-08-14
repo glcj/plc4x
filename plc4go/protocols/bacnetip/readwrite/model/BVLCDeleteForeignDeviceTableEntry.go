@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -182,9 +182,9 @@ func BVLCDeleteForeignDeviceTableEntryParse(readBuffer utils.ReadBuffer) (BVLCDe
 
 	// Create a partially initialized instance
 	_child := &_BVLCDeleteForeignDeviceTableEntry{
+		_BVLC: &_BVLC{},
 		Ip:    ip,
 		Port:  port,
-		_BVLC: &_BVLC{},
 	}
 	_child._BVLC._BVLCChildRequirements = _child
 	return _child, nil

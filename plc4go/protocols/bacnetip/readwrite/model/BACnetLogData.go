@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -280,6 +280,16 @@ func (pm *_BACnetLogData) SerializeParent(writeBuffer utils.WriteBuffer, child B
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetLogData) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetLogData) isBACnetLogData() bool {
 	return true

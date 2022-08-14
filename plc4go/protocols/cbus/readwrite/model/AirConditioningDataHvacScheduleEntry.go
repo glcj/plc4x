@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -41,12 +41,12 @@ type AirConditioningDataHvacScheduleEntry interface {
 	GetEntry() uint8
 	// GetFormat returns Format (property field)
 	GetFormat() byte
-	// GetHumidityModeAndFlags returns HumidityModeAndFlags (property field)
-	GetHumidityModeAndFlags() HVACHumidityModeAndFlags
+	// GetHvacModeAndFlags returns HvacModeAndFlags (property field)
+	GetHvacModeAndFlags() HVACModeAndFlags
 	// GetStartTime returns StartTime (property field)
 	GetStartTime() HVACStartTime
 	// GetLevel returns Level (property field)
-	GetLevel() HVACHumidity
+	GetLevel() HVACTemperature
 	// GetRawLevel returns RawLevel (property field)
 	GetRawLevel() HVACRawLevels
 }
@@ -61,14 +61,14 @@ type AirConditioningDataHvacScheduleEntryExactly interface {
 // _AirConditioningDataHvacScheduleEntry is the data-structure of this message
 type _AirConditioningDataHvacScheduleEntry struct {
 	*_AirConditioningData
-	ZoneGroup            byte
-	ZoneList             HVACZoneList
-	Entry                uint8
-	Format               byte
-	HumidityModeAndFlags HVACHumidityModeAndFlags
-	StartTime            HVACStartTime
-	Level                HVACHumidity
-	RawLevel             HVACRawLevels
+	ZoneGroup        byte
+	ZoneList         HVACZoneList
+	Entry            uint8
+	Format           byte
+	HvacModeAndFlags HVACModeAndFlags
+	StartTime        HVACStartTime
+	Level            HVACTemperature
+	RawLevel         HVACRawLevels
 }
 
 ///////////////////////////////////////////////////////////
@@ -110,15 +110,15 @@ func (m *_AirConditioningDataHvacScheduleEntry) GetFormat() byte {
 	return m.Format
 }
 
-func (m *_AirConditioningDataHvacScheduleEntry) GetHumidityModeAndFlags() HVACHumidityModeAndFlags {
-	return m.HumidityModeAndFlags
+func (m *_AirConditioningDataHvacScheduleEntry) GetHvacModeAndFlags() HVACModeAndFlags {
+	return m.HvacModeAndFlags
 }
 
 func (m *_AirConditioningDataHvacScheduleEntry) GetStartTime() HVACStartTime {
 	return m.StartTime
 }
 
-func (m *_AirConditioningDataHvacScheduleEntry) GetLevel() HVACHumidity {
+func (m *_AirConditioningDataHvacScheduleEntry) GetLevel() HVACTemperature {
 	return m.Level
 }
 
@@ -132,13 +132,13 @@ func (m *_AirConditioningDataHvacScheduleEntry) GetRawLevel() HVACRawLevels {
 ///////////////////////////////////////////////////////////
 
 // NewAirConditioningDataHvacScheduleEntry factory function for _AirConditioningDataHvacScheduleEntry
-func NewAirConditioningDataHvacScheduleEntry(zoneGroup byte, zoneList HVACZoneList, entry uint8, format byte, humidityModeAndFlags HVACHumidityModeAndFlags, startTime HVACStartTime, level HVACHumidity, rawLevel HVACRawLevels, commandTypeContainer AirConditioningCommandTypeContainer) *_AirConditioningDataHvacScheduleEntry {
+func NewAirConditioningDataHvacScheduleEntry(zoneGroup byte, zoneList HVACZoneList, entry uint8, format byte, hvacModeAndFlags HVACModeAndFlags, startTime HVACStartTime, level HVACTemperature, rawLevel HVACRawLevels, commandTypeContainer AirConditioningCommandTypeContainer) *_AirConditioningDataHvacScheduleEntry {
 	_result := &_AirConditioningDataHvacScheduleEntry{
 		ZoneGroup:            zoneGroup,
 		ZoneList:             zoneList,
 		Entry:                entry,
 		Format:               format,
-		HumidityModeAndFlags: humidityModeAndFlags,
+		HvacModeAndFlags:     hvacModeAndFlags,
 		StartTime:            startTime,
 		Level:                level,
 		RawLevel:             rawLevel,
@@ -182,8 +182,8 @@ func (m *_AirConditioningDataHvacScheduleEntry) GetLengthInBitsConditional(lastI
 	// Simple field (format)
 	lengthInBits += 8
 
-	// Simple field (humidityModeAndFlags)
-	lengthInBits += m.HumidityModeAndFlags.GetLengthInBits()
+	// Simple field (hvacModeAndFlags)
+	lengthInBits += m.HvacModeAndFlags.GetLengthInBits()
 
 	// Simple field (startTime)
 	lengthInBits += m.StartTime.GetLengthInBits()
@@ -248,17 +248,17 @@ func AirConditioningDataHvacScheduleEntryParse(readBuffer utils.ReadBuffer) (Air
 	}
 	format := _format
 
-	// Simple Field (humidityModeAndFlags)
-	if pullErr := readBuffer.PullContext("humidityModeAndFlags"); pullErr != nil {
-		return nil, errors.Wrap(pullErr, "Error pulling for humidityModeAndFlags")
+	// Simple Field (hvacModeAndFlags)
+	if pullErr := readBuffer.PullContext("hvacModeAndFlags"); pullErr != nil {
+		return nil, errors.Wrap(pullErr, "Error pulling for hvacModeAndFlags")
 	}
-	_humidityModeAndFlags, _humidityModeAndFlagsErr := HVACHumidityModeAndFlagsParse(readBuffer)
-	if _humidityModeAndFlagsErr != nil {
-		return nil, errors.Wrap(_humidityModeAndFlagsErr, "Error parsing 'humidityModeAndFlags' field of AirConditioningDataHvacScheduleEntry")
+	_hvacModeAndFlags, _hvacModeAndFlagsErr := HVACModeAndFlagsParse(readBuffer)
+	if _hvacModeAndFlagsErr != nil {
+		return nil, errors.Wrap(_hvacModeAndFlagsErr, "Error parsing 'hvacModeAndFlags' field of AirConditioningDataHvacScheduleEntry")
 	}
-	humidityModeAndFlags := _humidityModeAndFlags.(HVACHumidityModeAndFlags)
-	if closeErr := readBuffer.CloseContext("humidityModeAndFlags"); closeErr != nil {
-		return nil, errors.Wrap(closeErr, "Error closing for humidityModeAndFlags")
+	hvacModeAndFlags := _hvacModeAndFlags.(HVACModeAndFlags)
+	if closeErr := readBuffer.CloseContext("hvacModeAndFlags"); closeErr != nil {
+		return nil, errors.Wrap(closeErr, "Error closing for hvacModeAndFlags")
 	}
 
 	// Simple Field (startTime)
@@ -275,13 +275,13 @@ func AirConditioningDataHvacScheduleEntryParse(readBuffer utils.ReadBuffer) (Air
 	}
 
 	// Optional Field (level) (Can be skipped, if a given expression evaluates to false)
-	var level HVACHumidity = nil
-	if humidityModeAndFlags.GetIsLevelHumidity() {
+	var level HVACTemperature = nil
+	if hvacModeAndFlags.GetIsLevelTemperature() {
 		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("level"); pullErr != nil {
 			return nil, errors.Wrap(pullErr, "Error pulling for level")
 		}
-		_val, _err := HVACHumidityParse(readBuffer)
+		_val, _err := HVACTemperatureParse(readBuffer)
 		switch {
 		case errors.Is(_err, utils.ParseAssertError{}) || errors.Is(_err, io.EOF):
 			log.Debug().Err(_err).Msg("Resetting position because optional threw an error")
@@ -289,7 +289,7 @@ func AirConditioningDataHvacScheduleEntryParse(readBuffer utils.ReadBuffer) (Air
 		case _err != nil:
 			return nil, errors.Wrap(_err, "Error parsing 'level' field of AirConditioningDataHvacScheduleEntry")
 		default:
-			level = _val.(HVACHumidity)
+			level = _val.(HVACTemperature)
 			if closeErr := readBuffer.CloseContext("level"); closeErr != nil {
 				return nil, errors.Wrap(closeErr, "Error closing for level")
 			}
@@ -298,7 +298,7 @@ func AirConditioningDataHvacScheduleEntryParse(readBuffer utils.ReadBuffer) (Air
 
 	// Optional Field (rawLevel) (Can be skipped, if a given expression evaluates to false)
 	var rawLevel HVACRawLevels = nil
-	if humidityModeAndFlags.GetIsLevelRaw() {
+	if hvacModeAndFlags.GetIsLevelRaw() {
 		currentPos = positionAware.GetPos()
 		if pullErr := readBuffer.PullContext("rawLevel"); pullErr != nil {
 			return nil, errors.Wrap(pullErr, "Error pulling for rawLevel")
@@ -324,15 +324,15 @@ func AirConditioningDataHvacScheduleEntryParse(readBuffer utils.ReadBuffer) (Air
 
 	// Create a partially initialized instance
 	_child := &_AirConditioningDataHvacScheduleEntry{
+		_AirConditioningData: &_AirConditioningData{},
 		ZoneGroup:            zoneGroup,
 		ZoneList:             zoneList,
 		Entry:                entry,
 		Format:               format,
-		HumidityModeAndFlags: humidityModeAndFlags,
+		HvacModeAndFlags:     hvacModeAndFlags,
 		StartTime:            startTime,
 		Level:                level,
 		RawLevel:             rawLevel,
-		_AirConditioningData: &_AirConditioningData{},
 	}
 	_child._AirConditioningData._AirConditioningDataChildRequirements = _child
 	return _child, nil
@@ -379,16 +379,16 @@ func (m *_AirConditioningDataHvacScheduleEntry) Serialize(writeBuffer utils.Writ
 			return errors.Wrap(_formatErr, "Error serializing 'format' field")
 		}
 
-		// Simple Field (humidityModeAndFlags)
-		if pushErr := writeBuffer.PushContext("humidityModeAndFlags"); pushErr != nil {
-			return errors.Wrap(pushErr, "Error pushing for humidityModeAndFlags")
+		// Simple Field (hvacModeAndFlags)
+		if pushErr := writeBuffer.PushContext("hvacModeAndFlags"); pushErr != nil {
+			return errors.Wrap(pushErr, "Error pushing for hvacModeAndFlags")
 		}
-		_humidityModeAndFlagsErr := writeBuffer.WriteSerializable(m.GetHumidityModeAndFlags())
-		if popErr := writeBuffer.PopContext("humidityModeAndFlags"); popErr != nil {
-			return errors.Wrap(popErr, "Error popping for humidityModeAndFlags")
+		_hvacModeAndFlagsErr := writeBuffer.WriteSerializable(m.GetHvacModeAndFlags())
+		if popErr := writeBuffer.PopContext("hvacModeAndFlags"); popErr != nil {
+			return errors.Wrap(popErr, "Error popping for hvacModeAndFlags")
 		}
-		if _humidityModeAndFlagsErr != nil {
-			return errors.Wrap(_humidityModeAndFlagsErr, "Error serializing 'humidityModeAndFlags' field")
+		if _hvacModeAndFlagsErr != nil {
+			return errors.Wrap(_hvacModeAndFlagsErr, "Error serializing 'hvacModeAndFlags' field")
 		}
 
 		// Simple Field (startTime)
@@ -404,7 +404,7 @@ func (m *_AirConditioningDataHvacScheduleEntry) Serialize(writeBuffer utils.Writ
 		}
 
 		// Optional Field (level) (Can be skipped, if the value is null)
-		var level HVACHumidity = nil
+		var level HVACTemperature = nil
 		if m.GetLevel() != nil {
 			if pushErr := writeBuffer.PushContext("level"); pushErr != nil {
 				return errors.Wrap(pushErr, "Error pushing for level")

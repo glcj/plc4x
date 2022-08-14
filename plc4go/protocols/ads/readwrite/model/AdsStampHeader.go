@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -173,7 +173,11 @@ func AdsStampHeaderParse(readBuffer utils.ReadBuffer) (AdsStampHeader, error) {
 	}
 
 	// Create the instance
-	return NewAdsStampHeader(timestamp, samples, adsNotificationSamples), nil
+	return &_AdsStampHeader{
+		Timestamp:              timestamp,
+		Samples:                samples,
+		AdsNotificationSamples: adsNotificationSamples,
+	}, nil
 }
 
 func (m *_AdsStampHeader) Serialize(writeBuffer utils.WriteBuffer) error {

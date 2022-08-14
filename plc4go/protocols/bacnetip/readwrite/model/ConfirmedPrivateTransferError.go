@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -237,11 +237,11 @@ func ConfirmedPrivateTransferErrorParse(readBuffer utils.ReadBuffer, errorChoice
 
 	// Create a partially initialized instance
 	_child := &_ConfirmedPrivateTransferError{
+		_BACnetError:    &_BACnetError{},
 		ErrorType:       errorType,
 		VendorId:        vendorId,
 		ServiceNumber:   serviceNumber,
 		ErrorParameters: errorParameters,
-		_BACnetError:    &_BACnetError{},
 	}
 	_child._BACnetError._BACnetErrorChildRequirements = _child
 	return _child, nil

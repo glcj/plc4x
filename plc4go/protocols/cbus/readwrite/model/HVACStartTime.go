@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -192,7 +192,9 @@ func HVACStartTimeParse(readBuffer utils.ReadBuffer) (HVACStartTime, error) {
 	}
 
 	// Create the instance
-	return NewHVACStartTime(minutesSinceSunday12AM), nil
+	return &_HVACStartTime{
+		MinutesSinceSunday12AM: minutesSinceSunday12AM,
+	}, nil
 }
 
 func (m *_HVACStartTime) Serialize(writeBuffer utils.WriteBuffer) error {

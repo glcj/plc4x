@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -160,7 +160,10 @@ func BACnetPortPermissionParse(readBuffer utils.ReadBuffer) (BACnetPortPermissio
 	}
 
 	// Create the instance
-	return NewBACnetPortPermission(port, enable), nil
+	return &_BACnetPortPermission{
+		Port:   port,
+		Enable: enable,
+	}, nil
 }
 
 func (m *_BACnetPortPermission) Serialize(writeBuffer utils.WriteBuffer) error {

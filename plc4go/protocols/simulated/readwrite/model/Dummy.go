@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -118,7 +118,9 @@ func DummyParse(readBuffer utils.ReadBuffer) (Dummy, error) {
 	}
 
 	// Create the instance
-	return NewDummy(dummy), nil
+	return &_Dummy{
+		Dummy: dummy,
+	}, nil
 }
 
 func (m *_Dummy) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -234,6 +234,16 @@ func (pm *_Apdu) SerializeParent(writeBuffer utils.WriteBuffer, child Apdu, seri
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_Apdu) GetDataLength() uint8 {
+	return m.DataLength
+}
+
+//
+////
 
 func (m *_Apdu) isApdu() bool {
 	return true

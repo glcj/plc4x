@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -165,11 +165,11 @@ func IdentifyReplyCommandDelaysParse(readBuffer utils.ReadBuffer, attribute Attr
 
 	// Create a partially initialized instance
 	_child := &_IdentifyReplyCommandDelays{
-		TerminalLevels: terminalLevels,
-		ReStrikeDelay:  reStrikeDelay,
 		_IdentifyReplyCommand: &_IdentifyReplyCommand{
 			NumBytes: numBytes,
 		},
+		TerminalLevels: terminalLevels,
+		ReStrikeDelay:  reStrikeDelay,
 	}
 	_child._IdentifyReplyCommand._IdentifyReplyCommandChildRequirements = _child
 	return _child, nil

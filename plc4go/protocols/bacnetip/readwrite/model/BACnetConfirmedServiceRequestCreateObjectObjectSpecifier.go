@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -285,7 +285,13 @@ func BACnetConfirmedServiceRequestCreateObjectObjectSpecifierParse(readBuffer ut
 	}
 
 	// Create the instance
-	return NewBACnetConfirmedServiceRequestCreateObjectObjectSpecifier(openingTag, rawObjectType, objectIdentifier, closingTag, tagNumber), nil
+	return &_BACnetConfirmedServiceRequestCreateObjectObjectSpecifier{
+		TagNumber:        tagNumber,
+		OpeningTag:       openingTag,
+		RawObjectType:    rawObjectType,
+		ObjectIdentifier: objectIdentifier,
+		ClosingTag:       closingTag,
+	}, nil
 }
 
 func (m *_BACnetConfirmedServiceRequestCreateObjectObjectSpecifier) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -368,6 +374,16 @@ func (m *_BACnetConfirmedServiceRequestCreateObjectObjectSpecifier) Serialize(wr
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetConfirmedServiceRequestCreateObjectObjectSpecifier) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetConfirmedServiceRequestCreateObjectObjectSpecifier) isBACnetConfirmedServiceRequestCreateObjectObjectSpecifier() bool {
 	return true

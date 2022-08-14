@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -152,10 +152,10 @@ func COTPParameterTpduSizeParse(readBuffer utils.ReadBuffer, rest uint8) (COTPPa
 
 	// Create a partially initialized instance
 	_child := &_COTPParameterTpduSize{
-		TpduSize: tpduSize,
 		_COTPParameter: &_COTPParameter{
 			Rest: rest,
 		},
+		TpduSize: tpduSize,
 	}
 	_child._COTPParameter._COTPParameterChildRequirements = _child
 	return _child, nil

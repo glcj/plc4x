@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetLogDataLogDataEntryFailureParse(readBuffer utils.ReadBuffer) (BACnetL
 
 	// Create a partially initialized instance
 	_child := &_BACnetLogDataLogDataEntryFailure{
-		Failure:                    failure,
 		_BACnetLogDataLogDataEntry: &_BACnetLogDataLogDataEntry{},
+		Failure:                    failure,
 	}
 	_child._BACnetLogDataLogDataEntry._BACnetLogDataLogDataEntryChildRequirements = _child
 	return _child, nil

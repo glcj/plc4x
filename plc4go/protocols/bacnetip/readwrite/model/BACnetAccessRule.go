@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -240,7 +240,13 @@ func BACnetAccessRuleParse(readBuffer utils.ReadBuffer) (BACnetAccessRule, error
 	}
 
 	// Create the instance
-	return NewBACnetAccessRule(timeRangeSpecifier, timeRange, locationSpecifier, location, enable), nil
+	return &_BACnetAccessRule{
+		TimeRangeSpecifier: timeRangeSpecifier,
+		TimeRange:          timeRange,
+		LocationSpecifier:  locationSpecifier,
+		Location:           location,
+		Enable:             enable,
+	}, nil
 }
 
 func (m *_BACnetAccessRule) Serialize(writeBuffer utils.WriteBuffer) error {

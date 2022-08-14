@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -180,8 +180,8 @@ func SecurityDataLowBatteryChargingParse(readBuffer utils.ReadBuffer) (SecurityD
 
 	// Create a partially initialized instance
 	_child := &_SecurityDataLowBatteryCharging{
-		StartStop:     startStop,
 		_SecurityData: &_SecurityData{},
+		StartStop:     startStop,
 	}
 	_child._SecurityData._SecurityDataChildRequirements = _child
 	return _child, nil

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -206,7 +206,12 @@ func BACnetRouterEntryParse(readBuffer utils.ReadBuffer) (BACnetRouterEntry, err
 	}
 
 	// Create the instance
-	return NewBACnetRouterEntry(networkNumber, macAddress, status, performanceIndex), nil
+	return &_BACnetRouterEntry{
+		NetworkNumber:    networkNumber,
+		MacAddress:       macAddress,
+		Status:           status,
+		PerformanceIndex: performanceIndex,
+	}, nil
 }
 
 func (m *_BACnetRouterEntry) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -284,14 +284,14 @@ func BACnetConfirmedServiceRequestSubscribeCOVPropertyMultipleParse(readBuffer u
 
 	// Create a partially initialized instance
 	_child := &_BACnetConfirmedServiceRequestSubscribeCOVPropertyMultiple{
+		_BACnetConfirmedServiceRequest: &_BACnetConfirmedServiceRequest{
+			ServiceRequestLength: serviceRequestLength,
+		},
 		SubscriberProcessIdentifier:         subscriberProcessIdentifier,
 		IssueConfirmedNotifications:         issueConfirmedNotifications,
 		Lifetime:                            lifetime,
 		MaxNotificationDelay:                maxNotificationDelay,
 		ListOfCovSubscriptionSpecifications: listOfCovSubscriptionSpecifications,
-		_BACnetConfirmedServiceRequest: &_BACnetConfirmedServiceRequest{
-			ServiceRequestLength: serviceRequestLength,
-		},
 	}
 	_child._BACnetConfirmedServiceRequest._BACnetConfirmedServiceRequestChildRequirements = _child
 	return _child, nil

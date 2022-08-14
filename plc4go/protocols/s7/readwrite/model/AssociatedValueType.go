@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -202,7 +202,12 @@ func AssociatedValueTypeParse(readBuffer utils.ReadBuffer) (AssociatedValueType,
 	}
 
 	// Create the instance
-	return NewAssociatedValueType(returnCode, transportSize, valueLength, data), nil
+	return &_AssociatedValueType{
+		ReturnCode:    returnCode,
+		TransportSize: transportSize,
+		ValueLength:   valueLength,
+		Data:          data,
+	}, nil
 }
 
 func (m *_AssociatedValueType) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -118,7 +118,9 @@ func UnitAddressParse(readBuffer utils.ReadBuffer) (UnitAddress, error) {
 	}
 
 	// Create the instance
-	return NewUnitAddress(address), nil
+	return &_UnitAddress{
+		Address: address,
+	}, nil
 }
 
 func (m *_UnitAddress) Serialize(writeBuffer utils.WriteBuffer) error {

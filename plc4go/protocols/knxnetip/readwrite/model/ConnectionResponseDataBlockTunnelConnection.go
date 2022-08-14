@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -153,8 +153,8 @@ func ConnectionResponseDataBlockTunnelConnectionParse(readBuffer utils.ReadBuffe
 
 	// Create a partially initialized instance
 	_child := &_ConnectionResponseDataBlockTunnelConnection{
-		KnxAddress:                   knxAddress,
 		_ConnectionResponseDataBlock: &_ConnectionResponseDataBlock{},
+		KnxAddress:                   knxAddress,
 	}
 	_child._ConnectionResponseDataBlock._ConnectionResponseDataBlockChildRequirements = _child
 	return _child, nil

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -118,7 +118,9 @@ func ChecksumParse(readBuffer utils.ReadBuffer) (Checksum, error) {
 	}
 
 	// Create the instance
-	return NewChecksum(value), nil
+	return &_Checksum{
+		Value: value,
+	}, nil
 }
 
 func (m *_Checksum) Serialize(writeBuffer utils.WriteBuffer) error {

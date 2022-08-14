@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -166,7 +166,9 @@ func PanicStatusParse(readBuffer utils.ReadBuffer) (PanicStatus, error) {
 	}
 
 	// Create the instance
-	return NewPanicStatus(status), nil
+	return &_PanicStatus{
+		Status: status,
+	}, nil
 }
 
 func (m *_PanicStatus) Serialize(writeBuffer utils.WriteBuffer) error {

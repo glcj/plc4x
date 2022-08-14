@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -144,8 +144,8 @@ func LightingDataOnParse(readBuffer utils.ReadBuffer) (LightingDataOn, error) {
 
 	// Create a partially initialized instance
 	_child := &_LightingDataOn{
-		Group:         group,
 		_LightingData: &_LightingData{},
+		Group:         group,
 	}
 	_child._LightingData._LightingDataChildRequirements = _child
 	return _child, nil

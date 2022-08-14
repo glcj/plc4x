@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -183,7 +183,11 @@ func BACnetLogRecordParse(readBuffer utils.ReadBuffer) (BACnetLogRecord, error) 
 	}
 
 	// Create the instance
-	return NewBACnetLogRecord(timestamp, logDatum, statusFlags), nil
+	return &_BACnetLogRecord{
+		Timestamp:   timestamp,
+		LogDatum:    logDatum,
+		StatusFlags: statusFlags,
+	}, nil
 }
 
 func (m *_BACnetLogRecord) Serialize(writeBuffer utils.WriteBuffer) error {

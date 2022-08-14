@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -160,7 +160,10 @@ func BACnetRecipientProcessParse(readBuffer utils.ReadBuffer) (BACnetRecipientPr
 	}
 
 	// Create the instance
-	return NewBACnetRecipientProcess(recipient, processIdentifier), nil
+	return &_BACnetRecipientProcess{
+		Recipient:         recipient,
+		ProcessIdentifier: processIdentifier,
+	}, nil
 }
 
 func (m *_BACnetRecipientProcess) Serialize(writeBuffer utils.WriteBuffer) error {

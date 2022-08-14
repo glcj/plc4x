@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -203,10 +203,10 @@ func ComObjectTableRealisationType1Parse(readBuffer utils.ReadBuffer, firmwareTy
 
 	// Create a partially initialized instance
 	_child := &_ComObjectTableRealisationType1{
+		_ComObjectTable:      &_ComObjectTable{},
 		NumEntries:           numEntries,
 		RamFlagsTablePointer: ramFlagsTablePointer,
 		ComObjectDescriptors: comObjectDescriptors,
-		_ComObjectTable:      &_ComObjectTable{},
 	}
 	_child._ComObjectTable._ComObjectTableChildRequirements = _child
 	return _child, nil

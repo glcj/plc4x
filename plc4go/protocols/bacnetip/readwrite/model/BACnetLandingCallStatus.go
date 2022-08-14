@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -183,7 +183,11 @@ func BACnetLandingCallStatusParse(readBuffer utils.ReadBuffer) (BACnetLandingCal
 	}
 
 	// Create the instance
-	return NewBACnetLandingCallStatus(floorNumber, command, floorText), nil
+	return &_BACnetLandingCallStatus{
+		FloorNumber: floorNumber,
+		Command:     command,
+		FloorText:   floorText,
+	}, nil
 }
 
 func (m *_BACnetLandingCallStatus) Serialize(writeBuffer utils.WriteBuffer) error {

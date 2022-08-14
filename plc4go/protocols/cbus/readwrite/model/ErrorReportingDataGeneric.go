@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -335,6 +335,7 @@ func ErrorReportingDataGenericParse(readBuffer utils.ReadBuffer) (ErrorReporting
 
 	// Create a partially initialized instance
 	_child := &_ErrorReportingDataGeneric{
+		_ErrorReportingData: &_ErrorReportingData{},
 		SystemCategory:      systemCategory,
 		MostRecent:          mostRecent,
 		Acknowledge:         acknowledge,
@@ -343,7 +344,6 @@ func ErrorReportingDataGenericParse(readBuffer utils.ReadBuffer) (ErrorReporting
 		DeviceId:            deviceId,
 		ErrorData1:          errorData1,
 		ErrorData2:          errorData2,
-		_ErrorReportingData: &_ErrorReportingData{},
 	}
 	_child._ErrorReportingData._ErrorReportingDataChildRequirements = _child
 	return _child, nil

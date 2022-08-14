@@ -21,13 +21,14 @@ package bacnetip
 
 import (
 	"fmt"
-	"github.com/apache/plc4x/plc4go/internal/spi"
-	"github.com/apache/plc4x/plc4go/internal/spi/default"
-	internalModel "github.com/apache/plc4x/plc4go/internal/spi/model"
 	"github.com/apache/plc4x/plc4go/pkg/api"
 	apiModel "github.com/apache/plc4x/plc4go/pkg/api/model"
+	"github.com/apache/plc4x/plc4go/spi"
+	"github.com/apache/plc4x/plc4go/spi/default"
+	internalModel "github.com/apache/plc4x/plc4go/spi/model"
 	"github.com/rs/zerolog/log"
 	"sync"
+	"time"
 )
 
 type Connection struct {
@@ -84,6 +85,7 @@ func (c *Connection) Connect() <-chan plc4go.PlcConnectionConnectResult {
 				case message := <-incomingMessageChannel:
 					// TODO: implement mapping to subscribers
 					log.Info().Msgf("Received \n%v", message)
+				case <-time.After(20 * time.Millisecond):
 				}
 			}
 			log.Info().Msg("Ending incoming message transfer")

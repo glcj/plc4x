@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetSecurityKeySetKeyIdsParse(readBuffer utils.ReadBuffer, tagNumber uint
 	}
 
 	// Create the instance
-	return NewBACnetSecurityKeySetKeyIds(openingTag, keyIds, closingTag, tagNumber), nil
+	return &_BACnetSecurityKeySetKeyIds{
+		TagNumber:  tagNumber,
+		OpeningTag: openingTag,
+		KeyIds:     keyIds,
+		ClosingTag: closingTag,
+	}, nil
 }
 
 func (m *_BACnetSecurityKeySetKeyIds) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetSecurityKeySetKeyIds) Serialize(writeBuffer utils.WriteBuffer) e
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetSecurityKeySetKeyIds) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetSecurityKeySetKeyIds) isBACnetSecurityKeySetKeyIds() bool {
 	return true

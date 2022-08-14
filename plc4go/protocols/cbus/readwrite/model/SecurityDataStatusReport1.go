@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -238,11 +238,11 @@ func SecurityDataStatusReport1Parse(readBuffer utils.ReadBuffer) (SecurityDataSt
 
 	// Create a partially initialized instance
 	_child := &_SecurityDataStatusReport1{
+		_SecurityData: &_SecurityData{},
 		ArmCodeType:   armCodeType,
 		TamperStatus:  tamperStatus,
 		PanicStatus:   panicStatus,
 		ZoneStatus:    zoneStatus,
-		_SecurityData: &_SecurityData{},
 	}
 	_child._SecurityData._SecurityDataChildRequirements = _child
 	return _child, nil

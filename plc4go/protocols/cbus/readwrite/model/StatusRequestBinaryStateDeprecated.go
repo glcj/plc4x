@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 )
@@ -33,7 +33,7 @@ type StatusRequestBinaryStateDeprecated interface {
 	utils.Serializable
 	StatusRequest
 	// GetApplication returns Application (property field)
-	GetApplication() byte
+	GetApplication() ApplicationIdContainer
 }
 
 // StatusRequestBinaryStateDeprecatedExactly can be used when we want exactly this type and not a type which fulfills StatusRequestBinaryStateDeprecated.
@@ -46,7 +46,10 @@ type StatusRequestBinaryStateDeprecatedExactly interface {
 // _StatusRequestBinaryStateDeprecated is the data-structure of this message
 type _StatusRequestBinaryStateDeprecated struct {
 	*_StatusRequest
-	Application byte
+	Application ApplicationIdContainer
+	// Reserved Fields
+	reservedField0 *byte
+	reservedField1 *byte
 }
 
 ///////////////////////////////////////////////////////////
@@ -72,7 +75,7 @@ func (m *_StatusRequestBinaryStateDeprecated) GetParent() StatusRequest {
 /////////////////////// Accessors for property fields.
 ///////////////////////
 
-func (m *_StatusRequestBinaryStateDeprecated) GetApplication() byte {
+func (m *_StatusRequestBinaryStateDeprecated) GetApplication() ApplicationIdContainer {
 	return m.Application
 }
 
@@ -82,7 +85,7 @@ func (m *_StatusRequestBinaryStateDeprecated) GetApplication() byte {
 ///////////////////////////////////////////////////////////
 
 // NewStatusRequestBinaryStateDeprecated factory function for _StatusRequestBinaryStateDeprecated
-func NewStatusRequestBinaryStateDeprecated(application byte, statusType byte) *_StatusRequestBinaryStateDeprecated {
+func NewStatusRequestBinaryStateDeprecated(application ApplicationIdContainer, statusType byte) *_StatusRequestBinaryStateDeprecated {
 	_result := &_StatusRequestBinaryStateDeprecated{
 		Application:    application,
 		_StatusRequest: NewStatusRequest(statusType),
@@ -138,6 +141,7 @@ func StatusRequestBinaryStateDeprecatedParse(readBuffer utils.ReadBuffer) (Statu
 	currentPos := positionAware.GetPos()
 	_ = currentPos
 
+	var reservedField0 *byte
 	// Reserved Field (Compartmentalized so the "reserved" variable can't leak)
 	{
 		reserved, _err := readBuffer.ReadByte("reserved")
@@ -149,16 +153,25 @@ func StatusRequestBinaryStateDeprecatedParse(readBuffer utils.ReadBuffer) (Statu
 				"expected value": byte(0xFA),
 				"got value":      reserved,
 			}).Msg("Got unexpected response for reserved field.")
+			// We save the value, so it can be re-serialized
+			reservedField0 = &reserved
 		}
 	}
 
 	// Simple Field (application)
-	_application, _applicationErr := readBuffer.ReadByte("application")
+	if pullErr := readBuffer.PullContext("application"); pullErr != nil {
+		return nil, errors.Wrap(pullErr, "Error pulling for application")
+	}
+	_application, _applicationErr := ApplicationIdContainerParse(readBuffer)
 	if _applicationErr != nil {
 		return nil, errors.Wrap(_applicationErr, "Error parsing 'application' field of StatusRequestBinaryStateDeprecated")
 	}
 	application := _application
+	if closeErr := readBuffer.CloseContext("application"); closeErr != nil {
+		return nil, errors.Wrap(closeErr, "Error closing for application")
+	}
 
+	var reservedField1 *byte
 	// Reserved Field (Compartmentalized so the "reserved" variable can't leak)
 	{
 		reserved, _err := readBuffer.ReadByte("reserved")
@@ -170,6 +183,8 @@ func StatusRequestBinaryStateDeprecatedParse(readBuffer utils.ReadBuffer) (Statu
 				"expected value": byte(0x00),
 				"got value":      reserved,
 			}).Msg("Got unexpected response for reserved field.")
+			// We save the value, so it can be re-serialized
+			reservedField1 = &reserved
 		}
 	}
 
@@ -179,8 +194,10 @@ func StatusRequestBinaryStateDeprecatedParse(readBuffer utils.ReadBuffer) (Statu
 
 	// Create a partially initialized instance
 	_child := &_StatusRequestBinaryStateDeprecated{
-		Application:    application,
 		_StatusRequest: &_StatusRequest{},
+		Application:    application,
+		reservedField0: reservedField0,
+		reservedField1: reservedField1,
 	}
 	_child._StatusRequest._StatusRequestChildRequirements = _child
 	return _child, nil
@@ -196,22 +213,43 @@ func (m *_StatusRequestBinaryStateDeprecated) Serialize(writeBuffer utils.WriteB
 
 		// Reserved Field (reserved)
 		{
-			_err := writeBuffer.WriteByte("reserved", byte(0xFA))
+			var reserved byte = byte(0xFA)
+			if m.reservedField0 != nil {
+				log.Info().Fields(map[string]interface{}{
+					"expected value": byte(0xFA),
+					"got value":      reserved,
+				}).Msg("Overriding reserved field with unexpected value.")
+				reserved = *m.reservedField0
+			}
+			_err := writeBuffer.WriteByte("reserved", reserved)
 			if _err != nil {
 				return errors.Wrap(_err, "Error serializing 'reserved' field")
 			}
 		}
 
 		// Simple Field (application)
-		application := byte(m.GetApplication())
-		_applicationErr := writeBuffer.WriteByte("application", (application))
+		if pushErr := writeBuffer.PushContext("application"); pushErr != nil {
+			return errors.Wrap(pushErr, "Error pushing for application")
+		}
+		_applicationErr := writeBuffer.WriteSerializable(m.GetApplication())
+		if popErr := writeBuffer.PopContext("application"); popErr != nil {
+			return errors.Wrap(popErr, "Error popping for application")
+		}
 		if _applicationErr != nil {
 			return errors.Wrap(_applicationErr, "Error serializing 'application' field")
 		}
 
 		// Reserved Field (reserved)
 		{
-			_err := writeBuffer.WriteByte("reserved", byte(0x00))
+			var reserved byte = byte(0x00)
+			if m.reservedField1 != nil {
+				log.Info().Fields(map[string]interface{}{
+					"expected value": byte(0x00),
+					"got value":      reserved,
+				}).Msg("Overriding reserved field with unexpected value.")
+				reserved = *m.reservedField1
+			}
+			_err := writeBuffer.WriteByte("reserved", reserved)
 			if _err != nil {
 				return errors.Wrap(_err, "Error serializing 'reserved' field")
 			}

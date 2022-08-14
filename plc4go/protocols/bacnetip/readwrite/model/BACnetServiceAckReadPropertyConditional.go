@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,10 +150,10 @@ func BACnetServiceAckReadPropertyConditionalParse(readBuffer utils.ReadBuffer, s
 
 	// Create a partially initialized instance
 	_child := &_BACnetServiceAckReadPropertyConditional{
-		BytesOfRemovedService: bytesOfRemovedService,
 		_BACnetServiceAck: &_BACnetServiceAck{
 			ServiceAckLength: serviceAckLength,
 		},
+		BytesOfRemovedService: bytesOfRemovedService,
 	}
 	_child._BACnetServiceAck._BACnetServiceAckChildRequirements = _child
 	return _child, nil
@@ -180,6 +180,16 @@ func (m *_BACnetServiceAckReadPropertyConditional) Serialize(writeBuffer utils.W
 	}
 	return m.SerializeParent(writeBuffer, m, ser)
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetServiceAckReadPropertyConditional) GetServiceAckPayloadLength() uint16 {
+	return m.ServiceAckPayloadLength
+}
+
+//
+////
 
 func (m *_BACnetServiceAckReadPropertyConditional) isBACnetServiceAckReadPropertyConditional() bool {
 	return true

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -114,7 +114,7 @@ func (m *_MediaTransportControlDataTrackName) GetLengthInBitsConditional(lastIte
 	lengthInBits := uint16(m.GetParentLengthInBits())
 
 	// Simple field (trackName)
-	lengthInBits += uint16(int32(int32(int32(m.GetCommandTypeContainer().NumBytes())-int32(int32(1)))) * int32(int32(8)))
+	lengthInBits += uint16(int32((int32(m.GetCommandTypeContainer().NumBytes()) - int32(int32(1)))) * int32(int32(8)))
 
 	return lengthInBits
 }
@@ -145,8 +145,8 @@ func MediaTransportControlDataTrackNameParse(readBuffer utils.ReadBuffer, comman
 
 	// Create a partially initialized instance
 	_child := &_MediaTransportControlDataTrackName{
-		TrackName:                  trackName,
 		_MediaTransportControlData: &_MediaTransportControlData{},
+		TrackName:                  trackName,
 	}
 	_child._MediaTransportControlData._MediaTransportControlDataChildRequirements = _child
 	return _child, nil

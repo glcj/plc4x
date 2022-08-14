@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -146,8 +146,8 @@ func SecurityDataEventParse(readBuffer utils.ReadBuffer, commandTypeContainer Se
 
 	// Create a partially initialized instance
 	_child := &_SecurityDataEvent{
-		Data:          data,
 		_SecurityData: &_SecurityData{},
+		Data:          data,
 	}
 	_child._SecurityData._SecurityDataChildRequirements = _child
 	return _child, nil

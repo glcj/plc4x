@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -124,7 +124,9 @@ func BACnetAssignedLandingCallsParse(readBuffer utils.ReadBuffer) (BACnetAssigne
 	}
 
 	// Create the instance
-	return NewBACnetAssignedLandingCalls(landingCalls), nil
+	return &_BACnetAssignedLandingCalls{
+		LandingCalls: landingCalls,
+	}, nil
 }
 
 func (m *_BACnetAssignedLandingCalls) Serialize(writeBuffer utils.WriteBuffer) error {

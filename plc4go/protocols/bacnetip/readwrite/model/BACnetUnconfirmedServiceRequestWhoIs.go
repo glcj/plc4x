@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -201,11 +201,11 @@ func BACnetUnconfirmedServiceRequestWhoIsParse(readBuffer utils.ReadBuffer, serv
 
 	// Create a partially initialized instance
 	_child := &_BACnetUnconfirmedServiceRequestWhoIs{
-		DeviceInstanceRangeLowLimit:  deviceInstanceRangeLowLimit,
-		DeviceInstanceRangeHighLimit: deviceInstanceRangeHighLimit,
 		_BACnetUnconfirmedServiceRequest: &_BACnetUnconfirmedServiceRequest{
 			ServiceRequestLength: serviceRequestLength,
 		},
+		DeviceInstanceRangeLowLimit:  deviceInstanceRangeLowLimit,
+		DeviceInstanceRangeHighLimit: deviceInstanceRangeHighLimit,
 	}
 	_child._BACnetUnconfirmedServiceRequest._BACnetUnconfirmedServiceRequestChildRequirements = _child
 	return _child, nil

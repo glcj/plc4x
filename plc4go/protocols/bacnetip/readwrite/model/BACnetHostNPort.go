@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -147,7 +147,10 @@ func BACnetHostNPortParse(readBuffer utils.ReadBuffer) (BACnetHostNPort, error) 
 	}
 
 	// Create the instance
-	return NewBACnetHostNPort(host, port), nil
+	return &_BACnetHostNPort{
+		Host: host,
+		Port: port,
+	}, nil
 }
 
 func (m *_BACnetHostNPort) Serialize(writeBuffer utils.WriteBuffer) error {

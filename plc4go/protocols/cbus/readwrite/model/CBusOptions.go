@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -254,7 +254,17 @@ func CBusOptionsParse(readBuffer utils.ReadBuffer) (CBusOptions, error) {
 	}
 
 	// Create the instance
-	return NewCBusOptions(connect, smart, idmon, exstat, monitor, monall, pun, pcn, srchk), nil
+	return &_CBusOptions{
+		Connect: connect,
+		Smart:   smart,
+		Idmon:   idmon,
+		Exstat:  exstat,
+		Monitor: monitor,
+		Monall:  monall,
+		Pun:     pun,
+		Pcn:     pcn,
+		Srchk:   srchk,
+	}, nil
 }
 
 func (m *_CBusOptions) Serialize(writeBuffer utils.WriteBuffer) error {

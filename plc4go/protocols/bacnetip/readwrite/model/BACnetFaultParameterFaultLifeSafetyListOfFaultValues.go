@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetFaultParameterFaultLifeSafetyListOfFaultValuesParse(readBuffer utils.
 	}
 
 	// Create the instance
-	return NewBACnetFaultParameterFaultLifeSafetyListOfFaultValues(openingTag, listIfFaultValues, closingTag, tagNumber), nil
+	return &_BACnetFaultParameterFaultLifeSafetyListOfFaultValues{
+		TagNumber:         tagNumber,
+		OpeningTag:        openingTag,
+		ListIfFaultValues: listIfFaultValues,
+		ClosingTag:        closingTag,
+	}, nil
 }
 
 func (m *_BACnetFaultParameterFaultLifeSafetyListOfFaultValues) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetFaultParameterFaultLifeSafetyListOfFaultValues) Serialize(writeB
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetFaultParameterFaultLifeSafetyListOfFaultValues) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetFaultParameterFaultLifeSafetyListOfFaultValues) isBACnetFaultParameterFaultLifeSafetyListOfFaultValues() bool {
 	return true

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetTimeStampTimeParse(readBuffer utils.ReadBuffer) (BACnetTimeStampTime,
 
 	// Create a partially initialized instance
 	_child := &_BACnetTimeStampTime{
-		TimeValue:        timeValue,
 		_BACnetTimeStamp: &_BACnetTimeStamp{},
+		TimeValue:        timeValue,
 	}
 	_child._BACnetTimeStamp._BACnetTimeStampChildRequirements = _child
 	return _child, nil

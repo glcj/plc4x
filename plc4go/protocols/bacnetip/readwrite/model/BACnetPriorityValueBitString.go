@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,10 +150,10 @@ func BACnetPriorityValueBitStringParse(readBuffer utils.ReadBuffer, objectTypeAr
 
 	// Create a partially initialized instance
 	_child := &_BACnetPriorityValueBitString{
-		BitStringValue: bitStringValue,
 		_BACnetPriorityValue: &_BACnetPriorityValue{
 			ObjectTypeArgument: objectTypeArgument,
 		},
+		BitStringValue: bitStringValue,
 	}
 	_child._BACnetPriorityValue._BACnetPriorityValueChildRequirements = _child
 	return _child, nil

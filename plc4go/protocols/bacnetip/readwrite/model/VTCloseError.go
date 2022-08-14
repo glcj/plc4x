@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -189,9 +189,9 @@ func VTCloseErrorParse(readBuffer utils.ReadBuffer, errorChoice BACnetConfirmedS
 
 	// Create a partially initialized instance
 	_child := &_VTCloseError{
+		_BACnetError:               &_BACnetError{},
 		ErrorType:                  errorType,
 		ListOfVtSessionIdentifiers: listOfVtSessionIdentifiers,
-		_BACnetError:               &_BACnetError{},
 	}
 	_child._BACnetError._BACnetErrorChildRequirements = _child
 	return _child, nil

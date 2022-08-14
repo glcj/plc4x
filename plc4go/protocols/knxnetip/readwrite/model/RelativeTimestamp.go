@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -118,7 +118,9 @@ func RelativeTimestampParse(readBuffer utils.ReadBuffer) (RelativeTimestamp, err
 	}
 
 	// Create the instance
-	return NewRelativeTimestamp(timestamp), nil
+	return &_RelativeTimestamp{
+		Timestamp: timestamp,
+	}, nil
 }
 
 func (m *_RelativeTimestamp) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -194,7 +194,11 @@ func BACnetAuthenticationFactorFormatParse(readBuffer utils.ReadBuffer) (BACnetA
 	}
 
 	// Create the instance
-	return NewBACnetAuthenticationFactorFormat(formatType, vendorId, vendorFormat), nil
+	return &_BACnetAuthenticationFactorFormat{
+		FormatType:   formatType,
+		VendorId:     vendorId,
+		VendorFormat: vendorFormat,
+	}, nil
 }
 
 func (m *_BACnetAuthenticationFactorFormat) Serialize(writeBuffer utils.WriteBuffer) error {

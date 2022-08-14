@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -180,8 +180,8 @@ func MediaTransportControlDataPauseResumeParse(readBuffer utils.ReadBuffer) (Med
 
 	// Create a partially initialized instance
 	_child := &_MediaTransportControlDataPauseResume{
-		Operation:                  operation,
 		_MediaTransportControlData: &_MediaTransportControlData{},
+		Operation:                  operation,
 	}
 	_child._MediaTransportControlData._MediaTransportControlDataChildRequirements = _child
 	return _child, nil

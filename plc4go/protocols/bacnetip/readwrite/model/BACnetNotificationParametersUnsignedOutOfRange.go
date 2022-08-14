@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -272,16 +272,16 @@ func BACnetNotificationParametersUnsignedOutOfRangeParse(readBuffer utils.ReadBu
 
 	// Create a partially initialized instance
 	_child := &_BACnetNotificationParametersUnsignedOutOfRange{
+		_BACnetNotificationParameters: &_BACnetNotificationParameters{
+			TagNumber:          tagNumber,
+			ObjectTypeArgument: objectTypeArgument,
+		},
 		InnerOpeningTag: innerOpeningTag,
 		ExceedingValue:  exceedingValue,
 		StatusFlags:     statusFlags,
 		Deadband:        deadband,
 		ExceededLimit:   exceededLimit,
 		InnerClosingTag: innerClosingTag,
-		_BACnetNotificationParameters: &_BACnetNotificationParameters{
-			TagNumber:          tagNumber,
-			ObjectTypeArgument: objectTypeArgument,
-		},
 	}
 	_child._BACnetNotificationParameters._BACnetNotificationParametersChildRequirements = _child
 	return _child, nil

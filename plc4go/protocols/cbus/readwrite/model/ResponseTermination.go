@@ -21,7 +21,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -138,7 +138,7 @@ func ResponseTerminationParse(readBuffer utils.ReadBuffer) (ResponseTermination,
 	}
 
 	// Create the instance
-	return NewResponseTermination(), nil
+	return &_ResponseTermination{}, nil
 }
 
 func (m *_ResponseTermination) Serialize(writeBuffer utils.WriteBuffer) error {

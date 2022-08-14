@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -98,7 +98,7 @@ func (m *_SecurityDataArmSystem) GetArmMode() byte {
 ///////////////////////
 
 func (m *_SecurityDataArmSystem) GetIsReserved() bool {
-	return bool(bool(bool((m.GetArmMode()) == (0x00))) || bool(bool(bool(bool((m.GetArmMode()) >= (0x05))) && bool(bool((m.GetArmMode()) <= (0xFE))))))
+	return bool(bool(bool((m.GetArmMode()) == (0x00))) || bool((bool(bool((m.GetArmMode()) >= (0x05))) && bool(bool((m.GetArmMode()) <= (0xFE))))))
 }
 
 func (m *_SecurityDataArmSystem) GetIsArmToAwayMode() bool {
@@ -197,7 +197,7 @@ func SecurityDataArmSystemParse(readBuffer utils.ReadBuffer) (SecurityDataArmSys
 	armMode := _armMode
 
 	// Virtual field
-	_isReserved := bool(bool((armMode) == (0x00))) || bool(bool(bool(bool((armMode) >= (0x05))) && bool(bool((armMode) <= (0xFE)))))
+	_isReserved := bool(bool((armMode) == (0x00))) || bool((bool(bool((armMode) >= (0x05))) && bool(bool((armMode) <= (0xFE)))))
 	isReserved := bool(_isReserved)
 	_ = isReserved
 
@@ -232,8 +232,8 @@ func SecurityDataArmSystemParse(readBuffer utils.ReadBuffer) (SecurityDataArmSys
 
 	// Create a partially initialized instance
 	_child := &_SecurityDataArmSystem{
-		ArmMode:       armMode,
 		_SecurityData: &_SecurityData{},
+		ArmMode:       armMode,
 	}
 	_child._SecurityData._SecurityDataChildRequirements = _child
 	return _child, nil

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -323,6 +323,7 @@ func AirConditioningDataSetZoneHvacModeParse(readBuffer utils.ReadBuffer) (AirCo
 
 	// Create a partially initialized instance
 	_child := &_AirConditioningDataSetZoneHvacMode{
+		_AirConditioningData: &_AirConditioningData{},
 		ZoneGroup:            zoneGroup,
 		ZoneList:             zoneList,
 		HvacModeAndFlags:     hvacModeAndFlags,
@@ -330,7 +331,6 @@ func AirConditioningDataSetZoneHvacModeParse(readBuffer utils.ReadBuffer) (AirCo
 		Level:                level,
 		RawLevel:             rawLevel,
 		AuxLevel:             auxLevel,
-		_AirConditioningData: &_AirConditioningData{},
 	}
 	_child._AirConditioningData._AirConditioningDataChildRequirements = _child
 	return _child, nil

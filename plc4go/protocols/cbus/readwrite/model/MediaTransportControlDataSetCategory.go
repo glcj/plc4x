@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -145,8 +145,8 @@ func MediaTransportControlDataSetCategoryParse(readBuffer utils.ReadBuffer) (Med
 
 	// Create a partially initialized instance
 	_child := &_MediaTransportControlDataSetCategory{
-		CategoryNumber:             categoryNumber,
 		_MediaTransportControlData: &_MediaTransportControlData{},
+		CategoryNumber:             categoryNumber,
 	}
 	_child._MediaTransportControlData._MediaTransportControlDataChildRequirements = _child
 	return _child, nil

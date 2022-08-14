@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -181,7 +181,12 @@ func CBusHeaderParse(readBuffer utils.ReadBuffer) (CBusHeader, error) {
 	}
 
 	// Create the instance
-	return NewCBusHeader(priorityClass, dp, rc, destinationAddressType), nil
+	return &_CBusHeader{
+		PriorityClass:          priorityClass,
+		Dp:                     dp,
+		Rc:                     rc,
+		DestinationAddressType: destinationAddressType,
+	}, nil
 }
 
 func (m *_CBusHeader) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -206,7 +206,12 @@ func BACnetEventNotificationSubscriptionParse(readBuffer utils.ReadBuffer) (BACn
 	}
 
 	// Create the instance
-	return NewBACnetEventNotificationSubscription(recipient, processIdentifier, issueConfirmedNotifications, timeRemaining), nil
+	return &_BACnetEventNotificationSubscription{
+		Recipient:                   recipient,
+		ProcessIdentifier:           processIdentifier,
+		IssueConfirmedNotifications: issueConfirmedNotifications,
+		TimeRemaining:               timeRemaining,
+	}, nil
 }
 
 func (m *_BACnetEventNotificationSubscription) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -173,7 +173,12 @@ func BACnetAuthenticationFactorEnclosedParse(readBuffer utils.ReadBuffer, tagNum
 	}
 
 	// Create the instance
-	return NewBACnetAuthenticationFactorEnclosed(openingTag, authenticationFactor, closingTag, tagNumber), nil
+	return &_BACnetAuthenticationFactorEnclosed{
+		TagNumber:            tagNumber,
+		OpeningTag:           openingTag,
+		AuthenticationFactor: authenticationFactor,
+		ClosingTag:           closingTag,
+	}, nil
 }
 
 func (m *_BACnetAuthenticationFactorEnclosed) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -224,6 +229,16 @@ func (m *_BACnetAuthenticationFactorEnclosed) Serialize(writeBuffer utils.WriteB
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetAuthenticationFactorEnclosed) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetAuthenticationFactorEnclosed) isBACnetAuthenticationFactorEnclosed() bool {
 	return true

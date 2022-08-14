@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -193,8 +193,8 @@ func MediaTransportControlDataRepeatOnOffParse(readBuffer utils.ReadBuffer) (Med
 
 	// Create a partially initialized instance
 	_child := &_MediaTransportControlDataRepeatOnOff{
-		RepeatType:                 repeatType,
 		_MediaTransportControlData: &_MediaTransportControlData{},
+		RepeatType:                 repeatType,
 	}
 	_child._MediaTransportControlData._MediaTransportControlDataChildRequirements = _child
 	return _child, nil

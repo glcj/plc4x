@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -211,12 +211,12 @@ func BACnetLogDataLogDataParse(readBuffer utils.ReadBuffer, tagNumber uint8) (BA
 
 	// Create a partially initialized instance
 	_child := &_BACnetLogDataLogData{
-		InnerOpeningTag: innerOpeningTag,
-		LogData:         logData,
-		InnerClosingTag: innerClosingTag,
 		_BACnetLogData: &_BACnetLogData{
 			TagNumber: tagNumber,
 		},
+		InnerOpeningTag: innerOpeningTag,
+		LogData:         logData,
+		InnerClosingTag: innerClosingTag,
 	}
 	_child._BACnetLogData._BACnetLogDataChildRequirements = _child
 	return _child, nil

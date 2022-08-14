@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetEventSummariesListParse(readBuffer utils.ReadBuffer, tagNumber uint8)
 	}
 
 	// Create the instance
-	return NewBACnetEventSummariesList(openingTag, listOfEventSummaries, closingTag, tagNumber), nil
+	return &_BACnetEventSummariesList{
+		TagNumber:            tagNumber,
+		OpeningTag:           openingTag,
+		ListOfEventSummaries: listOfEventSummaries,
+		ClosingTag:           closingTag,
+	}, nil
 }
 
 func (m *_BACnetEventSummariesList) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetEventSummariesList) Serialize(writeBuffer utils.WriteBuffer) err
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetEventSummariesList) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetEventSummariesList) isBACnetEventSummariesList() bool {
 	return true

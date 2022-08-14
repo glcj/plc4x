@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -198,7 +198,11 @@ func TemperatureBroadcastDataParse(readBuffer utils.ReadBuffer) (TemperatureBroa
 	}
 
 	// Create the instance
-	return NewTemperatureBroadcastData(commandTypeContainer, temperatureGroup, temperatureByte), nil
+	return &_TemperatureBroadcastData{
+		CommandTypeContainer: commandTypeContainer,
+		TemperatureGroup:     temperatureGroup,
+		TemperatureByte:      temperatureByte,
+	}, nil
 }
 
 func (m *_TemperatureBroadcastData) Serialize(writeBuffer utils.WriteBuffer) error {

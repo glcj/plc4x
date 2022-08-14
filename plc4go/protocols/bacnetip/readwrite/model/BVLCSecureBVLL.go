@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BVLCSecureBVLLParse(readBuffer utils.ReadBuffer, bvlcPayloadLength uint16) 
 
 	// Create a partially initialized instance
 	_child := &_BVLCSecureBVLL{
-		SecurityWrapper: securityWrapper,
 		_BVLC:           &_BVLC{},
+		SecurityWrapper: securityWrapper,
 	}
 	_child._BVLC._BVLCChildRequirements = _child
 	return _child, nil
@@ -178,6 +178,16 @@ func (m *_BVLCSecureBVLL) Serialize(writeBuffer utils.WriteBuffer) error {
 	}
 	return m.SerializeParent(writeBuffer, m, ser)
 }
+
+////
+// Arguments Getter
+
+func (m *_BVLCSecureBVLL) GetBvlcPayloadLength() uint16 {
+	return m.BvlcPayloadLength
+}
+
+//
+////
 
 func (m *_BVLCSecureBVLL) isBVLCSecureBVLL() bool {
 	return true

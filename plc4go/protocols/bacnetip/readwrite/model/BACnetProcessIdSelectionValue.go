@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetProcessIdSelectionValueParse(readBuffer utils.ReadBuffer) (BACnetProc
 
 	// Create a partially initialized instance
 	_child := &_BACnetProcessIdSelectionValue{
-		ProcessIdentifier:         processIdentifier,
 		_BACnetProcessIdSelection: &_BACnetProcessIdSelection{},
+		ProcessIdentifier:         processIdentifier,
 	}
 	_child._BACnetProcessIdSelection._BACnetProcessIdSelectionChildRequirements = _child
 	return _child, nil

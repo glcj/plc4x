@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecificationParse(readBu
 	}
 
 	// Create the instance
-	return NewBACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecification(openingTag, listOfCovSubscriptionSpecificationEntry, closingTag, tagNumber), nil
+	return &_BACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecification{
+		TagNumber:                               tagNumber,
+		OpeningTag:                              openingTag,
+		ListOfCovSubscriptionSpecificationEntry: listOfCovSubscriptionSpecificationEntry,
+		ClosingTag:                              closingTag,
+	}, nil
 }
 
 func (m *_BACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecification) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecification) Seria
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecification) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecification) isBACnetCOVMultipleSubscriptionListOfCovSubscriptionSpecification() bool {
 	return true

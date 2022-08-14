@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -253,6 +253,16 @@ func (pm *_CBusPointToPointToMultiPointCommand) SerializeParent(writeBuffer util
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_CBusPointToPointToMultiPointCommand) GetCBusOptions() CBusOptions {
+	return m.CBusOptions
+}
+
+//
+////
 
 func (m *_CBusPointToPointToMultiPointCommand) isCBusPointToPointToMultiPointCommand() bool {
 	return true

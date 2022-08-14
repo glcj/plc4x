@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -180,7 +180,11 @@ func BACnetTagPayloadObjectIdentifierParse(readBuffer utils.ReadBuffer) (BACnetT
 	}
 
 	// Create the instance
-	return NewBACnetTagPayloadObjectIdentifier(objectType, proprietaryValue, instanceNumber), nil
+	return &_BACnetTagPayloadObjectIdentifier{
+		ObjectType:       objectType,
+		ProprietaryValue: proprietaryValue,
+		InstanceNumber:   instanceNumber,
+	}, nil
 }
 
 func (m *_BACnetTagPayloadObjectIdentifier) Serialize(writeBuffer utils.WriteBuffer) error {

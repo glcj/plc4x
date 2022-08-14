@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -168,9 +168,9 @@ func S7MessageResponseParse(readBuffer utils.ReadBuffer) (S7MessageResponse, err
 
 	// Create a partially initialized instance
 	_child := &_S7MessageResponse{
+		_S7Message: &_S7Message{},
 		ErrorClass: errorClass,
 		ErrorCode:  errorCode,
-		_S7Message: &_S7Message{},
 	}
 	_child._S7Message._S7MessageChildRequirements = _child
 	return _child, nil

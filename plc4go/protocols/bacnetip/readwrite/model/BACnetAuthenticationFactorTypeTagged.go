@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -139,7 +139,7 @@ func BACnetAuthenticationFactorTypeTaggedParse(readBuffer utils.ReadBuffer, tagN
 	}
 
 	// Validation
-	if !(bool(bool(bool((header.GetTagClass()) == (TagClass_APPLICATION_TAGS)))) || bool(bool(bool((header.GetActualTagNumber()) == (tagNumber))))) {
+	if !(bool((bool((header.GetTagClass()) == (TagClass_APPLICATION_TAGS)))) || bool((bool((header.GetActualTagNumber()) == (tagNumber))))) {
 		return nil, errors.WithStack(utils.ParseAssertError{"tagnumber doesn't match"})
 	}
 
@@ -158,7 +158,12 @@ func BACnetAuthenticationFactorTypeTaggedParse(readBuffer utils.ReadBuffer, tagN
 	}
 
 	// Create the instance
-	return NewBACnetAuthenticationFactorTypeTagged(header, value, tagNumber, tagClass), nil
+	return &_BACnetAuthenticationFactorTypeTagged{
+		TagNumber: tagNumber,
+		TagClass:  tagClass,
+		Header:    header,
+		Value:     value,
+	}, nil
 }
 
 func (m *_BACnetAuthenticationFactorTypeTagged) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -191,6 +196,19 @@ func (m *_BACnetAuthenticationFactorTypeTagged) Serialize(writeBuffer utils.Writ
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetAuthenticationFactorTypeTagged) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+func (m *_BACnetAuthenticationFactorTypeTagged) GetTagClass() TagClass {
+	return m.TagClass
+}
+
+//
+////
 
 func (m *_BACnetAuthenticationFactorTypeTagged) isBACnetAuthenticationFactorTypeTagged() bool {
 	return true

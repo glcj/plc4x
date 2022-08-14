@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -266,7 +266,17 @@ func GroupObjectDescriptorRealisationType7Parse(readBuffer utils.ReadBuffer) (Gr
 	}
 
 	// Create the instance
-	return NewGroupObjectDescriptorRealisationType7(dataAddress, updateEnable, transmitEnable, segmentSelectorEnable, writeEnable, readEnable, communicationEnable, priority, valueType), nil
+	return &_GroupObjectDescriptorRealisationType7{
+		DataAddress:           dataAddress,
+		UpdateEnable:          updateEnable,
+		TransmitEnable:        transmitEnable,
+		SegmentSelectorEnable: segmentSelectorEnable,
+		WriteEnable:           writeEnable,
+		ReadEnable:            readEnable,
+		CommunicationEnable:   communicationEnable,
+		Priority:              priority,
+		ValueType:             valueType,
+	}, nil
 }
 
 func (m *_GroupObjectDescriptorRealisationType7) Serialize(writeBuffer utils.WriteBuffer) error {

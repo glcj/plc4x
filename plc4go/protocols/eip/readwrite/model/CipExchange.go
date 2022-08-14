@@ -21,7 +21,7 @@ package model
 
 import (
 	"fmt"
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -200,7 +200,10 @@ func CipExchangeParse(readBuffer utils.ReadBuffer, exchangeLen uint16) (CipExcha
 	}
 
 	// Create the instance
-	return NewCipExchange(service, exchangeLen), nil
+	return &_CipExchange{
+		ExchangeLen: exchangeLen,
+		Service:     service,
+	}, nil
 }
 
 func (m *_CipExchange) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -252,6 +255,16 @@ func (m *_CipExchange) Serialize(writeBuffer utils.WriteBuffer) error {
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_CipExchange) GetExchangeLen() uint16 {
+	return m.ExchangeLen
+}
+
+//
+////
 
 func (m *_CipExchange) isCipExchange() bool {
 	return true

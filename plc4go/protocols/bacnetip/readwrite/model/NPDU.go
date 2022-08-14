@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -160,7 +160,7 @@ func (m *_NPDU) GetDestinationLengthAddon() uint16 {
 	_ = nlm
 	apdu := m.Apdu
 	_ = apdu
-	return uint16(utils.InlineIf(m.GetControl().GetDestinationSpecified(), func() interface{} { return uint16(uint16(uint16(uint16(3)) + uint16((*m.GetDestinationLength())))) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
+	return uint16(utils.InlineIf(m.GetControl().GetDestinationSpecified(), func() interface{} { return uint16((uint16(uint16(3)) + uint16((*m.GetDestinationLength())))) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
 }
 
 func (m *_NPDU) GetSourceLengthAddon() uint16 {
@@ -178,7 +178,7 @@ func (m *_NPDU) GetSourceLengthAddon() uint16 {
 	_ = nlm
 	apdu := m.Apdu
 	_ = apdu
-	return uint16(utils.InlineIf(m.GetControl().GetSourceSpecified(), func() interface{} { return uint16(uint16(uint16(uint16(3)) + uint16((*m.GetSourceLength())))) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
+	return uint16(utils.InlineIf(m.GetControl().GetSourceSpecified(), func() interface{} { return uint16((uint16(uint16(3)) + uint16((*m.GetSourceLength())))) }, func() interface{} { return uint16(uint16(0)) }).(uint16))
 }
 
 func (m *_NPDU) GetPayloadSubtraction() uint16 {
@@ -196,7 +196,7 @@ func (m *_NPDU) GetPayloadSubtraction() uint16 {
 	_ = nlm
 	apdu := m.Apdu
 	_ = apdu
-	return uint16(uint16(uint16(2)) + uint16(uint16(uint16(uint16(m.GetSourceLengthAddon())+uint16(m.GetDestinationLengthAddon()))+uint16(uint16(utils.InlineIf(bool(m.GetControl().GetDestinationSpecified()), func() interface{} { return uint16(uint16(1)) }, func() interface{} { return uint16(uint16(0)) }).(uint16))))))
+	return uint16(uint16(uint16(2)) + uint16((uint16(uint16(m.GetSourceLengthAddon())+uint16(m.GetDestinationLengthAddon())) + uint16((utils.InlineIf((m.GetControl().GetDestinationSpecified()), func() interface{} { return uint16(uint16(1)) }, func() interface{} { return uint16(uint16(0)) }).(uint16))))))
 }
 
 ///////////////////////
@@ -368,7 +368,7 @@ func NPDUParse(readBuffer utils.ReadBuffer, npduLength uint16) (NPDU, error) {
 	}
 
 	// Virtual field
-	_destinationLengthAddon := utils.InlineIf(control.GetDestinationSpecified(), func() interface{} { return uint16(uint16(uint16(uint16(3)) + uint16((*destinationLength)))) }, func() interface{} { return uint16(uint16(0)) }).(uint16)
+	_destinationLengthAddon := utils.InlineIf(control.GetDestinationSpecified(), func() interface{} { return uint16((uint16(uint16(3)) + uint16((*destinationLength)))) }, func() interface{} { return uint16(uint16(0)) }).(uint16)
 	destinationLengthAddon := uint16(_destinationLengthAddon)
 	_ = destinationLengthAddon
 
@@ -416,7 +416,7 @@ func NPDUParse(readBuffer utils.ReadBuffer, npduLength uint16) (NPDU, error) {
 	}
 
 	// Virtual field
-	_sourceLengthAddon := utils.InlineIf(control.GetSourceSpecified(), func() interface{} { return uint16(uint16(uint16(uint16(3)) + uint16((*sourceLength)))) }, func() interface{} { return uint16(uint16(0)) }).(uint16)
+	_sourceLengthAddon := utils.InlineIf(control.GetSourceSpecified(), func() interface{} { return uint16((uint16(uint16(3)) + uint16((*sourceLength)))) }, func() interface{} { return uint16(uint16(0)) }).(uint16)
 	sourceLengthAddon := uint16(_sourceLengthAddon)
 	_ = sourceLengthAddon
 
@@ -431,7 +431,7 @@ func NPDUParse(readBuffer utils.ReadBuffer, npduLength uint16) (NPDU, error) {
 	}
 
 	// Virtual field
-	_payloadSubtraction := uint16(uint16(2)) + uint16(uint16(uint16(uint16(sourceLengthAddon)+uint16(destinationLengthAddon))+uint16(uint16(utils.InlineIf(bool(control.GetDestinationSpecified()), func() interface{} { return uint16(uint16(1)) }, func() interface{} { return uint16(uint16(0)) }).(uint16)))))
+	_payloadSubtraction := uint16(uint16(2)) + uint16((uint16(uint16(sourceLengthAddon)+uint16(destinationLengthAddon)) + uint16((utils.InlineIf((control.GetDestinationSpecified()), func() interface{} { return uint16(uint16(1)) }, func() interface{} { return uint16(uint16(0)) }).(uint16)))))
 	payloadSubtraction := uint16(_payloadSubtraction)
 	_ = payloadSubtraction
 
@@ -489,7 +489,20 @@ func NPDUParse(readBuffer utils.ReadBuffer, npduLength uint16) (NPDU, error) {
 	}
 
 	// Create the instance
-	return NewNPDU(protocolVersionNumber, control, destinationNetworkAddress, destinationLength, destinationAddress, sourceNetworkAddress, sourceLength, sourceAddress, hopCount, nlm, apdu, npduLength), nil
+	return &_NPDU{
+		NpduLength:                npduLength,
+		ProtocolVersionNumber:     protocolVersionNumber,
+		Control:                   control,
+		DestinationNetworkAddress: destinationNetworkAddress,
+		DestinationLength:         destinationLength,
+		DestinationAddress:        destinationAddress,
+		SourceNetworkAddress:      sourceNetworkAddress,
+		SourceLength:              sourceLength,
+		SourceAddress:             sourceAddress,
+		HopCount:                  hopCount,
+		Nlm:                       nlm,
+		Apdu:                      apdu,
+	}, nil
 }
 
 func (m *_NPDU) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -645,6 +658,16 @@ func (m *_NPDU) Serialize(writeBuffer utils.WriteBuffer) error {
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_NPDU) GetNpduLength() uint16 {
+	return m.NpduLength
+}
+
+//
+////
 
 func (m *_NPDU) isNPDU() bool {
 	return true

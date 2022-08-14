@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 )
@@ -1400,6 +1400,13 @@ const (
 	BACnetVendorId_IDM_ENERGIESYSTEME_GMBH                                                      BACnetVendorId = 1367
 	BACnetVendorId_BE_NEXTBV                                                                    BACnetVendorId = 1368
 	BACnetVendorId_CLEAN_AIRAI_CORPORATION                                                      BACnetVendorId = 1369
+	BACnetVendorId_REVOLUTION_MICROELECTRONICS_AMERICA_INC                                      BACnetVendorId = 1370
+	BACnetVendorId_ARENDARIT_SECURITY_GMBH                                                      BACnetVendorId = 1371
+	BACnetVendorId_ZED_BEE_TECHNOLOGIES_PVT_LTD                                                 BACnetVendorId = 1372
+	BACnetVendorId_WINMATE_TECHNOLOGY_SOLUTIONS_PVT_LTD                                         BACnetVendorId = 1373
+	BACnetVendorId_SENTICON_LTD                                                                 BACnetVendorId = 1374
+	BACnetVendorId_ROSSAKERAB                                                                   BACnetVendorId = 1375
+	BACnetVendorId_OPIT_SOLUTIONS_LTD                                                           BACnetVendorId = 1376
 	BACnetVendorId_UNKNOWN_VENDOR                                                               BACnetVendorId = 0xFFFF
 )
 
@@ -2771,6 +2778,13 @@ func init() {
 		BACnetVendorId_IDM_ENERGIESYSTEME_GMBH,
 		BACnetVendorId_BE_NEXTBV,
 		BACnetVendorId_CLEAN_AIRAI_CORPORATION,
+		BACnetVendorId_REVOLUTION_MICROELECTRONICS_AMERICA_INC,
+		BACnetVendorId_ARENDARIT_SECURITY_GMBH,
+		BACnetVendorId_ZED_BEE_TECHNOLOGIES_PVT_LTD,
+		BACnetVendorId_WINMATE_TECHNOLOGY_SOLUTIONS_PVT_LTD,
+		BACnetVendorId_SENTICON_LTD,
+		BACnetVendorId_ROSSAKERAB,
+		BACnetVendorId_OPIT_SOLUTIONS_LTD,
 		BACnetVendorId_UNKNOWN_VENDOR,
 	}
 }
@@ -4432,6 +4446,34 @@ func (e BACnetVendorId) VendorId() uint16 {
 	case 137:
 		{ /* '137' */
 			return 137
+		}
+	case 1370:
+		{ /* '1370' */
+			return 1370
+		}
+	case 1371:
+		{ /* '1371' */
+			return 1371
+		}
+	case 1372:
+		{ /* '1372' */
+			return 1372
+		}
+	case 1373:
+		{ /* '1373' */
+			return 1373
+		}
+	case 1374:
+		{ /* '1374' */
+			return 1374
+		}
+	case 1375:
+		{ /* '1375' */
+			return 1375
+		}
+	case 1376:
+		{ /* '1376' */
+			return 1376
 		}
 	case 138:
 		{ /* '138' */
@@ -9907,6 +9949,34 @@ func (e BACnetVendorId) VendorName() string {
 		{ /* '137' */
 			return "AFDtek Division of Fastek International Inc."
 		}
+	case 1370:
+		{ /* '1370' */
+			return "Revolution Microelectronics (America) Inc."
+		}
+	case 1371:
+		{ /* '1371' */
+			return "Arendar IT-Security GmbH"
+		}
+	case 1372:
+		{ /* '1372' */
+			return "ZedBee Technologies Pvt Ltd"
+		}
+	case 1373:
+		{ /* '1373' */
+			return "Winmate Technology Solutions Pvt. Ltd."
+		}
+	case 1374:
+		{ /* '1374' */
+			return "Senticon Ltd."
+		}
+	case 1375:
+		{ /* '1375' */
+			return "Rossaker AB"
+		}
+	case 1376:
+		{ /* '1376' */
+			return "OPIT Solutions Ltd"
+		}
 	case 138:
 		{ /* '138' */
 			return "PowerCold Comfort Air Solutions, Inc."
@@ -14552,6 +14622,20 @@ func BACnetVendorIdByValue(value uint16) (enum BACnetVendorId, ok bool) {
 		return BACnetVendorId_CLEAN_AIRAI_CORPORATION, true
 	case 137:
 		return BACnetVendorId_AF_DTEK_DIVISIONOF_FASTEK_INTERNATIONAL_INC, true
+	case 1370:
+		return BACnetVendorId_REVOLUTION_MICROELECTRONICS_AMERICA_INC, true
+	case 1371:
+		return BACnetVendorId_ARENDARIT_SECURITY_GMBH, true
+	case 1372:
+		return BACnetVendorId_ZED_BEE_TECHNOLOGIES_PVT_LTD, true
+	case 1373:
+		return BACnetVendorId_WINMATE_TECHNOLOGY_SOLUTIONS_PVT_LTD, true
+	case 1374:
+		return BACnetVendorId_SENTICON_LTD, true
+	case 1375:
+		return BACnetVendorId_ROSSAKERAB, true
+	case 1376:
+		return BACnetVendorId_OPIT_SOLUTIONS_LTD, true
 	case 138:
 		return BACnetVendorId_POWER_COLD_COMFORT_AIR_SOLUTIONS_INC, true
 	case 139:
@@ -17286,6 +17370,20 @@ func BACnetVendorIdByName(value string) (enum BACnetVendorId, ok bool) {
 		return BACnetVendorId_CLEAN_AIRAI_CORPORATION, true
 	case "AF_DTEK_DIVISIONOF_FASTEK_INTERNATIONAL_INC":
 		return BACnetVendorId_AF_DTEK_DIVISIONOF_FASTEK_INTERNATIONAL_INC, true
+	case "REVOLUTION_MICROELECTRONICS_AMERICA_INC":
+		return BACnetVendorId_REVOLUTION_MICROELECTRONICS_AMERICA_INC, true
+	case "ARENDARIT_SECURITY_GMBH":
+		return BACnetVendorId_ARENDARIT_SECURITY_GMBH, true
+	case "ZED_BEE_TECHNOLOGIES_PVT_LTD":
+		return BACnetVendorId_ZED_BEE_TECHNOLOGIES_PVT_LTD, true
+	case "WINMATE_TECHNOLOGY_SOLUTIONS_PVT_LTD":
+		return BACnetVendorId_WINMATE_TECHNOLOGY_SOLUTIONS_PVT_LTD, true
+	case "SENTICON_LTD":
+		return BACnetVendorId_SENTICON_LTD, true
+	case "ROSSAKERAB":
+		return BACnetVendorId_ROSSAKERAB, true
+	case "OPIT_SOLUTIONS_LTD":
+		return BACnetVendorId_OPIT_SOLUTIONS_LTD, true
 	case "POWER_COLD_COMFORT_AIR_SOLUTIONS_INC":
 		return BACnetVendorId_POWER_COLD_COMFORT_AIR_SOLUTIONS_INC, true
 	case "I_CONTROLS":
@@ -20065,6 +20163,20 @@ func (e BACnetVendorId) PLC4XEnumName() string {
 		return "CLEAN_AIRAI_CORPORATION"
 	case BACnetVendorId_AF_DTEK_DIVISIONOF_FASTEK_INTERNATIONAL_INC:
 		return "AF_DTEK_DIVISIONOF_FASTEK_INTERNATIONAL_INC"
+	case BACnetVendorId_REVOLUTION_MICROELECTRONICS_AMERICA_INC:
+		return "REVOLUTION_MICROELECTRONICS_AMERICA_INC"
+	case BACnetVendorId_ARENDARIT_SECURITY_GMBH:
+		return "ARENDARIT_SECURITY_GMBH"
+	case BACnetVendorId_ZED_BEE_TECHNOLOGIES_PVT_LTD:
+		return "ZED_BEE_TECHNOLOGIES_PVT_LTD"
+	case BACnetVendorId_WINMATE_TECHNOLOGY_SOLUTIONS_PVT_LTD:
+		return "WINMATE_TECHNOLOGY_SOLUTIONS_PVT_LTD"
+	case BACnetVendorId_SENTICON_LTD:
+		return "SENTICON_LTD"
+	case BACnetVendorId_ROSSAKERAB:
+		return "ROSSAKERAB"
+	case BACnetVendorId_OPIT_SOLUTIONS_LTD:
+		return "OPIT_SOLUTIONS_LTD"
 	case BACnetVendorId_POWER_COLD_COMFORT_AIR_SOLUTIONS_INC:
 		return "POWER_COLD_COMFORT_AIR_SOLUTIONS_INC"
 	case BACnetVendorId_I_CONTROLS:

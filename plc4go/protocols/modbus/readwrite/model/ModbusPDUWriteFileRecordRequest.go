@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -182,8 +182,8 @@ func ModbusPDUWriteFileRecordRequestParse(readBuffer utils.ReadBuffer, response 
 
 	// Create a partially initialized instance
 	_child := &_ModbusPDUWriteFileRecordRequest{
-		Items:      items,
 		_ModbusPDU: &_ModbusPDU{},
+		Items:      items,
 	}
 	_child._ModbusPDU._ModbusPDUChildRequirements = _child
 	return _child, nil

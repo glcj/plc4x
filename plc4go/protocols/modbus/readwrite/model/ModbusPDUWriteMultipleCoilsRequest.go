@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -201,10 +201,10 @@ func ModbusPDUWriteMultipleCoilsRequestParse(readBuffer utils.ReadBuffer, respon
 
 	// Create a partially initialized instance
 	_child := &_ModbusPDUWriteMultipleCoilsRequest{
+		_ModbusPDU:      &_ModbusPDU{},
 		StartingAddress: startingAddress,
 		Quantity:        quantity,
 		Value:           value,
-		_ModbusPDU:      &_ModbusPDU{},
 	}
 	_child._ModbusPDU._ModbusPDUChildRequirements = _child
 	return _child, nil

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetCalendarEntryDateParse(readBuffer utils.ReadBuffer) (BACnetCalendarEn
 
 	// Create a partially initialized instance
 	_child := &_BACnetCalendarEntryDate{
-		DateValue:            dateValue,
 		_BACnetCalendarEntry: &_BACnetCalendarEntry{},
+		DateValue:            dateValue,
 	}
 	_child._BACnetCalendarEntry._BACnetCalendarEntryChildRequirements = _child
 	return _child, nil

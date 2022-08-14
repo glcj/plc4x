@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -124,7 +124,9 @@ func BACnetLiftCarCallListParse(readBuffer utils.ReadBuffer) (BACnetLiftCarCallL
 	}
 
 	// Create the instance
-	return NewBACnetLiftCarCallList(floorNumbers), nil
+	return &_BACnetLiftCarCallList{
+		FloorNumbers: floorNumbers,
+	}, nil
 }
 
 func (m *_BACnetLiftCarCallList) Serialize(writeBuffer utils.WriteBuffer) error {

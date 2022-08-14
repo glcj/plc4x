@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetOptionalBinaryPVValueParse(readBuffer utils.ReadBuffer) (BACnetOption
 
 	// Create a partially initialized instance
 	_child := &_BACnetOptionalBinaryPVValue{
-		BinaryPv:                binaryPv,
 		_BACnetOptionalBinaryPV: &_BACnetOptionalBinaryPV{},
+		BinaryPv:                binaryPv,
 	}
 	_child._BACnetOptionalBinaryPV._BACnetOptionalBinaryPVChildRequirements = _child
 	return _child, nil

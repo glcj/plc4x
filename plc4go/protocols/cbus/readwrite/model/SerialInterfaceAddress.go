@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -118,7 +118,9 @@ func SerialInterfaceAddressParse(readBuffer utils.ReadBuffer) (SerialInterfaceAd
 	}
 
 	// Create the instance
-	return NewSerialInterfaceAddress(address), nil
+	return &_SerialInterfaceAddress{
+		Address: address,
+	}, nil
 }
 
 func (m *_SerialInterfaceAddress) Serialize(writeBuffer utils.WriteBuffer) error {

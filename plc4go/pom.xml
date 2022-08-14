@@ -441,7 +441,7 @@
                 <flag>Apache Software Foundation (ASF)</flag>
               </buildFlags>
               <packages>
-                <package>internal/s7/fieldtype_string.go</package>
+                <package>internal/cbus/fieldtype_string.go</package>
               </packages>
             </configuration>
           </execution>
@@ -458,7 +458,24 @@
                 <flag>Apache Software Foundation (ASF)</flag>
               </buildFlags>
               <packages>
-                <package>internal/spi/testutils/steptype_string.go</package>
+                <package>internal/s7/fieldtype_string.go</package>
+              </packages>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-license5</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>custom</goal>
+            </goals>
+            <configuration>
+              <exec>go-licenser</exec>
+              <customCommand>-licensor</customCommand>
+              <buildFlags>
+                <flag>Apache Software Foundation (ASF)</flag>
+              </buildFlags>
+              <packages>
+                <package>spi/testutils/steptype_string.go</package>
               </packages>
             </configuration>
           </execution>

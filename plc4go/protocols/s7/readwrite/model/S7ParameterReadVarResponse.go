@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func S7ParameterReadVarResponseParse(readBuffer utils.ReadBuffer, messageType ui
 
 	// Create a partially initialized instance
 	_child := &_S7ParameterReadVarResponse{
-		NumItems:     numItems,
 		_S7Parameter: &_S7Parameter{},
+		NumItems:     numItems,
 	}
 	_child._S7Parameter._S7ParameterChildRequirements = _child
 	return _child, nil

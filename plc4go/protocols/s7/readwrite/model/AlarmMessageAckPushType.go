@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -196,7 +196,12 @@ func AlarmMessageAckPushTypeParse(readBuffer utils.ReadBuffer) (AlarmMessageAckP
 	}
 
 	// Create the instance
-	return NewAlarmMessageAckPushType(TimeStamp, functionId, numberOfObjects, messageObjects), nil
+	return &_AlarmMessageAckPushType{
+		TimeStamp:       TimeStamp,
+		FunctionId:      functionId,
+		NumberOfObjects: numberOfObjects,
+		MessageObjects:  messageObjects,
+	}, nil
 }
 
 func (m *_AlarmMessageAckPushType) Serialize(writeBuffer utils.WriteBuffer) error {

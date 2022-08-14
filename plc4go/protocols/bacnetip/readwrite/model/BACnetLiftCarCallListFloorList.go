@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetLiftCarCallListFloorListParse(readBuffer utils.ReadBuffer, tagNumber 
 	}
 
 	// Create the instance
-	return NewBACnetLiftCarCallListFloorList(openingTag, floorNumbers, closingTag, tagNumber), nil
+	return &_BACnetLiftCarCallListFloorList{
+		TagNumber:    tagNumber,
+		OpeningTag:   openingTag,
+		FloorNumbers: floorNumbers,
+		ClosingTag:   closingTag,
+	}, nil
 }
 
 func (m *_BACnetLiftCarCallListFloorList) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetLiftCarCallListFloorList) Serialize(writeBuffer utils.WriteBuffe
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetLiftCarCallListFloorList) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetLiftCarCallListFloorList) isBACnetLiftCarCallListFloorList() bool {
 	return true

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -193,7 +193,12 @@ func BACnetAccumulatorRecordParse(readBuffer utils.ReadBuffer) (BACnetAccumulato
 	}
 
 	// Create the instance
-	return NewBACnetAccumulatorRecord(timestamp, presentValue, accumulatedValue, accumulatorStatus), nil
+	return &_BACnetAccumulatorRecord{
+		Timestamp:         timestamp,
+		PresentValue:      presentValue,
+		AccumulatedValue:  accumulatedValue,
+		AccumulatorStatus: accumulatorStatus,
+	}, nil
 }
 
 func (m *_BACnetAccumulatorRecord) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -295,7 +295,18 @@ func DeviceDescriptorType2Parse(readBuffer utils.ReadBuffer) (DeviceDescriptorTy
 	}
 
 	// Create the instance
-	return NewDeviceDescriptorType2(manufacturerId, deviceType, version, readSupported, writeSupported, logicalTagBase, channelInfo1, channelInfo2, channelInfo3, channelInfo4), nil
+	return &_DeviceDescriptorType2{
+		ManufacturerId: manufacturerId,
+		DeviceType:     deviceType,
+		Version:        version,
+		ReadSupported:  readSupported,
+		WriteSupported: writeSupported,
+		LogicalTagBase: logicalTagBase,
+		ChannelInfo1:   channelInfo1,
+		ChannelInfo2:   channelInfo2,
+		ChannelInfo3:   channelInfo3,
+		ChannelInfo4:   channelInfo4,
+	}, nil
 }
 
 func (m *_DeviceDescriptorType2) Serialize(writeBuffer utils.WriteBuffer) error {

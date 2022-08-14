@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -176,11 +176,11 @@ func BACnetServiceAckGetEventInformationParse(readBuffer utils.ReadBuffer, servi
 
 	// Create a partially initialized instance
 	_child := &_BACnetServiceAckGetEventInformation{
-		ListOfEventSummaries: listOfEventSummaries,
-		MoreEvents:           moreEvents,
 		_BACnetServiceAck: &_BACnetServiceAck{
 			ServiceAckLength: serviceAckLength,
 		},
+		ListOfEventSummaries: listOfEventSummaries,
+		MoreEvents:           moreEvents,
 	}
 	_child._BACnetServiceAck._BACnetServiceAckChildRequirements = _child
 	return _child, nil

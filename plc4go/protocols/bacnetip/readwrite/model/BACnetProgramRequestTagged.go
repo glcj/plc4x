@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -139,7 +139,7 @@ func BACnetProgramRequestTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint
 	}
 
 	// Validation
-	if !(bool(bool(bool((header.GetTagClass()) == (TagClass_APPLICATION_TAGS)))) || bool(bool(bool((header.GetActualTagNumber()) == (tagNumber))))) {
+	if !(bool((bool((header.GetTagClass()) == (TagClass_APPLICATION_TAGS)))) || bool((bool((header.GetActualTagNumber()) == (tagNumber))))) {
 		return nil, errors.WithStack(utils.ParseAssertError{"tagnumber doesn't match"})
 	}
 
@@ -158,7 +158,12 @@ func BACnetProgramRequestTaggedParse(readBuffer utils.ReadBuffer, tagNumber uint
 	}
 
 	// Create the instance
-	return NewBACnetProgramRequestTagged(header, value, tagNumber, tagClass), nil
+	return &_BACnetProgramRequestTagged{
+		TagNumber: tagNumber,
+		TagClass:  tagClass,
+		Header:    header,
+		Value:     value,
+	}, nil
 }
 
 func (m *_BACnetProgramRequestTagged) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -191,6 +196,19 @@ func (m *_BACnetProgramRequestTagged) Serialize(writeBuffer utils.WriteBuffer) e
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetProgramRequestTagged) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+func (m *_BACnetProgramRequestTagged) GetTagClass() TagClass {
+	return m.TagClass
+}
+
+//
+////
 
 func (m *_BACnetProgramRequestTagged) isBACnetProgramRequestTagged() bool {
 	return true

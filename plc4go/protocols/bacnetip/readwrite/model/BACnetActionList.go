@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -181,7 +181,11 @@ func BACnetActionListParse(readBuffer utils.ReadBuffer) (BACnetActionList, error
 	}
 
 	// Create the instance
-	return NewBACnetActionList(innerOpeningTag, action, innerClosingTag), nil
+	return &_BACnetActionList{
+		InnerOpeningTag: innerOpeningTag,
+		Action:          action,
+		InnerClosingTag: innerClosingTag,
+	}, nil
 }
 
 func (m *_BACnetActionList) Serialize(writeBuffer utils.WriteBuffer) error {

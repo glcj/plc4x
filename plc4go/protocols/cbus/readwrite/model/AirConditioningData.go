@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -175,8 +175,8 @@ func AirConditioningDataParse(readBuffer utils.ReadBuffer) (AirConditioningData,
 	switch {
 	case commandType == AirConditioningCommandType_HVAC_SCHEDULE_ENTRY: // AirConditioningDataHvacScheduleEntry
 		_childTemp, typeSwitchError = AirConditioningDataHvacScheduleEntryParse(readBuffer)
-	case commandType == AirConditioningCommandType_HUMIDITY_SCHEDULE_ENTRY: // AirConditioningDataHvacScheduleEntry
-		_childTemp, typeSwitchError = AirConditioningDataHvacScheduleEntryParse(readBuffer)
+	case commandType == AirConditioningCommandType_HUMIDITY_SCHEDULE_ENTRY: // AirConditioningDataHumidityScheduleEntry
+		_childTemp, typeSwitchError = AirConditioningDataHumidityScheduleEntryParse(readBuffer)
 	case commandType == AirConditioningCommandType_REFRESH: // AirConditioningDataRefresh
 		_childTemp, typeSwitchError = AirConditioningDataRefreshParse(readBuffer)
 	case commandType == AirConditioningCommandType_ZONE_HVAC_PLANT_STATUS: // AirConditioningDataZoneHvacPlantStatus

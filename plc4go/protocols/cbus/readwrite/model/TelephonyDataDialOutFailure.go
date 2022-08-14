@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -32,7 +32,7 @@ type TelephonyDataDialOutFailure interface {
 	utils.Serializable
 	TelephonyData
 	// GetReason returns Reason (property field)
-	GetReason() DialInFailureReason
+	GetReason() DialOutFailureReason
 }
 
 // TelephonyDataDialOutFailureExactly can be used when we want exactly this type and not a type which fulfills TelephonyDataDialOutFailure.
@@ -45,7 +45,7 @@ type TelephonyDataDialOutFailureExactly interface {
 // _TelephonyDataDialOutFailure is the data-structure of this message
 type _TelephonyDataDialOutFailure struct {
 	*_TelephonyData
-	Reason DialInFailureReason
+	Reason DialOutFailureReason
 }
 
 ///////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ func (m *_TelephonyDataDialOutFailure) GetParent() TelephonyData {
 /////////////////////// Accessors for property fields.
 ///////////////////////
 
-func (m *_TelephonyDataDialOutFailure) GetReason() DialInFailureReason {
+func (m *_TelephonyDataDialOutFailure) GetReason() DialOutFailureReason {
 	return m.Reason
 }
 
@@ -82,7 +82,7 @@ func (m *_TelephonyDataDialOutFailure) GetReason() DialInFailureReason {
 ///////////////////////////////////////////////////////////
 
 // NewTelephonyDataDialOutFailure factory function for _TelephonyDataDialOutFailure
-func NewTelephonyDataDialOutFailure(reason DialInFailureReason, commandTypeContainer TelephonyCommandTypeContainer, argument byte) *_TelephonyDataDialOutFailure {
+func NewTelephonyDataDialOutFailure(reason DialOutFailureReason, commandTypeContainer TelephonyCommandTypeContainer, argument byte) *_TelephonyDataDialOutFailure {
 	_result := &_TelephonyDataDialOutFailure{
 		Reason:         reason,
 		_TelephonyData: NewTelephonyData(commandTypeContainer, argument),
@@ -136,7 +136,7 @@ func TelephonyDataDialOutFailureParse(readBuffer utils.ReadBuffer) (TelephonyDat
 	if pullErr := readBuffer.PullContext("reason"); pullErr != nil {
 		return nil, errors.Wrap(pullErr, "Error pulling for reason")
 	}
-	_reason, _reasonErr := DialInFailureReasonParse(readBuffer)
+	_reason, _reasonErr := DialOutFailureReasonParse(readBuffer)
 	if _reasonErr != nil {
 		return nil, errors.Wrap(_reasonErr, "Error parsing 'reason' field of TelephonyDataDialOutFailure")
 	}
@@ -151,8 +151,8 @@ func TelephonyDataDialOutFailureParse(readBuffer utils.ReadBuffer) (TelephonyDat
 
 	// Create a partially initialized instance
 	_child := &_TelephonyDataDialOutFailure{
-		Reason:         reason,
 		_TelephonyData: &_TelephonyData{},
+		Reason:         reason,
 	}
 	_child._TelephonyData._TelephonyDataChildRequirements = _child
 	return _child, nil

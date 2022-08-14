@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -173,7 +173,12 @@ func BACnetCalendarEntryEnclosedParse(readBuffer utils.ReadBuffer, tagNumber uin
 	}
 
 	// Create the instance
-	return NewBACnetCalendarEntryEnclosed(openingTag, calendarEntry, closingTag, tagNumber), nil
+	return &_BACnetCalendarEntryEnclosed{
+		TagNumber:     tagNumber,
+		OpeningTag:    openingTag,
+		CalendarEntry: calendarEntry,
+		ClosingTag:    closingTag,
+	}, nil
 }
 
 func (m *_BACnetCalendarEntryEnclosed) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -224,6 +229,16 @@ func (m *_BACnetCalendarEntryEnclosed) Serialize(writeBuffer utils.WriteBuffer) 
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetCalendarEntryEnclosed) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetCalendarEntryEnclosed) isBACnetCalendarEntryEnclosed() bool {
 	return true

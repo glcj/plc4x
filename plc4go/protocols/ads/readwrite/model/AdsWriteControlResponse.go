@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -156,8 +156,8 @@ func AdsWriteControlResponseParse(readBuffer utils.ReadBuffer, commandId Command
 
 	// Create a partially initialized instance
 	_child := &_AdsWriteControlResponse{
-		Result:   result,
 		_AdsData: &_AdsData{},
+		Result:   result,
 	}
 	_child._AdsData._AdsDataChildRequirements = _child
 	return _child, nil

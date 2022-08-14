@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -160,7 +160,10 @@ func BACnetDeviceObjectReferenceParse(readBuffer utils.ReadBuffer) (BACnetDevice
 	}
 
 	// Create the instance
-	return NewBACnetDeviceObjectReference(deviceIdentifier, objectIdentifier), nil
+	return &_BACnetDeviceObjectReference{
+		DeviceIdentifier: deviceIdentifier,
+		ObjectIdentifier: objectIdentifier,
+	}, nil
 }
 
 func (m *_BACnetDeviceObjectReference) Serialize(writeBuffer utils.WriteBuffer) error {

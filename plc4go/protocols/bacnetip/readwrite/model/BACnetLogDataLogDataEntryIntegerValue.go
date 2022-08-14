@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetLogDataLogDataEntryIntegerValueParse(readBuffer utils.ReadBuffer) (BA
 
 	// Create a partially initialized instance
 	_child := &_BACnetLogDataLogDataEntryIntegerValue{
-		IntegerValue:               integerValue,
 		_BACnetLogDataLogDataEntry: &_BACnetLogDataLogDataEntry{},
+		IntegerValue:               integerValue,
 	}
 	_child._BACnetLogDataLogDataEntry._BACnetLogDataLogDataEntryChildRequirements = _child
 	return _child, nil

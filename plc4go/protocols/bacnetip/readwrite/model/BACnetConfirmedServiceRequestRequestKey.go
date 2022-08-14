@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -151,10 +151,10 @@ func BACnetConfirmedServiceRequestRequestKeyParse(readBuffer utils.ReadBuffer, s
 
 	// Create a partially initialized instance
 	_child := &_BACnetConfirmedServiceRequestRequestKey{
-		BytesOfRemovedService: bytesOfRemovedService,
 		_BACnetConfirmedServiceRequest: &_BACnetConfirmedServiceRequest{
 			ServiceRequestLength: serviceRequestLength,
 		},
+		BytesOfRemovedService: bytesOfRemovedService,
 	}
 	_child._BACnetConfirmedServiceRequest._BACnetConfirmedServiceRequestChildRequirements = _child
 	return _child, nil
@@ -181,6 +181,16 @@ func (m *_BACnetConfirmedServiceRequestRequestKey) Serialize(writeBuffer utils.W
 	}
 	return m.SerializeParent(writeBuffer, m, ser)
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetConfirmedServiceRequestRequestKey) GetServiceRequestPayloadLength() uint16 {
+	return m.ServiceRequestPayloadLength
+}
+
+//
+////
 
 func (m *_BACnetConfirmedServiceRequestRequestKey) isBACnetConfirmedServiceRequestRequestKey() bool {
 	return true

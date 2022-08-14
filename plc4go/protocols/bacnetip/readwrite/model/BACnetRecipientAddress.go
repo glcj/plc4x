@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -150,8 +150,8 @@ func BACnetRecipientAddressParse(readBuffer utils.ReadBuffer) (BACnetRecipientAd
 
 	// Create a partially initialized instance
 	_child := &_BACnetRecipientAddress{
-		AddressValue:     addressValue,
 		_BACnetRecipient: &_BACnetRecipient{},
+		AddressValue:     addressValue,
 	}
 	_child._BACnetRecipient._BACnetRecipientChildRequirements = _child
 	return _child, nil

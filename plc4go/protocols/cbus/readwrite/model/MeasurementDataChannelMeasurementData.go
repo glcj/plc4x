@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -124,7 +124,7 @@ func (m *_MeasurementDataChannelMeasurementData) GetLsb() uint8 {
 ///////////////////////
 
 func (m *_MeasurementDataChannelMeasurementData) GetRawValue() uint16 {
-	return uint16(uint16(uint16(m.GetMsb())<<uint16(uint16(8))) | uint16(m.GetLsb()))
+	return uint16(m.GetMsb()<<uint16(8) | m.GetLsb())
 }
 
 func (m *_MeasurementDataChannelMeasurementData) GetValue() float64 {
@@ -260,7 +260,7 @@ func MeasurementDataChannelMeasurementDataParse(readBuffer utils.ReadBuffer) (Me
 	lsb := _lsb
 
 	// Virtual field
-	_rawValue := uint16(uint16(msb)<<uint16(uint16(8))) | uint16(lsb)
+	_rawValue := msb<<uint16(8) | lsb
 	rawValue := uint16(_rawValue)
 	_ = rawValue
 
@@ -275,13 +275,13 @@ func MeasurementDataChannelMeasurementDataParse(readBuffer utils.ReadBuffer) (Me
 
 	// Create a partially initialized instance
 	_child := &_MeasurementDataChannelMeasurementData{
+		_MeasurementData: &_MeasurementData{},
 		DeviceId:         deviceId,
 		Channel:          channel,
 		Units:            units,
 		Multiplier:       multiplier,
 		Msb:              msb,
 		Lsb:              lsb,
-		_MeasurementData: &_MeasurementData{},
 	}
 	_child._MeasurementData._MeasurementDataChildRequirements = _child
 	return _child, nil

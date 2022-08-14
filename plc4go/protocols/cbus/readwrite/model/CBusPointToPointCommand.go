@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -98,7 +98,7 @@ func (m *_CBusPointToPointCommand) GetCalData() CALData {
 ///////////////////////
 
 func (m *_CBusPointToPointCommand) GetIsDirect() bool {
-	return bool(bool(((m.GetBridgeAddressCountPeek()) & (0x00FF)) == (0x0000)))
+	return bool(bool((m.GetBridgeAddressCountPeek() & 0x00FF) == (0x0000)))
 }
 
 ///////////////////////
@@ -160,7 +160,7 @@ func CBusPointToPointCommandParse(readBuffer utils.ReadBuffer, cBusOptions CBusO
 	readBuffer.Reset(currentPos)
 
 	// Virtual field
-	_isDirect := bool(((bridgeAddressCountPeek) & (0x00FF)) == (0x0000))
+	_isDirect := bool((bridgeAddressCountPeek & 0x00FF) == (0x0000))
 	isDirect := bool(_isDirect)
 	_ = isDirect
 
@@ -244,6 +244,16 @@ func (pm *_CBusPointToPointCommand) SerializeParent(writeBuffer utils.WriteBuffe
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_CBusPointToPointCommand) GetCBusOptions() CBusOptions {
+	return m.CBusOptions
+}
+
+//
+////
 
 func (m *_CBusPointToPointCommand) isCBusPointToPointCommand() bool {
 	return true

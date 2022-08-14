@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -118,7 +118,9 @@ func BridgeAddressParse(readBuffer utils.ReadBuffer) (BridgeAddress, error) {
 	}
 
 	// Create the instance
-	return NewBridgeAddress(address), nil
+	return &_BridgeAddress{
+		Address: address,
+	}, nil
 }
 
 func (m *_BridgeAddress) Serialize(writeBuffer utils.WriteBuffer) error {

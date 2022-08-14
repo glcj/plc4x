@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -170,7 +170,11 @@ func ErrorReportingSystemCategoryParse(readBuffer utils.ReadBuffer) (ErrorReport
 	}
 
 	// Create the instance
-	return NewErrorReportingSystemCategory(systemCategoryClass, systemCategoryType, systemCategoryVariant), nil
+	return &_ErrorReportingSystemCategory{
+		SystemCategoryClass:   systemCategoryClass,
+		SystemCategoryType:    systemCategoryType,
+		SystemCategoryVariant: systemCategoryVariant,
+	}, nil
 }
 
 func (m *_ErrorReportingSystemCategory) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -147,7 +147,10 @@ func BACnetEventLogRecordParse(readBuffer utils.ReadBuffer) (BACnetEventLogRecor
 	}
 
 	// Create the instance
-	return NewBACnetEventLogRecord(timestamp, logDatum), nil
+	return &_BACnetEventLogRecord{
+		Timestamp: timestamp,
+		LogDatum:  logDatum,
+	}, nil
 }
 
 func (m *_BACnetEventLogRecord) Serialize(writeBuffer utils.WriteBuffer) error {

@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -119,7 +119,9 @@ func MACAddressParse(readBuffer utils.ReadBuffer) (MACAddress, error) {
 	}
 
 	// Create the instance
-	return NewMACAddress(addr), nil
+	return &_MACAddress{
+		Addr: addr,
+	}, nil
 }
 
 func (m *_MACAddress) Serialize(writeBuffer utils.WriteBuffer) error {

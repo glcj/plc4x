@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -183,6 +183,16 @@ func (pm *_MonitoredSAL) SerializeParent(writeBuffer utils.WriteBuffer, child Mo
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_MonitoredSAL) GetCBusOptions() CBusOptions {
+	return m.CBusOptions
+}
+
+//
+////
 
 func (m *_MonitoredSAL) isMonitoredSAL() bool {
 	return true

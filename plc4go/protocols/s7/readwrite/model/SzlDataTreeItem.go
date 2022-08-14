@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -187,7 +187,13 @@ func SzlDataTreeItemParse(readBuffer utils.ReadBuffer) (SzlDataTreeItem, error) 
 	}
 
 	// Create the instance
-	return NewSzlDataTreeItem(itemIndex, mlfb, moduleTypeId, ausbg, ausbe), nil
+	return &_SzlDataTreeItem{
+		ItemIndex:    itemIndex,
+		Mlfb:         mlfb,
+		ModuleTypeId: moduleTypeId,
+		Ausbg:        ausbg,
+		Ausbe:        ausbe,
+	}, nil
 }
 
 func (m *_SzlDataTreeItem) Serialize(writeBuffer utils.WriteBuffer) error {

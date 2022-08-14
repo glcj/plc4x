@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"io"
@@ -207,7 +207,11 @@ func ConfirmationParse(readBuffer utils.ReadBuffer) (Confirmation, error) {
 	}
 
 	// Create the instance
-	return NewConfirmation(alpha, secondAlpha, confirmationType), nil
+	return &_Confirmation{
+		Alpha:            alpha,
+		SecondAlpha:      secondAlpha,
+		ConfirmationType: confirmationType,
+	}, nil
 }
 
 func (m *_Confirmation) Serialize(writeBuffer utils.WriteBuffer) error {

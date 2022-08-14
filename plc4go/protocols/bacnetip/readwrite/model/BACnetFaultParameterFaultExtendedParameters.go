@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -184,7 +184,12 @@ func BACnetFaultParameterFaultExtendedParametersParse(readBuffer utils.ReadBuffe
 	}
 
 	// Create the instance
-	return NewBACnetFaultParameterFaultExtendedParameters(openingTag, parameters, closingTag, tagNumber), nil
+	return &_BACnetFaultParameterFaultExtendedParameters{
+		TagNumber:  tagNumber,
+		OpeningTag: openingTag,
+		Parameters: parameters,
+		ClosingTag: closingTag,
+	}, nil
 }
 
 func (m *_BACnetFaultParameterFaultExtendedParameters) Serialize(writeBuffer utils.WriteBuffer) error {
@@ -237,6 +242,16 @@ func (m *_BACnetFaultParameterFaultExtendedParameters) Serialize(writeBuffer uti
 	}
 	return nil
 }
+
+////
+// Arguments Getter
+
+func (m *_BACnetFaultParameterFaultExtendedParameters) GetTagNumber() uint8 {
+	return m.TagNumber
+}
+
+//
+////
 
 func (m *_BACnetFaultParameterFaultExtendedParameters) isBACnetFaultParameterFaultExtendedParameters() bool {
 	return true

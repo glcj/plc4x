@@ -20,7 +20,7 @@
 package model
 
 import (
-	"github.com/apache/plc4x/plc4go/internal/spi/utils"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/pkg/errors"
 )
 
@@ -226,7 +226,15 @@ func AmsSerialFrameParse(readBuffer utils.ReadBuffer) (AmsSerialFrame, error) {
 	}
 
 	// Create the instance
-	return NewAmsSerialFrame(magicCookie, transmitterAddress, receiverAddress, fragmentNumber, length, userdata, crc), nil
+	return &_AmsSerialFrame{
+		MagicCookie:        magicCookie,
+		TransmitterAddress: transmitterAddress,
+		ReceiverAddress:    receiverAddress,
+		FragmentNumber:     fragmentNumber,
+		Length:             length,
+		Userdata:           userdata,
+		Crc:                crc,
+	}, nil
 }
 
 func (m *_AmsSerialFrame) Serialize(writeBuffer utils.WriteBuffer) error {
