@@ -280,6 +280,8 @@
     ['0x14' MEDIA_TRANSPORT_CONTROL           ]
     ['0x15' ERROR_REPORTING                   ]
     ['0x16' HVAC_ACTUATOR                     ]
+    ['0x17' INFO_MESSAGES                     ]
+    ['0x18' NETWORK_CONTROL                   ]
 ]
 
 [enum uint 4 LightingCompatible
@@ -463,7 +465,7 @@
     ['0xAA' RESERVED_AA                           ['RESERVED'                          , 'NA'                  ]]
     ['0xAB' RESERVED_AB                           ['RESERVED'                          , 'NA'                  ]]
     ['0xAC' AIR_CONDITIONING_AC                   ['AIR_CONDITIONING'                  , 'NO'                  ]]
-    ['0xAD' RESERVED_AD                           ['RESERVED'                          , 'NA'                  ]] // INFO_MESSAGES
+    ['0xAD' INFO_MESSAGES                         ['INFO_MESSAGES'                     , 'NA'                  ]]
     ['0xAE' RESERVED_AE                           ['RESERVED'                          , 'NA'                  ]]
     ['0xAF' RESERVED_AF                           ['RESERVED'                          , 'NA'                  ]]
     ['0xB0' RESERVED_B0                           ['RESERVED'                          , 'NA'                  ]]
@@ -545,7 +547,7 @@
     ['0xFC' RESERVED_FC                           ['RESERVED'                          , 'NO'                  ]]
     ['0xFD' RESERVED_FD                           ['RESERVED'                          , 'NO'                  ]]
     ['0xFE' RESERVED_FE                           ['RESERVED'                          , 'NO'                  ]]
-    ['0xFF' RESERVED_FF                           ['RESERVED'                          , 'NO'                  ]] // NETWORK_CONTROL
+    ['0xFF' NETWORK_CONTROL                       ['NETWORK_CONTROL'                   , 'NO'                  ]]
 ]
 
 [type CALData(RequestContext requestContext)
@@ -1064,8 +1066,8 @@
         ['FirmwareVersion'              IdentifyReplyCommandFirmwareVersion
             [simple string 64  firmwareVersion  ]
         ]
-        ['Summary'                      IdentifyReplyCommandFirmwareSummary
-            [simple string 48  firmwareVersion  ]
+        ['Summary'                      IdentifyReplyCommandSummary
+            [simple string 48  partName         ]
             [simple byte       unitServiceType  ]
             [simple string 32  version          ]
         ]
@@ -1095,7 +1097,7 @@
             [simple   bit                     microPowerReset        ]
         ]
         ['NetworkTerminalLevels'        IdentifyReplyCommandNetworkTerminalLevels
-            [array  byte        minimumLevels        count 'numBytes'       ] // TODO: check datatype
+            [array  byte        networkTerminalLevels  count 'numBytes'       ] // TODO: check datatype
         ]
         ['TerminalLevel'                IdentifyReplyCommandTerminalLevels
             [array  byte        terminalLevels        count 'numBytes'       ] // TODO: check datatype
@@ -1385,7 +1387,7 @@
             [simple LightingData poolsSpaPondsFountainsData]
         ]
         ['HEATING'                              *Heating
-            // Note: the documentation states that the data for ventilation uses LightingData
+            // Note: the documentation states that the data for heating uses LightingData
             [simple LightingData heatingData]
         ]
         ['AIR_CONDITIONING'                     *AirConditioning
@@ -1398,7 +1400,7 @@
             [simple EnableControlData enableControlData]
         ]
         ['AUDIO_AND_VIDEO'                      *AudioAndVideo
-             // Note: the documentation states that the data for ventilation uses LightingData
+             // Note: the documentation states that the data for audio video data uses LightingData
             [simple LightingData audioVideoData]
         ]
         ['SECURITY'                             *Security
@@ -1430,7 +1432,7 @@
         ]
         ['HVAC_ACTUATOR'                        *HvacActuator
              // Note: the documentation states that the data for hvac actuator uses LightingData
-            [simple LightingData ventilationData]
+            [simple LightingData hvacActuatorData]
         ]
     ]
     [optional SALData('applicationId') salData                                  ]
@@ -1617,7 +1619,8 @@
         [*          *Normal
             [simple  LevelInformationNibblePair  pair1                      ]
             [simple  LevelInformationNibblePair  pair2                      ]
-            [virtual uint 8  actualLevel 'pair2.nibbleValue << 4 | pair1.nibbleValue']
+            [virtual uint   8  actualLevel 'pair2.nibbleValue << 4 | pair1.nibbleValue']
+            [virtual float 32  actualLevelInPercent '100 * (actualLevel + 2) / 255 )'  ]
         ]
     ]
 ]

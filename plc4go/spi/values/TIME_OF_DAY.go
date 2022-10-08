@@ -20,13 +20,15 @@
 package values
 
 import (
+	"fmt"
+	apiValues "github.com/apache/plc4x/plc4go/pkg/api/values"
 	"github.com/apache/plc4x/plc4go/spi/utils"
 	"time"
 )
 
 type PlcTIME_OF_DAY struct {
-	value time.Time
 	PlcSimpleValueAdapter
+	value time.Time
 }
 
 func NewPlcTIME_OF_DAY(value interface{}) PlcTIME_OF_DAY {
@@ -53,7 +55,7 @@ func NewPlcTIME_OF_DAY(value interface{}) PlcTIME_OF_DAY {
 
 func (m PlcTIME_OF_DAY) GetRaw() []byte {
 	buf := utils.NewWriteBufferByteBased()
-	m.Serialize(buf)
+	_ = m.Serialize(buf)
 	return buf.GetBytes()
 }
 
@@ -69,6 +71,14 @@ func (m PlcTIME_OF_DAY) GetString() string {
 	return m.value.Format("15:04:05.000")
 }
 
+func (m PlcTIME_OF_DAY) GetPlcValueType() apiValues.PlcValueType {
+	return apiValues.TIME_OF_DAY
+}
+
 func (m PlcTIME_OF_DAY) Serialize(writeBuffer utils.WriteBuffer) error {
 	return writeBuffer.WriteString("PlcTIME_OF_DAY", uint32(len([]rune(m.GetString()))*8), "UTF-8", m.GetString())
+}
+
+func (m PlcTIME_OF_DAY) String() string {
+	return fmt.Sprintf("%s(%dbit):%v", m.GetPlcValueType(), uint32(len([]rune(m.GetString()))*8), m.value)
 }

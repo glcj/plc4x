@@ -26,8 +26,7 @@ var (
 	TraceDefaultMessageCodecWorker      bool
 )
 
-func init() {
-	TraceTransactionManagerWorkers = false
-	TraceTransactionManagerTransactions = false
-	TraceDefaultMessageCodecWorker = false
-}
+// TraceConnectionCache when set to true the connection cache outputs logs by default
+var (
+	TraceConnectionCache bool
+)

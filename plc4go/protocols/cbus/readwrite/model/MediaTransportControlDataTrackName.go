@@ -133,7 +133,7 @@ func MediaTransportControlDataTrackNameParse(readBuffer utils.ReadBuffer, comman
 	_ = currentPos
 
 	// Simple Field (trackName)
-	_trackName, _trackNameErr := readBuffer.ReadString("trackName", uint32(((commandTypeContainer.NumBytes())-(1))*(8)))
+	_trackName, _trackNameErr := readBuffer.ReadString("trackName", uint32(((commandTypeContainer.NumBytes())-(1))*(8)), "UTF-8")
 	if _trackNameErr != nil {
 		return nil, errors.Wrap(_trackNameErr, "Error parsing 'trackName' field of MediaTransportControlDataTrackName")
 	}
@@ -183,7 +183,7 @@ func (m *_MediaTransportControlDataTrackName) String() string {
 	if m == nil {
 		return "<nil>"
 	}
-	writeBuffer := utils.NewBoxedWriteBufferWithOptions(true, true)
+	writeBuffer := utils.NewWriteBufferBoxBasedWithOptions(true, true)
 	if err := writeBuffer.WriteSerializable(m); err != nil {
 		return err.Error()
 	}

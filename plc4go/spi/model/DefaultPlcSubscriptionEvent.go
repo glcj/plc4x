@@ -26,87 +26,62 @@ import (
 	"time"
 )
 
+//go:generate go run ../../tools/plc4xgenerator/gen.go -type=DefaultPlcSubscriptionEvent
 type DefaultPlcSubscriptionEvent struct {
 	DefaultResponse
-	fields    map[string]model.PlcField
-	types     map[string]SubscriptionType
-	intervals map[string]time.Duration
-	values    map[string]values.PlcValue
+	DefaultPlcSubscriptionEventRequirements `ignore:"true"` // Avoid recursion
+	fields                                  map[string]model.PlcField
+	types                                   map[string]SubscriptionType
+	intervals                               map[string]time.Duration
+	values                                  map[string]values.PlcValue
 }
 
-func NewDefaultPlcSubscriptionEvent(fields map[string]model.PlcField, types map[string]SubscriptionType,
+type DefaultPlcSubscriptionEventRequirements interface {
+	utils.Serializable
+	GetAddress(name string) string
+}
+
+func NewDefaultPlcSubscriptionEvent(defaultPlcSubscriptionEventRequirements DefaultPlcSubscriptionEventRequirements, fields map[string]model.PlcField, types map[string]SubscriptionType,
 	intervals map[string]time.Duration, responseCodes map[string]model.PlcResponseCode,
 	values map[string]values.PlcValue) DefaultPlcSubscriptionEvent {
 	return DefaultPlcSubscriptionEvent{
-		DefaultResponse: NewDefaultResponse(responseCodes),
-		fields:          fields,
-		types:           types,
-		intervals:       intervals,
-		values:          values,
+		DefaultResponse:                         NewDefaultResponse(responseCodes),
+		DefaultPlcSubscriptionEventRequirements: defaultPlcSubscriptionEventRequirements,
+		fields:                                  fields,
+		types:                                   types,
+		intervals:                               intervals,
+		values:                                  values,
 	}
 }
 
-func (m DefaultPlcSubscriptionEvent) GetFieldNames() []string {
+func (d *DefaultPlcSubscriptionEvent) GetFieldNames() []string {
 	var fieldNames []string
-	for fieldName := range m.fields {
+	for fieldName := range d.fields {
 		fieldNames = append(fieldNames, fieldName)
 	}
 	return fieldNames
 }
 
-func (m DefaultPlcSubscriptionEvent) GetField(name string) model.PlcField {
-	return m.fields[name]
+func (d *DefaultPlcSubscriptionEvent) GetField(name string) model.PlcField {
+	return d.fields[name]
 }
 
-func (m DefaultPlcSubscriptionEvent) GetType(name string) SubscriptionType {
-	return m.types[name]
+func (d *DefaultPlcSubscriptionEvent) GetType(name string) SubscriptionType {
+	return d.types[name]
 }
 
-func (m DefaultPlcSubscriptionEvent) GetInterval(name string) time.Duration {
-	return m.intervals[name]
+func (d *DefaultPlcSubscriptionEvent) GetInterval(name string) time.Duration {
+	return d.intervals[name]
 }
 
-func (m DefaultPlcSubscriptionEvent) GetAddress(name string) string {
-	panic("GetAddress not implemented")
+func (d *DefaultPlcSubscriptionEvent) GetAddress(name string) string {
+	return d.DefaultPlcSubscriptionEventRequirements.GetAddress(name)
 }
 
-func (m DefaultPlcSubscriptionEvent) GetValue(name string) values.PlcValue {
-	return m.values[name]
+func (d *DefaultPlcSubscriptionEvent) GetSource(name string) string {
+	return d.GetAddress(name)
 }
 
-func (m DefaultPlcSubscriptionEvent) Serialize(writeBuffer utils.WriteBuffer) error {
-	if err := writeBuffer.PushContext("PlcReadResponse"); err != nil {
-		return err
-	}
-
-	if err := writeBuffer.PushContext("fields"); err != nil {
-		return err
-	}
-	for _, fieldName := range m.GetFieldNames() {
-		if err := writeBuffer.PushContext(fieldName); err != nil {
-			return err
-		}
-		valueResponse := m.GetValue(fieldName)
-		if err := valueResponse.(utils.Serializable).Serialize(writeBuffer); err != nil {
-			return err
-		}
-		if err := writeBuffer.PopContext(fieldName); err != nil {
-			return err
-		}
-	}
-	if err := writeBuffer.PopContext("fields"); err != nil {
-		return err
-	}
-	if err := writeBuffer.PopContext("PlcReadResponse"); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m DefaultPlcSubscriptionEvent) String() string {
-	writeBuffer := utils.NewBoxedWriteBufferWithOptions(true, true)
-	if err := writeBuffer.WriteSerializable(m); err != nil {
-		return err.Error()
-	}
-	return writeBuffer.GetBox().String()
+func (d *DefaultPlcSubscriptionEvent) GetValue(name string) values.PlcValue {
+	return d.values[name]
 }

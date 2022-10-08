@@ -19,14 +19,17 @@
 
 package model
 
-import "github.com/apache/plc4x/plc4go/pkg/api/model"
+import (
+	"github.com/apache/plc4x/plc4go/pkg/api/model"
+)
 
+//go:generate go run ../../tools/plc4xgenerator/gen.go -type=DefaultRequest
 type DefaultRequest struct {
 	fields     map[string]model.PlcField
 	fieldNames []string
 }
 
-func (m DefaultRequest) IsAPlcMessage() bool {
+func (d *DefaultRequest) IsAPlcMessage() bool {
 	return true
 }
 
@@ -34,12 +37,12 @@ func NewDefaultRequest(Fields map[string]model.PlcField, FieldNames []string) De
 	return DefaultRequest{Fields, FieldNames}
 }
 
-func (m DefaultRequest) GetFieldNames() []string {
-	return m.fieldNames
+func (d *DefaultRequest) GetFieldNames() []string {
+	return d.fieldNames
 }
 
-func (m DefaultRequest) GetField(name string) model.PlcField {
-	if field, ok := m.fields[name]; ok {
+func (d *DefaultRequest) GetField(name string) model.PlcField {
+	if field, ok := d.fields[name]; ok {
 		return field
 	}
 	return nil

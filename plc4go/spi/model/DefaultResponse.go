@@ -19,18 +19,21 @@
 
 package model
 
-import "github.com/apache/plc4x/plc4go/pkg/api/model"
+import (
+	"github.com/apache/plc4x/plc4go/pkg/api/model"
+)
 
+//go:generate go run ../../tools/plc4xgenerator/gen.go -type=DefaultResponse
 type DefaultResponse struct {
 	responseCodes map[string]model.PlcResponseCode
 }
 
-func (m DefaultResponse) IsAPlcMessage() bool {
+func (d *DefaultResponse) IsAPlcMessage() bool {
 	return true
 }
 
-func (m DefaultResponse) GetResponseCode(name string) model.PlcResponseCode {
-	return m.responseCodes[name]
+func (d *DefaultResponse) GetResponseCode(name string) model.PlcResponseCode {
+	return d.responseCodes[name]
 }
 
 func NewDefaultResponse(responseCodes map[string]model.PlcResponseCode) DefaultResponse {

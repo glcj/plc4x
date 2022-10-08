@@ -20,6 +20,8 @@
 package values
 
 import (
+	"fmt"
+	apiValues "github.com/apache/plc4x/plc4go/pkg/api/values"
 	"github.com/apache/plc4x/plc4go/spi/utils"
 	"time"
 )
@@ -51,7 +53,7 @@ func NewPlcDATE(value interface{}) PlcDATE {
 
 func (m PlcDATE) GetRaw() []byte {
 	buf := utils.NewWriteBufferByteBased()
-	m.Serialize(buf)
+	_ = m.Serialize(buf)
 	return buf.GetBytes()
 }
 
@@ -66,6 +68,14 @@ func (m PlcDATE) GetString() string {
 	return m.GetDate().Format("2006-01-02")
 }
 
+func (m PlcDATE) GetPlcValueType() apiValues.PlcValueType {
+	return apiValues.DATE
+}
+
 func (m PlcDATE) Serialize(writeBuffer utils.WriteBuffer) error {
 	return writeBuffer.WriteString("PlcDATE", uint32(len([]rune(m.GetString()))*8), "UTF-8", m.GetString())
+}
+
+func (m PlcDATE) String() string {
+	return fmt.Sprintf("%s(%dbit):%v", m.GetPlcValueType(), uint32(len([]rune(m.GetString()))*8), m.value)
 }

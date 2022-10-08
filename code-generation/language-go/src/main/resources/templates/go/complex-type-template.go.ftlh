@@ -753,8 +753,11 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 	}
 	currentPos := positionAware.GetPos()
 	_ = currentPos
-	<#if helper.requiresStartPosAndCurPos()>
+	<#if helper.requiresStartPos() || helper.requiresCurPos()>
 	var startPos = positionAware.GetPos()
+	_ = startPos
+	</#if>
+	<#if helper.requiresCurPos()>
 	var curPos uint16
 	</#if>
 	<#assign reservedFieldIndex=0>
@@ -996,7 +999,7 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 		return nil, errors.Wrap(_${constField.name}Err, "Error parsing '${constField.name}' field of ${type.name}")<@emitImport import="github.com/pkg/errors" />
 	}
 	if ${constField.name} != ${type.name}_${constField.name?upper_case} {
-		return nil, errors.New("Expected constant value " + fmt.Sprintf("%d", ${type.name}_${constField.name?upper_case}) + " but got " + fmt.Sprintf("%d", ${constField.name}))<@emitImport import="github.com/pkg/errors" /><@emitImport import="fmt" />
+		return nil, errors.New("Expected constant value " + fmt.Sprintf("%<#if constField.type.isBooleanTypeReference()>t<#else>d</#if>", ${type.name}_${constField.name?upper_case}) + " but got " + fmt.Sprintf("%<#if constField.type.isBooleanTypeReference()>t<#else>d</#if>", ${constField.name}))<@emitImport import="github.com/pkg/errors" /><@emitImport import="fmt" />
 	}
 				<#break>
 			<#case "discriminator">
@@ -1198,7 +1201,7 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 
 		switch {
 		case errors.Is(_err, utils.ParseAssertError{}) || errors.Is(_err, io.EOF):<@emitImport import="io" />
-			log.Debug().Err(_err).Msg("Resetting position because optional threw an error")<@emitImport import="github.com/rs/zerolog/log" />
+			Plc4xModelLog.Debug().Err(_err).Msg("Resetting position because optional threw an error")
 			readBuffer.Reset(currentPos)
 		case _err != nil:
 			return nil, errors.Wrap(_err, "Error parsing '${optionalField.name}' field of ${type.name}")<@emitImport import="github.com/pkg/errors" />
@@ -1285,7 +1288,7 @@ func ${type.name}Parse(readBuffer utils.ReadBuffer<#if hasParserArguments>, ${pa
 			return nil, errors.Wrap(_err, "Error parsing 'reserved' field of ${type.name}")<@emitImport import="github.com/pkg/errors" />
 		}
 		if ${helper.toTypeSafeCompare(reservedField)} {
-			log.Info().Fields(map[string]interface{}{<@emitImport import="github.com/rs/zerolog/log" />
+			Plc4xModelLog.Info().Fields(map[string]interface{}{
 				"expected value": ${helper.getReservedValue(reservedField)},
 				"got value": reserved,
 			}).Msg("Got unexpected response for reserved field.")
@@ -1812,7 +1815,7 @@ func (m *_${type.name}) Serialize(writeBuffer utils.WriteBuffer) error {
 	{
 		var reserved ${helper.getLanguageTypeNameForTypeReference(simpleTypeReference)} = ${helper.getReservedValue(reservedField)}
 		if <#if type.isAbstract()>p</#if>m.reservedField${reservedFieldIndex} != nil {
-			log.Info().Fields(map[string]interface{}{<@emitImport import="github.com/rs/zerolog/log" />
+			Plc4xModelLog.Info().Fields(map[string]interface{}{
 				"expected value": ${helper.getReservedValue(reservedField)},
 				"got value": reserved,
 			}).Msg("Overriding reserved field with unexpected value.")
@@ -1909,7 +1912,7 @@ func (m *_${type.name}) String() string {
 	if m == nil {
 		return "<nil>"
 	}
-	writeBuffer := utils.NewBoxedWriteBufferWithOptions(true, true)
+	writeBuffer := utils.NewWriteBufferBoxBasedWithOptions(true, true)
 	if err := writeBuffer.WriteSerializable(m); err != nil {
 		return err.Error()
 	}

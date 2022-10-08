@@ -133,7 +133,7 @@ func SecurityDataDisplayMessageParse(readBuffer utils.ReadBuffer, commandTypeCon
 	_ = currentPos
 
 	// Simple Field (message)
-	_message, _messageErr := readBuffer.ReadString("message", uint32(((commandTypeContainer.NumBytes())-(1))*(8)))
+	_message, _messageErr := readBuffer.ReadString("message", uint32(((commandTypeContainer.NumBytes())-(1))*(8)), "UTF-8")
 	if _messageErr != nil {
 		return nil, errors.Wrap(_messageErr, "Error parsing 'message' field of SecurityDataDisplayMessage")
 	}
@@ -183,7 +183,7 @@ func (m *_SecurityDataDisplayMessage) String() string {
 	if m == nil {
 		return "<nil>"
 	}
-	writeBuffer := utils.NewBoxedWriteBufferWithOptions(true, true)
+	writeBuffer := utils.NewWriteBufferBoxBasedWithOptions(true, true)
 	if err := writeBuffer.WriteSerializable(m); err != nil {
 		return err.Error()
 	}

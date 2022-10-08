@@ -20,23 +20,25 @@
 package values
 
 import (
+	"fmt"
+	apiValues "github.com/apache/plc4x/plc4go/pkg/api/values"
 	"github.com/apache/plc4x/plc4go/spi/utils"
 )
 
 type PlcCHAR struct {
-	// TODO: Why is this a byte-array?
-	value []byte
 	PlcSimpleValueAdapter
+	// TODO: Why is this a byte-array?
+	value string
 }
 
-func NewPlcCHAR(value uint8) PlcCHAR {
+func NewPlcCHAR(value string) PlcCHAR {
 	return PlcCHAR{
-		value: []byte{value},
+		value: value,
 	}
 }
 
 func (m PlcCHAR) GetRaw() []byte {
-	return m.value
+	return []byte(m.value)
 }
 
 func (m PlcCHAR) IsString() bool {
@@ -44,9 +46,17 @@ func (m PlcCHAR) IsString() bool {
 }
 
 func (m PlcCHAR) GetString() string {
-	return string(m.value)
+	return m.value
+}
+
+func (m PlcCHAR) GetPlcValueType() apiValues.PlcValueType {
+	return apiValues.CHAR
 }
 
 func (m PlcCHAR) Serialize(writeBuffer utils.WriteBuffer) error {
-	return writeBuffer.WriteString("PlcBYTE", 16, "UTF-8", string(m.value))
+	return writeBuffer.WriteString("PlcCHAR", 8, "UTF-8", m.value)
+}
+
+func (m PlcCHAR) String() string {
+	return fmt.Sprintf("%s(%dbit):%v", m.GetPlcValueType(), 8, m.value)
 }

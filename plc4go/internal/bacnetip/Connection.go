@@ -26,6 +26,7 @@ import (
 	"github.com/apache/plc4x/plc4go/spi"
 	"github.com/apache/plc4x/plc4go/spi/default"
 	internalModel "github.com/apache/plc4x/plc4go/spi/model"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	"github.com/rs/zerolog/log"
 	"sync"
 	"time"
@@ -81,11 +82,13 @@ func (c *Connection) Connect() <-chan plc4go.PlcConnectionConnectResult {
 			for c.IsConnected() {
 				log.Debug().Msg("Polling data")
 				incomingMessageChannel := c.messageCodec.GetDefaultIncomingMessageChannel()
+				timeout := time.NewTimer(20 * time.Millisecond)
 				select {
 				case message := <-incomingMessageChannel:
 					// TODO: implement mapping to subscribers
 					log.Info().Msgf("Received \n%v", message)
-				case <-time.After(20 * time.Millisecond):
+					utils.CleanupTimer(timeout)
+				case <-timeout.C:
 				}
 			}
 			log.Info().Msg("Ending incoming message transfer")
@@ -103,8 +106,8 @@ func (c *Connection) GetMessageCodec() spi.MessageCodec {
 	return c.messageCodec
 }
 
-func (m *Connection) ReadRequestBuilder() apiModel.PlcReadRequestBuilder {
-	return internalModel.NewDefaultPlcReadRequestBuilder(m.GetPlcFieldHandler(), NewReader(&m.invokeIdGenerator, m.messageCodec, m.tm))
+func (c *Connection) ReadRequestBuilder() apiModel.PlcReadRequestBuilder {
+	return internalModel.NewDefaultPlcReadRequestBuilder(c.GetPlcFieldHandler(), NewReader(&c.invokeIdGenerator, c.messageCodec, c.tm))
 }
 
 func (c *Connection) SubscriptionRequestBuilder() apiModel.PlcSubscriptionRequestBuilder {

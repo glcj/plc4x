@@ -86,10 +86,6 @@ const (
 type IEC61131ValueHandler struct {
 }
 
-func NewIEC61131ValueHandler() IEC61131ValueHandler {
-	return IEC61131ValueHandler{}
-}
-
 func (m IEC61131ValueHandler) NewPlcValue(field model.PlcField, value interface{}) (values.PlcValue, error) {
 	typeName := field.GetTypeName()
 	quantity := field.GetQuantity()
@@ -110,7 +106,7 @@ func (m IEC61131ValueHandler) NewPlcValue(field model.PlcField, value interface{
 		var plcValues []values.PlcValue
 		for i := uint16(0); i < quantity; i++ {
 			curValue := curValues[i]
-			plcValue, err := m.newPlcValue(typeName, 1, curValue)
+			plcValue, err := m.NewPlcValueFromType(typeName, curValue)
 			if err != nil {
 				return nil, errors.New("error parsing PlcValue: " + err.Error())
 			}
@@ -118,11 +114,10 @@ func (m IEC61131ValueHandler) NewPlcValue(field model.PlcField, value interface{
 		}
 		return NewPlcList(plcValues), nil
 	}
-	return m.newPlcValue(typeName, 1, value)
+	return m.NewPlcValueFromType(typeName, value)
 }
 
-func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, value interface{}) (values.PlcValue, error) {
-
+func (m IEC61131ValueHandler) NewPlcValueFromType(typeName string, value interface{}) (values.PlcValue, error) {
 	stringValue, isString := value.(string)
 	switch typeName {
 	// Bit & Bit-Strings
@@ -188,7 +183,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to lword")
 			}
-			return NewPlcLWORD(uint64(casted)), nil
+			return NewPlcLWORD(casted), nil
 		} else {
 			casted, ok := value.(uint64)
 			if !ok {
@@ -246,7 +241,7 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 			if err != nil {
 				return nil, errors.New("couldn't parse string value '" + stringValue + "' to ulint")
 			}
-			return NewPlcULINT(uint64(casted)), nil
+			return NewPlcULINT(casted), nil
 		} else {
 			casted, ok := value.(uint64)
 			if !ok {
@@ -385,44 +380,32 @@ func (m IEC61131ValueHandler) newPlcValue(typeName string, quantity uint16, valu
 
 	// Chars and Strings
 	case IEC61131_CHAR:
-		if isString {
-			return nil, errors.New("string to IEC61131_CHAR conversion not implemented")
+		if !isString {
+			return nil, errors.New("non-string to IEC61131_CHAR conversion not implemented")
+		} else if len(stringValue) > 1 {
+			return nil, errors.New("IEC61131_CHAR can only contain one character")
 		} else {
-			casted, ok := value.(uint8)
-			if !ok {
-				return nil, errors.New("couldn't cast value of type " + reflect.TypeOf(value).Name() + " to uint8")
-			}
-			return NewPlcCHAR(casted), nil
+			return NewPlcCHAR(stringValue), nil
 		}
 	case IEC61131_WCHAR:
-		if isString {
-			return nil, errors.New("string to IEC61131_WCHAR conversion not implemented")
+		if !isString {
+			return nil, errors.New("non-string to IEC61131_WCHAR conversion not implemented")
+		} else if len(stringValue) > 1 {
+			return nil, errors.New("IEC61131_WCHAR can only contain one character")
 		} else {
-			casted, ok := value.(uint16)
-			if !ok {
-				return nil, errors.New("couldn't cast value of type " + reflect.TypeOf(value).Name() + " to uint16")
-			}
-			return NewPlcWCHAR(casted), nil
+			return NewPlcWCHAR(stringValue), nil
 		}
 	case IEC61131_STRING:
-		if isString {
-			return NewPlcSTRING(stringValue), nil
+		if !isString {
+			return nil, errors.New("non-string to IEC61131_STRING conversion not implemented")
 		} else {
-			/*casted, ok := value.([]uint8)
-			  if !ok {
-			  	return nil, errors.New("couldn't cast value of type " + reflect.TypeOf(value).Name() + " to []uint8")
-			  }
-			  return NewPlcSTRING(casted), nil*/
+			return NewPlcSTRING(stringValue), nil
 		}
 	case IEC61131_WSTRING:
-		if isString {
-			return NewPlcSTRING(stringValue), nil
+		if !isString {
+			return nil, errors.New("non-string to IEC61131_WSTRING conversion not implemented")
 		} else {
-			casted, ok := value.([]uint16)
-			if !ok {
-				return nil, errors.New("couldn't cast value of type " + reflect.TypeOf(value).Name() + " to []uint16")
-			}
-			return NewPlcWSTRING(casted), nil
+			return NewPlcSTRING(stringValue), nil
 		}
 	}
 

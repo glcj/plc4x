@@ -202,7 +202,7 @@ func (d *plcConnectionCloseResult) GetErr() error {
 	return d.err
 }
 
-func (d plcConnectionCloseResult) GetTraces() []spi.TraceEntry {
+func (d *plcConnectionCloseResult) GetTraces() []spi.TraceEntry {
 	return d.traces
 }
 
@@ -255,6 +255,9 @@ func (d *defaultConnection) BlockingClose() {
 
 func (d *defaultConnection) Close() <-chan plc4go.PlcConnectionCloseResult {
 	log.Trace().Msg("close connection")
+	if err := d.GetMessageCodec().Disconnect(); err != nil {
+		log.Warn().Err(err).Msg("Error disconnecting message code")
+	}
 	err := d.GetTransportInstance().Close()
 	d.SetConnected(false)
 	ch := make(chan plc4go.PlcConnectionCloseResult)

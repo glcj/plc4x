@@ -21,6 +21,7 @@ package values
 
 import (
 	"fmt"
+	apiValues "github.com/apache/plc4x/plc4go/pkg/api/values"
 	"github.com/apache/plc4x/plc4go/spi/utils"
 	"math"
 )
@@ -38,7 +39,7 @@ func NewPlcLREAL(value float64) PlcLREAL {
 
 func (m PlcLREAL) GetRaw() []byte {
 	buf := utils.NewWriteBufferByteBased()
-	m.Serialize(buf)
+	_ = m.Serialize(buf)
 	return buf.GetBytes()
 }
 
@@ -160,6 +161,14 @@ func (m PlcLREAL) GetString() string {
 	return fmt.Sprintf("%g", m.GetFloat64())
 }
 
+func (m PlcLREAL) GetPlcValueType() apiValues.PlcValueType {
+	return apiValues.LREAL
+}
+
 func (m PlcLREAL) Serialize(writeBuffer utils.WriteBuffer) error {
 	return writeBuffer.WriteFloat64("PlcLREAL", 64, m.value)
+}
+
+func (m PlcLREAL) String() string {
+	return fmt.Sprintf("%s(%dbit):%v", m.GetPlcValueType(), 64, m.value)
 }

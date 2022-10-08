@@ -173,7 +173,7 @@ func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attrib
 	_ = currentPos
 
 	// Simple Field (volts)
-	_volts, _voltsErr := readBuffer.ReadString("volts", uint32(16))
+	_volts, _voltsErr := readBuffer.ReadString("volts", uint32(16), "UTF-8")
 	if _voltsErr != nil {
 		return nil, errors.Wrap(_voltsErr, "Error parsing 'volts' field of IdentifyReplyCommandNetworkVoltage")
 	}
@@ -189,7 +189,7 @@ func IdentifyReplyCommandNetworkVoltageParse(readBuffer utils.ReadBuffer, attrib
 	}
 
 	// Simple Field (voltsDecimalPlace)
-	_voltsDecimalPlace, _voltsDecimalPlaceErr := readBuffer.ReadString("voltsDecimalPlace", uint32(16))
+	_voltsDecimalPlace, _voltsDecimalPlaceErr := readBuffer.ReadString("voltsDecimalPlace", uint32(16), "UTF-8")
 	if _voltsDecimalPlaceErr != nil {
 		return nil, errors.Wrap(_voltsDecimalPlaceErr, "Error parsing 'voltsDecimalPlace' field of IdentifyReplyCommandNetworkVoltage")
 	}
@@ -270,7 +270,7 @@ func (m *_IdentifyReplyCommandNetworkVoltage) String() string {
 	if m == nil {
 		return "<nil>"
 	}
-	writeBuffer := utils.NewBoxedWriteBufferWithOptions(true, true)
+	writeBuffer := utils.NewWriteBufferBoxBasedWithOptions(true, true)
 	if err := writeBuffer.WriteSerializable(m); err != nil {
 		return err.Error()
 	}

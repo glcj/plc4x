@@ -19,6 +19,11 @@
 
 package values
 
+import (
+	"fmt"
+	apiValues "github.com/apache/plc4x/plc4go/pkg/api/values"
+)
+
 type PlcNULL struct {
 	PlcValueAdapter
 }
@@ -29,4 +34,12 @@ func NewPlcNULL() PlcNULL {
 
 func (m PlcNULL) GetRaw() []byte {
 	return []byte{}
+}
+
+func (m PlcNULL) GetPlcValueType() apiValues.PlcValueType {
+	return apiValues.NULL
+}
+
+func (m PlcNULL) String() string {
+	return fmt.Sprintf("%s", m.GetPlcValueType())
 }

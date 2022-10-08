@@ -20,6 +20,7 @@
 package _default
 
 import (
+	"context"
 	"fmt"
 	"github.com/apache/plc4x/plc4go/pkg/api"
 	apiModel "github.com/apache/plc4x/plc4go/pkg/api/model"
@@ -89,7 +90,11 @@ func (d *defaultDriver) SupportsDiscovery() bool {
 	return false
 }
 
-func (d *defaultDriver) Discover(_ func(event apiModel.PlcDiscoveryEvent), _ ...options.WithDiscoveryOption) error {
+func (d *defaultDriver) Discover(_ func(event apiModel.PlcDiscoveryItem), _ ...options.WithDiscoveryOption) error {
+	panic("not available")
+}
+
+func (d *defaultDriver) DiscoverWithContext(_ context.Context, callback func(event apiModel.PlcDiscoveryItem), discoveryOptions ...options.WithDiscoveryOption) error {
 	panic("not available")
 }
 

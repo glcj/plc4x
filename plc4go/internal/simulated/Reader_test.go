@@ -20,12 +20,14 @@
 package simulated
 
 import (
-	s7 "github.com/apache/plc4x/plc4go/internal/s7"
+	"context"
+	"github.com/apache/plc4x/plc4go/internal/s7"
 	"github.com/apache/plc4x/plc4go/pkg/api/model"
 	"github.com/apache/plc4x/plc4go/pkg/api/values"
 	model4 "github.com/apache/plc4x/plc4go/protocols/s7/readwrite/model"
 	model2 "github.com/apache/plc4x/plc4go/protocols/simulated/readwrite/model"
 	model3 "github.com/apache/plc4x/plc4go/spi/model"
+	"github.com/apache/plc4x/plc4go/spi/utils"
 	values2 "github.com/apache/plc4x/plc4go/spi/values"
 	"reflect"
 	"testing"
@@ -161,7 +163,9 @@ func TestReader_Read(t *testing.T) {
 			r := NewReader(tt.fields.device, tt.fields.options, nil)
 			readRequest := model3.NewDefaultPlcReadRequest(tt.args.fields, tt.args.fieldNames, r, nil)
 			timeBeforeReadRequest := time.Now()
-			readResponseChannel := r.Read(readRequest)
+			readResponseChannel := r.Read(context.TODO(), readRequest)
+			timeout := time.NewTimer(3 * time.Second)
+			defer utils.CleanupTimer(timeout)
 			select {
 			case readResponse := <-readResponseChannel:
 				timeAfterReadRequest := time.Now()
@@ -186,7 +190,7 @@ func TestReader_Read(t *testing.T) {
 							readResponse.GetResponse().GetValue(fieldName), tt.want.GetValue(fieldName))
 					}
 				}
-			case <-time.After(3 * time.Second):
+			case <-timeout.C:
 				t.Errorf("Reader.Read() got timeout")
 			}
 		})

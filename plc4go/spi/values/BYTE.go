@@ -20,12 +20,14 @@
 package values
 
 import (
+	"fmt"
+	apiValues "github.com/apache/plc4x/plc4go/pkg/api/values"
 	"github.com/apache/plc4x/plc4go/spi/utils"
 )
 
 type PlcBYTE struct {
-	value byte
 	PlcSimpleValueAdapter
+	value byte
 }
 
 func NewPlcBYTE(value byte) PlcBYTE {
@@ -98,6 +100,14 @@ func (m PlcBYTE) GetString() string {
 	return strVal
 }
 
+func (m PlcBYTE) GetPlcValueType() apiValues.PlcValueType {
+	return apiValues.BYTE
+}
+
 func (m PlcBYTE) Serialize(writeBuffer utils.WriteBuffer) error {
 	return writeBuffer.WriteByte("PlcBYTE", m.value)
+}
+
+func (m PlcBYTE) String() string {
+	return fmt.Sprintf("%s(%dbit):%v", m.GetPlcValueType(), 8, m.value)
 }

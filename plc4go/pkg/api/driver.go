@@ -20,6 +20,7 @@
 package plc4go
 
 import (
+	"context"
 	"github.com/apache/plc4x/plc4go/pkg/api/model"
 	"github.com/apache/plc4x/plc4go/spi/options"
 	"github.com/apache/plc4x/plc4go/spi/transports"
@@ -29,7 +30,7 @@ import (
 type PlcDriver interface {
 	// GetProtocolCode Get the short code used to identify this driver (As used in the connection string)
 	GetProtocolCode() string
-	// GetProtocolName Get a human readable name for this driver
+	// GetProtocolName Get a human-readable name for this driver
 	GetProtocolName() string
 
 	// GetDefaultTransport If the driver has a default form of transport, provide this and make
@@ -48,5 +49,6 @@ type PlcDriver interface {
 
 	// Discover TODO: document me
 	// FIXME: this leaks spi in the signature move to spi driver or create interfaces. Can also be done by moving spi in a proper module
-	Discover(callback func(event model.PlcDiscoveryEvent), discoveryOptions ...options.WithDiscoveryOption) error
+	Discover(callback func(event model.PlcDiscoveryItem), discoveryOptions ...options.WithDiscoveryOption) error
+	DiscoverWithContext(ctx context.Context, callback func(event model.PlcDiscoveryItem), discoveryOptions ...options.WithDiscoveryOption) error
 }

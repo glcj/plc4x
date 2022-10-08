@@ -24,9 +24,9 @@ import (
 	plc4x_config "github.com/apache/plc4x/plc4go/pkg/api/config"
 	"github.com/apache/plc4x/plc4go/pkg/api/model"
 	"github.com/pkg/errors"
+	"github.com/rivo/tview"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/sruehl/tview"
 	"net/url"
 	"strings"
 	"time"
@@ -52,7 +52,7 @@ var rootCommand = Command{
 					if !driver.SupportsDiscovery() {
 						return errors.Errorf("%s doesn't support discovery", driverId)
 					}
-					return driver.Discover(func(event model.PlcDiscoveryEvent) {
+					return driver.Discover(func(event model.PlcDiscoveryItem) {
 						_, _ = fmt.Fprintf(messageOutput, "%v\n", event)
 					})
 				} else {
@@ -121,7 +121,7 @@ var rootCommand = Command{
 				return nil
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					entries = append(entries, connectionsString)
 				}
 				return
@@ -138,7 +138,7 @@ var rootCommand = Command{
 				}
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					entries = append(entries, connectionsString)
 				}
 				return
@@ -177,7 +177,7 @@ var rootCommand = Command{
 				return nil
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					if strings.HasPrefix(currentText, connectionsString+"") {
 						parse, _ := url.Parse(connectionsString)
 						switch parse.Scheme {
@@ -202,7 +202,7 @@ var rootCommand = Command{
 				}
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					entries = append(entries, connectionsString)
 				}
 				return
@@ -241,7 +241,7 @@ var rootCommand = Command{
 				return nil
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					if strings.HasPrefix(currentText, connectionsString+"") {
 						parse, _ := url.Parse(connectionsString)
 						switch parse.Scheme {
@@ -266,7 +266,7 @@ var rootCommand = Command{
 				}
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					entries = append(entries, connectionsString)
 				}
 				return
@@ -309,7 +309,7 @@ var rootCommand = Command{
 				return nil
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					if strings.HasPrefix(currentText, connectionsString+"") {
 						parse, _ := url.Parse(connectionsString)
 						switch parse.Scheme {
@@ -350,7 +350,7 @@ var rootCommand = Command{
 				}
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					entries = append(entries, connectionsString)
 				}
 				return
@@ -370,7 +370,7 @@ var rootCommand = Command{
 				} else {
 					subscriptionRequest, err := connection.SubscriptionRequestBuilder().
 						AddEventQuery("subscriptionField", split[1]).
-						AddItemHandler(func(event model.PlcSubscriptionEvent) {
+						AddPreRegisteredConsumer("subscriptionField", func(event model.PlcSubscriptionEvent) {
 							numberOfMessagesReceived++
 							messageReceived(numberOfMessagesReceived, time.Now(), event)
 						}).
@@ -382,12 +382,12 @@ var rootCommand = Command{
 					if err := subscriptionRequestResult.GetErr(); err != nil {
 						return errors.Wrapf(err, "%s can't subscribe", connectionsString)
 					}
-					log.Info().Msgf("subscription result %s", subscriptionRequestResult.GetResponse())
+					log.Info().Msgf("subscription result\n%s", subscriptionRequestResult.GetResponse())
 				}
 				return nil
 			},
 			parameterSuggestions: func(currentText string) (entries []string) {
-				for connectionsString, _ := range connections {
+				for connectionsString := range connections {
 					entries = append(entries, connectionsString)
 					if strings.HasPrefix(currentText, connectionsString) {
 						parse, _ := url.Parse(connectionsString)
