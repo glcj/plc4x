@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>28</version>
+    <version>29</version>
   </parent>
 
   <groupId>org.apache.plc4x</groupId>
@@ -150,8 +150,8 @@
     <!-- version 0.6.7 is newer, however the ExampleServer doesn't seem to run with that -->
     <!-- version 0.6.8 is being released, however the milo-examples artifact is not available yet -->
     <milo.version>0.6.8</milo.version>
-    <mockito.version>4.9.0</mockito.version>
-    <netty.version>4.1.85.Final</netty.version>
+    <mockito.version>4.10.0</mockito.version>
+    <netty.version>4.1.86.Final</netty.version>
     <pcap4j.version>1.8.2</pcap4j.version>
     <slf4j.version>2.0.6</slf4j.version>
     <vavr.version>0.10.4</vavr.version>
