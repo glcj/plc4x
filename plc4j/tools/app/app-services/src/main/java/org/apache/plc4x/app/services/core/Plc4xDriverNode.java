@@ -18,21 +18,25 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.plc4x.app.services.api.DriverDBRecord;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.RenameAction;
 import org.openide.actions.ToolsAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 
@@ -40,17 +44,17 @@ import org.openide.util.actions.SystemAction;
  *
  * @author cgarcia
  */
-public class Plc4xDriverNode  extends AbstractNode{
+public class Plc4xDriverNode  extends BeanNode{
 
-    private String key;     
+    private final DriverDBRecord bean;     
     private ChangeListener listener;    
 
     @Messages("HINT_Plc4xDriverNode=Represents one Plc4x driver.")    
-    public Plc4xDriverNode(String key){
-        super(Children.create(new Plc4xDriverChildFactory(), false));
-        this.key = key;   
+    public Plc4xDriverNode(DriverDBRecord bean) throws IntrospectionException{
+        super(bean, Children.create(new Plc4xDriverChildFactory(), false));
+        this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/Driver_16x16.png"); 
-        super.setName(key);         
+        super.setName(bean.getProtocolName());         
         setShortDescription(Bundle.HINT_Plc4xDriverNode());        
     }
     
@@ -74,15 +78,22 @@ public class Plc4xDriverNode  extends AbstractNode{
     
     @Override     
     public Node cloneNode() {         
-        return new Plc4xDriverNode(key);     
+        try {     
+            return new Plc4xDriverNode(bean);
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
     }
 
     @Messages({"PROP_Driver_value=Value",
         "HINT_Driver_value=Value of this system property."})     
     @Override     
     protected Sheet createSheet() {
+
         Sheet sheet = super.createSheet();
         Sheet.Set props = sheet.get(Sheet.PROPERTIES);
+        /*
         if (props == null) {
             props = Sheet.createPropertiesSet();
             sheet.put(props);
@@ -113,7 +124,7 @@ public class Plc4xDriverNode  extends AbstractNode{
                 firePropertyChange("value", null, null);
             }         
         });
-        
+        */
         return sheet;
     }    
 
@@ -132,6 +143,7 @@ public class Plc4xDriverNode  extends AbstractNode{
     
     @Override     
     public void setName(String nue) {
+        /*
         Properties p = System.getProperties();
         String value = p.getProperty(key);
         p.remove(key);         
@@ -142,7 +154,8 @@ public class Plc4xDriverNode  extends AbstractNode{
         
         System.setProperties(p);         
         
-        Plc4xPropertiesNotifier.changed();     
+        Plc4xPropertiesNotifier.changed();  
+        */
     }   
     
     @Override    
@@ -152,10 +165,12 @@ public class Plc4xDriverNode  extends AbstractNode{
     
     @Override     
     public void destroy() throws IOException {
+        /*
         Properties p = System.getProperties();
         p.remove(key);
         System.setProperties(p);
         Plc4xPropertiesNotifier.changed();     
+        */
     }    
     
 }

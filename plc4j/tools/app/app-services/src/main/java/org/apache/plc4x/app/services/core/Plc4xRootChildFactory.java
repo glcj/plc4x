@@ -18,17 +18,20 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.plc4x.app.services.api.DriverDBRecord;
 import org.apache.plc4x.app.services.api.MasterDB;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcDriver;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
@@ -38,6 +41,7 @@ import org.openide.util.Lookup;
 public class Plc4xRootChildFactory extends ChildFactory.Detachable<String> {
 
     private ChangeListener listener;
+    private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);
     
     @Override     
     protected void addNotify() {
@@ -56,17 +60,19 @@ public class Plc4xRootChildFactory extends ChildFactory.Detachable<String> {
     
     @Override     
     protected Node createNodeForKey(String key) {         
-        return new Plc4xDriverNode(key);     
+        try {     
+            return new Plc4xDriverNode(db.getDriverByName(key));
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
     }    
     
     @Override
     protected boolean createKeys(List<String> toPopulate) {
         
         List<String> keys = new ArrayList<String>();
-        
-        MasterDB db = Lookup.getDefault().lookup(MasterDB.class);
-        
-
+     
         for (String name:db.getDriverNames()) {
             keys.add(name);
             

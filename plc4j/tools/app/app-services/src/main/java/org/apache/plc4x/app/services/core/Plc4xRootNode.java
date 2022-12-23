@@ -18,8 +18,12 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import java.awt.Image;
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
+import org.apache.plc4x.app.services.api.MasterDB;
 import org.netbeans.api.core.ide.ServicesTabNodeRegistration;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
@@ -28,9 +32,12 @@ import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.ToolsAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.HelpCtx;
+import org.openide.util.ImageUtilities;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.NewType;
@@ -43,9 +50,14 @@ import org.openide.util.datatransfer.NewType;
 @Messages({"LBL_Plc4xRootNode=Plc4x Drivers",
     "HINT_Plc4xRootNode=Shows all currently set system properties." })
 public class Plc4xRootNode extends AbstractNode {
+    
+    public final Image closeicon = ImageUtilities.loadImage("org/apache/plc4x/app/services/toddy_s7_16x16.png");
+    public final Image openicon = ImageUtilities.loadImage("org/apache/plc4x/app/services/toddy_s7_16x16.png");
 
-    public Plc4xRootNode() {
-        super(Children.create(new Plc4xRootChildFactory(), false));
+    private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);
+
+    public Plc4xRootNode() throws IntrospectionException {
+        super(Children.create(new Plc4xRootChildFactory(), false));        
         setDisplayName(Bundle.LBL_Plc4xRootNode());      
         setShortDescription(Bundle.HINT_Plc4xRootNode());        
     }
@@ -64,7 +76,18 @@ public class Plc4xRootNode extends AbstractNode {
           SystemAction.get(PropertiesAction.class),};
       return result;
     }
-    
+
+    @Override
+    public Image getIcon(int type) {
+        return closeicon;
+    }
+        
+    @Override
+    public Image getOpenedIcon(int type) {
+        return openicon;
+    }
+
+
     
     
 }
