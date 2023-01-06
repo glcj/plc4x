@@ -18,7 +18,7 @@
  */
 package org.apache.plc4x.app.services.impl;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import org.apache.plc4x.app.services.api.TagDBRecord;
 
@@ -39,7 +39,11 @@ public class TagDBRecordImpl implements TagDBRecord {
     
     private int transmits = 0;
     private int receives = 0;
-    private int errors = 0;      
+    private int errors = 0;  
+
+    private Instant startInstant;
+    private Instant currentInstant;
+    private Instant lastUpdateInstant;      
     
     @Override
     public void setTagName(String name) {
@@ -103,37 +107,32 @@ public class TagDBRecordImpl implements TagDBRecord {
 
     @Override
     public int getTransmits() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return transmits;
     }
 
     @Override
     public int getReceives() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return receives;
     }
 
     @Override
     public int getErrors() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return errors;
     }
 
     @Override
-    public int getNumberOfTags() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Instant getLastReadInstant() {
+        return startInstant;
     }
 
     @Override
-    public LocalDateTime getLastReadDateTime() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Instant getLastWriteInstant() {
+        return currentInstant; 
     }
 
     @Override
-    public LocalDateTime getLastWriteDateTime() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public LocalDateTime getLastErrorDateTime() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Instant getLastErrorInstant() {
+        return lastUpdateInstant;
     }
     
 }

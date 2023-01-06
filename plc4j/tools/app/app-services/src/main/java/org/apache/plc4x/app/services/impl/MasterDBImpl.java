@@ -19,6 +19,8 @@
 package org.apache.plc4x.app.services.impl;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,7 @@ import org.apache.plc4x.java.api.PlcDriver;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.ServiceProvider;
 
+@JsonPropertyOrder({"db"})
 @ServiceProvider(service=MasterDB.class)
 public class MasterDBImpl implements MasterDB {
 
@@ -46,6 +49,11 @@ public class MasterDBImpl implements MasterDB {
         }        
     }
     
+    public HashMap<UUID, DriverDBRecord> getDB(){
+        return db;
+    } 
+    
+    @JsonIgnore    
     @Override
     public List<String> getDriverCodes() {
         return db.entrySet().stream()
@@ -54,6 +62,7 @@ public class MasterDBImpl implements MasterDB {
                 .collect(Collectors.toList());              
     }
 
+    @JsonIgnore    
     @Override
     public List<String> getDriverNames() {
         return db.entrySet().stream()
@@ -62,6 +71,7 @@ public class MasterDBImpl implements MasterDB {
                 .collect(Collectors.toList());  
     }
 
+    @JsonIgnore
     @Override
     public DriverDBRecord getDriverByCode(String code) {
         return db.entrySet().stream()
@@ -69,6 +79,7 @@ public class MasterDBImpl implements MasterDB {
                 .findFirst().get().getValue();
     }
 
+    @JsonIgnore
     @Override
     public DriverDBRecord getDriverByName(String name) {
         return db.entrySet().stream()
@@ -76,37 +87,55 @@ public class MasterDBImpl implements MasterDB {
                 .findFirst().get().getValue();
     }    
     
-
+    @JsonIgnore
     @Override
     public int getNumberOfDrivers() {
         return db.size();
     }
-
+    
+    @JsonIgnore
     @Override
     public int getNumberOfDevice() {
-        return 0;
+        int[] n = new int[1];
+        n[0] = 0;
+        db.entrySet().stream()
+                .forEach(drv -> n[0] += drv.getValue().getNumberOfDevice());
+        return n[0];
     }
 
+    @JsonIgnore
     @Override
     public int getNumberOfTagGroups() {
-        return 0;
+        int[] n = new int[1];
+        n[0] = 0;
+        db.entrySet().stream()
+                .forEach(drv -> n[0] += drv.getValue().getNumberOfTagGroups());
+        return n[0];
     }
-
+    
+    @JsonIgnore
     @Override
     public int getNumberOfTags() {
-        return 0;
+        int[] n = new int[1];
+        n[0] = 0;
+        db.entrySet().stream()
+                .forEach(drv -> n[0] += drv.getValue().getNumberOfTags());
+        return n[0];
     }
 
+    @JsonIgnore
     @Override
     public int getTransmits() {
         return 0;
     }
 
+    @JsonIgnore
     @Override
     public int getReceives() {
         return 0;
     }
 
+    @JsonIgnore
     @Override
     public int getErrors() {
         return 0;

@@ -18,18 +18,31 @@
  */
 package org.apache.plc4x.app.services.impl;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.time.Instant;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.apache.plc4x.app.services.api.DeviceDBRecord;
 import org.apache.plc4x.app.services.api.TagGroupDBRecord;
 
-
+@JsonPropertyOrder({ "deviceName",
+    "deviceDesc",
+    "protocolCode",
+    "uuid",
+    "treenode",
+    "enable",
+    "properties",
+    "tagg"})
 public class DeviceDBRecordImpl implements DeviceDBRecord {
     
-    private String protocolCode;
-    private String protocolName;
-    private UUID uuid;    
+
+    private String deviceName;
+    private String deviceDesc;
+    private UUID protocolCode;    
+    private UUID uuid; 
+    private UUID treenode;        
     
     private Boolean enable = false;   
     
@@ -37,31 +50,36 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     private int receives = 0;
     private int errors = 0;    
     
-    private LocalDateTime startDateTime;
-    private LocalDateTime currentDateTime;
-    private LocalDateTime lastUpdateDateTime;    
+    private Instant startInstant;
+    private Instant currentInstant;
+    private Instant lastUpdateInstant;    
     
+    private Map<String, String> properties = new HashMap<String, String>();
+    
+    @JsonIgnore
     private final HashMap<UUID, TagGroupDBRecord> tagg = new HashMap();      
 
+
+
     @Override
-    public void setProtocolCode(String protocol) {
-        this.protocolCode = protocol;
+    public void setDeviceName(String name) {
+        this.deviceName = name;
     }
 
     @Override
-    public String getProtocolCode() {
-        return protocolCode;
+    public String getDeviceName() {
+        return deviceName;
+    }
+    
+    @Override
+    public void setDeviceDescription(String desc) {
+        this.deviceDesc = desc;
     }
 
     @Override
-    public void setProtocolName(String name) {
-        this.protocolName = name;
-    }
-
-    @Override
-    public String getProtocolName() {
-        return protocolName;
-    }
+    public String getDeviceDescription() {
+        return deviceDesc;
+    }    
 
     @Override
     public void setUUID(UUID uuid) {
@@ -72,6 +90,26 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     public UUID getUUID() {
         return uuid;
     }
+    
+    @Override
+    public void setProtocolCode(UUID protocol) {
+        this.protocolCode = protocol;
+    }
+
+    @Override
+    public UUID getProtocolCode() {
+        return protocolCode;
+    }  
+    
+    @Override    
+    public void setTreeLocation(UUID treenode) {
+        this.treenode = treenode;
+    }   
+    
+    @Override    
+    public UUID getTreeLocation() {
+        return treenode;
+    }    
 
     @Override
     public void setEnable(Boolean enable) {
@@ -81,6 +119,21 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     @Override
     public Boolean getEnable() {
         return enable;
+    }
+
+    @Override
+    public void setPropertie(String id, String str) {
+        properties.put(id, str);
+    }
+
+    @Override
+    public String getPropertie(String id) {
+        return properties.get(id);
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
     @Override
@@ -112,18 +165,18 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     }
 
     @Override
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
+    public Instant getStartInstant() {
+        return startInstant;
     }
 
     @Override
-    public LocalDateTime getCurrentDateTime() {
-        return currentDateTime;
+    public Instant getCurrentInstant() {
+        return currentInstant;
     }
 
     @Override
-    public LocalDateTime getLastUpdateDateTime() {
-        return lastUpdateDateTime;
+    public Instant getLastUpdateDateTime() {
+        return lastUpdateInstant;
     }
     
 }

@@ -70,7 +70,7 @@ public class Plc4xRootNode extends AbstractNode {
           null,
           SystemAction.get(OpenLocalExplorerAction.class),
           null,
-          SystemAction.get(NewAction.class),
+          new Plc4xRootNodeSaveAction(),
           null,
           SystemAction.get(ToolsAction.class),
           SystemAction.get(PropertiesAction.class),};

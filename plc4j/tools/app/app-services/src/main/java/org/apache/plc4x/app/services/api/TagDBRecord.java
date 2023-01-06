@@ -18,7 +18,7 @@
  */
 package org.apache.plc4x.app.services.api;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 
@@ -45,11 +45,9 @@ public interface TagDBRecord {
     public int getTransmits();
     public int getReceives();
     public int getErrors();
- 
-    public int getNumberOfTags();
     
-    public LocalDateTime getLastReadDateTime();
-    public LocalDateTime getLastWriteDateTime();
-    public LocalDateTime getLastErrorDateTime();      
+    public Instant getLastReadInstant();
+    public Instant getLastWriteInstant();
+    public Instant getLastErrorInstant();      
     
 }

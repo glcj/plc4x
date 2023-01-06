@@ -18,32 +18,47 @@
  */
 package org.apache.plc4x.app.services.impl;
 
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.UUID;
 import org.apache.plc4x.app.services.api.DeviceDBRecord;
 import org.apache.plc4x.app.services.api.DriverDBRecord;
 import org.apache.plc4x.java.api.PlcDriver;
 
-
+@JsonPropertyOrder({ "protocolCode",
+    "protocolName",
+    "uuid",
+    "enable",
+    "devices"})
+@JsonIgnoreProperties(value = { "plcdriver",
+    "transmits",
+    "receives",
+    "errors",
+    "startInstant",
+    "currentInstant",
+    "lastUpdateInstant"})
 public class DriverDBRecordImpl implements DriverDBRecord {
        
     private String protocolCode;
     private String protocolName;
     private UUID uuid;
     
+    private Boolean enable = false;    
+    
     private PlcDriver plcdriver = null;
-
-    private Boolean enable = false;
     
     private int transmits = 0;
     private int receives = 0;
     private int errors = 0;
     
-    private LocalDateTime startDateTime;
-    private LocalDateTime currentDateTime;
-    private LocalDateTime lastUpdateDateTime;
+    private Instant startInstant;
+    private Instant currentInstant;
+    private Instant lastUpdateInstant;
     
+    @JsonIgnore
     private final HashMap<UUID, DeviceDBRecord> devices = new HashMap();    
     
     
@@ -86,7 +101,7 @@ public class DriverDBRecordImpl implements DriverDBRecord {
         return uuid;
     }
     
-
+    @JsonIgnore
     @Override
     public PlcDriver getPlcDriver() {
         return plcdriver;
@@ -124,27 +139,35 @@ public class DriverDBRecordImpl implements DriverDBRecord {
 
     @Override
     public int getNumberOfTagGroups() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int[] n = new int[1];
+        n[0] = 0;
+        devices.entrySet().stream()
+                .forEach(drv -> n[0] += drv.getValue().getNumberOfTagGroups());
+        return n[0];
     }
 
     @Override
     public int getNumberOfTags() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        int[] n = new int[1];
+        n[0] = 0;
+        devices.entrySet().stream()
+                .forEach(drv -> n[0] += drv.getValue().getNumberOfTags());
+        return n[0];
     }
 
     @Override
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
+    public Instant getStartInstant() {
+        return startInstant;
     }
 
     @Override
-    public LocalDateTime getCurrentDateTime() {
-        return currentDateTime;
+    public Instant getCurrentInstant() {
+        return currentInstant;
     }
 
     @Override
-    public LocalDateTime getLastUpdateDateTime() {
-        return lastUpdateDateTime;
+    public Instant getLastUpdateInstant() {
+        return lastUpdateInstant;
     }
 
     

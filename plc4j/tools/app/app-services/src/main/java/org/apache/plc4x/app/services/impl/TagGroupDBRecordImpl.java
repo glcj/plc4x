@@ -18,7 +18,7 @@
  */
 package org.apache.plc4x.app.services.impl;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.UUID;
 import org.apache.plc4x.app.services.api.TagDBRecord;
@@ -35,9 +35,9 @@ public class TagGroupDBRecordImpl implements TagGroupDBRecord {
     
     private int scanTime = 100;
     
-    private LocalDateTime startDateTime;
-    private LocalDateTime currentDateTime;
-    private LocalDateTime lastUpdateDateTime;    
+    private Instant startInstant;
+    private Instant currentInstant;
+    private Instant lastUpdateInstant;    
     
     private final HashMap<UUID, TagDBRecord> tags = new HashMap();      
     
@@ -118,18 +118,18 @@ public class TagGroupDBRecordImpl implements TagGroupDBRecord {
     }
 
     @Override
-    public LocalDateTime getStartDateTime() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Instant getStartInstant() {
+        return startInstant;
     }
 
     @Override
-    public LocalDateTime getCurrentDateTime() {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public Instant getCurrentInstant() {
+        return currentInstant; 
     }
 
     @Override
-    public LocalDateTime getLastUpdateDateTime() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Instant getLastUpdateDateTime() {
+        return lastUpdateInstant;
     }
 
 

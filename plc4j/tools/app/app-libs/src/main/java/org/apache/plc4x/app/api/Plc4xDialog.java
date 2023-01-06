@@ -16,33 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.core;
+package org.apache.plc4x.app.api;
 
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
 import org.openide.nodes.Node;
-import org.openide.util.Lookup;
 
 
-public class Plc4xAddDeviceAction extends AbstractAction {
+public interface Plc4xDialog {
     
-    private final Plc4xDriverNode node;
-
-    public Plc4xAddDeviceAction(final Plc4xDriverNode node) {
-        this.node = node;
-        this.putValue(AbstractAction.NAME, "Add Device...");
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent ae) {
-        Plc4xAddDeviceDialog dialog = Lookup.getDefault().lookup(Plc4xAddDeviceDialog.class);
-        dialog.setNode(node);
-        dialog.setVisible(true);
-        
-        // Node[] nodes = new Plc4xDeviceNode[1];
-        // nodes[0] = new Plc4xDeviceNode("NOmbre");
-        // node.getChildren().add(nodes);
-    }
+    public void setNode(Node node);
     
 }

@@ -171,6 +171,10 @@ public class Plc4xDriverNode  extends BeanNode{
         System.setProperties(p);
         Plc4xPropertiesNotifier.changed();     
         */
-    }    
+    } 
+    
+    public DriverDBRecord getDriverRecord() {
+        return bean;
+    }
     
 }

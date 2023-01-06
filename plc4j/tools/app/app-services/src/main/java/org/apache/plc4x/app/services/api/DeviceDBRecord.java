@@ -18,26 +18,37 @@
  */
 package org.apache.plc4x.app.services.api;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
-/**
- *
- * @author cgarcia
- */
+
 public interface DeviceDBRecord {
     
-    public void setProtocolCode(String protocol);   
-    public String getProtocolCode();
+
     
-    public void setProtocolName(String name);  
-    String getProtocolName();
+    public void setDeviceName(String name);  
+    String getDeviceName();
+    
+    public void setDeviceDescription(String desc);  
+    public String getDeviceDescription();    
     
     public void setUUID(UUID uuid);  
     public UUID getUUID();
+    
+    public void setProtocolCode(UUID protocol);   
+    public UUID getProtocolCode();
 
+    public void setTreeLocation(UUID treenode);   
+    public UUID getTreeLocation();
+    
     public void setEnable(Boolean enable);
     public Boolean getEnable();    
+    
+    public void setPropertie(String id, String str);
+    public String getPropertie(String id);
+    public Map<String, String> getProperties();
     
     public int getTransmits();
     public int getReceives();
@@ -46,8 +57,8 @@ public interface DeviceDBRecord {
     public int getNumberOfTagGroups();   
     public int getNumberOfTags();
     
-    public LocalDateTime getStartDateTime();
-    public LocalDateTime getCurrentDateTime();
-    public LocalDateTime getLastUpdateDateTime();    
+    public Instant getStartInstant();
+    public Instant  getCurrentInstant();
+    public Instant  getLastUpdateDateTime();    
     
 }

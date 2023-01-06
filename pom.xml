@@ -824,6 +824,7 @@
             <!-- NetBeans generated files -->
             <exlude>**/manifest.mf</exlude>
             <exlude>**/Bundle.properties</exlude>
+            <exlude>**/*.form</exlude>
           </excludes>
         </configuration>
       </plugin>

@@ -18,7 +18,7 @@
  */
 package org.apache.plc4x.app.services.api;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 
@@ -48,8 +48,8 @@ public interface TagGroupDBRecord {
  
     public int getNumberOfTags();
     
-    public LocalDateTime getStartDateTime();
-    public LocalDateTime getCurrentDateTime();
-    public LocalDateTime getLastUpdateDateTime();      
+    public Instant getStartInstant();
+    public Instant getCurrentInstant();
+    public Instant getLastUpdateDateTime();      
     
 }
