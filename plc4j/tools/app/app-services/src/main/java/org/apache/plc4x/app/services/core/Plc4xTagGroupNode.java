@@ -18,21 +18,25 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.plc4x.app.services.api.TagGroupDBRecord;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.RenameAction;
 import org.openide.actions.ToolsAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 
@@ -40,17 +44,18 @@ import org.openide.util.actions.SystemAction;
  *
  * @author cgarcia
  */
-public class Plc4xTagGroupNode  extends AbstractNode{
+public class Plc4xTagGroupNode  extends BeanNode {
 
+    private final TagGroupDBRecord bean;
     private String key;     
     private ChangeListener listener;    
 
     @Messages("HINT_Plc4xTagGroupNode=Represents one Plc4x driver.")    
-    public Plc4xTagGroupNode(String key){
-        super(Children.LEAF);        
-        this.key = key;   
+    public Plc4xTagGroupNode(TagGroupDBRecord bean)  throws IntrospectionException {
+        super(bean, Children.create(new Plc4xTagGroupChildFactory(bean), false));       
+        this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/tag_doble_16x16.png"); 
-        super.setName(key);         
+        super.setName(bean.getTagGroupName());         
         setShortDescription(Bundle.HINT_Plc4xTagGroupNode());        
     }
     
@@ -75,7 +80,12 @@ public class Plc4xTagGroupNode  extends AbstractNode{
     
     @Override     
     public Node cloneNode() {         
-        return new Plc4xTagGroupNode(key);     
+        try {     
+            return new Plc4xTagGroupNode(bean);
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
     }
 
     @Messages({"PROP_TagGroup_value=Value",

@@ -19,6 +19,7 @@
 package org.apache.plc4x.app.services.api;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
 
 
@@ -34,11 +35,13 @@ public interface TagGroupDBRecord {
     public void setUUID(UUID uuid);  
     public UUID getUUID();
 
+    public void setScanTime(int ms);
+    public int getScanTime();    
+    
     public void setEnable(Boolean enable);
     public Boolean getEnable(); 
     
-    public void setScanTime(int ms);
-    public int getScanTime();
+    public Collection<TagDBRecord> getTags();     
     
     public int getJitter();
     

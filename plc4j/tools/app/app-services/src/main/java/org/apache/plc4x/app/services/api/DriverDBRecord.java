@@ -20,6 +20,9 @@ package org.apache.plc4x.app.services.api;
 
 import java.time.Instant;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.apache.plc4x.java.api.PlcDriver;
 
@@ -40,7 +43,10 @@ public interface DriverDBRecord {
     public PlcDriver getPlcDriver();
 
     public void setEnable(Boolean enable);
-    public Boolean getEnable();    
+    public Boolean getEnable();  
+    
+    public HashMap<UUID, DeviceDBRecord> getMapDevices();
+    public Collection<DeviceDBRecord> getDevices();
     
     public int getTransmits();
     public int getReceives();

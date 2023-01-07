@@ -20,13 +20,12 @@ package org.apache.plc4x.app.services.api;
 
 import java.time.Instant;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
 
 public interface DeviceDBRecord {
-    
-
     
     public void setDeviceName(String name);  
     String getDeviceName();
@@ -49,6 +48,8 @@ public interface DeviceDBRecord {
     public void setPropertie(String id, String str);
     public String getPropertie(String id);
     public Map<String, String> getProperties();
+    
+    public Collection<TagGroupDBRecord> getTagGroups();    
     
     public int getTransmits();
     public int getReceives();

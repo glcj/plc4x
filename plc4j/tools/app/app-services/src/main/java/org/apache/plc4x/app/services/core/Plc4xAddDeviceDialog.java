@@ -18,24 +18,44 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import java.beans.IntrospectionException;
+import java.io.IOException;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import org.apache.plc4x.app.api.Plc4xDialog;
+import org.apache.plc4x.app.api.Plc4xDialogParametersEnum;
+import org.apache.plc4x.app.services.api.DeviceDBRecord;
+import org.apache.plc4x.app.services.api.DriverDBRecord;
+import org.apache.plc4x.app.services.api.MasterDB;
+import org.apache.plc4x.app.services.impl.DeviceDBRecordImpl;
+import org.openide.cookies.InstanceCookie;
+import org.openide.nodes.BeanNode;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
-import org.openide.util.Lookup.Result;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ServiceProvider;
 
 @ServiceProvider(service=Plc4xAddDeviceDialog.class)
 public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDialog {
 
+    private Plc4xDialogParametersEnum parameters;
     private final JFrame myJframe = new javax.swing.JFrame();
-    Plc4xDriverNode node;
+    private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);    
+    Plc4xDriverNode drivernode;
+    BeanNode[] devicenodes  = new Plc4xDeviceNode[1];
+     
     
     public Plc4xAddDeviceDialog() {
         super(new javax.swing.JFrame(), true);
         initComponents();
+
+        DeviceDBRecord device = new DeviceDBRecordImpl();
+        try {
+            devicenodes[0] = new Plc4xDeviceNode(device);
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }           
     }
 
     /**
@@ -273,31 +293,76 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
     }// </editor-fold>//GEN-END:initComponents
 
     private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
-        this.setVisible(false);
+        this.setVisible(false);       
     }//GEN-LAST:event_btCancelActionPerformed
 
     private void btOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOkActionPerformed
         // TODO add your handling code here:
+        devicenodes[0].setDisplayName(tfDeviceName.getText());
+        
+        //Everything's okay? Then we attach it to the database and to the representation on the screen
+        final Plc4xDeviceNode beannode = (Plc4xDeviceNode) devicenodes[0];
+        
+        final InstanceCookie cookie = devicenodes[0].getLookup().lookup(InstanceCookie.class);
+        try {
+            final DeviceDBRecord dbr = (DeviceDBRecord) cookie.instanceCreate();
+            dbr.setDeviceName(tfDeviceName.getText());
+            dbr.setDeviceDescription(tfDeviceDesc.getText());
+            //dbr.setUUID(uuid);
+            //dbr.setTreeLocation(treenode);
 
-        System.out.println("Aceptando los datos...");
+            dbr.setPropertie(parameters.SERIAL_PORT.name(), (String) devicenodes[0].getValue(parameters.SERIAL_PORT.name()));
+            dbr.setPropertie(parameters.BAUD_RATE.name(),   (String) devicenodes[0].getValue(parameters.BAUD_RATE.name()));
+            dbr.setPropertie(parameters.DATA_BITS.name(),   (String) devicenodes[0].getValue(parameters.DATA_BITS.name()));   
+            dbr.setPropertie(parameters.PARITY.name(),      (String) devicenodes[0].getValue(parameters.PARITY.name()));  
+            dbr.setPropertie(parameters.STOP_BITS.name(),   (String) devicenodes[0].getValue(parameters.STOP_BITS.name()));              
+            dbr.setPropertie(parameters.TIMEOUT.name(),     (String) devicenodes[0].getValue(parameters.TIMEOUT.name())); 
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (ClassNotFoundException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        
+        drivernode.getChildren().add(devicenodes);
     }//GEN-LAST:event_btOkActionPerformed
 
     private void btCommsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCommsActionPerformed
         // TODO add your handling code here:
-        Lookup lk = Lookups.forPath("Plc4xDriver/" + node.getDriverRecord().getProtocolCode());
+        Lookup lk = Lookups.forPath("Plc4xDriver/" + drivernode.getDriverRecord().getProtocolCode());
         if ( lk != null) {
             JDialog dialog = lk.lookup(JDialog.class);
+            ((Plc4xDialog) dialog).setNode(devicenodes[0]);
             dialog.setVisible(true);
         }        
     }//GEN-LAST:event_btCommsActionPerformed
 
     @Override
     public void setNode(Node node) {
-        if (node instanceof Plc4xDriverNode)
-            this.node = (Plc4xDriverNode) node;
-        else
+        if (node instanceof Plc4xDriverNode) {
+            this.drivernode = (Plc4xDriverNode) node;
+            tfDeviceProtocol.setText(drivernode.getDriverRecord().getProtocolCode());
+        } else
             System.out.println("Asignado tipo erroneo");
     }    
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b); 
+        if (b) {
+            
+            //Crea nueva instanci o se debe reiniciar todos los parametros;
+            final DriverDBRecord driver = db.getDriverByCode(drivernode.getDriverRecord().getProtocolCode());
+            DeviceDBRecord device = new DeviceDBRecordImpl();
+            try {
+                devicenodes[0] = new Plc4xDeviceNode(device);
+            } catch (IntrospectionException ex) {
+                Exceptions.printStackTrace(ex);
+            }            
+        } else {
+            devicenodes[0] = null;
+        }
+    }
     
     /**
      * @param args the command line arguments

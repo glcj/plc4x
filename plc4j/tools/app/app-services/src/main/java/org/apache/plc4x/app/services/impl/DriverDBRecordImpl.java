@@ -22,7 +22,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import org.apache.plc4x.app.services.api.DeviceDBRecord;
 import org.apache.plc4x.app.services.api.DriverDBRecord;
@@ -118,6 +120,16 @@ public class DriverDBRecordImpl implements DriverDBRecord {
     }
 
     @Override
+    public HashMap<UUID, DeviceDBRecord> getMapDevices() {
+        return devices;
+    }
+ 
+    @Override
+    public Collection<DeviceDBRecord> getDevices() {
+        return devices.values();
+    }    
+
+    @Override
     public int getTransmits() {
         return transmits;
     }
@@ -169,6 +181,5 @@ public class DriverDBRecordImpl implements DriverDBRecord {
     public Instant getLastUpdateInstant() {
         return lastUpdateInstant;
     }
-
     
 }

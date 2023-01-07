@@ -18,21 +18,26 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.plc4x.app.services.api.DeviceDBRecord;
+import org.apache.plc4x.app.services.api.DriverDBRecord;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.RenameAction;
 import org.openide.actions.ToolsAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 
@@ -40,15 +45,16 @@ import org.openide.util.actions.SystemAction;
  *
  * @author cgarcia
  */
-public class Plc4xDeviceNode  extends AbstractNode{
+public class Plc4xDeviceNode  extends BeanNode  {
 
+    private final DeviceDBRecord bean;      
     private String key;     
     private ChangeListener listener;    
 
     @Messages("HINT_Plc4xDeviceNode=Represents one Plc4x driver.")    
-    public Plc4xDeviceNode(String key){
-        super(Children.LEAF);        
-        this.key = key;   
+    public Plc4xDeviceNode(DeviceDBRecord bean) throws IntrospectionException {
+        super(bean, Children.create(new Plc4xDeviceChildFactory(bean), false));       
+        this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/Device_16x16.png"); 
         super.setName(key);         
         setShortDescription(Bundle.HINT_Plc4xDeviceNode());        
@@ -75,7 +81,12 @@ public class Plc4xDeviceNode  extends AbstractNode{
     
     @Override     
     public Node cloneNode() {         
-        return new Plc4xDeviceNode(key);     
+        try {     
+            return new Plc4xDeviceNode(bean);
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
     }
 
     @Messages({"PROP_Device_value=Value",

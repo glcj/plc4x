@@ -19,6 +19,7 @@
 package org.apache.plc4x.app.services.impl;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 import org.apache.plc4x.app.services.api.TagDBRecord;
@@ -72,6 +73,17 @@ public class TagGroupDBRecordImpl implements TagGroupDBRecord {
     }
 
     @Override
+    public void setScanTime(int ms) {
+        if (ms < 100) scanTime=100;
+        else  scanTime = ms;
+    }
+
+    @Override
+    public int getScanTime() {
+        return scanTime;
+    }    
+    
+    @Override
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }
@@ -82,16 +94,10 @@ public class TagGroupDBRecordImpl implements TagGroupDBRecord {
     }
 
     @Override
-    public void setScanTime(int ms) {
-        if (ms < 100) scanTime=100;
-        else  scanTime = ms;
+    public Collection<TagDBRecord> getTags() {
+        return tags.values();
     }
-
-    @Override
-    public int getScanTime() {
-        return scanTime;
-    }
-
+    
     @Override
     public int getJitter() {
         return 0;
@@ -131,6 +137,7 @@ public class TagGroupDBRecordImpl implements TagGroupDBRecord {
     public Instant getLastUpdateDateTime() {
         return lastUpdateInstant;
     }
+
 
 
 

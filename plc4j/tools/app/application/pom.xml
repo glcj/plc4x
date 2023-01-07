@@ -76,12 +76,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>app-libs</artifactId>
+            <artifactId>app-modbus</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>app-modbus</artifactId>
+            <artifactId>app-libs</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

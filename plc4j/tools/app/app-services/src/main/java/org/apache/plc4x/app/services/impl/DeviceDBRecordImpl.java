@@ -21,6 +21,7 @@ package org.apache.plc4x.app.services.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -135,6 +136,12 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     public Map<String, String> getProperties() {
         return properties;
     }
+
+    @Override
+    public Collection<TagGroupDBRecord> getTagGroups() {
+        return tagg.values();
+    }
+        
 
     @Override
     public int getTransmits() {

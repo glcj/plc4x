@@ -20,42 +20,33 @@ package org.apache.plc4x.app.services.core;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
-import java.util.Properties;
 import javax.swing.Action;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.plc4x.app.services.api.DriverDBRecord;
-import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
-import org.openide.actions.RenameAction;
 import org.openide.actions.ToolsAction;
-import org.openide.nodes.AbstractNode;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 
-/**
- *
- * @author cgarcia
- */
-public class Plc4xDriverNode  extends BeanNode{
+
+public class Plc4xDriverNode  extends BeanNode {
 
     private final DriverDBRecord bean;     
     private ChangeListener listener;    
 
     @Messages("HINT_Plc4xDriverNode=Represents one Plc4x driver.")    
-    public Plc4xDriverNode(DriverDBRecord bean) throws IntrospectionException{
-        super(bean, Children.create(new Plc4xDriverChildFactory(), false));
+    public Plc4xDriverNode(DriverDBRecord bean) throws IntrospectionException {
+        super(bean, Children.create(new Plc4xDriverChildFactory(bean), false));
         this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/Driver_16x16.png"); 
         super.setName(bean.getProtocolName());         
-        setShortDescription(Bundle.HINT_Plc4xDriverNode());        
+        setShortDescription(Bundle.HINT_Plc4xDriverNode());   
     }
     
     @Override     

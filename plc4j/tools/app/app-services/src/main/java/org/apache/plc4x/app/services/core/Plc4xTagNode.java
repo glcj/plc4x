@@ -18,21 +18,25 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.plc4x.app.services.api.TagDBRecord;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.RenameAction;
 import org.openide.actions.ToolsAction;
 import org.openide.nodes.AbstractNode;
+import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 
@@ -40,17 +44,18 @@ import org.openide.util.actions.SystemAction;
  *
  * @author cgarcia
  */
-public class Plc4xTagNode  extends AbstractNode{
-
+public class Plc4xTagNode  extends BeanNode {
+    
+    private final TagDBRecord bean;
     private String key;     
     private ChangeListener listener;    
 
     @Messages("HINT_Plc4xTagNode=Represents one Plc4x driver.")    
-    public Plc4xTagNode(String key){
-        super(Children.LEAF);        
-        this.key = key;   
+    public Plc4xTagNode(TagDBRecord bean)  throws IntrospectionException {
+        super(bean, Children.LEAF);        
+        this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/tag_amarilla_linea_16x16.png"); 
-        super.setName(key);         
+        super.setName(bean.getTagName());         
         setShortDescription(Bundle.HINT_Plc4xTagNode());        
     }
     
@@ -75,7 +80,12 @@ public class Plc4xTagNode  extends AbstractNode{
     
     @Override     
     public Node cloneNode() {         
-        return new Plc4xTagNode(key);     
+        try {     
+            return new Plc4xTagNode(bean);
+        } catch (IntrospectionException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return Node.EMPTY;
     }
 
     @Messages({"PROP_TagNode_value=Value",

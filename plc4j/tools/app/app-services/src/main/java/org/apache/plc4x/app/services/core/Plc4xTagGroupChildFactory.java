@@ -24,18 +24,20 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.plc4x.app.services.api.DeviceDBRecord;
 import org.apache.plc4x.app.services.api.DriverDBRecord;
+import org.apache.plc4x.app.services.api.TagDBRecord;
+import org.apache.plc4x.app.services.api.TagGroupDBRecord;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 
 
-public class Plc4xDriverChildFactory extends ChildFactory.Detachable<DeviceDBRecord> {
+public class Plc4xTagGroupChildFactory extends ChildFactory.Detachable<TagDBRecord> {
    
-    private final DriverDBRecord driver;  
+    private final TagGroupDBRecord tagg;  
     private ChangeListener listener;
 
-    public Plc4xDriverChildFactory(DriverDBRecord driver) {
-        this.driver = driver;
+    public Plc4xTagGroupChildFactory(TagGroupDBRecord tagg) {
+        this.tagg = tagg;
     }
 
     @Override     
@@ -54,9 +56,9 @@ public class Plc4xDriverChildFactory extends ChildFactory.Detachable<DeviceDBRec
     }   
     
     @Override     
-    protected Node createNodeForKey(DeviceDBRecord key) {         
+    protected Node createNodeForKey(TagDBRecord key) {         
         try {     
-            return new Plc4xDeviceNode(key);
+            return new Plc4xTagNode(key);
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);
         }
@@ -64,8 +66,9 @@ public class Plc4xDriverChildFactory extends ChildFactory.Detachable<DeviceDBRec
     }    
     
     @Override
-    protected boolean createKeys(List<DeviceDBRecord> toPopulate) {
-        driver.getDevices().stream().forEach(b -> {if (b != null) toPopulate.add(b);});               
+    protected boolean createKeys(List<TagDBRecord> toPopulate) {
+        //device.getDevices().stream().forEach(b -> toPopulate.add(b));
+
         return true;
     }
     
