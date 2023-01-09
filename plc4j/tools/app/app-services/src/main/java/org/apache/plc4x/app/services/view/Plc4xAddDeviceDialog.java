@@ -16,20 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.core;
+package org.apache.plc4x.app.services.view;
 
+import org.apache.plc4x.app.services.model.Plc4xDeviceNode;
+import org.apache.plc4x.app.services.model.Plc4xDriverNode;
 import java.beans.IntrospectionException;
 import java.io.IOException;
+import java.util.UUID;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import org.apache.plc4x.app.api.DeviceDBRecord;
+import org.apache.plc4x.app.api.DriverDBRecord;
+import org.apache.plc4x.app.api.MasterDB;
 import org.apache.plc4x.app.api.Plc4xDialog;
 import org.apache.plc4x.app.api.Plc4xDialogParametersEnum;
-import org.apache.plc4x.app.services.api.DeviceDBRecord;
-import org.apache.plc4x.app.services.api.DriverDBRecord;
-import org.apache.plc4x.app.services.api.MasterDB;
 import org.apache.plc4x.app.services.impl.DeviceDBRecordImpl;
 import org.openide.cookies.InstanceCookie;
-import org.openide.nodes.BeanNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
@@ -43,7 +45,7 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
     private final JFrame myJframe = new javax.swing.JFrame();
     private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);    
     Plc4xDriverNode drivernode;
-    BeanNode[] devicenodes  = new Plc4xDeviceNode[1];
+    Node[] devicenodes  = new Plc4xDeviceNode[1];
      
     
     public Plc4xAddDeviceDialog() {
@@ -51,6 +53,7 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
         initComponents();
 
         DeviceDBRecord device = new DeviceDBRecordImpl();
+        device.setUUID(UUID.randomUUID());
         try {
             devicenodes[0] = new Plc4xDeviceNode(device);
         } catch (IntrospectionException ex) {
@@ -147,9 +150,8 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
                         .addGap(29, 29, 29)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cbEnable)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(tfDeviceDesc)
-                                .addComponent(tfUUID)))))
+                            .addComponent(tfDeviceDesc)
+                            .addComponent(tfUUID))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -304,7 +306,9 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
         final Plc4xDeviceNode beannode = (Plc4xDeviceNode) devicenodes[0];
         
         final InstanceCookie cookie = devicenodes[0].getLookup().lookup(InstanceCookie.class);
+
         try {
+
             final DeviceDBRecord dbr = (DeviceDBRecord) cookie.instanceCreate();
             dbr.setDeviceName(tfDeviceName.getText());
             dbr.setDeviceDescription(tfDeviceDesc.getText());
@@ -317,13 +321,14 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
             dbr.setPropertie(parameters.PARITY.name(),      (String) devicenodes[0].getValue(parameters.PARITY.name()));  
             dbr.setPropertie(parameters.STOP_BITS.name(),   (String) devicenodes[0].getValue(parameters.STOP_BITS.name()));              
             dbr.setPropertie(parameters.TIMEOUT.name(),     (String) devicenodes[0].getValue(parameters.TIMEOUT.name())); 
+
             
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         } catch (ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
-        
+
         drivernode.getChildren().add(devicenodes);
     }//GEN-LAST:event_btOkActionPerformed
 

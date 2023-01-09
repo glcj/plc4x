@@ -20,7 +20,8 @@ package org.apache.plc4x.app.services.impl;
 
 import java.time.Instant;
 import java.util.UUID;
-import org.apache.plc4x.app.services.api.TagDBRecord;
+import org.apache.plc4x.app.api.TagDBRecord;
+
 
 /**
  *

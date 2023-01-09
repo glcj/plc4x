@@ -18,14 +18,25 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import org.apache.plc4x.app.services.view.Plc4xAddDeviceDialog;
+import org.apache.plc4x.app.services.model.Plc4xDriverNode;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentListener;
+import java.beans.IntrospectionException;
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import org.apache.plc4x.app.api.DeviceDBRecord;
+import org.apache.plc4x.app.api.Plc4xDialog;
+import org.apache.plc4x.app.services.impl.DeviceDBRecordImpl;
+import org.apache.plc4x.app.services.model.Plc4xDeviceNode;
 import org.openide.nodes.Node;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 
-public class Plc4xAddDeviceAction extends AbstractAction {
+public class Plc4xAddDeviceAction extends AbstractAction{
     
     private final Plc4xDriverNode node;
 
@@ -34,12 +45,41 @@ public class Plc4xAddDeviceAction extends AbstractAction {
         this.putValue(AbstractAction.NAME, "Add Device...");
     }
 
+    /*
+    * TODO: Apply regex to device name. Only letter and number, including "_".
+    */
     @Override
     public void actionPerformed(ActionEvent ae) {
+        Lookup lk = Lookups.forPath("Plc4xDriver/" + node.getDriverRecord().getProtocolCode());
+        if ( lk != null) {
+            DeviceDBRecord devicerecord = new DeviceDBRecordImpl();
+            node.setValue("DEVICE", devicerecord);
+            JDialog dialog = lk.lookup(JDialog.class);
+            ((Plc4xDialog) dialog).setNode(node);                       
+            dialog.setVisible(true);
+            
+            if (devicerecord != null) {
+                String name = devicerecord.getDeviceName();
+                name = name.trim();
+                Boolean isBlank =  name.isEmpty();
+                if (!isBlank) {
+                    System.out.println(">> " + devicerecord.getDeviceName());
+                    Node[] nodes = new Plc4xDeviceNode[1];
+                try {
+                    nodes[0] = new Plc4xDeviceNode(devicerecord);
+                    node.getChildren().add(nodes); 
+                } catch (IntrospectionException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                   
+                }
+            }
+        }     
+        /*
         Plc4xAddDeviceDialog dialog = Lookup.getDefault().lookup(Plc4xAddDeviceDialog.class);
         dialog.setNode(node);
         dialog.setVisible(true);
-        
+        */
         // Node[] nodes = new Plc4xDeviceNode[1];
         // nodes[0] = new Plc4xDeviceNode("NOmbre");
         // node.getChildren().add(nodes);

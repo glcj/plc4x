@@ -18,14 +18,13 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import org.apache.plc4x.app.services.model.Plc4xTagNode;
 import java.beans.IntrospectionException;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.services.api.DeviceDBRecord;
-import org.apache.plc4x.app.services.api.DriverDBRecord;
-import org.apache.plc4x.app.services.api.TagDBRecord;
-import org.apache.plc4x.app.services.api.TagGroupDBRecord;
+import org.apache.plc4x.app.api.TagDBRecord;
+import org.apache.plc4x.app.api.TagGroupDBRecord;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;

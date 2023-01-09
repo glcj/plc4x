@@ -16,38 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.api;
+package org.apache.plc4x.app.api;
 
-import java.time.Instant;
-import java.util.UUID;
+import java.util.List;
+import org.apache.plc4x.java.api.PlcDriver;
 
 
-public interface TagDBRecord {
+public interface MasterDB {
     
-    public void setTagName(String name);  
-    String getTagName();
+    public List<String> getDriverCodes();    
+    public List<String> getDriverNames();
     
-    public void setTagDesc(String desc);   
-    public String getTagDesc();
-
-    public void setTagID(String id);   
-    public String getTagID();    
+    public DriverDBRecord getDriverByCode(String code);
+    public DriverDBRecord getDriverByName(String name);    
     
-    public void setUUID(UUID uuid);  
-    public UUID getUUID();
-
-    public void setEnable(Boolean enable);
-    public Boolean getEnable();
-
-    public void setDisableOutput(Boolean disableOutput);
-    public Boolean getDisableOutput();     
+    
+    public int getNumberOfDrivers();
+    public int getNumberOfDevice();
+    public int getNumberOfTagGroups();   
+    public int getNumberOfTags(); 
     
     public int getTransmits();
     public int getReceives();
     public int getErrors();
     
-    public Instant getLastReadInstant();
-    public Instant getLastWriteInstant();
-    public Instant getLastErrorInstant();      
     
 }

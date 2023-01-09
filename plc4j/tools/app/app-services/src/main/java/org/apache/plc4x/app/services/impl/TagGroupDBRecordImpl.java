@@ -22,9 +22,8 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
-import org.apache.plc4x.app.services.api.TagDBRecord;
-import org.apache.plc4x.app.services.api.TagGroupDBRecord;
-
+import org.apache.plc4x.app.api.TagDBRecord;
+import org.apache.plc4x.app.api.TagGroupDBRecord;
 
 public class TagGroupDBRecordImpl implements TagGroupDBRecord {
 

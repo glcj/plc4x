@@ -18,6 +18,7 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import org.apache.plc4x.app.services.model.Plc4xDriverNode;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;

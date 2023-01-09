@@ -24,10 +24,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
-import org.apache.plc4x.app.services.api.DeviceDBRecord;
-import org.apache.plc4x.app.services.api.DriverDBRecord;
+import org.apache.plc4x.app.api.DeviceDBRecord;
+import org.apache.plc4x.app.api.DriverDBRecord;
 import org.apache.plc4x.java.api.PlcDriver;
 
 @JsonPropertyOrder({ "protocolCode",
@@ -119,11 +118,13 @@ public class DriverDBRecordImpl implements DriverDBRecord {
         return enable;
     }
 
+    @JsonIgnore 
     @Override
     public HashMap<UUID, DeviceDBRecord> getMapDevices() {
         return devices;
     }
  
+    @JsonIgnore    
     @Override
     public Collection<DeviceDBRecord> getDevices() {
         return devices.values();
@@ -180,6 +181,6 @@ public class DriverDBRecordImpl implements DriverDBRecord {
     @Override
     public Instant getLastUpdateInstant() {
         return lastUpdateInstant;
-    }
+    }    
     
 }

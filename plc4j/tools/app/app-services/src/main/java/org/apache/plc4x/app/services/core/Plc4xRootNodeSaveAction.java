@@ -18,15 +18,11 @@
  */
 package org.apache.plc4x.app.services.core;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import javax.swing.AbstractAction;
-import org.apache.plc4x.app.services.api.MasterDB;
+import org.apache.plc4x.app.api.MasterDB;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
@@ -40,6 +36,10 @@ public class Plc4xRootNodeSaveAction  extends AbstractAction  {
 
     private MasterDB db =  null;   
     private final XmlMapper mapper = new XmlMapper();    
+
+    public Plc4xRootNodeSaveAction() {
+        this.putValue(AbstractAction.NAME, "Save config...");
+    }
     
     @Override
     public void actionPerformed(ActionEvent ae) {

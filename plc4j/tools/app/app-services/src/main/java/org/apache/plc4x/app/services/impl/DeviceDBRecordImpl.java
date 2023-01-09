@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.apache.plc4x.app.services.api.DeviceDBRecord;
-import org.apache.plc4x.app.services.api.TagGroupDBRecord;
+import org.apache.plc4x.app.api.DeviceDBRecord;
+import org.apache.plc4x.app.api.TagGroupDBRecord;
 
 @JsonPropertyOrder({ "deviceName",
     "deviceDesc",
@@ -59,7 +59,6 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     
     @JsonIgnore
     private final HashMap<UUID, TagGroupDBRecord> tagg = new HashMap();      
-
 
 
     @Override
@@ -114,6 +113,8 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
 
     @Override
     public void setEnable(Boolean enable) {
+        if (enable) startInstant = Instant.now();
+        lastUpdateInstant = startInstant;
         this.enable = enable;
     }
 
@@ -137,32 +138,37 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
         return properties;
     }
 
+    @JsonIgnore    
     @Override
     public Collection<TagGroupDBRecord> getTagGroups() {
         return tagg.values();
     }
         
-
+    @JsonIgnore
     @Override
     public int getTransmits() {
         return transmits;
     }
 
+    @JsonIgnore    
     @Override
     public int getReceives() {
         return receives;
     }
 
+    @JsonIgnore    
     @Override
     public int getErrors() {
         return errors;
     }
 
+    @JsonIgnore    
     @Override
     public int getNumberOfTagGroups() {
         return tagg.size();
     }
 
+    @JsonIgnore
     @Override
     public int getNumberOfTags() {
         int[] ntags = new int[1];
@@ -171,19 +177,23 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
         return ntags[0];
     }
 
+    @JsonIgnore
     @Override
     public Instant getStartInstant() {
         return startInstant;
     }
 
+    @JsonIgnore
     @Override
     public Instant getCurrentInstant() {
-        return currentInstant;
+        return Instant.now();
     }
 
+@JsonIgnore
     @Override
-    public Instant getLastUpdateDateTime() {
+    public Instant getLastUpdateInstant() {
         return lastUpdateInstant;
     }
+    
     
 }

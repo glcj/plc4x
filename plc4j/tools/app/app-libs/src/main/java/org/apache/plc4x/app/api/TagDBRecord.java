@@ -16,50 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.api;
+package org.apache.plc4x.app.api;
 
 import java.time.Instant;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Map;
 import java.util.UUID;
 
 
-public interface DeviceDBRecord {
+public interface TagDBRecord {
     
-    public void setDeviceName(String name);  
-    String getDeviceName();
+    public void setTagName(String name);  
+    String getTagName();
     
-    public void setDeviceDescription(String desc);  
-    public String getDeviceDescription();    
+    public void setTagDesc(String desc);   
+    public String getTagDesc();
+
+    public void setTagID(String id);   
+    public String getTagID();    
     
     public void setUUID(UUID uuid);  
     public UUID getUUID();
-    
-    public void setProtocolCode(UUID protocol);   
-    public UUID getProtocolCode();
 
-    public void setTreeLocation(UUID treenode);   
-    public UUID getTreeLocation();
-    
     public void setEnable(Boolean enable);
-    public Boolean getEnable();    
-    
-    public void setPropertie(String id, String str);
-    public String getPropertie(String id);
-    public Map<String, String> getProperties();
-    
-    public Collection<TagGroupDBRecord> getTagGroups();    
+    public Boolean getEnable();
+
+    public void setDisableOutput(Boolean disableOutput);
+    public Boolean getDisableOutput();     
     
     public int getTransmits();
     public int getReceives();
     public int getErrors();
-
-    public int getNumberOfTagGroups();   
-    public int getNumberOfTags();
     
-    public Instant getStartInstant();
-    public Instant  getCurrentInstant();
-    public Instant  getLastUpdateDateTime();    
+    public Instant getLastReadInstant();
+    public Instant getLastWriteInstant();
+    public Instant getLastErrorInstant();      
     
 }

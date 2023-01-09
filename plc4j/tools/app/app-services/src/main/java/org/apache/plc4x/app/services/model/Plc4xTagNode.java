@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.core;
+package org.apache.plc4x.app.services.model;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
@@ -24,14 +24,12 @@ import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.services.api.DeviceDBRecord;
-import org.apache.plc4x.app.services.api.DriverDBRecord;
+import org.apache.plc4x.app.api.TagDBRecord;
+import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.RenameAction;
-import org.openide.actions.ToolsAction;
-import org.openide.nodes.AbstractNode;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -45,27 +43,27 @@ import org.openide.util.actions.SystemAction;
  *
  * @author cgarcia
  */
-public class Plc4xDeviceNode  extends BeanNode  {
-
-    private final DeviceDBRecord bean;      
+public class Plc4xTagNode  extends BeanNode {
+    
+    private final TagDBRecord bean;
     private String key;     
     private ChangeListener listener;    
 
-    @Messages("HINT_Plc4xDeviceNode=Represents one Plc4x driver.")    
-    public Plc4xDeviceNode(DeviceDBRecord bean) throws IntrospectionException {
-        super(bean, Children.create(new Plc4xDeviceChildFactory(bean), false));       
+    @Messages("HINT_Plc4xTagNode=Represents one Plc4x driver.")    
+    public Plc4xTagNode(TagDBRecord bean)  throws IntrospectionException {
+        super(bean, Children.LEAF);        
         this.bean = bean;   
-        setIconBaseWithExtension("org/apache/plc4x/app/services/Device_16x16.png"); 
-        super.setName(key);         
-        setShortDescription(Bundle.HINT_Plc4xDeviceNode());        
+        setIconBaseWithExtension("org/apache/plc4x/app/services/tag_amarilla_linea_16x16.png"); 
+        super.setName(bean.getTagName());         
+        setShortDescription(Bundle.HINT_Plc4xTagNode());        
     }
     
     @Override     
     public Action[] getActions(boolean context) {
         Action[] result = new Action[]{
             SystemAction.get(OpenLocalExplorerAction.class),
-            new Plc4xAddTagGroupAction(this),
-            new Plc4xDelTagGroupAction(this),
+            null,
+            null,
             SystemAction.get(RenameAction.class),
             null,
             SystemAction.get(DeleteAction.class),
@@ -82,16 +80,16 @@ public class Plc4xDeviceNode  extends BeanNode  {
     @Override     
     public Node cloneNode() {         
         try {     
-            return new Plc4xDeviceNode(bean);
+            return new Plc4xTagNode(bean);
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);
         }
         return Node.EMPTY;
     }
 
-    @Messages({"PROP_Device_value=Value",
-        "HINT_Device_value=Value of this system property."})     
-    @Override      
+    @Messages({"PROP_TagNode_value=Value",
+        "HINT_TagNode_value=Value of this system property."})     
+    @Override     
     protected Sheet createSheet() {
         Sheet sheet = super.createSheet();
         Sheet.Set props = sheet.get(Sheet.PROPERTIES);
@@ -103,7 +101,7 @@ public class Plc4xDeviceNode  extends BeanNode  {
         
         class ValueProp extends PropertySupport.ReadWrite {
             public ValueProp() {
-                super("value", String.class, Bundle.PROP_Device_value(), Bundle.HINT_Device_value());
+                super("value", String.class, Bundle.PROP_TagNode_value(), Bundle.HINT_TagNode_value());
             }             
             
             @Override             

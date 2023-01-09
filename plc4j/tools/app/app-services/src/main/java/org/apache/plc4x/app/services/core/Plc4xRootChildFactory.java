@@ -18,17 +18,14 @@
  */
 package org.apache.plc4x.app.services.core;
 
+import org.apache.plc4x.app.services.model.Plc4xDriverNode;
 import java.beans.IntrospectionException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.services.api.DriverDBRecord;
-import org.apache.plc4x.app.services.api.MasterDB;
-import org.apache.plc4x.java.PlcDriverManager;
-import org.apache.plc4x.java.api.PlcDriver;
+import org.apache.plc4x.app.api.MasterDB;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;

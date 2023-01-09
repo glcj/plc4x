@@ -16,31 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.core;
+package org.apache.plc4x.app.services.view;
 
 import java.awt.Image;
 import java.beans.IntrospectionException;
-import java.io.IOException;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
-import org.apache.plc4x.app.services.api.MasterDB;
+import org.apache.plc4x.app.api.MasterDB;
+import org.apache.plc4x.app.services.core.Plc4xRootChildFactory;
+import org.apache.plc4x.app.services.core.Plc4xRootNodeSaveAction;
 import org.netbeans.api.core.ide.ServicesTabNodeRegistration;
-import org.openide.DialogDisplayer;
-import org.openide.NotifyDescriptor;
-import org.openide.actions.NewAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.ToolsAction;
 import org.openide.nodes.AbstractNode;
-import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
-import org.openide.nodes.Node;
-import org.openide.util.HelpCtx;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
-import org.openide.util.datatransfer.NewType;
 
 @ServicesTabNodeRegistration(name = "Plc4xRootNode",
     displayName = "#LBL_Plc4xRootNode",

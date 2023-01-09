@@ -18,26 +18,29 @@
  */
 package org.apache.plc4x.app.services.core;
 
-import org.apache.plc4x.app.services.model.Plc4xTagGroupNode;
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
+import java.beans.PropertyEditorSupport;
+import java.util.UUID;
+import org.openide.explorer.propertysheet.ExPropertyEditor;
+import org.openide.explorer.propertysheet.InplaceEditor;
+import org.openide.explorer.propertysheet.PropertyEnv;
+import org.openide.nodes.PropertyEditorRegistration;
 
-/**
- *
- * @author cgarcia
- */
-public class Plc4xDelTagAction extends AbstractAction {
-    
-    private final Plc4xTagGroupNode node;      
+@PropertyEditorRegistration(targetType = UUID.class)
+public class UUIDPropertyEditor extends PropertyEditorSupport implements ExPropertyEditor {
 
-    public Plc4xDelTagAction(Plc4xTagGroupNode node) {
-        this.node = node;
-        this.putValue(AbstractAction.NAME, "Del Tag");          
+    @Override
+    public String getAsText() {
+        UUID uuid = (UUID) getValue();
+        if (uuid == null) {
+            return "No UUID assigned";            
+        }
+        return uuid.toString();
     }
 
     @Override
-    public void actionPerformed(ActionEvent ae) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void attachEnv(PropertyEnv pe) {
+        
     }
+    
     
 }

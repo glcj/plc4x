@@ -16,52 +16,65 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.core;
+package org.apache.plc4x.app.services.model;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
+import java.util.Properties;
 import javax.swing.Action;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.services.api.DriverDBRecord;
+import org.apache.plc4x.app.api.TagGroupDBRecord;
+import org.apache.plc4x.app.services.core.Plc4xAddTagAction;
+import org.apache.plc4x.app.services.core.Plc4xDelTagAction;
+import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
+import org.apache.plc4x.app.services.core.Plc4xTagGroupChildFactory;
+import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
-import org.openide.actions.ToolsAction;
+import org.openide.actions.RenameAction;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 
+/**
+ *
+ * @author cgarcia
+ */
+public class Plc4xTagGroupNode  extends BeanNode {
 
-public class Plc4xDriverNode  extends BeanNode {
-
-    private final DriverDBRecord bean;     
+    private final TagGroupDBRecord bean;
+    private String key;     
     private ChangeListener listener;    
 
-    @Messages("HINT_Plc4xDriverNode=Represents one Plc4x driver.")    
-    public Plc4xDriverNode(DriverDBRecord bean) throws IntrospectionException {
-        super(bean, Children.create(new Plc4xDriverChildFactory(bean), false));
+    @Messages("HINT_Plc4xTagGroupNode=Represents one Plc4x driver.")    
+    public Plc4xTagGroupNode(TagGroupDBRecord bean)  throws IntrospectionException {
+        super(bean, Children.create(new Plc4xTagGroupChildFactory(bean), false));       
         this.bean = bean;   
-        setIconBaseWithExtension("org/apache/plc4x/app/services/Driver_16x16.png"); 
-        super.setName(bean.getProtocolName());         
-        setShortDescription(Bundle.HINT_Plc4xDriverNode());   
+        setIconBaseWithExtension("org/apache/plc4x/app/services/tag_doble_16x16.png"); 
+        super.setName(bean.getTagGroupName());         
+        setShortDescription(Bundle.HINT_Plc4xTagGroupNode());        
     }
     
     @Override     
     public Action[] getActions(boolean context) {
         Action[] result = new Action[]{
-            SystemAction.get(OpenLocalExplorerAction.class),            
-            new Plc4xAddDeviceAction(this),
+            SystemAction.get(OpenLocalExplorerAction.class),
+            new Plc4xAddTagAction(this),
+            new Plc4xDelTagAction(this),
+            SystemAction.get(RenameAction.class),
             null,
-            null,
-            SystemAction.get(ToolsAction.class),
+            SystemAction.get(DeleteAction.class),
             SystemAction.get(PropertiesAction.class),
         };         
         return result;     
     } 
-    
+     
     @Override     
     public Action getPreferredAction() {
         return SystemAction.get(PropertiesAction.class);
@@ -70,21 +83,19 @@ public class Plc4xDriverNode  extends BeanNode {
     @Override     
     public Node cloneNode() {         
         try {     
-            return new Plc4xDriverNode(bean);
+            return new Plc4xTagGroupNode(bean);
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);
         }
-        return null;
+        return Node.EMPTY;
     }
 
-    @Messages({"PROP_Driver_value=Value",
-        "HINT_Driver_value=Value of this system property."})     
+    @Messages({"PROP_TagGroup_value=Value",
+        "HINT_TagGroup_value=Value of this system property."})     
     @Override     
     protected Sheet createSheet() {
-
         Sheet sheet = super.createSheet();
         Sheet.Set props = sheet.get(Sheet.PROPERTIES);
-        /*
         if (props == null) {
             props = Sheet.createPropertiesSet();
             sheet.put(props);
@@ -93,7 +104,7 @@ public class Plc4xDriverNode  extends BeanNode {
         
         class ValueProp extends PropertySupport.ReadWrite {
             public ValueProp() {
-                super("value", String.class, Bundle.PROP_Driver_value(), Bundle.HINT_Driver_value());
+                super("value", String.class, Bundle.PROP_TagGroup_value(), Bundle.HINT_TagGroup_value());
             }             
             
             @Override             
@@ -115,7 +126,7 @@ public class Plc4xDriverNode  extends BeanNode {
                 firePropertyChange("value", null, null);
             }         
         });
-        */
+        
         return sheet;
     }    
 
@@ -134,7 +145,6 @@ public class Plc4xDriverNode  extends BeanNode {
     
     @Override     
     public void setName(String nue) {
-        /*
         Properties p = System.getProperties();
         String value = p.getProperty(key);
         p.remove(key);         
@@ -145,8 +155,7 @@ public class Plc4xDriverNode  extends BeanNode {
         
         System.setProperties(p);         
         
-        Plc4xPropertiesNotifier.changed();  
-        */
+        Plc4xPropertiesNotifier.changed();     
     }   
     
     @Override    
@@ -156,16 +165,10 @@ public class Plc4xDriverNode  extends BeanNode {
     
     @Override     
     public void destroy() throws IOException {
-        /*
         Properties p = System.getProperties();
         p.remove(key);
         System.setProperties(p);
         Plc4xPropertiesNotifier.changed();     
-        */
-    } 
-    
-    public DriverDBRecord getDriverRecord() {
-        return bean;
-    }
+    }    
     
 }

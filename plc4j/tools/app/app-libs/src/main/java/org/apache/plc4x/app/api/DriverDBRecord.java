@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.api;
+package org.apache.plc4x.app.api;
 
 import java.time.Instant;
 import java.time.Instant;
@@ -58,7 +58,6 @@ public interface DriverDBRecord {
     
     public Instant getStartInstant();
     public Instant getCurrentInstant();
-    public Instant getLastUpdateInstant();
-   
+    public Instant getLastUpdateInstant();     
     
 }

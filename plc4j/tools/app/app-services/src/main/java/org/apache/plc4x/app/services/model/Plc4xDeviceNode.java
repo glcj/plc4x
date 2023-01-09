@@ -16,26 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.plc4x.app.services.core;
+package org.apache.plc4x.app.services.model;
 
+import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.Properties;
 import javax.swing.Action;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.services.api.TagDBRecord;
+import org.apache.plc4x.app.api.DeviceDBRecord;
+import org.apache.plc4x.app.services.core.Plc4xAddTagGroupAction;
+import org.apache.plc4x.app.services.core.Plc4xDelTagGroupAction;
+import org.apache.plc4x.app.services.core.Plc4xDeviceChildFactory;
+import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.RenameAction;
-import org.openide.actions.ToolsAction;
-import org.openide.nodes.AbstractNode;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.nodes.PropertySupport;
-import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
@@ -44,27 +46,30 @@ import org.openide.util.actions.SystemAction;
  *
  * @author cgarcia
  */
-public class Plc4xTagNode  extends BeanNode {
-    
-    private final TagDBRecord bean;
+public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener {
+
+    private final DeviceDBRecord bean;      
     private String key;     
     private ChangeListener listener;    
 
-    @Messages("HINT_Plc4xTagNode=Represents one Plc4x driver.")    
-    public Plc4xTagNode(TagDBRecord bean)  throws IntrospectionException {
-        super(bean, Children.LEAF);        
+    @Messages("HINT_Plc4xDeviceNode=Represents one Plc4x driver.")    
+    public Plc4xDeviceNode(DeviceDBRecord bean) throws IntrospectionException {
+        super(bean, Children.create(new Plc4xDeviceChildFactory(bean), false));       
         this.bean = bean;   
-        setIconBaseWithExtension("org/apache/plc4x/app/services/tag_amarilla_linea_16x16.png"); 
-        super.setName(bean.getTagName());         
-        setShortDescription(Bundle.HINT_Plc4xTagNode());        
+        setIconBaseWithExtension("org/apache/plc4x/app/services/Device_16x16.png"); 
+        super.setName(this.bean.getDeviceName());  
+        setShortDescription(Bundle.HINT_Plc4xDeviceNode()); 
+        final BeanInfo info = Introspector.getBeanInfo(DeviceDBRecord.class);
+        System.out.println("Propiedades: " + this.getPropertySets().length);
+        this.setValue("BEAN", bean);
     }
     
     @Override     
     public Action[] getActions(boolean context) {
         Action[] result = new Action[]{
             SystemAction.get(OpenLocalExplorerAction.class),
-            null,
-            null,
+            new Plc4xAddTagGroupAction(this),
+            new Plc4xDelTagGroupAction(this),
             SystemAction.get(RenameAction.class),
             null,
             SystemAction.get(DeleteAction.class),
@@ -73,6 +78,8 @@ public class Plc4xTagNode  extends BeanNode {
         return result;     
     } 
      
+    
+    
     @Override     
     public Action getPreferredAction() {
         return SystemAction.get(PropertiesAction.class);
@@ -81,52 +88,12 @@ public class Plc4xTagNode  extends BeanNode {
     @Override     
     public Node cloneNode() {         
         try {     
-            return new Plc4xTagNode(bean);
+            return new Plc4xDeviceNode(bean);
         } catch (IntrospectionException ex) {
             Exceptions.printStackTrace(ex);
         }
         return Node.EMPTY;
     }
-
-    @Messages({"PROP_TagNode_value=Value",
-        "HINT_TagNode_value=Value of this system property."})     
-    @Override     
-    protected Sheet createSheet() {
-        Sheet sheet = super.createSheet();
-        Sheet.Set props = sheet.get(Sheet.PROPERTIES);
-        if (props == null) {
-            props = Sheet.createPropertiesSet();
-            sheet.put(props);
-        }         
-        props.put(new PropertySupport.Name(this));
-        
-        class ValueProp extends PropertySupport.ReadWrite {
-            public ValueProp() {
-                super("value", String.class, Bundle.PROP_TagNode_value(), Bundle.HINT_TagNode_value());
-            }             
-            
-            @Override             
-            public Object getValue() {
-                return System.getProperty(key);
-            }             
-            
-            @Override             
-            public void setValue(Object nue) {
-                System.setProperty(key, (String) nue);
-                Plc4xPropertiesNotifier.changed();
-            }         
-        }         
-        
-        props.put(new ValueProp());
-        Plc4xPropertiesNotifier.addChangeListener(listener = new ChangeListener() {
-            @Override             
-            public void stateChanged(ChangeEvent ev) {
-                firePropertyChange("value", null, null);
-            }         
-        });
-        
-        return sheet;
-    }    
 
     @Override     
     protected void finalize() throws Throwable {
@@ -142,17 +109,7 @@ public class Plc4xTagNode  extends BeanNode {
     }    
     
     @Override     
-    public void setName(String nue) {
-        Properties p = System.getProperties();
-        String value = p.getProperty(key);
-        p.remove(key);         
-        
-        if (value != null) {
-            p.setProperty(nue, value);
-        }         
-        
-        System.setProperties(p);         
-        
+    public void setName(String nue) {              
         Plc4xPropertiesNotifier.changed();     
     }   
     
@@ -163,10 +120,13 @@ public class Plc4xTagNode  extends BeanNode {
     
     @Override     
     public void destroy() throws IOException {
-        Properties p = System.getProperties();
-        p.remove(key);
-        System.setProperties(p);
         Plc4xPropertiesNotifier.changed();     
     }    
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        System.out.println("Cambio: " + pce.getPropertyName());
+        System.out.println("Value: " + pce.getNewValue());
+    }
     
 }
