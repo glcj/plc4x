@@ -19,7 +19,14 @@
 package org.apache.plc4x.app.api;
 
 
-public enum Plc4xDialogParametersEnum {
+public enum Plc4xPropertyEnum {
+    
+    //Commons fields in dialogs
+    NAME,
+    DESCRIPTION,
+    SCANTIME,
+    ENABLE,
+    DISABLE_OUTPUT,
     
     //Serial connection parameters
     SERIAL_PORT,

@@ -30,12 +30,14 @@ import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 
 /**
  *
  * @author cgarcia
  */
-public class Plc4xRootChildFactory extends ChildFactory.Detachable<String> {
+public class Plc4xRootChildFactory extends ChildFactory.Detachable<String> implements LookupListener {
 
     private ChangeListener listener;
     private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);
@@ -79,6 +81,11 @@ public class Plc4xRootChildFactory extends ChildFactory.Detachable<String> {
         toPopulate.addAll(keys); 
 
         return true;
+    }
+
+    @Override
+    public void resultChanged(LookupEvent ev) {
+        this.refresh(true);
     }
     
 }

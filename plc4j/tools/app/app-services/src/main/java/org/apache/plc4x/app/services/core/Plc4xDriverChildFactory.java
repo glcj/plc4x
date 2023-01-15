@@ -20,28 +20,38 @@ package org.apache.plc4x.app.services.core;
 
 import org.apache.plc4x.app.services.model.Plc4xDeviceNode;
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.api.DeviceDBRecord;
-import org.apache.plc4x.app.api.DriverDBRecord;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.DriverRecord;
 
 
-public class Plc4xDriverChildFactory extends ChildFactory.Detachable<DeviceDBRecord> {
+public class Plc4xDriverChildFactory extends ChildFactory.Detachable<DeviceRecord> implements LookupListener {
    
-    private final DriverDBRecord driver;  
-    private ChangeListener listener;
+    private final DriverRecord driver;
+    private final Lookup.Result<DeviceRecord> plc4xresult;
+    private final Lookup.Template template = new Lookup.Template(DeviceRecord.class);     
+    private PropertyChangeListener listener;
 
-    public Plc4xDriverChildFactory(DriverDBRecord driver) {
+    public Plc4xDriverChildFactory(DriverRecord driver) {
         this.driver = driver;
+        
+        plc4xresult = driver.getLookup().lookup(template);
+        plc4xresult.addLookupListener(this);        
     }
 
     @Override     
     protected void addNotify() {
-       Plc4xPropertiesNotifier.addChangeListener(listener = (ChangeEvent ev) -> {
+        driver.addPropertyChangeListener(listener = (PropertyChangeEvent ev) -> {
            refresh(true);         
        });     
     }    
@@ -49,13 +59,13 @@ public class Plc4xDriverChildFactory extends ChildFactory.Detachable<DeviceDBRec
     @Override     
     protected void removeNotify() {
         if (listener != null) {
-            Plc4xPropertiesNotifier.removeChangeListener(listener);
+            driver.removePropertyChangeListener(listener);
             listener = null;         
-        }     
+        }         
     }   
     
     @Override     
-    protected Node createNodeForKey(DeviceDBRecord key) {         
+    protected Node createNodeForKey(DeviceRecord key) {         
         try {     
             return new Plc4xDeviceNode(key);
         } catch (IntrospectionException ex) {
@@ -65,9 +75,15 @@ public class Plc4xDriverChildFactory extends ChildFactory.Detachable<DeviceDBRec
     }    
     
     @Override
-    protected boolean createKeys(List<DeviceDBRecord> toPopulate) {
-        driver.getDevices().stream().forEach(b -> {if (b != null) toPopulate.add(b);});               
+    protected boolean createKeys(List<DeviceRecord> toPopulate) {
+        driver.getDevices().stream().
+                forEach(b -> {if (b != null) toPopulate.add(b);});               
         return true;
+    }
+
+    @Override
+    public void resultChanged(LookupEvent ev) {
+        this.refresh(true);
     }
     
 }

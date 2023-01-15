@@ -32,6 +32,8 @@ import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.ImageUtilities;
 import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
 
@@ -42,7 +44,7 @@ import org.openide.util.actions.SystemAction;
     position = 2021) 
 @Messages({"LBL_Plc4xRootNode=Plc4x Drivers",
     "HINT_Plc4xRootNode=Shows all currently set system properties." })
-public class Plc4xRootNode extends AbstractNode {
+public class Plc4xRootNode extends AbstractNode implements LookupListener {
     
     public final Image closeicon = ImageUtilities.loadImage("org/apache/plc4x/app/services/toddy_s7_16x16.png");
     public final Image openicon = ImageUtilities.loadImage("org/apache/plc4x/app/services/toddy_s7_16x16.png");
@@ -78,6 +80,11 @@ public class Plc4xRootNode extends AbstractNode {
     @Override
     public Image getOpenedIcon(int type) {
         return openicon;
+    }
+
+    @Override
+    public void resultChanged(LookupEvent ev) {
+
     }
 
 

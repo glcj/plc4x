@@ -19,13 +19,18 @@
 package org.apache.plc4x.app.services.model;
 
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
 import javax.swing.Action;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.api.DriverDBRecord;
+import org.apache.plc4x.app.api.MasterDB;
 import org.apache.plc4x.app.services.core.Plc4xAddDeviceAction;
 import org.apache.plc4x.app.services.core.Plc4xDriverChildFactory;
 import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
+import org.apache.plc4x.java.api.PlcDriver;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.ToolsAction;
@@ -34,22 +39,35 @@ import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
+import org.openide.util.lookup.AbstractLookup;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.DriverRecord;
 
 
-public class Plc4xDriverNode  extends BeanNode {
+public class Plc4xDriverNode  extends BeanNode  implements LookupListener {
 
-    private final DriverDBRecord bean;     
-    private ChangeListener listener;    
+    private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);    
+    private final DriverRecord bean;     
+    private PropertyChangeListener listener; 
+    private final Lookup.Result<DeviceRecord> plc4xresult;
+    private final Lookup.Template template = new Lookup.Template(DeviceRecord.class);      
 
     @Messages("HINT_Plc4xDriverNode=Represents one Plc4x driver.")    
-    public Plc4xDriverNode(DriverDBRecord bean) throws IntrospectionException {
+    public Plc4xDriverNode(DriverRecord bean) throws IntrospectionException {
         super(bean, Children.create(new Plc4xDriverChildFactory(bean), false));
         this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/Driver_16x16.png"); 
         super.setName(bean.getProtocolName());         
-        setShortDescription(Bundle.HINT_Plc4xDriverNode());   
+        setShortDescription(Bundle.HINT_Plc4xDriverNode()); 
+        
+        plc4xresult = bean.getLookup().lookup(template);
+        plc4xresult.addLookupListener(this);
+
     }
     
     @Override     
@@ -126,7 +144,7 @@ public class Plc4xDriverNode  extends BeanNode {
     protected void finalize() throws Throwable {
         super.finalize();
         if (listener != null) {
-            Plc4xPropertiesNotifier.removeChangeListener(listener);
+            bean.removePropertyChangeListener(listener);
         }
     } 
     
@@ -137,19 +155,7 @@ public class Plc4xDriverNode  extends BeanNode {
     
     @Override     
     public void setName(String nue) {
-        /*
-        Properties p = System.getProperties();
-        String value = p.getProperty(key);
-        p.remove(key);         
-        
-        if (value != null) {
-            p.setProperty(nue, value);
-        }         
-        
-        System.setProperties(p);         
-        
-        Plc4xPropertiesNotifier.changed();  
-        */
+
     }   
     
     @Override    
@@ -159,16 +165,16 @@ public class Plc4xDriverNode  extends BeanNode {
     
     @Override     
     public void destroy() throws IOException {
-        /*
-        Properties p = System.getProperties();
-        p.remove(key);
-        System.setProperties(p);
-        Plc4xPropertiesNotifier.changed();     
-        */
+        
     } 
     
-    public DriverDBRecord getDriverRecord() {
+    public DriverRecord getDriverRecord() {
         return bean;
+    }
+
+    @Override
+    public void resultChanged(LookupEvent ev) {
+
     }
     
 }

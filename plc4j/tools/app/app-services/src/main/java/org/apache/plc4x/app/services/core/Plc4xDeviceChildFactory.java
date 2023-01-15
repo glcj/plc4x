@@ -20,28 +20,37 @@ package org.apache.plc4x.app.services.core;
 
 import org.apache.plc4x.app.services.model.Plc4xTagGroupNode;
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.api.DeviceDBRecord;
-import org.apache.plc4x.app.api.TagGroupDBRecord;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.openide.util.LookupEvent;
+import org.openide.util.LookupListener;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.TagGroupRecord;
+import org.openide.util.Lookup;
 
 
-public class Plc4xDeviceChildFactory extends ChildFactory.Detachable<TagGroupDBRecord> {
+public class Plc4xDeviceChildFactory extends ChildFactory.Detachable<TagGroupRecord> implements LookupListener {
    
-    private final DeviceDBRecord device;  
-    private ChangeListener listener;
+    private final DeviceRecord device;
+    private final Lookup.Result<TagGroupRecord> plc4xresult;
+    private final Lookup.Template template = new Lookup.Template(TagGroupRecord.class);       
+    private PropertyChangeListener listener;
 
-    public Plc4xDeviceChildFactory(DeviceDBRecord device) {
+    public Plc4xDeviceChildFactory(DeviceRecord device) {
         this.device = device;
+        plc4xresult = device.getLookup().lookup(template);
+        plc4xresult.addLookupListener(this);          
     }
 
     @Override     
     protected void addNotify() {
-       Plc4xPropertiesNotifier.addChangeListener(listener = (ChangeEvent ev) -> {
+        device.addPropertyChangeListener(listener = (PropertyChangeEvent ev) -> {
            refresh(true);         
        });     
     }    
@@ -49,13 +58,13 @@ public class Plc4xDeviceChildFactory extends ChildFactory.Detachable<TagGroupDBR
     @Override     
     protected void removeNotify() {
         if (listener != null) {
-            Plc4xPropertiesNotifier.removeChangeListener(listener);
+            device.removePropertyChangeListener(listener);
             listener = null;         
         }     
     }   
     
     @Override     
-    protected Node createNodeForKey(TagGroupDBRecord key) {         
+    protected Node createNodeForKey(TagGroupRecord key) {         
         try {     
             return new Plc4xTagGroupNode(key);
         } catch (IntrospectionException ex) {
@@ -65,9 +74,14 @@ public class Plc4xDeviceChildFactory extends ChildFactory.Detachable<TagGroupDBR
     }    
     
     @Override
-    protected boolean createKeys(List<TagGroupDBRecord> toPopulate) {        
+    protected boolean createKeys(List<TagGroupRecord> toPopulate) {        
         device.getTagGroups().stream().forEach(b -> toPopulate.add(b));        
         return true;
+    }
+
+    @Override
+    public void resultChanged(LookupEvent ev) {
+        this.refresh(true);
     }
     
 }

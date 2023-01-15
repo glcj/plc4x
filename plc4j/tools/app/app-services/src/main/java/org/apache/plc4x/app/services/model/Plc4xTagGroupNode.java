@@ -24,7 +24,7 @@ import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.api.TagGroupDBRecord;
+import org.apache.plc4x.app.api.MasterDB;
 import org.apache.plc4x.app.services.core.Plc4xAddTagAction;
 import org.apache.plc4x.app.services.core.Plc4xDelTagAction;
 import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
@@ -41,6 +41,8 @@ import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
+import org.apache.plc4x.app.api.TagGroupRecord;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -48,12 +50,13 @@ import org.openide.util.actions.SystemAction;
  */
 public class Plc4xTagGroupNode  extends BeanNode {
 
-    private final TagGroupDBRecord bean;
+    private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);    
+    private final TagGroupRecord bean;
     private String key;     
     private ChangeListener listener;    
 
     @Messages("HINT_Plc4xTagGroupNode=Represents one Plc4x driver.")    
-    public Plc4xTagGroupNode(TagGroupDBRecord bean)  throws IntrospectionException {
+    public Plc4xTagGroupNode(TagGroupRecord bean)  throws IntrospectionException {
         super(bean, Children.create(new Plc4xTagGroupChildFactory(bean), false));       
         this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/tag_doble_16x16.png"); 
@@ -165,10 +168,8 @@ public class Plc4xTagGroupNode  extends BeanNode {
     
     @Override     
     public void destroy() throws IOException {
-        Properties p = System.getProperties();
-        p.remove(key);
-        System.setProperties(p);
-        Plc4xPropertiesNotifier.changed();     
+        bean.removePropertyChangeListener(listener);
+        db.removeTagGroup(uuid);
     }    
     
 }

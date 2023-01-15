@@ -18,14 +18,17 @@
  */
 package org.apache.plc4x.app.api;
 
+import java.beans.PropertyChangeListener;
 import java.time.Instant;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import org.openide.util.Lookup;
 
 
-public interface DeviceDBRecord {
+public interface DeviceRecord extends Lookup.Provider {
     
     public void setDeviceName(String name);  
     String getDeviceName();
@@ -49,8 +52,17 @@ public interface DeviceDBRecord {
     public String getPropertie(String id);
     public Map<String, String> getProperties();
     
-    public Collection<TagGroupDBRecord> getTagGroups();    
+    public void addTagGroup(TagGroupRecord  tagg);
+    public Collection<TagGroupRecord> getTagGroups();
+    public Optional<TagGroupRecord> getTagGroup(TagGroupRecord tagg);    
+    public Optional<TagGroupRecord> getTagGroup(UUID uuid);
+    public Optional<TagGroupRecord> getTagGroup(String name);    
+    public void removeTagGroup(TagGroupRecord  device);    
     
+    
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+    public void removePropertyChangeListener(PropertyChangeListener listener);    
+        
     public int getTransmits();
     public int getReceives();
     public int getErrors();

@@ -25,13 +25,14 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import javax.swing.Action;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.api.DeviceDBRecord;
+import org.apache.plc4x.app.api.MasterDB;
 import org.apache.plc4x.app.services.core.Plc4xAddTagGroupAction;
+import org.apache.plc4x.app.services.core.Plc4xDelDeviceAction;
 import org.apache.plc4x.app.services.core.Plc4xDelTagGroupAction;
 import org.apache.plc4x.app.services.core.Plc4xDeviceChildFactory;
 import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
-import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
 import org.openide.actions.PropertiesAction;
 import org.openide.actions.RenameAction;
@@ -39,29 +40,31 @@ import org.openide.nodes.BeanNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.Plc4xPropertyEnum;
 
-/**
- *
- * @author cgarcia
- */
-public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener {
 
-    private final DeviceDBRecord bean;      
+public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener{
+
+    private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);
+     Plc4xPropertyEnum P;
+    private final DeviceRecord bean;      
     private String key;     
-    private ChangeListener listener;    
+    private PropertyChangeListener listener;  
 
     @Messages("HINT_Plc4xDeviceNode=Represents one Plc4x driver.")    
-    public Plc4xDeviceNode(DeviceDBRecord bean) throws IntrospectionException {
+    public Plc4xDeviceNode(DeviceRecord bean) throws IntrospectionException {
         super(bean, Children.create(new Plc4xDeviceChildFactory(bean), false));       
         this.bean = bean;   
-        setIconBaseWithExtension("org/apache/plc4x/app/services/Device_16x16.png"); 
+        this.bean.addPropertyChangeListener(this);        
+        setIconBaseWithExtension("org/apache/plc4x/app/services/tag_roja_16x16.png"); 
         super.setName(this.bean.getDeviceName());  
-        setShortDescription(Bundle.HINT_Plc4xDeviceNode()); 
-        final BeanInfo info = Introspector.getBeanInfo(DeviceDBRecord.class);
-        System.out.println("Propiedades: " + this.getPropertySets().length);
-        this.setValue("BEAN", bean);
+        setShortDescription(this.bean.getDeviceDescription()); 
+        final BeanInfo info = Introspector.getBeanInfo(DeviceRecord.class);
+        this.setValue("BEAN", bean); 
     }
     
     @Override     
@@ -72,14 +75,13 @@ public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener
             new Plc4xDelTagGroupAction(this),
             SystemAction.get(RenameAction.class),
             null,
-            SystemAction.get(DeleteAction.class),
+            new Plc4xDelDeviceAction(this),
             SystemAction.get(PropertiesAction.class),
         };         
         return result;     
     } 
      
-    
-    
+       
     @Override     
     public Action getPreferredAction() {
         return SystemAction.get(PropertiesAction.class);
@@ -99,7 +101,7 @@ public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener
     protected void finalize() throws Throwable {
         super.finalize();
         if (listener != null) {
-            Plc4xPropertiesNotifier.removeChangeListener(listener);
+            bean.removePropertyChangeListener(listener);
         }
     } 
     
@@ -110,7 +112,7 @@ public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener
     
     @Override     
     public void setName(String nue) {              
-        Plc4xPropertiesNotifier.changed();     
+        super.setName(nue);    
     }   
     
     @Override    
@@ -120,13 +122,25 @@ public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener
     
     @Override     
     public void destroy() throws IOException {
-        Plc4xPropertiesNotifier.changed();     
+        bean.removePropertyChangeListener(this);        
+        db.removeDevice(bean);    
     }    
 
     @Override
     public void propertyChange(PropertyChangeEvent pce) {
-        System.out.println("Cambio: " + pce.getPropertyName());
-        System.out.println("Value: " + pce.getNewValue());
+        switch (Plc4xPropertyEnum.valueOf(pce.getPropertyName())) {
+            case NAME: setName((String) this.bean.getDeviceName());
+            break;
+            case DESCRIPTION: setShortDescription(this.bean.getDeviceDescription());
+            break;
+            case ENABLE: {
+                final Boolean b = (Boolean) pce.getNewValue();
+                String str = b ? "org/apache/plc4x/app/services/tag_verde_16x16.png" :
+                        "org/apache/plc4x/app/services/tag_roja_16x16.png";
+                setIconBaseWithExtension(str);
+            }
+            default:;
+        }
     }
     
 }

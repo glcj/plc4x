@@ -20,8 +20,14 @@ package org.apache.plc4x.app.services.core;
 
 import org.apache.plc4x.app.services.model.Plc4xDriverNode;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
+import org.apache.plc4x.app.services.model.Plc4xDeviceNode;
+import org.openide.nodes.AbstractNode;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
+import org.apache.plc4x.app.api.DeviceRecord;
 
 /**
  *
@@ -29,15 +35,28 @@ import javax.swing.JOptionPane;
  */
 public class Plc4xDelDeviceAction extends AbstractAction  {
     
-    private final Plc4xDriverNode node;    
+    private final Plc4xDeviceNode node;    
 
-    public Plc4xDelDeviceAction(final Plc4xDriverNode node) {
+    public Plc4xDelDeviceAction(final Plc4xDeviceNode node) {
         this.node = node;
         this.putValue(AbstractAction.NAME, "Delete Device");        
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        //1. Get the node selected
+        System.out.println("ActionEvent: " + ae.getSource().getClass().getName());
+        System.out.println("Este: " + node.getDisplayName());    
+        try {
+            node.destroy();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+
+        //2. Get the DeviceRecord associated to the noe
+        
+        //3. Delete from database.
+        
          JOptionPane.showMessageDialog(null, "Borrar Device!");
     }
     

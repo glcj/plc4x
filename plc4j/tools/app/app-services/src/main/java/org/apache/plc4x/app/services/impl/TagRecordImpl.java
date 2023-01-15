@@ -18,19 +18,24 @@
  */
 package org.apache.plc4x.app.services.impl;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.time.Instant;
 import java.util.UUID;
-import org.apache.plc4x.app.api.TagDBRecord;
+import org.apache.plc4x.app.api.Plc4xPropertyEnum;
+import org.apache.plc4x.app.api.TagRecord;
 
 
 /**
  *
  * @author cgarcia
  */
-public class TagDBRecordImpl implements TagDBRecord {
+public class TagRecordImpl implements TagRecord {
 
-    private String name;
-    private String desc;
+    private Plc4xPropertyEnum P;    
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);    
+    private String tagname;
+    private String tagdesc;
     private String id;
     
     private UUID uuid;   
@@ -48,22 +53,26 @@ public class TagDBRecordImpl implements TagDBRecord {
     
     @Override
     public void setTagName(String name) {
-        this.name = name;
+        String oldValue = this.tagname;
+        this.tagname = name;
+        this.pcs.firePropertyChange(P.NAME.name(), oldValue, name);   
     }
 
     @Override
     public String getTagName() {
-        return name;
+        return tagname;
     }
 
     @Override
     public void setTagDesc(String desc) {
-        this.desc = desc;
+        String oldValue = this.tagdesc;        
+        this.tagdesc = desc;
+        this.pcs.firePropertyChange(P.DESCRIPTION.name(), oldValue, desc);
     }
 
     @Override
     public String getTagDesc() {
-        return desc;
+        return tagdesc;
     }
 
     @Override
@@ -88,7 +97,11 @@ public class TagDBRecordImpl implements TagDBRecord {
 
     @Override
     public void setEnable(Boolean enable) {
+        Boolean oldValue = this.enable; 
         this.enable = enable;
+        if ((!oldValue) && enable) startInstant = Instant.now();
+        lastUpdateInstant = startInstant;
+        this.pcs.firePropertyChange(P.ENABLE.name(), oldValue, enable); 
     }
 
     @Override
@@ -98,7 +111,9 @@ public class TagDBRecordImpl implements TagDBRecord {
 
     @Override
     public void setDisableOutput(Boolean disableOutput) {
+        Boolean oldValue = this.disableOutput ;         
         this.disableOutput = disableOutput;
+        this.pcs.firePropertyChange(P.DISABLE_OUTPUT.name(), oldValue, disableOutput);         
     }
 
     @Override
@@ -106,6 +121,16 @@ public class TagDBRecordImpl implements TagDBRecord {
         return disableOutput;
     }
 
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+         this.pcs.removePropertyChangeListener(listener);
+    }
+    
     @Override
     public int getTransmits() {
         return transmits;

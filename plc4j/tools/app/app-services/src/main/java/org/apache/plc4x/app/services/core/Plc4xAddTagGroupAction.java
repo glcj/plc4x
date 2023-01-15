@@ -21,7 +21,16 @@ package org.apache.plc4x.app.services.core;
 import org.apache.plc4x.app.services.model.Plc4xDeviceNode;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.Plc4xDialog;
+import org.apache.plc4x.app.api.TagGroupRecord;
+import org.apache.plc4x.app.services.impl.DeviceRecordImpl;
+import org.apache.plc4x.app.services.impl.TagGroupRecordImpl;
+import org.apache.plc4x.app.services.view.Plc4xAddTagGroupDialog;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 /**
  *
@@ -38,7 +47,15 @@ public class Plc4xAddTagGroupAction extends AbstractAction {
     
     @Override
     public void actionPerformed(ActionEvent ae) {
-         JOptionPane.showMessageDialog(null, "Agregar TagGroup!");
+        Lookup lk = Lookups.forPath("Plc4xDriver/taggroup");
+       
+        if ( lk != null) {
+            TagGroupRecord taggroup = new TagGroupRecordImpl();  
+            final Plc4xDialog dialog = lk.lookup(Plc4xDialog.class);
+            dialog.setNode(node);                       
+            ((JDialog) dialog).setVisible(true);            
+        }        
+        
     }
     
 }

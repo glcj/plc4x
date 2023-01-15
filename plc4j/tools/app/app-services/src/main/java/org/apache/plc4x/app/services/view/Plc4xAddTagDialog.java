@@ -38,8 +38,8 @@ import org.openide.util.lookup.ServiceProvider;
 import org.apache.plc4x.app.api.DeviceRecord;
 import org.apache.plc4x.app.api.DriverRecord;
 
-@ServiceProvider(service=Plc4xAddDeviceDialog.class)
-public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDialog {
+@ServiceProvider(service=Plc4xDialog.class, path="Plc4xDriver/tag")
+public class Plc4xAddTagDialog extends javax.swing.JDialog implements Plc4xDialog {
 
     private Plc4xPropertyEnum parameters;
     private final JFrame myJframe = new javax.swing.JFrame();
@@ -48,7 +48,7 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
     Node[] devicenodes  = new Plc4xDeviceNode[1];
      
     
-    public Plc4xAddDeviceDialog() {
+    public Plc4xAddTagDialog() {
         super(new javax.swing.JFrame(), true);
         initComponents();
 
@@ -64,7 +64,7 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
     /**
      * Creates new form NewJDialog
      */
-    public Plc4xAddDeviceDialog(java.awt.Frame parent, boolean modal) {
+    public Plc4xAddTagDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -89,43 +89,46 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
         tfUUID = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         cbEnable = new javax.swing.JCheckBox();
+        jLabel8 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         btOk = new javax.swing.JButton();
         btCancel = new javax.swing.JButton();
         btComms = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        cbS88Tree = new javax.swing.JComboBox<>();
-        jLabel7 = new javax.swing.JLabel();
-        tfS88Uuid = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.title")); // NOI18N
+        setTitle(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.title")); // NOI18N
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jPanel2.border.title"))); // NOI18N
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jPanel2.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel1.text")); // NOI18N
-        jLabel1.setToolTipText(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel1.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel1, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel1.text")); // NOI18N
+        jLabel1.setToolTipText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel1.toolTipText")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel2.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel2, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel2.text")); // NOI18N
+        jLabel2.setToolTipText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel2.toolTipText")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel3.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel3, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel3.text")); // NOI18N
+        jLabel3.setToolTipText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel3.toolTipText")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel4.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel4, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel4.text")); // NOI18N
 
         tfDeviceProtocol.setEditable(false);
-        tfDeviceProtocol.setText(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.tfDeviceProtocol.text")); // NOI18N
+        tfDeviceProtocol.setText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.tfDeviceProtocol.text")); // NOI18N
 
-        tfDeviceName.setText(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.tfDeviceName.text")); // NOI18N
+        tfDeviceName.setText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.tfDeviceName.text")); // NOI18N
 
-        tfDeviceDesc.setText(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.tfDeviceDesc.text")); // NOI18N
+        tfDeviceDesc.setText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.tfDeviceDesc.text")); // NOI18N
 
         tfUUID.setEditable(false);
-        tfUUID.setText(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.tfUUID.text")); // NOI18N
+        tfUUID.setText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.tfUUID.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel5.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel5, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel5.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(cbEnable, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.cbEnable.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cbEnable, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.cbEnable.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jLabel8, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jLabel8.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(jCheckBox1, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.jCheckBox1.text")); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -138,21 +141,24 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
                             .addComponent(jLabel1))
-                        .addGap(51, 51, 51)
+                        .addGap(67, 67, 67)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tfDeviceProtocol, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(tfDeviceName, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(tfDeviceProtocol, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tfDeviceName, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel5))
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel8))
                         .addGap(29, 29, 29)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cbEnable)
-                            .addComponent(tfDeviceDesc)
-                            .addComponent(tfUUID))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jCheckBox1)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(cbEnable)
+                                .addComponent(tfDeviceDesc)
+                                .addComponent(tfUUID)))))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,34 +176,38 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
                     .addComponent(jLabel2)
                     .addComponent(tfDeviceDesc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(tfUUID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cbEnable))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel5)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
+                    .addComponent(jCheckBox1))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
-        btOk.setLabel(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.btOk.label")); // NOI18N
+        btOk.setLabel(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.btOk.label")); // NOI18N
         btOk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btOkActionPerformed(evt);
             }
         });
 
-        btCancel.setLabel(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.btCancel.label")); // NOI18N
+        btCancel.setLabel(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.btCancel.label")); // NOI18N
         btCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btCancelActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(btComms, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.btComms.text_1")); // NOI18N
-        btComms.setToolTipText(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.btComms.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btComms, org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.btComms.text_1")); // NOI18N
+        btComms.setToolTipText(org.openide.util.NbBundle.getMessage(Plc4xAddTagDialog.class, "Plc4xAddTagDialog.btComms.toolTipText")); // NOI18N
         btComms.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btCommsActionPerformed(evt);
@@ -228,46 +238,6 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
                 .addContainerGap(29, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jPanel3.border.title"))); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel6, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel6.text")); // NOI18N
-
-        cbS88Tree.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        org.openide.awt.Mnemonics.setLocalizedText(jLabel7, org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.jLabel7.text")); // NOI18N
-
-        tfS88Uuid.setEditable(false);
-        tfS88Uuid.setText(org.openide.util.NbBundle.getMessage(Plc4xAddDeviceDialog.class, "Plc4xAddDeviceDialog.tfS88Uuid.text")); // NOI18N
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbS88Tree, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(tfS88Uuid, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(cbS88Tree, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel7)
-                    .addComponent(tfS88Uuid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(10, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -275,7 +245,6 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -285,9 +254,7 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -386,21 +353,27 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Plc4xAddDeviceDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Plc4xAddTagDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Plc4xAddDeviceDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Plc4xAddTagDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Plc4xAddDeviceDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Plc4xAddTagDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Plc4xAddDeviceDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Plc4xAddTagDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Plc4xAddDeviceDialog dialog = new Plc4xAddDeviceDialog(new javax.swing.JFrame(), true);
+                Plc4xAddTagDialog dialog = new Plc4xAddTagDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -417,21 +390,18 @@ public class Plc4xAddDeviceDialog extends javax.swing.JDialog implements Plc4xDi
     private javax.swing.JButton btComms;
     private javax.swing.JButton btOk;
     private javax.swing.JCheckBox cbEnable;
-    private javax.swing.JComboBox<String> cbS88Tree;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JTextField tfDeviceDesc;
     private javax.swing.JTextField tfDeviceName;
     private javax.swing.JTextField tfDeviceProtocol;
-    private javax.swing.JTextField tfS88Uuid;
     private javax.swing.JTextField tfUUID;
     // End of variables declaration//GEN-END:variables
 

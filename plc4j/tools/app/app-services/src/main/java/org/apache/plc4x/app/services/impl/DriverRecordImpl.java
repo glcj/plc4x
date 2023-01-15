@@ -21,13 +21,19 @@ package org.apache.plc4x.app.services.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
-import org.apache.plc4x.app.api.DeviceDBRecord;
-import org.apache.plc4x.app.api.DriverDBRecord;
 import org.apache.plc4x.java.api.PlcDriver;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.DriverRecord;
 
 @JsonPropertyOrder({ "protocolCode",
     "protocolName",
@@ -41,15 +47,19 @@ import org.apache.plc4x.java.api.PlcDriver;
     "startInstant",
     "currentInstant",
     "lastUpdateInstant"})
-public class DriverDBRecordImpl implements DriverDBRecord {
+public class DriverRecordImpl implements DriverRecord {
        
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);    
+    private final Lookup lk;   
+    private final InstanceContent ic;
+    
     private String protocolCode;
     private String protocolName;
-    private UUID uuid;
+    private final UUID uuid;
     
     private Boolean enable = false;    
     
-    private PlcDriver plcdriver = null;
+    private final PlcDriver plcdriver;
     
     private int transmits = 0;
     private int receives = 0;
@@ -60,14 +70,20 @@ public class DriverDBRecordImpl implements DriverDBRecord {
     private Instant lastUpdateInstant;
     
     @JsonIgnore
-    private final HashMap<UUID, DeviceDBRecord> devices = new HashMap();    
+    private final HashMap<UUID, DeviceRecord> devices = new HashMap();    
     
     
     
-    public DriverDBRecordImpl() {
+    public DriverRecordImpl() {
+        this.lk = null;
+        this.ic = null;
+        this.uuid = null;        
+        this.plcdriver = null;
     }    
 
-    public DriverDBRecordImpl(UUID uuid, PlcDriver plcdriver) {
+    public DriverRecordImpl(UUID uuid, PlcDriver plcdriver) {
+        ic = new InstanceContent ();
+        lk = new AbstractLookup (ic);        
         this.uuid = uuid;
         this.plcdriver = plcdriver;
     }
@@ -94,7 +110,7 @@ public class DriverDBRecordImpl implements DriverDBRecord {
 
     @Override
     public void setUUID(UUID uuid) {
-        this.uuid = uuid;
+        //this.uuid = uuid;
     }
 
     @Override
@@ -118,16 +134,61 @@ public class DriverDBRecordImpl implements DriverDBRecord {
         return enable;
     }
 
+    @Override
+    public void addDevice(DeviceRecord device) {
+        ic.add(device);
+    }
+
+    @Override
+    public Optional<DeviceRecord> getDevice(DeviceRecord device) {
+        Optional<DeviceRecord> opdevice = (Optional<DeviceRecord>) lk.lookupAll(DeviceRecord.class).stream().
+                filter(d -> d.equals(device)).
+                findFirst();
+        
+        return opdevice;
+    }
+   
+    @Override
+    public Optional<DeviceRecord> getDevice(UUID uuid) {
+        Optional<DeviceRecord> opdevice = (Optional<DeviceRecord>) lk.lookupAll(DeviceRecord.class).stream().
+                filter(d -> d.getUUID().equals(uuid)).
+                findFirst();
+        return opdevice;
+    }
+
+    @Override
+    public Optional<DeviceRecord> getDevice(String name) {
+        Optional<DeviceRecord> opdevice = (Optional<DeviceRecord>) lk.lookupAll(DeviceRecord.class).stream().
+                filter(d -> d.getDeviceName().equals(name)).
+                findFirst();
+        return opdevice;
+    }
+    
+    @Override
+    public void removeDevice(DeviceRecord device) {
+        ic.remove(device);
+    }
+    
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+         this.pcs.removePropertyChangeListener(listener);
+    }    
+    
     @JsonIgnore 
     @Override
-    public HashMap<UUID, DeviceDBRecord> getMapDevices() {
+    public HashMap<UUID, DeviceRecord> getMapDevices() {
         return devices;
     }
  
     @JsonIgnore    
     @Override
-    public Collection<DeviceDBRecord> getDevices() {
-        return devices.values();
+    public Collection<DeviceRecord> getDevices() {
+        return (Collection<DeviceRecord>) lk.lookupAll(DeviceRecord.class);
     }    
 
     @Override
@@ -182,5 +243,10 @@ public class DriverDBRecordImpl implements DriverDBRecord {
     public Instant getLastUpdateInstant() {
         return lastUpdateInstant;
     }    
+
+    @Override
+    public Lookup getLookup() {
+        return lk;
+    }
     
 }

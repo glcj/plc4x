@@ -23,19 +23,19 @@ import java.beans.IntrospectionException;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.api.TagDBRecord;
-import org.apache.plc4x.app.api.TagGroupDBRecord;
 import org.openide.nodes.ChildFactory;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
+import org.apache.plc4x.app.api.TagRecord;
+import org.apache.plc4x.app.api.TagGroupRecord;
 
 
-public class Plc4xTagGroupChildFactory extends ChildFactory.Detachable<TagDBRecord> {
+public class Plc4xTagGroupChildFactory extends ChildFactory.Detachable<TagRecord> {
    
-    private final TagGroupDBRecord tagg;  
+    private final TagGroupRecord tagg;  
     private ChangeListener listener;
 
-    public Plc4xTagGroupChildFactory(TagGroupDBRecord tagg) {
+    public Plc4xTagGroupChildFactory(TagGroupRecord tagg) {
         this.tagg = tagg;
     }
 
@@ -55,7 +55,7 @@ public class Plc4xTagGroupChildFactory extends ChildFactory.Detachable<TagDBReco
     }   
     
     @Override     
-    protected Node createNodeForKey(TagDBRecord key) {         
+    protected Node createNodeForKey(TagRecord key) {         
         try {     
             return new Plc4xTagNode(key);
         } catch (IntrospectionException ex) {
@@ -65,7 +65,7 @@ public class Plc4xTagGroupChildFactory extends ChildFactory.Detachable<TagDBReco
     }    
     
     @Override
-    protected boolean createKeys(List<TagDBRecord> toPopulate) {
+    protected boolean createKeys(List<TagRecord> toPopulate) {
         //device.getDevices().stream().forEach(b -> toPopulate.add(b));
 
         return true;

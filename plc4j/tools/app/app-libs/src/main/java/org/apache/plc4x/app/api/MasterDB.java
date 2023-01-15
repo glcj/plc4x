@@ -18,18 +18,42 @@
  */
 package org.apache.plc4x.app.api;
 
+import java.beans.PropertyChangeListener;
 import java.util.List;
-import org.apache.plc4x.java.api.PlcDriver;
+import java.util.Optional;
+import java.util.UUID;
 
 
 public interface MasterDB {
+
+    public void addDriver(DriverRecord driver);
+    public Optional<DriverRecord> getDriver(UUID uuid);    
+    public void removeDriver(UUID uuid);
+    
+    public void addDevice(UUID driver, DeviceRecord device);
+    public Optional<DeviceRecord> getDevice(UUID uuid);      
+    public void removeDevice(DeviceRecord device);  
+    
+    public void addTagGroup(UUID device, TagGroupRecord taggroup);
+    public Optional<TagGroupRecord>  getTagGroup(UUID uuid);     
+    public void removeTagGroup(TagGroupRecord taggroup);      
+    
+    public void addTag(UUID taggroup, TagRecord tag);
+    public Optional<TagRecord> getTag(UUID uuid);      
+    public void removeTag(UUID uuid);     
+    
+    public DriverRecord getDriverByCode(String code);
+    public DriverRecord getDriverByName(String name);  
+    
+    public DeviceRecord createDeviceDBRecord();
+    public TagGroupRecord createTagGroupDBRecord();    
+    public TagRecord createTagDBRecord(); 
+    
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+    public void removePropertyChangeListener(PropertyChangeListener listener);
     
     public List<String> getDriverCodes();    
-    public List<String> getDriverNames();
-    
-    public DriverDBRecord getDriverByCode(String code);
-    public DriverDBRecord getDriverByName(String name);    
-    
+    public List<String> getDriverNames();    
     
     public int getNumberOfDrivers();
     public int getNumberOfDevice();

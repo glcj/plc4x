@@ -41,7 +41,11 @@
                         <dependency>
                             <id>org.netbeans.modules:org-netbeans-core-windows</id>
                             <type>impl</type>
-                        </dependency>                     
+                        </dependency>  
+                        <dependency>
+                            <id>org.netbeans.api:org-openide-util-lookup</id>
+                            <type>impl</type>
+                        </dependency>                                             
                     </moduleDependencies>
                     <publicPackages>
                         <package>org.apache.plc4x.app.services.api.*</package>  
@@ -100,11 +104,14 @@
             <artifactId>org-openide-nodes</artifactId>
             <version>${netbeans.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-util-lookup</artifactId>
             <version>${netbeans.version}</version>
+            <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.netbeans.api</groupId>
             <artifactId>org-openide-dialogs</artifactId>

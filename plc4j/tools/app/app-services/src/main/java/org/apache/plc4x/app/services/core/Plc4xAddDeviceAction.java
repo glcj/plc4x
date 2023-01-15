@@ -26,14 +26,14 @@ import java.beans.IntrospectionException;
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import org.apache.plc4x.app.api.DeviceDBRecord;
 import org.apache.plc4x.app.api.Plc4xDialog;
-import org.apache.plc4x.app.services.impl.DeviceDBRecordImpl;
+import org.apache.plc4x.app.services.impl.DeviceRecordImpl;
 import org.apache.plc4x.app.services.model.Plc4xDeviceNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
+import org.apache.plc4x.app.api.DeviceRecord;
 
 
 public class Plc4xAddDeviceAction extends AbstractAction{
@@ -52,28 +52,31 @@ public class Plc4xAddDeviceAction extends AbstractAction{
     public void actionPerformed(ActionEvent ae) {
         Lookup lk = Lookups.forPath("Plc4xDriver/" + node.getDriverRecord().getProtocolCode());
         if ( lk != null) {
-            DeviceDBRecord devicerecord = new DeviceDBRecordImpl();
+            DeviceRecord devicerecord = new DeviceRecordImpl();
             node.setValue("DEVICE", devicerecord);
-            JDialog dialog = lk.lookup(JDialog.class);
-            ((Plc4xDialog) dialog).setNode(node);                       
-            dialog.setVisible(true);
-            
-            if (devicerecord != null) {
+            final Plc4xDialog dialog = lk.lookup(Plc4xDialog.class);
+            dialog.setNode(node);                       
+            ((JDialog) dialog).setVisible(true);
+            /*
+            if (devicerecord.getDeviceName() !=null) {
                 String name = devicerecord.getDeviceName();
-                name = name.trim();
                 Boolean isBlank =  name.isEmpty();
                 if (!isBlank) {
-                    System.out.println(">> " + devicerecord.getDeviceName());
                     Node[] nodes = new Plc4xDeviceNode[1];
-                try {
-                    nodes[0] = new Plc4xDeviceNode(devicerecord);
-                    node.getChildren().add(nodes); 
-                } catch (IntrospectionException ex) {
-                    Exceptions.printStackTrace(ex);
+                    try {
+                        //1. Add to MasterDB.
+                        
+                        //2. Register to Plc4xDriver Service.
+                        //   Any problem disable the device record.
+                        
+                        //3. Add the node representation.
+                        nodes[0] = new Plc4xDeviceNode(devicerecord);
+                        node.getChildren().add(nodes); 
+                    } catch (IntrospectionException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }                 
                 }
-                   
-                }
-            }
+            }*/
         }     
         /*
         Plc4xAddDeviceDialog dialog = Lookup.getDefault().lookup(Plc4xAddDeviceDialog.class);

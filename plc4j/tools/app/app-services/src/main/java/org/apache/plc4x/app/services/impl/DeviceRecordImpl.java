@@ -20,13 +20,20 @@ package org.apache.plc4x.app.services.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-import org.apache.plc4x.app.api.DeviceDBRecord;
-import org.apache.plc4x.app.api.TagGroupDBRecord;
+import org.openide.util.Lookup;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.Plc4xPropertyEnum;
+import org.apache.plc4x.app.api.TagGroupRecord;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 
 @JsonPropertyOrder({ "deviceName",
     "deviceDesc",
@@ -36,9 +43,13 @@ import org.apache.plc4x.app.api.TagGroupDBRecord;
     "enable",
     "properties",
     "tagg"})
-public class DeviceDBRecordImpl implements DeviceDBRecord {
+public class DeviceRecordImpl implements DeviceRecord, Lookup.Provider {
     
-
+    private Plc4xPropertyEnum P;
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final Lookup lk;   
+    private final InstanceContent ic;    
+   
     private String deviceName;
     private String deviceDesc;
     private UUID protocolCode;    
@@ -58,12 +69,25 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     private Map<String, String> properties = new HashMap<String, String>();
     
     @JsonIgnore
-    private final HashMap<UUID, TagGroupDBRecord> tagg = new HashMap();      
+    private final HashMap<UUID, TagGroupRecord> tagg = new HashMap();      
+
+    public DeviceRecordImpl() {
+        this.ic = new InstanceContent ();        
+        this.lk = new AbstractLookup (ic);         
+    }
+    
+    public DeviceRecordImpl(UUID uuid) {
+        this.ic = new InstanceContent ();        
+        this.lk = new AbstractLookup (ic); 
+        this.uuid = uuid;
+    }
 
 
     @Override
     public void setDeviceName(String name) {
+        String oldValue = this.deviceName;
         this.deviceName = name;
+        this.pcs.firePropertyChange(P.NAME.name(), oldValue, name);        
     }
 
     @Override
@@ -73,7 +97,9 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     
     @Override
     public void setDeviceDescription(String desc) {
+        String oldValue = this.deviceDesc; 
         this.deviceDesc = desc;
+        this.pcs.firePropertyChange(P.DESCRIPTION.name(), oldValue, desc); 
     }
 
     @Override
@@ -113,9 +139,11 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
 
     @Override
     public void setEnable(Boolean enable) {
+        Boolean oldValue = this.enable; 
+        this.enable = enable;
         if (enable) startInstant = Instant.now();
         lastUpdateInstant = startInstant;
-        this.enable = enable;
+        this.pcs.firePropertyChange(P.ENABLE.name(), oldValue, enable); 
     }
 
     @Override
@@ -126,7 +154,7 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     @Override
     public void setPropertie(String id, String str) {
         properties.put(id, str);
-    }
+    }    
 
     @Override
     public String getPropertie(String id) {
@@ -138,12 +166,58 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
         return properties;
     }
 
-    @JsonIgnore    
     @Override
-    public Collection<TagGroupDBRecord> getTagGroups() {
-        return tagg.values();
+    public void addTagGroup(TagGroupRecord tagg) {
+        ic.add(tagg);
     }
-        
+
+    @Override
+    public Collection<TagGroupRecord> getTagGroups() {
+        return (Collection<TagGroupRecord>) lk.lookupAll(TagGroupRecord.class);
+    }
+
+    @Override
+    public Optional<TagGroupRecord> getTagGroup(TagGroupRecord tagg) {
+        Optional<TagGroupRecord> optagg = (Optional<TagGroupRecord>) lk.lookupAll(TagGroupRecord.class).stream().
+                filter(t -> t.equals(tagg)).
+                findFirst();      
+        return optagg;
+    }
+
+    @Override
+    public Optional<TagGroupRecord> getTagGroup(UUID uuid) {
+        Optional<TagGroupRecord> optagg = (Optional<TagGroupRecord>) lk.lookupAll(TagGroupRecord.class).stream().
+                filter(t -> t.getUUID().equals(uuid)).
+                findFirst();      
+        return optagg;
+    }
+
+    @Override
+    public Optional<TagGroupRecord> getTagGroup(String name) {
+        Optional<TagGroupRecord> optagg = (Optional<TagGroupRecord>) lk.lookupAll(TagGroupRecord.class).stream().
+                filter(t -> t.getTagGroupName().equals(name)).
+                findFirst();      
+        return optagg;
+    }
+
+    @Override
+    public void removeTagGroup(TagGroupRecord tagg) {
+        ic.remove(tagg);
+    }
+
+    
+    
+    
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+         this.pcs.removePropertyChangeListener(listener);
+    }    
+           
     @JsonIgnore
     @Override
     public int getTransmits() {
@@ -193,6 +267,11 @@ public class DeviceDBRecordImpl implements DeviceDBRecord {
     @Override
     public Instant getLastUpdateInstant() {
         return lastUpdateInstant;
+    }
+
+    @Override
+    public Lookup getLookup() {
+        return lk;
     }
     
     

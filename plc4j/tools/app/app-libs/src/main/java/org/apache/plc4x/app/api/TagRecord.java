@@ -18,46 +18,40 @@
  */
 package org.apache.plc4x.app.api;
 
+import java.beans.PropertyChangeListener;
 import java.time.Instant;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
-import org.apache.plc4x.java.api.PlcDriver;
 
 
-public interface DriverDBRecord {
+public interface TagRecord {
     
-    // Configuration section
+    public void setTagName(String name);  
+    String getTagName();
     
-    public void setProtocolCode(String protocol);   
-    public String getProtocolCode();
-    
-    public void setProtocolName(String name);  
-    String getProtocolName();
+    public void setTagDesc(String desc);   
+    public String getTagDesc();
+
+    public void setTagID(String id);   
+    public String getTagID();    
     
     public void setUUID(UUID uuid);  
     public UUID getUUID();
-    
-    public PlcDriver getPlcDriver();
 
     public void setEnable(Boolean enable);
-    public Boolean getEnable();  
+    public Boolean getEnable();
+
+    public void setDisableOutput(Boolean disableOutput);
+    public Boolean getDisableOutput();     
     
-    public HashMap<UUID, DeviceDBRecord> getMapDevices();
-    public Collection<DeviceDBRecord> getDevices();
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+    public void removePropertyChangeListener(PropertyChangeListener listener);    
     
     public int getTransmits();
     public int getReceives();
     public int getErrors();
-
-    public int getNumberOfDevice();
-    public int getNumberOfTagGroups();   
-    public int getNumberOfTags();
     
-    public Instant getStartInstant();
-    public Instant getCurrentInstant();
-    public Instant getLastUpdateInstant();     
+    public Instant getLastReadInstant();
+    public Instant getLastWriteInstant();
+    public Instant getLastErrorInstant();      
     
 }

@@ -18,12 +18,15 @@
  */
 package org.apache.plc4x.app.api;
 
+import java.beans.PropertyChangeListener;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
+import org.openide.util.Lookup;
 
 
-public interface TagGroupDBRecord {
+public interface TagGroupRecord  extends Lookup.Provider {
     
     
     public void setTagGroupName(String name);  
@@ -41,8 +44,16 @@ public interface TagGroupDBRecord {
     public void setEnable(Boolean enable);
     public Boolean getEnable(); 
     
-    public Collection<TagDBRecord> getTags();     
+    public void addTag(TagRecord  tag);
+    public Collection<TagRecord> getTags();
+    public Optional<TagRecord> getTag(TagRecord tag);    
+    public Optional<TagRecord> getTag(UUID uuid);
+    public Optional<TagRecord> getTag(String name);    
+    public void removeTag(TagRecord  tag); 
     
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+    public void removePropertyChangeListener(PropertyChangeListener listener);    
+          
     public int getJitter();
     
     public int getTransmits();

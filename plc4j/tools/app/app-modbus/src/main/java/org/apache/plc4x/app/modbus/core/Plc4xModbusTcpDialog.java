@@ -21,25 +21,25 @@ package org.apache.plc4x.app.modbus.core;
 import java.io.IOException;
 import java.util.UUID;
 import javax.swing.JDialog;
-import org.apache.plc4x.app.api.DeviceDBRecord;
-import org.apache.plc4x.app.api.DriverDBRecord;
 import org.apache.plc4x.app.api.Plc4xDialog;
-import org.apache.plc4x.app.api.Plc4xDialogParametersEnum;
+import org.apache.plc4x.app.api.Plc4xPropertyEnum;
 import org.openide.cookies.InstanceCookie;
 import org.openide.nodes.BeanNode;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.lookup.ServiceProvider;
+import org.apache.plc4x.app.api.DeviceRecord;
+import org.apache.plc4x.app.api.DriverRecord;
 
-@ServiceProvider(service=JDialog.class, path="Plc4xDriver/modbus-tcp")
+@ServiceProvider(service=Plc4xDialog.class, path="Plc4xDriver/modbus-tcp")
 public class Plc4xModbusTcpDialog extends JDialog implements Plc4xDialog {  
     
     private BeanNode  node;
-    private DriverDBRecord driverrecord = null;
-    private DeviceDBRecord devicerecord = null;
+    private DriverRecord driverrecord = null;
+    private DeviceRecord devicerecord = null;
     private UUID uuid;
     
-    private Plc4xDialogParametersEnum parameters;
+    private Plc4xPropertyEnum parameters;
     
     public Plc4xModbusTcpDialog() {
         super(new javax.swing.JFrame(), true);
@@ -329,7 +329,7 @@ public class Plc4xModbusTcpDialog extends JDialog implements Plc4xDialog {
         // TODO add your handling code here:
         /*
         final InstanceCookie cookie = node.getLookup().lookup(InstanceCookie.class);
-        final DeviceDBRecord dbr = (DeviceDBRecord) cookie.instanceCreate();
+        final DeviceRecord dbr = (DeviceRecord) cookie.instanceCreate();
         node.setValue(parameters.SERIAL_PORT.name(), (String) cbSerialPort.getSelectedItem());
         node.setValue(parameters.BAUD_RATE.name(), (String) cbBaudRate.getSelectedItem());
         node.setValue(parameters.DATA_BITS.name(), (String) cbBaudRate.getSelectedItem());
@@ -463,7 +463,7 @@ public class Plc4xModbusTcpDialog extends JDialog implements Plc4xDialog {
         final InstanceCookie cookie = node.getLookup().lookup(InstanceCookie.class);
         driverrecord = null;
         try {
-            driverrecord = (DriverDBRecord) cookie.instanceCreate();
+            driverrecord = (DriverRecord) cookie.instanceCreate();
             initfields();
         } catch (IOException | ClassNotFoundException ex) {
             Exceptions.printStackTrace(ex);
@@ -472,7 +472,7 @@ public class Plc4xModbusTcpDialog extends JDialog implements Plc4xDialog {
     
     private void initfields() {
         if (driverrecord != null) {
-            devicerecord = (DeviceDBRecord) node.getValue("DEVICE");
+            devicerecord = (DeviceRecord) node.getValue("DEVICE");
             tfDeviceProtocol.setText(driverrecord.getProtocolCode());
             
             tfDeviceName.setText("");

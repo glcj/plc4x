@@ -24,7 +24,6 @@ import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.plc4x.app.api.TagDBRecord;
 import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
@@ -38,6 +37,7 @@ import org.openide.nodes.Sheet;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
+import org.apache.plc4x.app.api.TagRecord;
 
 /**
  *
@@ -45,12 +45,12 @@ import org.openide.util.actions.SystemAction;
  */
 public class Plc4xTagNode  extends BeanNode {
     
-    private final TagDBRecord bean;
+    private final TagRecord bean;
     private String key;     
     private ChangeListener listener;    
 
     @Messages("HINT_Plc4xTagNode=Represents one Plc4x driver.")    
-    public Plc4xTagNode(TagDBRecord bean)  throws IntrospectionException {
+    public Plc4xTagNode(TagRecord bean)  throws IntrospectionException {
         super(bean, Children.LEAF);        
         this.bean = bean;   
         setIconBaseWithExtension("org/apache/plc4x/app/services/tag_amarilla_linea_16x16.png"); 
