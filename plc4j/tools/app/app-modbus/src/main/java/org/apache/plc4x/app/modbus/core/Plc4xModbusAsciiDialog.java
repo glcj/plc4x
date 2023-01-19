@@ -19,6 +19,7 @@
 package org.apache.plc4x.app.modbus.core;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 import javax.swing.JDialog;
 import org.apache.plc4x.app.api.MasterDB;
@@ -370,9 +371,9 @@ public class Plc4xModbusAsciiDialog extends JDialog implements Plc4xDialog {
         driverrecord = db.getDriverByCode(DRIVER_CODE);
         devicerecord = db.createDeviceDBRecord();
 
-        final DeviceRecord dbdevice = driverrecord.getDevice(tfDeviceName.getText().trim());
+        Optional<DeviceRecord> opdevice = driverrecord.getDevice(tfDeviceName.getText().trim());
         
-        if ((driverrecord != null) && (devicerecord != null) && (dbdevice == null)) {
+        if ((driverrecord != null) && (devicerecord != null) && (!opdevice.isPresent())) {
 
             devicerecord.setDeviceName(tfDeviceName.getText().trim());
             devicerecord.setDeviceName(tfDeviceName.getText().trim());            

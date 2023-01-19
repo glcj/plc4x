@@ -35,14 +35,8 @@ import org.apache.plc4x.app.api.TagGroupRecord;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
-@JsonPropertyOrder({ "deviceName",
-    "deviceDesc",
-    "protocolCode",
-    "uuid",
-    "treenode",
-    "enable",
-    "properties",
-    "tagg"})
+@JsonPropertyOrder({ "deviceName","deviceDesc","protocolCode","uuid","treenode",
+    "enable","properties","tagGroups"})
 public class DeviceRecordImpl implements DeviceRecord, Lookup.Provider {
     
     private Plc4xPropertyEnum P;
@@ -68,8 +62,7 @@ public class DeviceRecordImpl implements DeviceRecord, Lookup.Provider {
     
     private Map<String, String> properties = new HashMap<String, String>();
     
-    @JsonIgnore
-    private final HashMap<UUID, TagGroupRecord> tagg = new HashMap();      
+    
 
     public DeviceRecordImpl() {
         this.ic = new InstanceContent ();        
@@ -172,11 +165,6 @@ public class DeviceRecordImpl implements DeviceRecord, Lookup.Provider {
     }
 
     @Override
-    public Collection<TagGroupRecord> getTagGroups() {
-        return (Collection<TagGroupRecord>) lk.lookupAll(TagGroupRecord.class);
-    }
-
-    @Override
     public Optional<TagGroupRecord> getTagGroup(TagGroupRecord tagg) {
         Optional<TagGroupRecord> optagg = (Optional<TagGroupRecord>) lk.lookupAll(TagGroupRecord.class).stream().
                 filter(t -> t.equals(tagg)).
@@ -201,13 +189,16 @@ public class DeviceRecordImpl implements DeviceRecord, Lookup.Provider {
     }
 
     @Override
+    public Collection<TagGroupRecord> getTagGroups() {
+        System.out.println("Paso por aqui..." + lk.lookupAll(TagGroupRecord.class));
+        return (Collection<TagGroupRecord>) lk.lookupAll(TagGroupRecord.class);
+    }    
+    
+    @Override
     public void removeTagGroup(TagGroupRecord tagg) {
         ic.remove(tagg);
     }
-
-    
-    
-    
+   
     @Override
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.addPropertyChangeListener(listener);
@@ -239,15 +230,16 @@ public class DeviceRecordImpl implements DeviceRecord, Lookup.Provider {
     @JsonIgnore    
     @Override
     public int getNumberOfTagGroups() {
-        return tagg.size();
+       // return tagg.size();
+       return 12;
     }
 
     @JsonIgnore
     @Override
     public int getNumberOfTags() {
         int[] ntags = new int[1];
-        tagg.entrySet().stream()
-            .forEach(item -> ntags[0] += item.getValue().getNumberOfTags());
+       // tagg.entrySet().stream()
+       //     .forEach(item -> ntags[0] += item.getValue().getNumberOfTags());
         return ntags[0];
     }
 
@@ -263,12 +255,13 @@ public class DeviceRecordImpl implements DeviceRecord, Lookup.Provider {
         return Instant.now();
     }
 
-@JsonIgnore
+    @JsonIgnore
     @Override
     public Instant getLastUpdateInstant() {
         return lastUpdateInstant;
     }
 
+    @JsonIgnore
     @Override
     public Lookup getLookup() {
         return lk;

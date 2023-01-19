@@ -339,10 +339,8 @@ public class Plc4xModbusTcpDialog extends JDialog implements Plc4xDialog {
         */
         if ((driverrecord != null) && (devicerecord != null)) {
             devicerecord.setDeviceName(tfDeviceName.getText());
-            devicerecord.setUUID(UUID.fromString(tfUUID.getText()));            
-
-            
-            driverrecord.getMapDevices().put(devicerecord.getUUID(), devicerecord);            
+            devicerecord.setUUID(UUID.fromString(tfUUID.getText()));                       
+            //driverrecord.getMapDevices().put(devicerecord.getUUID(), devicerecord);            
         }
         
         this.setVisible(false);        

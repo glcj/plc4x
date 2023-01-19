@@ -50,7 +50,6 @@ public class Plc4xAddTagGroupAction extends AbstractAction {
         Lookup lk = Lookups.forPath("Plc4xDriver/taggroup");
        
         if ( lk != null) {
-            TagGroupRecord taggroup = new TagGroupRecordImpl();  
             final Plc4xDialog dialog = lk.lookup(Plc4xDialog.class);
             dialog.setNode(node);                       
             ((JDialog) dialog).setVisible(true);            

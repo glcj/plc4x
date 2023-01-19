@@ -35,18 +35,9 @@ import org.openide.util.lookup.InstanceContent;
 import org.apache.plc4x.app.api.DeviceRecord;
 import org.apache.plc4x.app.api.DriverRecord;
 
-@JsonPropertyOrder({ "protocolCode",
-    "protocolName",
-    "uuid",
-    "enable",
-    "devices"})
-@JsonIgnoreProperties(value = { "plcdriver",
-    "transmits",
-    "receives",
-    "errors",
-    "startInstant",
-    "currentInstant",
-    "lastUpdateInstant"})
+@JsonPropertyOrder({ "protocolCode","protocolName","uuid","enable","devices"})
+@JsonIgnoreProperties(value = { "plcdriver","transmits","receives","errors",
+    "startInstant","currentInstant","lastUpdateInstant"})
 public class DriverRecordImpl implements DriverRecord {
        
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);    
@@ -68,12 +59,8 @@ public class DriverRecordImpl implements DriverRecord {
     private Instant startInstant;
     private Instant currentInstant;
     private Instant lastUpdateInstant;
-    
-    @JsonIgnore
-    private final HashMap<UUID, DeviceRecord> devices = new HashMap();    
-    
-    
-    
+
+     
     public DriverRecordImpl() {
         this.lk = null;
         this.ic = null;
@@ -163,7 +150,12 @@ public class DriverRecordImpl implements DriverRecord {
                 findFirst();
         return opdevice;
     }
-    
+  
+    @Override
+    public Collection<DeviceRecord> getDevices() {
+        return (Collection<DeviceRecord>) lk.lookupAll(DeviceRecord.class);
+    }     
+
     @Override
     public void removeDevice(DeviceRecord device) {
         ic.remove(device);
@@ -177,18 +169,6 @@ public class DriverRecordImpl implements DriverRecord {
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
          this.pcs.removePropertyChangeListener(listener);
-    }    
-    
-    @JsonIgnore 
-    @Override
-    public HashMap<UUID, DeviceRecord> getMapDevices() {
-        return devices;
-    }
- 
-    @JsonIgnore    
-    @Override
-    public Collection<DeviceRecord> getDevices() {
-        return (Collection<DeviceRecord>) lk.lookupAll(DeviceRecord.class);
     }    
 
     @Override
@@ -208,15 +188,15 @@ public class DriverRecordImpl implements DriverRecord {
 
     @Override
     public int getNumberOfDevice() {
-        return devices.size();
+        return 0;
     }
 
     @Override
     public int getNumberOfTagGroups() {
         int[] n = new int[1];
         n[0] = 0;
-        devices.entrySet().stream()
-                .forEach(drv -> n[0] += drv.getValue().getNumberOfTagGroups());
+       // devices.entrySet().stream()
+       //         .forEach(drv -> n[0] += drv.getValue().getNumberOfTagGroups());
         return n[0];
     }
 
@@ -224,8 +204,8 @@ public class DriverRecordImpl implements DriverRecord {
     public int getNumberOfTags() {
         int[] n = new int[1];
         n[0] = 0;
-        devices.entrySet().stream()
-                .forEach(drv -> n[0] += drv.getValue().getNumberOfTags());
+        //devices.entrySet().stream()
+         //       .forEach(drv -> n[0] += drv.getValue().getNumberOfTags());
         return n[0];
     }
 
@@ -244,9 +224,11 @@ public class DriverRecordImpl implements DriverRecord {
         return lastUpdateInstant;
     }    
 
+    @JsonIgnore
     @Override
     public Lookup getLookup() {
         return lk;
     }
+
     
 }

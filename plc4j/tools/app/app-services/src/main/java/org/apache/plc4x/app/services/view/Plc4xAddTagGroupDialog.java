@@ -22,6 +22,7 @@ import org.apache.plc4x.app.services.model.Plc4xDeviceNode;
 import org.apache.plc4x.app.services.model.Plc4xDriverNode;
 import java.beans.IntrospectionException;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -259,6 +260,7 @@ public class Plc4xAddTagGroupDialog extends javax.swing.JDialog implements Plc4x
     private void btOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOkActionPerformed
         // TODO add your handling code here:
         TagGroupRecord tagg = db.createTagGroupDBRecord();
+
         tagg.setUUID(UUID.randomUUID());
         try {
             taggnodes[0] = new Plc4xTagGroupNode(tagg);
@@ -279,7 +281,12 @@ public class Plc4xAddTagGroupDialog extends javax.swing.JDialog implements Plc4x
             taggr.setTagGroupDesc(tfTagGroupDesc.getText());
             taggr.setScanTime(Integer.decode(tfScanTime.getText()));
             taggr.setEnable(cbEnable.isSelected());
-
+            
+            Optional<DeviceRecord> dev = db.getDevice(devicenode.getDisplayName());
+            if (dev.isPresent()){
+                System.out.println("Agrego el TagGroupRecord...");
+                db.addTagGroup(dev.get().getUUID(), taggr);
+            }
             
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
@@ -288,7 +295,7 @@ public class Plc4xAddTagGroupDialog extends javax.swing.JDialog implements Plc4x
         }
 
         devicenode.getChildren().add(taggnodes);
- 
+        this.setVisible(false);
     }//GEN-LAST:event_btOkActionPerformed
 
     private void tfScanTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfScanTimeActionPerformed

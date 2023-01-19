@@ -18,6 +18,9 @@
  */
 package org.apache.plc4x.app.services.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.time.Instant;
@@ -33,6 +36,8 @@ import org.apache.plc4x.app.api.TagGroupRecord;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 
+@JsonPropertyOrder({"groupName","groupDesc","uuid","deviceuuid","enable","tags"})
+@JsonIgnoreProperties(value = {"startInstant","currentInstant","lastUpdateInstant"})
 public class TagGroupRecordImpl implements TagGroupRecord, Lookup.Provider {
 
     private Plc4xPropertyEnum P;    
@@ -41,7 +46,8 @@ public class TagGroupRecordImpl implements TagGroupRecord, Lookup.Provider {
     private final InstanceContent ic;     
     private String groupName;
     private String groupDesc;
-    private UUID uuid;   
+    private UUID uuid;  
+    private UUID deviceuuid;     
     
     private Boolean enable = false;  
     
@@ -50,12 +56,12 @@ public class TagGroupRecordImpl implements TagGroupRecord, Lookup.Provider {
     private Instant startInstant;
     private Instant currentInstant;
     private Instant lastUpdateInstant;    
-    
-    private final HashMap<UUID, TagRecord> tags = new HashMap();  
+ 
 
-    public TagGroupRecordImpl() {
+    public TagGroupRecordImpl(UUID deviceuuid) {
         this.ic = new InstanceContent ();        
-        this.lk = new AbstractLookup (ic);         
+        this.lk = new AbstractLookup (ic);   
+        this.deviceuuid = uuid;
     }  
     
     @Override
@@ -111,10 +117,7 @@ public class TagGroupRecordImpl implements TagGroupRecord, Lookup.Provider {
         ic.add(tag);
     }
 
-    @Override
-    public Collection<TagRecord> getTags() {
-        return  (Collection<TagRecord>) lk.lookupAll(TagRecord.class);
-    }
+
     
     @Override
     public Optional<TagRecord> getTag(UUID uuid) {
@@ -137,6 +140,11 @@ public class TagGroupRecordImpl implements TagGroupRecord, Lookup.Provider {
                 findFirst();
     }    
 
+    @Override
+    public Collection<TagRecord> getTags() {
+        return  (Collection<TagRecord>) lk.lookupAll(TagRecord.class);
+    }
+    
     @Override
     public void removeTag(TagRecord tag) {
         ic.remove(tag);
@@ -167,48 +175,61 @@ public class TagGroupRecordImpl implements TagGroupRecord, Lookup.Provider {
          this.pcs.removePropertyChangeListener(listener);
     }
 
+    @Override
+    public UUID getDeviceRecord() {
+        return deviceuuid;
+    }
 
-    
+
+    @JsonIgnore     
     @Override
     public int getJitter() {
         return 0;
     }
-
+    
+    @JsonIgnore 
     @Override
     public int getTransmits() {
         return 0;
     }
 
+    @JsonIgnore     
     @Override
     public int getReceives() {
         return 0;
     }
 
+    @JsonIgnore     
     @Override
     public int getErrors() {
         return 0;
     }
 
+    @JsonIgnore     
     @Override
     public int getNumberOfTags() {
-        return tags.size();
+        return lk.lookupAll(TagRecord.class).size();
     }
-
+    
+    @JsonIgnore 
     @Override
     public Instant getStartInstant() {
         return startInstant;
     }
-
+    
+    @JsonIgnore 
     @Override
     public Instant getCurrentInstant() {
         return currentInstant; 
     }
-
+    
+    @JsonIgnore 
     @Override
     public Instant getLastUpdateDateTime() {
         return lastUpdateInstant;
     }
 
+    @JsonIgnore    
     @Override
     public Lookup getLookup() {
         return lk;

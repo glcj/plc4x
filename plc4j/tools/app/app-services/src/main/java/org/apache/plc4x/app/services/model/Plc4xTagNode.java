@@ -19,11 +19,17 @@
 package org.apache.plc4x.app.services.model;
 
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.Properties;
 import javax.swing.Action;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import org.apache.plc4x.app.api.Plc4xPropertyEnum;
+import static org.apache.plc4x.app.api.Plc4xPropertyEnum.DESCRIPTION;
+import static org.apache.plc4x.app.api.Plc4xPropertyEnum.ENABLE;
+import static org.apache.plc4x.app.api.Plc4xPropertyEnum.NAME;
 import org.apache.plc4x.app.services.core.Plc4xPropertiesNotifier;
 import org.openide.actions.DeleteAction;
 import org.openide.actions.OpenLocalExplorerAction;
@@ -43,7 +49,7 @@ import org.apache.plc4x.app.api.TagRecord;
  *
  * @author cgarcia
  */
-public class Plc4xTagNode  extends BeanNode {
+public class Plc4xTagNode  extends BeanNode  implements PropertyChangeListener  {
     
     private final TagRecord bean;
     private String key;     
@@ -52,7 +58,8 @@ public class Plc4xTagNode  extends BeanNode {
     @Messages("HINT_Plc4xTagNode=Represents one Plc4x driver.")    
     public Plc4xTagNode(TagRecord bean)  throws IntrospectionException {
         super(bean, Children.LEAF);        
-        this.bean = bean;   
+        this.bean = bean; 
+        this.bean.addPropertyChangeListener(this);
         setIconBaseWithExtension("org/apache/plc4x/app/services/tag_amarilla_linea_16x16.png"); 
         super.setName(bean.getTagName());         
         setShortDescription(Bundle.HINT_Plc4xTagNode());        
@@ -141,18 +148,8 @@ public class Plc4xTagNode  extends BeanNode {
     }    
     
     @Override     
-    public void setName(String nue) {
-        Properties p = System.getProperties();
-        String value = p.getProperty(key);
-        p.remove(key);         
-        
-        if (value != null) {
-            p.setProperty(nue, value);
-        }         
-        
-        System.setProperties(p);         
-        
-        Plc4xPropertiesNotifier.changed();     
+    public void setName(String name) {
+        this.setDisplayName(name);
     }   
     
     @Override    
@@ -162,10 +159,24 @@ public class Plc4xTagNode  extends BeanNode {
     
     @Override     
     public void destroy() throws IOException {
-        Properties p = System.getProperties();
-        p.remove(key);
-        System.setProperties(p);
-        Plc4xPropertiesNotifier.changed();     
+   
     }    
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        switch (Plc4xPropertyEnum.valueOf(pce.getPropertyName())) {
+            case NAME: setName((String) this.bean.getTagName());
+            break;
+            case DESCRIPTION: setShortDescription(this.bean.getTagDesc());
+            break;
+            case ENABLE: {
+                final Boolean b = (Boolean) pce.getNewValue();
+                String str = b ? "org/apache/plc4x/app/services/tag_verde_16x16.png" :
+                        "org/apache/plc4x/app/services/tag_roja_16x16.png";
+                setIconBaseWithExtension(str);
+            }
+            default:;
+        }
+    }
     
 }

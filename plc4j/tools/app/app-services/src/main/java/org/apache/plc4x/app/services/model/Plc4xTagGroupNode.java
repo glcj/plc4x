@@ -19,6 +19,8 @@
 package org.apache.plc4x.app.services.model;
 
 import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.Properties;
 import javax.swing.Action;
@@ -48,18 +50,18 @@ import org.openide.util.Lookup;
  *
  * @author cgarcia
  */
-public class Plc4xTagGroupNode  extends BeanNode {
+public class Plc4xTagGroupNode  extends BeanNode implements PropertyChangeListener {
 
     private final MasterDB db = Lookup.getDefault().lookup(MasterDB.class);    
     private final TagGroupRecord bean;
     private String key;     
-    private ChangeListener listener;    
+    private PropertyChangeListener listener;    
 
     @Messages("HINT_Plc4xTagGroupNode=Represents one Plc4x driver.")    
     public Plc4xTagGroupNode(TagGroupRecord bean)  throws IntrospectionException {
         super(bean, Children.create(new Plc4xTagGroupChildFactory(bean), false));       
         this.bean = bean;   
-        setIconBaseWithExtension("org/apache/plc4x/app/services/tag_doble_16x16.png"); 
+        setIconBaseWithExtension("org/apache/plc4x/app/services/tags_doble_16x16.png"); 
         super.setName(bean.getTagGroupName());         
         setShortDescription(Bundle.HINT_Plc4xTagGroupNode());        
     }
@@ -123,12 +125,14 @@ public class Plc4xTagGroupNode  extends BeanNode {
         }         
         
         props.put(new ValueProp());
+        
+        /*
         Plc4xPropertiesNotifier.addChangeListener(listener = new ChangeListener() {
             @Override             
             public void stateChanged(ChangeEvent ev) {
                 firePropertyChange("value", null, null);
             }         
-        });
+        }); */
         
         return sheet;
     }    
@@ -136,9 +140,6 @@ public class Plc4xTagGroupNode  extends BeanNode {
     @Override     
     protected void finalize() throws Throwable {
         super.finalize();
-        if (listener != null) {
-            Plc4xPropertiesNotifier.removeChangeListener(listener);
-        }
     } 
     
     @Override     
@@ -169,7 +170,12 @@ public class Plc4xTagGroupNode  extends BeanNode {
     @Override     
     public void destroy() throws IOException {
         bean.removePropertyChangeListener(listener);
-        db.removeTagGroup(uuid);
+        db.removeTagGroup(bean.getUUID());
     }    
+
+    @Override
+    public void propertyChange(PropertyChangeEvent pce) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }

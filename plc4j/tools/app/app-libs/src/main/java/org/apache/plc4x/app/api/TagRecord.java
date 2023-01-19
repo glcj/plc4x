@@ -22,36 +22,114 @@ import java.beans.PropertyChangeListener;
 import java.time.Instant;
 import java.util.UUID;
 
-
+/* 
+ *
+ */
 public interface TagRecord {
     
+    /*
+     *
+     */ 
     public void setTagName(String name);  
-    String getTagName();
     
+    /*
+     *
+     */  
+    public String getTagName();
+
+    /*
+     *
+     */    
     public void setTagDesc(String desc);   
+    
+    /*
+     *
+     */    
     public String getTagDesc();
 
-    public void setTagID(String id);   
+    /*
+     *
+     */   
+    public void setTagID(String id);  
+    
+    /*
+     *
+     */    
     public String getTagID();    
     
+    /*
+     *
+     */    
     public void setUUID(UUID uuid);  
+    
+    /*
+     *
+     */     
     public UUID getUUID();
 
+    /*
+     *
+     */    
     public void setEnable(Boolean enable);
+    
+    /*
+     *
+     */    
     public Boolean getEnable();
 
+    /*
+     *
+     */    
     public void setDisableOutput(Boolean disableOutput);
+    
+    /*
+     *
+     */    
     public Boolean getDisableOutput();     
     
+    /*
+     *
+     */    
     public void addPropertyChangeListener(PropertyChangeListener listener);
+    
+    /*
+     *
+     */   
     public void removePropertyChangeListener(PropertyChangeListener listener);    
     
+    /*
+     *
+     */     
+    public UUID getTagGroup();
+    
+    /*
+     *
+     */     
     public int getTransmits();
+    
+    /*
+     *
+     */     
     public int getReceives();
+    
+    /*
+     *
+     */     
     public int getErrors();
     
+    /*
+     *
+     */     
     public Instant getLastReadInstant();
+    
+    /*
+     *
+     */     
     public Instant getLastWriteInstant();
+    
+    /*
+     *
+     */     
     public Instant getLastErrorInstant();      
     
 }

@@ -19,49 +19,194 @@
 package org.apache.plc4x.app.api;
 
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
+/* 
+ *
+ */
 public interface MasterDB {
 
+    /*
+     *
+     */ 
     public void addDriver(DriverRecord driver);
-    public Optional<DriverRecord> getDriver(UUID uuid);    
+    
+    /*
+     *
+     */    
+    public Optional<DriverRecord> getDriver(UUID uuid);
+    
+    /*
+     *
+     */     
+    public Optional<DriverRecord> getDriver(String drvname);
+    
+    /*
+     *
+     */     
+    public Collection<DriverRecord> getDrivers();
+    
+    /*
+     *
+     */     
     public void removeDriver(UUID uuid);
-    
+ 
+    /*
+     *
+     */    
     public void addDevice(UUID driver, DeviceRecord device);
-    public Optional<DeviceRecord> getDevice(UUID uuid);      
-    public void removeDevice(DeviceRecord device);  
     
+    /*
+     *
+     */    
+    public Optional<DeviceRecord> getDevice(UUID uuid);
+    
+    /*
+     *
+     */    
+    public Optional<DeviceRecord> getDevice(String devicename);
+    
+    /*
+     *
+     */    
+    public void removeDevice(DeviceRecord device);
+    
+    /*
+     *
+     */    
+    public void removeDevice(UUID uuid);      
+    
+    /*
+     *
+     */    
     public void addTagGroup(UUID device, TagGroupRecord taggroup);
-    public Optional<TagGroupRecord>  getTagGroup(UUID uuid);     
-    public void removeTagGroup(TagGroupRecord taggroup);      
     
+    /*
+     *
+     */    
+    public Optional<TagGroupRecord>  getTagGroup(UUID uuid);
+    
+    /*
+     *
+     */    
+    public Optional<TagGroupRecord>  getTagGroup(String taggname);
+    
+    /*
+     *
+     */    
+    public void removeTagGroup(TagGroupRecord taggroup);
+    
+    /*
+     *
+     */    
+    public void removeTagGroup(UUID uuid);    
+    
+    /*
+     *
+     */     
     public void addTag(UUID taggroup, TagRecord tag);
-    public Optional<TagRecord> getTag(UUID uuid);      
+    
+    /*
+     *
+     */    
+    public Optional<TagRecord> getTag(UUID uuid);
+    
+    /*
+     *
+     */    
+    public Optional<TagRecord> getTag(String  tagname);
+    
+    /*
+     *
+     */    
+    public void removeTag(TagRecord tag);
+    
+    /*
+     *
+     */     
     public void removeTag(UUID uuid);     
     
+    /*
+     *
+     */   
     public DriverRecord getDriverByCode(String code);
+    
+    /*
+     *
+     */    
     public DriverRecord getDriverByName(String name);  
     
+    /*
+     *
+     */     
     public DeviceRecord createDeviceDBRecord();
-    public TagGroupRecord createTagGroupDBRecord();    
+    
+    /*
+     *
+     */   
+    public TagGroupRecord createTagGroupDBRecord();
+
+    /*
+     *
+     */   
     public TagRecord createTagDBRecord(); 
     
+    /*
+     *
+     */  
     public void addPropertyChangeListener(PropertyChangeListener listener);
+    
+    /*
+     *
+     */   
     public void removePropertyChangeListener(PropertyChangeListener listener);
     
-    public List<String> getDriverCodes();    
+    /*
+     *
+     */   
+    public List<String> getDriverCodes();
+
+    /*
+     *
+     */    
     public List<String> getDriverNames();    
     
+    /*
+     *
+     */    
     public int getNumberOfDrivers();
+    
+    /*
+     *
+     */   
     public int getNumberOfDevice();
-    public int getNumberOfTagGroups();   
+    
+    /*
+     *
+     */   
+    public int getNumberOfTagGroups();
+    
+    /*
+     *
+     */    
     public int getNumberOfTags(); 
     
+    /*
+     *
+     */    
     public int getTransmits();
+    
+    /*
+     *
+     */   
     public int getReceives();
+    
+    /*
+     *
+     */    
     public int getErrors();
     
     

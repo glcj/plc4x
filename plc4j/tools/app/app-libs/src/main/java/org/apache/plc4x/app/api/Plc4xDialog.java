@@ -20,7 +20,9 @@ package org.apache.plc4x.app.api;
 
 import org.openide.nodes.Node;
 
-
+/* 
+ *
+ */
 public interface Plc4xDialog {
     
     public void setNode(Node node);

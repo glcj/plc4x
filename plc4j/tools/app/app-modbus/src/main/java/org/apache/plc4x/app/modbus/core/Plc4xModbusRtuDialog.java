@@ -377,7 +377,7 @@ public class Plc4xModbusRtuDialog extends JDialog implements Plc4xDialog {
 
             devicerecord.setDeviceName(tfDeviceName.getText());
             devicerecord.setUUID(UUID.fromString(tfUUID.getText()));
-            driverrecord.getMapDevices().put(devicerecord.getUUID(), devicerecord);
+            //driverrecord.getMapDevices().put(devicerecord.getUUID(), devicerecord);
      
         }            
         this.setVisible(false);

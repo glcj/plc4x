@@ -18,7 +18,9 @@
  */
 package org.apache.plc4x.app.api;
 
-
+/* 
+ *
+ */
 public enum Plc4xPropertyEnum {
     
     //Commons fields in dialogs

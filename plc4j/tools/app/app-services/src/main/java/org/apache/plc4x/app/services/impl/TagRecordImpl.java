@@ -38,7 +38,8 @@ public class TagRecordImpl implements TagRecord {
     private String tagdesc;
     private String id;
     
-    private UUID uuid;   
+    private UUID uuid;
+    private final UUID tagguuid;
 
     private Boolean enable = false;    
     private Boolean disableOutput = true;   
@@ -50,6 +51,10 @@ public class TagRecordImpl implements TagRecord {
     private Instant startInstant;
     private Instant currentInstant;
     private Instant lastUpdateInstant;      
+
+    public TagRecordImpl(UUID tagguuid) {
+        this.tagguuid = tagguuid;
+    }
     
     @Override
     public void setTagName(String name) {
@@ -129,6 +134,11 @@ public class TagRecordImpl implements TagRecord {
     @Override
     public void removePropertyChangeListener(PropertyChangeListener listener) {
          this.pcs.removePropertyChangeListener(listener);
+    }
+
+    @Override
+    public UUID getTagGroup() {
+        return tagguuid;
     }
     
     @Override

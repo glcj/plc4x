@@ -60,7 +60,7 @@ public class Plc4xDeviceNode  extends BeanNode implements PropertyChangeListener
         super(bean, Children.create(new Plc4xDeviceChildFactory(bean), false));       
         this.bean = bean;   
         this.bean.addPropertyChangeListener(this);        
-        setIconBaseWithExtension("org/apache/plc4x/app/services/tag_roja_16x16.png"); 
+        setIconBaseWithExtension("org/apache/plc4x/app/services/Device_16x16.png"); 
         super.setName(this.bean.getDeviceName());  
         setShortDescription(this.bean.getDeviceDescription()); 
         final BeanInfo info = Introspector.getBeanInfo(DeviceRecord.class);

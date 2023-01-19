@@ -27,51 +27,164 @@ import java.util.Optional;
 import java.util.UUID;
 import org.openide.util.Lookup;
 
-
+/* 
+ *
+ */
 public interface DeviceRecord extends Lookup.Provider {
     
-    public void setDeviceName(String name);  
-    String getDeviceName();
+    /*
+     *
+     */    
+    public void setDeviceName(String name);
+
+    /*
+     *
+     */    
+    public String getDeviceName();
+
+    /*
+     *
+     */    
+    public void setDeviceDescription(String desc); 
     
-    public void setDeviceDescription(String desc);  
+    /*
+     *
+     */     
     public String getDeviceDescription();    
     
-    public void setUUID(UUID uuid);  
+    /*
+     *
+     */    
+    public void setUUID(UUID uuid);
+    
+    /*
+     *
+     */    
     public UUID getUUID();
     
-    public void setProtocolCode(UUID protocol);   
+    /*
+     *
+     */    
+    public void setProtocolCode(UUID protocol);
+    
+    /*
+     *
+     */    
     public UUID getProtocolCode();
 
-    public void setTreeLocation(UUID treenode);   
+    /*
+     *
+     */   
+    public void setTreeLocation(UUID treenode);
+    
+    /*
+     *
+     */   
     public UUID getTreeLocation();
     
+    /*
+     *
+     */    
     public void setEnable(Boolean enable);
+    
+    /*
+     *
+     */    
     public Boolean getEnable();    
     
+    /*
+     *
+     */    
     public void setPropertie(String id, String str);
-    public String getPropertie(String id);
-    public Map<String, String> getProperties();
     
+    /*
+     *
+     */    
+    public String getPropertie(String id);
+    
+    /*
+     *
+     */     
+    public Map<String, String> getProperties();
+        
+    /*
+     *
+     */    
     public void addTagGroup(TagGroupRecord  tagg);
-    public Collection<TagGroupRecord> getTagGroups();
-    public Optional<TagGroupRecord> getTagGroup(TagGroupRecord tagg);    
+
+    /*
+     *
+     */   
+    public Optional<TagGroupRecord> getTagGroup(TagGroupRecord tagg); 
+    
+    /*
+     *
+     */    
     public Optional<TagGroupRecord> getTagGroup(UUID uuid);
-    public Optional<TagGroupRecord> getTagGroup(String name);    
+    
+    /*
+     *
+     */     
+    public Optional<TagGroupRecord> getTagGroup(String name);
+    
+    /*
+     *
+     */    
+    public Collection<TagGroupRecord> getTagGroups();
+
+    /*
+     *
+     */    
     public void removeTagGroup(TagGroupRecord  device);    
     
-    
+    /*
+     *
+     */ 
     public void addPropertyChangeListener(PropertyChangeListener listener);
+    
+    /*
+     *
+     */     
     public void removePropertyChangeListener(PropertyChangeListener listener);    
-        
+     
+    /*
+     *
+     */    
     public int getTransmits();
+    
+    /*
+     *
+     */    
     public int getReceives();
+    
+    /*
+     *
+     */     
     public int getErrors();
 
-    public int getNumberOfTagGroups();   
+    /*
+     *
+     */     
+    public int getNumberOfTagGroups();  
+    
+    /*
+     *
+     */     
     public int getNumberOfTags();
     
+    /*
+     *
+     */        
     public Instant getStartInstant();
+    
+    /*
+     *
+     */    
     public Instant  getCurrentInstant();
+    
+    /*
+     *
+     */     
     public Instant  getLastUpdateInstant();   
     
     

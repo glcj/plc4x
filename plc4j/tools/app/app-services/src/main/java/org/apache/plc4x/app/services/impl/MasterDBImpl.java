@@ -23,6 +23,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +49,10 @@ import org.apache.plc4x.app.api.TagGroupRecord;
 public class MasterDBImpl implements MasterDB, Lookup.Provider, LookupListener {
     
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private final HashMap<UUID, DriverRecord> db = new HashMap();
+    private final HashMap<UUID, DriverRecord> db = new HashMap();    
+    private final HashMap<UUID, TagGroupRecord> taggs = new HashMap();
+    private final HashMap<UUID, TagRecord> tags = new HashMap();
+     
     private final InstanceContent ic;
     private final Lookup lk;
     private final Lookup.Result<PlcDriver> plc4xresult;
@@ -90,7 +95,7 @@ public class MasterDBImpl implements MasterDB, Lookup.Provider, LookupListener {
     @Override
     public void addDriver(DriverRecord driver) {
         final DriverRecord  tempdrv =  getDriverByCode(driver.getProtocolCode());
-        if (tempdrv == null) {
+        if (null == tempdrv) {
             if(null == driver.getUUID()){
                 tempUuid = UUID.randomUUID();
             } else {
@@ -108,6 +113,19 @@ public class MasterDBImpl implements MasterDB, Lookup.Provider, LookupListener {
                 findFirst();
     }
 
+    @Override
+    public Optional<DriverRecord> getDriver(String drvname) {
+        return  (Optional<DriverRecord>) dbresult.allInstances().stream().
+                filter(r -> r.getProtocolCode().equals(drvname)).
+                findFirst();
+    }
+
+    @Override
+    public Collection<DriverRecord> getDrivers() {
+        return (Collection<DriverRecord>) dbresult.allInstances();
+
+    }
+    
     @Override
     public void removeDriver(UUID uuid) {
         Optional<DriverRecord> oprecord = getDriver(uuid);
@@ -134,19 +152,48 @@ public class MasterDBImpl implements MasterDB, Lookup.Provider, LookupListener {
     }
 
     @Override
+    public Optional<DeviceRecord> getDevice(String devicename) {
+         Optional<DriverRecord> opdriver = 
+                (Optional<DriverRecord>) dbresult.allInstances().stream().
+                filter(drv -> ((Optional<DeviceRecord>) drv.getDevice(devicename)).isPresent()).
+                findFirst();
+        
+        return opdriver.isPresent() ? opdriver.get().getDevice(devicename):  Optional.empty();
+    }
+   
+     
+    @Override
     public void removeDevice(DeviceRecord device) {
-        Optional<DriverRecord> opdriver = (Optional<DriverRecord>) dbresult.allInstances().
-                stream().
-                filter(drv -> drv.getDevice(device) != null).
+        removeDevice(device.getUUID());
+    }
+
+    @Override
+    public void removeDevice(UUID uuid) {
+        Optional<DriverRecord> opdriver = (Optional<DriverRecord>) dbresult.allInstances().stream().
+                filter(drv -> drv.getDevice(uuid).equals(uuid)).
                 findFirst();              
-        if (opdriver.isPresent()) opdriver.get().removeDevice(device);           
+        if (opdriver.isPresent()) {
+            Optional<DeviceRecord> opdev = opdriver.get().getDevice(uuid);
+            if (opdev.isPresent()) 
+                if (!opdev.get().getEnable()){
+                    opdev.get().getTagGroups().stream().
+                            forEach(tg -> {
+                                taggs.remove(tg.getUUID());
+                                removeTagGroup(tg.getUUID());
+                                });
+                    if (opdev.get().getTagGroups().isEmpty()) 
+                        opdriver.get().removeDevice(opdev.get());
+                    opdev = null;
+            };
+        }         
     }
 
     @Override
     public void addTagGroup(UUID device, TagGroupRecord taggroup) {
         Optional<DeviceRecord> opdevice = getDevice(device);
         if (opdevice.isPresent()){
-            opdevice.get().addTagGroup(taggroup);            
+            opdevice.get().addTagGroup(taggroup);
+            taggs.put(taggroup.getUUID(), taggroup);
         } else {
             System.out.println("Dispositivo no encontrado: " + device.toString());
         }
@@ -154,37 +201,92 @@ public class MasterDBImpl implements MasterDB, Lookup.Provider, LookupListener {
 
     @Override
     public Optional<TagGroupRecord> getTagGroup(UUID uuid) {
-        return null;
+        return taggs.values().stream().
+                filter(t -> t.getUUID().equals(uuid)).
+                findFirst(); 
     }
 
-    //TODO: Solo si no esta habilitado el driver/dispositivo/taggroup
+
+    @Override
+    public Optional<TagGroupRecord> getTagGroup(String taggname) {
+        return taggs.values().stream().
+                filter(t -> t.getTagGroupName().equals(taggname)).
+                findFirst(); 
+    }
+    
     @Override
     public void removeTagGroup(TagGroupRecord taggroup) {
-        dbresult.allInstances().stream().
-                forEach(drv -> {
-                    drv.getDevices().stream().
-                            forEach(dev -> dev.removeTagGroup(taggroup));
-                    ;
-                });
+        removeTagGroup(taggroup.getUUID());
+    }
+
+    @Override
+    public void removeTagGroup(UUID uuid) {
+        Optional<TagGroupRecord> opTagGroup = getTagGroup(uuid);
+        if (opTagGroup.isPresent())
+            if (!opTagGroup.get().getEnable()) {
+                Optional<TagRecord> optag = opTagGroup.get().getTags().stream().
+                        filter(t -> t.getEnable()).
+                        findFirst();
+            if (!optag.isPresent()) {
+                taggs.remove(opTagGroup.get());
+                opTagGroup.get().getTags().stream().forEach(t -> tags.remove(t.getUUID()));
+                Optional<DeviceRecord> opdevice = getDevice(opTagGroup.get().getDeviceRecord());
+                if (opdevice.isPresent()) opdevice.get().removeTagGroup(opTagGroup.get());
+                opTagGroup = null;
+            }
+        }
     }
 
     @Override
     public void addTag(UUID taggroup, TagRecord tag) {
-        Optional<TagGroup> optagg = dbresult.allInstances().stream().
-                filter(drv -> drv.getDevices().stream().
-                        anyMatch(dev -> dev.getTagGroup(taggroup).isPresent())).
-                findFirst();
-                
+        Optional<TagGroupRecord> optagg = getTagGroup(taggroup);
+        if (optagg.isPresent()){
+            optagg.get().addTag(tag);
+            tags.put(tag.getUUID(), tag);
+        }
+        
     }
 
     @Override
     public Optional<TagRecord> getTag(UUID uuid) {
-        return null;
+        return tags.values().stream().
+                filter(t -> t.getUUID().equals(uuid)).
+                findFirst();              
     }
 
     @Override
+    public Optional<TagRecord> getTag(String tagname) {
+        return tags.values().stream().
+                filter(t -> t.getTagName().equals(tagname)).
+                findFirst();           
+    }
+
+    @Override
+    public void removeTag(TagRecord tag) {
+        Optional<TagRecord> optag = getTag(tag.getUUID());
+        if (optag.isPresent()) {
+            tags.remove(tag.getUUID());
+            Optional<TagGroupRecord> optagg = getTagGroup(tag.getTagGroup());
+                if (optagg.isPresent()) {
+                    optagg.get().removeTag(tag);
+                }
+            optag =null; //To GC?            
+        }
+    }
+         
+    @Override
     public void removeTag(UUID uuid) {
-        
+        Optional<TagRecord> optag = getTag(uuid);
+        if (optag.isPresent()){
+            if (!optag.get().getEnable()) {
+                tags.remove(optag.get().getUUID());
+                Optional<TagGroupRecord> optagg = getTagGroup(optag.get().getTagGroup());
+                if (optagg.isPresent()) {
+                    optagg.get().removeTag(optag.get());
+                }
+                optag = null; //To GC?
+            }
+        }      
     }
     
     @JsonIgnore    
@@ -234,12 +336,14 @@ public class MasterDBImpl implements MasterDB, Lookup.Provider, LookupListener {
 
     @Override
     public TagGroupRecord createTagGroupDBRecord() {
-        return new TagGroupRecordImpl();
+        UUID uuid = UUID.randomUUID();
+        return new TagGroupRecordImpl(uuid);
     }
 
     @Override
     public TagRecord createTagDBRecord() {
-        return new TagRecordImpl();
+        UUID uuid = UUID.randomUUID();        
+        return new TagRecordImpl(uuid);
     }
 
     @Override
@@ -306,6 +410,7 @@ public class MasterDBImpl implements MasterDB, Lookup.Provider, LookupListener {
         return 0;
     }
 
+    @JsonIgnore
     @Override
     public Lookup getLookup() {
         return lk;

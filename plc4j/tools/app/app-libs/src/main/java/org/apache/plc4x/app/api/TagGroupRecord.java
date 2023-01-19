@@ -26,44 +26,145 @@ import java.util.UUID;
 import org.openide.util.Lookup;
 
 
+/* 
+ *
+ */
 public interface TagGroupRecord  extends Lookup.Provider {
     
     
+    /*
+     *
+     */    
     public void setTagGroupName(String name);  
+    
+    /*
+     *
+     */    
     public String getTagGroupName();
     
-    public void setTagGroupDesc(String desc);   
+    /*
+     *
+     */   
+    public void setTagGroupDesc(String desc);
+    
+    /*
+     *
+     */   
     public String getTagGroupDesc();    
     
+    /*
+     *
+     */   
     public void setUUID(UUID uuid);  
+    
+    /*
+     *
+     */   
     public UUID getUUID();
 
+    /*
+     *
+     */   
     public void setScanTime(int ms);
-    public int getScanTime();    
     
+    /*
+     *
+     */   
+    public int getScanTime(); 
+        
+    /*
+     *
+     */    
     public void setEnable(Boolean enable);
-    public Boolean getEnable(); 
     
+    /*
+     *
+     */   
+    public Boolean getEnable(); 
+
+    /*
+     *
+     */  
     public void addTag(TagRecord  tag);
-    public Collection<TagRecord> getTags();
-    public Optional<TagRecord> getTag(TagRecord tag);    
+    
+    /*
+     *
+     */   
+    public Optional<TagRecord> getTag(TagRecord tag);
+
+    /*
+     *
+     */   
     public Optional<TagRecord> getTag(UUID uuid);
-    public Optional<TagRecord> getTag(String name);    
+    
+    /*
+     *
+     */
+    public Optional<TagRecord> getTag(String name);
+    
+    /*
+     *
+     */   
+    public Collection<TagRecord> getTags(); 
+    
+    /*
+     *
+     */   
     public void removeTag(TagRecord  tag); 
     
+    /*
+     *
+     */   
     public void addPropertyChangeListener(PropertyChangeListener listener);
+    
+    /*
+     *
+     */   
     public void removePropertyChangeListener(PropertyChangeListener listener);    
           
+    /*
+     *
+     */   
+    public UUID getDeviceRecord();    
+
+    /*
+     *
+     */   
     public int getJitter();
     
+    /*
+     *
+     */  
     public int getTransmits();
+    
+    /*
+     *
+     */   
     public int getReceives();
+    
+    /*
+     *
+     */   
     public int getErrors();
  
+    /*
+     *
+     */
     public int getNumberOfTags();
     
+    /*
+     *
+     */  
     public Instant getStartInstant();
+    
+    /*
+     *
+     */  
     public Instant getCurrentInstant();
+    
+    /*
+     *
+     */   
     public Instant getLastUpdateDateTime();      
     
 }

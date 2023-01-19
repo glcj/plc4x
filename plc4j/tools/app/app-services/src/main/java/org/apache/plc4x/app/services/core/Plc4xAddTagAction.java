@@ -21,6 +21,10 @@ package org.apache.plc4x.app.services.core;
 import org.apache.plc4x.app.services.model.Plc4xTagGroupNode;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
+import javax.swing.JDialog;
+import org.apache.plc4x.app.api.Plc4xDialog;
+import org.openide.util.Lookup;
+import org.openide.util.lookup.Lookups;
 
 /**
  *
@@ -37,7 +41,13 @@ public class Plc4xAddTagAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Lookup lk = Lookups.forPath("Plc4xDriver/tag");
+       
+        if ( lk != null) {
+            final Plc4xDialog dialog = lk.lookup(Plc4xDialog.class);
+            dialog.setNode(node);                       
+            ((JDialog) dialog).setVisible(true);            
+        }   
     }
     
 }
