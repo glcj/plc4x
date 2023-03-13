@@ -24,7 +24,7 @@ go 1.18
 require (
 	github.com/IBM/netaddr v1.5.0
 	github.com/ajankovic/xdiff v0.0.1
-	github.com/fatih/color v1.13.0
+	github.com/fatih/color v1.15.0
 	github.com/gdamore/tcell/v2 v2.5.3
 	github.com/gopacket/gopacket v0.0.0-20221006103438-9e6d99b9b443
 	github.com/icza/bitio v1.1.0
@@ -55,8 +55,8 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-runewidth v0.0.14 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -71,7 +71,7 @@ require (
 	github.com/subosito/gotenv v1.4.1 // indirect
 	golang.org/x/mod v0.7.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/term v0.3.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
