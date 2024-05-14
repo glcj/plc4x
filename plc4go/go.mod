@@ -25,7 +25,7 @@ require (
 	github.com/IBM/netaddr v1.5.0
 	github.com/ajankovic/xdiff v0.0.1
 	github.com/dchest/uniuri v1.2.0
-	github.com/fatih/color v1.16.0
+	github.com/fatih/color v1.17.0
 	github.com/gdamore/tcell/v2 v2.7.4
 	github.com/google/uuid v1.6.0
 	github.com/gopacket/gopacket v1.2.0
