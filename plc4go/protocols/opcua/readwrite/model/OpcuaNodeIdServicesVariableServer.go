@@ -394,6 +394,46 @@ const (
 	OpcuaNodeIdServicesVariableServer_Server_ServerRedundancy_ServerNetworkGroups                                                                                               OpcuaNodeIdServicesVariableServer = 14415
 	OpcuaNodeIdServicesVariableServer_ServerType_UrisVersion                                                                                                                    OpcuaNodeIdServicesVariableServer = 15003
 	OpcuaNodeIdServicesVariableServer_Server_UrisVersion                                                                                                                        OpcuaNodeIdServicesVariableServer = 15004
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Size                                                                                            OpcuaNodeIdServicesVariableServer = 15565
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Writable                                                                                        OpcuaNodeIdServicesVariableServer = 15566
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserWritable                                                                                    OpcuaNodeIdServicesVariableServer = 15567
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_OpenCount                                                                                       OpcuaNodeIdServicesVariableServer = 15568
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MimeType                                                                                        OpcuaNodeIdServicesVariableServer = 15569
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxByteStringLength                                                                             OpcuaNodeIdServicesVariableServer = 15570
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastModifiedTime                                                                                OpcuaNodeIdServicesVariableServer = 15571
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_InputArguments                                                                             OpcuaNodeIdServicesVariableServer = 15573
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_OutputArguments                                                                            OpcuaNodeIdServicesVariableServer = 15574
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Close_InputArguments                                                                            OpcuaNodeIdServicesVariableServer = 15790
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_InputArguments                                                                             OpcuaNodeIdServicesVariableServer = 15792
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_OutputArguments                                                                            OpcuaNodeIdServicesVariableServer = 15804
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Write_InputArguments                                                                            OpcuaNodeIdServicesVariableServer = 15806
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments                                                                      OpcuaNodeIdServicesVariableServer = 15808
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments                                                                     OpcuaNodeIdServicesVariableServer = 15809
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments                                                                      OpcuaNodeIdServicesVariableServer = 15811
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastUpdateTime                                                                                  OpcuaNodeIdServicesVariableServer = 15812
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CurrentVersion                                                                                  OpcuaNodeIdServicesVariableServer = 15813
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ActivityTimeout                                                                                 OpcuaNodeIdServicesVariableServer = 15814
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SupportedDataType                                                                               OpcuaNodeIdServicesVariableServer = 15848
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments                                                                   OpcuaNodeIdServicesVariableServer = 15850
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments                                                                  OpcuaNodeIdServicesVariableServer = 15851
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments                                                                    OpcuaNodeIdServicesVariableServer = 15864
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Size                                                                                                OpcuaNodeIdServicesVariableServer = 15893
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Writable                                                                                            OpcuaNodeIdServicesVariableServer = 15894
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserWritable                                                                                        OpcuaNodeIdServicesVariableServer = 15937
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_OpenCount                                                                                           OpcuaNodeIdServicesVariableServer = 15938
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MimeType                                                                                            OpcuaNodeIdServicesVariableServer = 15939
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxByteStringLength                                                                                 OpcuaNodeIdServicesVariableServer = 15989
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastModifiedTime                                                                                    OpcuaNodeIdServicesVariableServer = 15994
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_InputArguments                                                                                 OpcuaNodeIdServicesVariableServer = 16020
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_OutputArguments                                                                                OpcuaNodeIdServicesVariableServer = 16059
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Close_InputArguments                                                                                OpcuaNodeIdServicesVariableServer = 16061
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_InputArguments                                                                                 OpcuaNodeIdServicesVariableServer = 16075
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_OutputArguments                                                                                OpcuaNodeIdServicesVariableServer = 16076
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Write_InputArguments                                                                                OpcuaNodeIdServicesVariableServer = 16102
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_InputArguments                                                                          OpcuaNodeIdServicesVariableServer = 16122
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments                                                                         OpcuaNodeIdServicesVariableServer = 16123
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SetPosition_InputArguments                                                                          OpcuaNodeIdServicesVariableServer = 16160
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastUpdateTime                                                                                      OpcuaNodeIdServicesVariableServer = 16283
 	OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments                                                                              OpcuaNodeIdServicesVariableServer = 16291
 	OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_OutputArguments                                                                             OpcuaNodeIdServicesVariableServer = 16292
 	OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_RemoveRole_InputArguments                                                                           OpcuaNodeIdServicesVariableServer = 16294
@@ -403,6 +443,22 @@ const (
 	OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_AddRole_InputArguments                                                                                  OpcuaNodeIdServicesVariableServer = 16302
 	OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_AddRole_OutputArguments                                                                                 OpcuaNodeIdServicesVariableServer = 16303
 	OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments                                                                               OpcuaNodeIdServicesVariableServer = 16305
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CurrentVersion                                                                                      OpcuaNodeIdServicesVariableServer = 16306
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ActivityTimeout                                                                                     OpcuaNodeIdServicesVariableServer = 16315
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SupportedDataType                                                                                   OpcuaNodeIdServicesVariableServer = 16316
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments                                                                       OpcuaNodeIdServicesVariableServer = 16318
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments                                                                      OpcuaNodeIdServicesVariableServer = 16319
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments                                                                        OpcuaNodeIdServicesVariableServer = 16321
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailableNetworks                                                                               OpcuaNodeIdServicesVariableServer = 16646
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailablePorts                                                                                  OpcuaNodeIdServicesVariableServer = 16647
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SecurityPolicyUris                                                                              OpcuaNodeIdServicesVariableServer = 16648
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserTokenTypes                                                                                  OpcuaNodeIdServicesVariableServer = 16649
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateTypes                                                                                OpcuaNodeIdServicesVariableServer = 16650
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailableNetworks                                                                                   OpcuaNodeIdServicesVariableServer = 16652
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailablePorts                                                                                      OpcuaNodeIdServicesVariableServer = 16653
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SecurityPolicyUris                                                                                  OpcuaNodeIdServicesVariableServer = 16654
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserTokenTypes                                                                                      OpcuaNodeIdServicesVariableServer = 16655
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateTypes                                                                                    OpcuaNodeIdServicesVariableServer = 16656
 	OpcuaNodeIdServicesVariableServer_ServerType_LocalTime                                                                                                                      OpcuaNodeIdServicesVariableServer = 17612
 	OpcuaNodeIdServicesVariableServer_Server_LocalTime                                                                                                                          OpcuaNodeIdServicesVariableServer = 17634
 	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ApplicationNames                                                                                                  OpcuaNodeIdServicesVariableServer = 18660
@@ -411,6 +467,32 @@ const (
 	OpcuaNodeIdServicesVariableServer_ServerConfiguration_SupportsTransactions                                                                                                  OpcuaNodeIdServicesVariableServer = 18663
 	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_InApplicationSetup                                                                                                OpcuaNodeIdServicesVariableServer = 19308
 	OpcuaNodeIdServicesVariableServer_ServerConfiguration_InApplicationSetup                                                                                                    OpcuaNodeIdServicesVariableServer = 19309
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_InputArguments                                                                        OpcuaNodeIdServicesVariableServer = 19338
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments                                                                       OpcuaNodeIdServicesVariableServer = 19339
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_DeleteCertificate_InputArguments                                                                                  OpcuaNodeIdServicesVariableServer = 19341
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_InputArguments                                                                            OpcuaNodeIdServicesVariableServer = 19343
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_OutputArguments                                                                           OpcuaNodeIdServicesVariableServer = 19344
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_DeleteCertificate_InputArguments                                                                                      OpcuaNodeIdServicesVariableServer = 19346
+	OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_InputArguments                                                                                                       OpcuaNodeIdServicesVariableServer = 19374
+	OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_OutputArguments                                                                                                      OpcuaNodeIdServicesVariableServer = 19375
+	OpcuaNodeIdServicesVariableServer_ServerLog_MaxRecords                                                                                                                      OpcuaNodeIdServicesVariableServer = 19376
+	OpcuaNodeIdServicesVariableServer_ServerLog_MaxStorageDuration                                                                                                              OpcuaNodeIdServicesVariableServer = 19377
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose                                                                 OpcuaNodeIdServicesVariableServer = 19417
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose                                                                       OpcuaNodeIdServicesVariableServer = 19418
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose                                                                   OpcuaNodeIdServicesVariableServer = 19419
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxEndpoints                                                                                    OpcuaNodeIdServicesVariableServer = 19420
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxCertificateGroups                                                                            OpcuaNodeIdServicesVariableServer = 19421
+	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes                                                                        OpcuaNodeIdServicesVariableServer = 19422
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose                                                                     OpcuaNodeIdServicesVariableServer = 19428
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose                                                                           OpcuaNodeIdServicesVariableServer = 19429
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose                                                                       OpcuaNodeIdServicesVariableServer = 19430
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxEndpoints                                                                                        OpcuaNodeIdServicesVariableServer = 19442
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxCertificateGroups                                                                                OpcuaNodeIdServicesVariableServer = 19443
+	OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateGroupPurposes                                                                            OpcuaNodeIdServicesVariableServer = 19444
+	OpcuaNodeIdServicesVariableServer_ServerLog_MinimumSeverity                                                                                                                 OpcuaNodeIdServicesVariableServer = 19751
+	OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_MaxLogObjectContinuationPoints                                                                              OpcuaNodeIdServicesVariableServer = 19807
+	OpcuaNodeIdServicesVariableServer_ServerCapabilitiesType_MaxLogObjectContinuationPoints                                                                                     OpcuaNodeIdServicesVariableServer = 19809
+	OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_MaxLogObjectContinuationPoints                                                                                  OpcuaNodeIdServicesVariableServer = 19812
 	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_TrustList_UpdateFrequency                                               OpcuaNodeIdServicesVariableServer = 21679
 	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_CertificateExpired_EventId                                              OpcuaNodeIdServicesVariableServer = 21681
 	OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_CertificateExpired_EventType                                            OpcuaNodeIdServicesVariableServer = 21682
@@ -2544,6 +2626,46 @@ func init() {
 		OpcuaNodeIdServicesVariableServer_Server_ServerRedundancy_ServerNetworkGroups,
 		OpcuaNodeIdServicesVariableServer_ServerType_UrisVersion,
 		OpcuaNodeIdServicesVariableServer_Server_UrisVersion,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Size,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Writable,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserWritable,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_OpenCount,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MimeType,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxByteStringLength,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastModifiedTime,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Close_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Write_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastUpdateTime,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CurrentVersion,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ActivityTimeout,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SupportedDataType,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Size,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Writable,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserWritable,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_OpenCount,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MimeType,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxByteStringLength,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastModifiedTime,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Close_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Write_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastUpdateTime,
 		OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments,
 		OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_OutputArguments,
 		OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_RemoveRole_InputArguments,
@@ -2553,6 +2675,22 @@ func init() {
 		OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_AddRole_InputArguments,
 		OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_AddRole_OutputArguments,
 		OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CurrentVersion,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ActivityTimeout,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SupportedDataType,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailableNetworks,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailablePorts,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SecurityPolicyUris,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserTokenTypes,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateTypes,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailableNetworks,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailablePorts,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SecurityPolicyUris,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserTokenTypes,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateTypes,
 		OpcuaNodeIdServicesVariableServer_ServerType_LocalTime,
 		OpcuaNodeIdServicesVariableServer_Server_LocalTime,
 		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ApplicationNames,
@@ -2561,6 +2699,32 @@ func init() {
 		OpcuaNodeIdServicesVariableServer_ServerConfiguration_SupportsTransactions,
 		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_InApplicationSetup,
 		OpcuaNodeIdServicesVariableServer_ServerConfiguration_InApplicationSetup,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_DeleteCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_DeleteCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_InputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_OutputArguments,
+		OpcuaNodeIdServicesVariableServer_ServerLog_MaxRecords,
+		OpcuaNodeIdServicesVariableServer_ServerLog_MaxStorageDuration,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxEndpoints,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxCertificateGroups,
+		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxEndpoints,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxCertificateGroups,
+		OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateGroupPurposes,
+		OpcuaNodeIdServicesVariableServer_ServerLog_MinimumSeverity,
+		OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_MaxLogObjectContinuationPoints,
+		OpcuaNodeIdServicesVariableServer_ServerCapabilitiesType_MaxLogObjectContinuationPoints,
+		OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_MaxLogObjectContinuationPoints,
 		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_TrustList_UpdateFrequency,
 		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_CertificateExpired_EventId,
 		OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_CertificateExpired_EventType,
@@ -4771,6 +4935,86 @@ func OpcuaNodeIdServicesVariableServerByValue(value int32) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableServer_ServerType_UrisVersion, true
 	case 15004:
 		return OpcuaNodeIdServicesVariableServer_Server_UrisVersion, true
+	case 15565:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Size, true
+	case 15566:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Writable, true
+	case 15567:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserWritable, true
+	case 15568:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_OpenCount, true
+	case 15569:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MimeType, true
+	case 15570:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxByteStringLength, true
+	case 15571:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastModifiedTime, true
+	case 15573:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_InputArguments, true
+	case 15574:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_OutputArguments, true
+	case 15790:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Close_InputArguments, true
+	case 15792:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_InputArguments, true
+	case 15804:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_OutputArguments, true
+	case 15806:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Write_InputArguments, true
+	case 15808:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments, true
+	case 15809:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments, true
+	case 15811:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments, true
+	case 15812:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastUpdateTime, true
+	case 15813:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CurrentVersion, true
+	case 15814:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ActivityTimeout, true
+	case 15848:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SupportedDataType, true
+	case 15850:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case 15851:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case 15864:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case 15893:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Size, true
+	case 15894:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Writable, true
+	case 15937:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserWritable, true
+	case 15938:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_OpenCount, true
+	case 15939:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MimeType, true
+	case 15989:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxByteStringLength, true
+	case 15994:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastModifiedTime, true
+	case 16020:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_InputArguments, true
+	case 16059:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_OutputArguments, true
+	case 16061:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Close_InputArguments, true
+	case 16075:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_InputArguments, true
+	case 16076:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_OutputArguments, true
+	case 16102:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Write_InputArguments, true
+	case 16122:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_InputArguments, true
+	case 16123:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments, true
+	case 16160:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SetPosition_InputArguments, true
+	case 16283:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastUpdateTime, true
 	case 16291:
 		return OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments, true
 	case 16292:
@@ -4789,6 +5033,38 @@ func OpcuaNodeIdServicesVariableServerByValue(value int32) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_AddRole_OutputArguments, true
 	case 16305:
 		return OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments, true
+	case 16306:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CurrentVersion, true
+	case 16315:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ActivityTimeout, true
+	case 16316:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SupportedDataType, true
+	case 16318:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case 16319:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case 16321:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case 16646:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailableNetworks, true
+	case 16647:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailablePorts, true
+	case 16648:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SecurityPolicyUris, true
+	case 16649:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserTokenTypes, true
+	case 16650:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateTypes, true
+	case 16652:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailableNetworks, true
+	case 16653:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailablePorts, true
+	case 16654:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SecurityPolicyUris, true
+	case 16655:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserTokenTypes, true
+	case 16656:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateTypes, true
 	case 17612:
 		return OpcuaNodeIdServicesVariableServer_ServerType_LocalTime, true
 	case 17634:
@@ -4805,6 +5081,58 @@ func OpcuaNodeIdServicesVariableServerByValue(value int32) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_InApplicationSetup, true
 	case 19309:
 		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_InApplicationSetup, true
+	case 19338:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_InputArguments, true
+	case 19339:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments, true
+	case 19341:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_DeleteCertificate_InputArguments, true
+	case 19343:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_InputArguments, true
+	case 19344:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_OutputArguments, true
+	case 19346:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_DeleteCertificate_InputArguments, true
+	case 19374:
+		return OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_InputArguments, true
+	case 19375:
+		return OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_OutputArguments, true
+	case 19376:
+		return OpcuaNodeIdServicesVariableServer_ServerLog_MaxRecords, true
+	case 19377:
+		return OpcuaNodeIdServicesVariableServer_ServerLog_MaxStorageDuration, true
+	case 19417:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case 19418:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case 19419:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case 19420:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxEndpoints, true
+	case 19421:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxCertificateGroups, true
+	case 19422:
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes, true
+	case 19428:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case 19429:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case 19430:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case 19442:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxEndpoints, true
+	case 19443:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxCertificateGroups, true
+	case 19444:
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateGroupPurposes, true
+	case 19751:
+		return OpcuaNodeIdServicesVariableServer_ServerLog_MinimumSeverity, true
+	case 19807:
+		return OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_MaxLogObjectContinuationPoints, true
+	case 19809:
+		return OpcuaNodeIdServicesVariableServer_ServerCapabilitiesType_MaxLogObjectContinuationPoints, true
+	case 19812:
+		return OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_MaxLogObjectContinuationPoints, true
 	case 2005:
 		return OpcuaNodeIdServicesVariableServer_ServerType_ServerArray, true
 	case 2006:
@@ -9063,6 +9391,86 @@ func OpcuaNodeIdServicesVariableServerByName(value string) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableServer_ServerType_UrisVersion, true
 	case "Server_UrisVersion":
 		return OpcuaNodeIdServicesVariableServer_Server_UrisVersion, true
+	case "ServerConfigurationType_ConfigurationFile_Size":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Size, true
+	case "ServerConfigurationType_ConfigurationFile_Writable":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Writable, true
+	case "ServerConfigurationType_ConfigurationFile_UserWritable":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserWritable, true
+	case "ServerConfigurationType_ConfigurationFile_OpenCount":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_OpenCount, true
+	case "ServerConfigurationType_ConfigurationFile_MimeType":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MimeType, true
+	case "ServerConfigurationType_ConfigurationFile_MaxByteStringLength":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxByteStringLength, true
+	case "ServerConfigurationType_ConfigurationFile_LastModifiedTime":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastModifiedTime, true
+	case "ServerConfigurationType_ConfigurationFile_Open_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_Open_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_OutputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_Close_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Close_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_Read_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_Read_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_OutputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_Write_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Write_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_LastUpdateTime":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastUpdateTime, true
+	case "ServerConfigurationType_ConfigurationFile_CurrentVersion":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CurrentVersion, true
+	case "ServerConfigurationType_ConfigurationFile_ActivityTimeout":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ActivityTimeout, true
+	case "ServerConfigurationType_ConfigurationFile_SupportedDataType":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SupportedDataType, true
+	case "ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_Size":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Size, true
+	case "ServerConfiguration_ConfigurationFile_Writable":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Writable, true
+	case "ServerConfiguration_ConfigurationFile_UserWritable":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserWritable, true
+	case "ServerConfiguration_ConfigurationFile_OpenCount":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_OpenCount, true
+	case "ServerConfiguration_ConfigurationFile_MimeType":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MimeType, true
+	case "ServerConfiguration_ConfigurationFile_MaxByteStringLength":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxByteStringLength, true
+	case "ServerConfiguration_ConfigurationFile_LastModifiedTime":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastModifiedTime, true
+	case "ServerConfiguration_ConfigurationFile_Open_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_Open_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_OutputArguments, true
+	case "ServerConfiguration_ConfigurationFile_Close_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Close_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_Read_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_Read_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_OutputArguments, true
+	case "ServerConfiguration_ConfigurationFile_Write_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Write_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_GetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments, true
+	case "ServerConfiguration_ConfigurationFile_SetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SetPosition_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_LastUpdateTime":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastUpdateTime, true
 	case "ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments":
 		return OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments, true
 	case "ServerType_ServerCapabilities_RoleSet_AddRole_OutputArguments":
@@ -9081,6 +9489,38 @@ func OpcuaNodeIdServicesVariableServerByName(value string) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_AddRole_OutputArguments, true
 	case "Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments":
 		return OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_CurrentVersion":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CurrentVersion, true
+	case "ServerConfiguration_ConfigurationFile_ActivityTimeout":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ActivityTimeout, true
+	case "ServerConfiguration_ConfigurationFile_SupportedDataType":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SupportedDataType, true
+	case "ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case "ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case "ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case "ServerConfigurationType_ConfigurationFile_AvailableNetworks":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailableNetworks, true
+	case "ServerConfigurationType_ConfigurationFile_AvailablePorts":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailablePorts, true
+	case "ServerConfigurationType_ConfigurationFile_SecurityPolicyUris":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SecurityPolicyUris, true
+	case "ServerConfigurationType_ConfigurationFile_UserTokenTypes":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserTokenTypes, true
+	case "ServerConfigurationType_ConfigurationFile_CertificateTypes":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateTypes, true
+	case "ServerConfiguration_ConfigurationFile_AvailableNetworks":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailableNetworks, true
+	case "ServerConfiguration_ConfigurationFile_AvailablePorts":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailablePorts, true
+	case "ServerConfiguration_ConfigurationFile_SecurityPolicyUris":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SecurityPolicyUris, true
+	case "ServerConfiguration_ConfigurationFile_UserTokenTypes":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserTokenTypes, true
+	case "ServerConfiguration_ConfigurationFile_CertificateTypes":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateTypes, true
 	case "ServerType_LocalTime":
 		return OpcuaNodeIdServicesVariableServer_ServerType_LocalTime, true
 	case "Server_LocalTime":
@@ -9097,6 +9537,58 @@ func OpcuaNodeIdServicesVariableServerByName(value string) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_InApplicationSetup, true
 	case "ServerConfiguration_InApplicationSetup":
 		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_InApplicationSetup, true
+	case "ServerConfigurationType_CreateSelfSignedCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_InputArguments, true
+	case "ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments, true
+	case "ServerConfigurationType_DeleteCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_DeleteCertificate_InputArguments, true
+	case "ServerConfiguration_CreateSelfSignedCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_InputArguments, true
+	case "ServerConfiguration_CreateSelfSignedCertificate_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_OutputArguments, true
+	case "ServerConfiguration_DeleteCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_DeleteCertificate_InputArguments, true
+	case "ServerLog_GetRecords_InputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_InputArguments, true
+	case "ServerLog_GetRecords_OutputArguments":
+		return OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_OutputArguments, true
+	case "ServerLog_MaxRecords":
+		return OpcuaNodeIdServicesVariableServer_ServerLog_MaxRecords, true
+	case "ServerLog_MaxStorageDuration":
+		return OpcuaNodeIdServicesVariableServer_ServerLog_MaxStorageDuration, true
+	case "ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case "ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case "ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case "ServerConfigurationType_ConfigurationFile_MaxEndpoints":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxEndpoints, true
+	case "ServerConfigurationType_ConfigurationFile_MaxCertificateGroups":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxCertificateGroups, true
+	case "ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes":
+		return OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes, true
+	case "ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case "ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case "ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case "ServerConfiguration_ConfigurationFile_MaxEndpoints":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxEndpoints, true
+	case "ServerConfiguration_ConfigurationFile_MaxCertificateGroups":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxCertificateGroups, true
+	case "ServerConfiguration_ConfigurationFile_CertificateGroupPurposes":
+		return OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateGroupPurposes, true
+	case "ServerLog_MinimumSeverity":
+		return OpcuaNodeIdServicesVariableServer_ServerLog_MinimumSeverity, true
+	case "ServerType_ServerCapabilities_MaxLogObjectContinuationPoints":
+		return OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_MaxLogObjectContinuationPoints, true
+	case "ServerCapabilitiesType_MaxLogObjectContinuationPoints":
+		return OpcuaNodeIdServicesVariableServer_ServerCapabilitiesType_MaxLogObjectContinuationPoints, true
+	case "Server_ServerCapabilities_MaxLogObjectContinuationPoints":
+		return OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_MaxLogObjectContinuationPoints, true
 	case "ServerType_ServerArray":
 		return OpcuaNodeIdServicesVariableServer_ServerType_ServerArray, true
 	case "ServerType_NamespaceArray":
@@ -13420,6 +13912,86 @@ func (e OpcuaNodeIdServicesVariableServer) PLC4XEnumName() string {
 		return "ServerType_UrisVersion"
 	case OpcuaNodeIdServicesVariableServer_Server_UrisVersion:
 		return "Server_UrisVersion"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Size:
+		return "ServerConfigurationType_ConfigurationFile_Size"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Writable:
+		return "ServerConfigurationType_ConfigurationFile_Writable"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserWritable:
+		return "ServerConfigurationType_ConfigurationFile_UserWritable"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_OpenCount:
+		return "ServerConfigurationType_ConfigurationFile_OpenCount"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MimeType:
+		return "ServerConfigurationType_ConfigurationFile_MimeType"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxByteStringLength:
+		return "ServerConfigurationType_ConfigurationFile_MaxByteStringLength"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastModifiedTime:
+		return "ServerConfigurationType_ConfigurationFile_LastModifiedTime"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_Open_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Open_OutputArguments:
+		return "ServerConfigurationType_ConfigurationFile_Open_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Close_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_Close_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_Read_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Read_OutputArguments:
+		return "ServerConfigurationType_ConfigurationFile_Read_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_Write_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_Write_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments:
+		return "ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_LastUpdateTime:
+		return "ServerConfigurationType_ConfigurationFile_LastUpdateTime"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CurrentVersion:
+		return "ServerConfigurationType_ConfigurationFile_CurrentVersion"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ActivityTimeout:
+		return "ServerConfigurationType_ConfigurationFile_ActivityTimeout"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SupportedDataType:
+		return "ServerConfigurationType_ConfigurationFile_SupportedDataType"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments:
+		return "ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments:
+		return "ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Size:
+		return "ServerConfiguration_ConfigurationFile_Size"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Writable:
+		return "ServerConfiguration_ConfigurationFile_Writable"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserWritable:
+		return "ServerConfiguration_ConfigurationFile_UserWritable"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_OpenCount:
+		return "ServerConfiguration_ConfigurationFile_OpenCount"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MimeType:
+		return "ServerConfiguration_ConfigurationFile_MimeType"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxByteStringLength:
+		return "ServerConfiguration_ConfigurationFile_MaxByteStringLength"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastModifiedTime:
+		return "ServerConfiguration_ConfigurationFile_LastModifiedTime"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_Open_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Open_OutputArguments:
+		return "ServerConfiguration_ConfigurationFile_Open_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Close_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_Close_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_Read_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Read_OutputArguments:
+		return "ServerConfiguration_ConfigurationFile_Read_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_Write_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_Write_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_GetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments:
+		return "ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SetPosition_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_SetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_LastUpdateTime:
+		return "ServerConfiguration_ConfigurationFile_LastUpdateTime"
 	case OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments:
 		return "ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments"
 	case OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_RoleSet_AddRole_OutputArguments:
@@ -13438,6 +14010,38 @@ func (e OpcuaNodeIdServicesVariableServer) PLC4XEnumName() string {
 		return "Server_ServerCapabilities_RoleSet_AddRole_OutputArguments"
 	case OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments:
 		return "Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CurrentVersion:
+		return "ServerConfiguration_ConfigurationFile_CurrentVersion"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ActivityTimeout:
+		return "ServerConfiguration_ConfigurationFile_ActivityTimeout"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SupportedDataType:
+		return "ServerConfiguration_ConfigurationFile_SupportedDataType"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments:
+		return "ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments:
+		return "ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailableNetworks:
+		return "ServerConfigurationType_ConfigurationFile_AvailableNetworks"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_AvailablePorts:
+		return "ServerConfigurationType_ConfigurationFile_AvailablePorts"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_SecurityPolicyUris:
+		return "ServerConfigurationType_ConfigurationFile_SecurityPolicyUris"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_UserTokenTypes:
+		return "ServerConfigurationType_ConfigurationFile_UserTokenTypes"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateTypes:
+		return "ServerConfigurationType_ConfigurationFile_CertificateTypes"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailableNetworks:
+		return "ServerConfiguration_ConfigurationFile_AvailableNetworks"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_AvailablePorts:
+		return "ServerConfiguration_ConfigurationFile_AvailablePorts"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_SecurityPolicyUris:
+		return "ServerConfiguration_ConfigurationFile_SecurityPolicyUris"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_UserTokenTypes:
+		return "ServerConfiguration_ConfigurationFile_UserTokenTypes"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateTypes:
+		return "ServerConfiguration_ConfigurationFile_CertificateTypes"
 	case OpcuaNodeIdServicesVariableServer_ServerType_LocalTime:
 		return "ServerType_LocalTime"
 	case OpcuaNodeIdServicesVariableServer_Server_LocalTime:
@@ -13454,6 +14058,58 @@ func (e OpcuaNodeIdServicesVariableServer) PLC4XEnumName() string {
 		return "ServerConfigurationType_InApplicationSetup"
 	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_InApplicationSetup:
 		return "ServerConfiguration_InApplicationSetup"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_InputArguments:
+		return "ServerConfigurationType_CreateSelfSignedCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments:
+		return "ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_DeleteCertificate_InputArguments:
+		return "ServerConfigurationType_DeleteCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_InputArguments:
+		return "ServerConfiguration_CreateSelfSignedCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_CreateSelfSignedCertificate_OutputArguments:
+		return "ServerConfiguration_CreateSelfSignedCertificate_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_DeleteCertificate_InputArguments:
+		return "ServerConfiguration_DeleteCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_InputArguments:
+		return "ServerLog_GetRecords_InputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerLog_GetRecords_OutputArguments:
+		return "ServerLog_GetRecords_OutputArguments"
+	case OpcuaNodeIdServicesVariableServer_ServerLog_MaxRecords:
+		return "ServerLog_MaxRecords"
+	case OpcuaNodeIdServicesVariableServer_ServerLog_MaxStorageDuration:
+		return "ServerLog_MaxStorageDuration"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose:
+		return "ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose:
+		return "ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose:
+		return "ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxEndpoints:
+		return "ServerConfigurationType_ConfigurationFile_MaxEndpoints"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_MaxCertificateGroups:
+		return "ServerConfigurationType_ConfigurationFile_MaxCertificateGroups"
+	case OpcuaNodeIdServicesVariableServer_ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes:
+		return "ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose:
+		return "ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose:
+		return "ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose:
+		return "ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxEndpoints:
+		return "ServerConfiguration_ConfigurationFile_MaxEndpoints"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_MaxCertificateGroups:
+		return "ServerConfiguration_ConfigurationFile_MaxCertificateGroups"
+	case OpcuaNodeIdServicesVariableServer_ServerConfiguration_ConfigurationFile_CertificateGroupPurposes:
+		return "ServerConfiguration_ConfigurationFile_CertificateGroupPurposes"
+	case OpcuaNodeIdServicesVariableServer_ServerLog_MinimumSeverity:
+		return "ServerLog_MinimumSeverity"
+	case OpcuaNodeIdServicesVariableServer_ServerType_ServerCapabilities_MaxLogObjectContinuationPoints:
+		return "ServerType_ServerCapabilities_MaxLogObjectContinuationPoints"
+	case OpcuaNodeIdServicesVariableServer_ServerCapabilitiesType_MaxLogObjectContinuationPoints:
+		return "ServerCapabilitiesType_MaxLogObjectContinuationPoints"
+	case OpcuaNodeIdServicesVariableServer_Server_ServerCapabilities_MaxLogObjectContinuationPoints:
+		return "Server_ServerCapabilities_MaxLogObjectContinuationPoints"
 	case OpcuaNodeIdServicesVariableServer_ServerType_ServerArray:
 		return "ServerType_ServerArray"
 	case OpcuaNodeIdServicesVariableServer_ServerType_NamespaceArray:

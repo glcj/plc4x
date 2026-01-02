@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -121,7 +122,7 @@ type _SessionlessInvokeRequestTypeBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (SessionlessInvokeRequestTypeBuilder) = (*_SessionlessInvokeRequestTypeBuilder)(nil)
@@ -161,8 +162,8 @@ func (b *_SessionlessInvokeRequestTypeBuilder) WithServiceId(serviceId uint32) S
 }
 
 func (b *_SessionlessInvokeRequestTypeBuilder) Build() (SessionlessInvokeRequestType, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._SessionlessInvokeRequestType.deepCopy(), nil
 }
@@ -188,8 +189,8 @@ func (b *_SessionlessInvokeRequestTypeBuilder) buildForExtensionObjectDefinition
 
 func (b *_SessionlessInvokeRequestTypeBuilder) DeepCopy() any {
 	_copy := b.CreateSessionlessInvokeRequestTypeBuilder().(*_SessionlessInvokeRequestTypeBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -283,9 +284,7 @@ func (m *_SessionlessInvokeRequestType) GetLengthInBits(ctx context.Context) uin
 	if len(m.NamespaceUris) > 0 {
 		for _curItem, element := range m.NamespaceUris {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.NamespaceUris), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -296,9 +295,7 @@ func (m *_SessionlessInvokeRequestType) GetLengthInBits(ctx context.Context) uin
 	if len(m.ServerUris) > 0 {
 		for _curItem, element := range m.ServerUris {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.ServerUris), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -309,9 +306,7 @@ func (m *_SessionlessInvokeRequestType) GetLengthInBits(ctx context.Context) uin
 	if len(m.LocaleIds) > 0 {
 		for _curItem, element := range m.LocaleIds {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.LocaleIds), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

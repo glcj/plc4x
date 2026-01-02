@@ -246,6 +246,7 @@ public enum OpcuaStatusCode {
   BadRequestNotAllowed((long) 0x80E40000L),
   BadRequestNotComplete((long) 0x81130000L),
   BadTransactionPending((long) 0x80E80000L),
+  BadTransactionFailed((long) 0x80F10000L),
   BadTicketRequired((long) 0x811F0000L),
   BadTicketInvalid((long) 0x81200000L),
   BadLocked((long) 0x80E90000L),

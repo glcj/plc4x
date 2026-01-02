@@ -190,7 +190,6 @@
     [typeSwitch extensionId
         ['0' NullExtension
         ]
-
         
         ['12758' Union
             
@@ -279,10 +278,121 @@
             [implicit int 32 noOfIssuerCrls 'issuerCrls == null ? -1 : COUNT(issuerCrls)']
             [array PascalByteString issuerCrls count 'noOfIssuerCrls']
         ]
+        ['15436' BaseConfigurationDataType
+            [simple uint 32 configurationVersion]
+            [implicit int 32 noOfConfigurationProperties 'configurationProperties == null ? -1 : COUNT(configurationProperties)']
+            [array KeyValuePair('14535') configurationProperties count 'noOfConfigurationProperties']
+        ]
+        ['15437' BaseConfigurationRecordDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+        ]
+        ['15438' CertificateGroupDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+            [simple NodeId purpose]
+            [implicit int 32 noOfCertificateTypes 'certificateTypes == null ? -1 : COUNT(certificateTypes)']
+            [array NodeId certificateTypes count 'noOfCertificateTypes']
+            [implicit int 32 noOfIsCertificateAssigned 'isCertificateAssigned == null ? -1 : COUNT(isCertificateAssigned)']
+            [reserved uint 7 '0x00']
+            [array bit isCertificateAssigned count 'noOfIsCertificateAssigned']
+            [simple TrustListValidationOptions validationOptions]
+        ]
+        ['15540' ConfigurationUpdateTargetType
+            [simple PascalString path]
+            [simple ConfigurationUpdateType updateType]
+        ]
         ['32287' TransactionErrorType
             [simple NodeId targetId]
             [simple StatusCode error]
             [simple LocalizedText message]
+        ]
+        ['15551' ApplicationConfigurationDataType
+            [simple uint 32 configurationVersion]
+            [implicit int 32 noOfConfigurationProperties 'configurationProperties == null ? -1 : COUNT(configurationProperties)']
+            [array KeyValuePair('14535') configurationProperties count 'noOfConfigurationProperties']
+            [simple ApplicationIdentityDataType('15558') applicationIdentity]
+            [implicit int 32 noOfCertificateGroups 'certificateGroups == null ? -1 : COUNT(certificateGroups)']
+            [array CertificateGroupDataType('15438') certificateGroups count 'noOfCertificateGroups']
+            [implicit int 32 noOfServerEndpoints 'serverEndpoints == null ? -1 : COUNT(serverEndpoints)']
+            [array ServerEndpointDataType('15560') serverEndpoints count 'noOfServerEndpoints']
+            [implicit int 32 noOfClientEndpoints 'clientEndpoints == null ? -1 : COUNT(clientEndpoints)']
+            [array EndpointDataType('15559') clientEndpoints count 'noOfClientEndpoints']
+            [implicit int 32 noOfSecuritySettings 'securitySettings == null ? -1 : COUNT(securitySettings)']
+            [array SecuritySettingsDataType('15561') securitySettings count 'noOfSecuritySettings']
+            [implicit int 32 noOfUserTokenSettings 'userTokenSettings == null ? -1 : COUNT(userTokenSettings)']
+            [array UserTokenSettingsDataType('15562') userTokenSettings count 'noOfUserTokenSettings']
+            [implicit int 32 noOfAuthorizationServices 'authorizationServices == null ? -1 : COUNT(authorizationServices)']
+            [array AuthorizationServiceConfigurationDataType('19447') authorizationServices count 'noOfAuthorizationServices']
+        ]
+        ['15558' ApplicationIdentityDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+            [simple PascalString applicationUri]
+            [implicit int 32 noOfApplicationNames 'applicationNames == null ? -1 : COUNT(applicationNames)']
+            [array LocalizedText applicationNames count 'noOfApplicationNames']
+            [implicit int 32 noOfAdditionalServers 'additionalServers == null ? -1 : COUNT(additionalServers)']
+            [array ApplicationDescription('310') additionalServers count 'noOfAdditionalServers']
+        ]
+        ['15559' EndpointDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+            [implicit int 32 noOfDiscoveryUrls 'discoveryUrls == null ? -1 : COUNT(discoveryUrls)']
+            [array PascalString discoveryUrls count 'noOfDiscoveryUrls']
+            [simple PascalString networkName]
+            [simple uint 16 port]
+        ]
+        ['15560' ServerEndpointDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+            [implicit int 32 noOfDiscoveryUrls 'discoveryUrls == null ? -1 : COUNT(discoveryUrls)']
+            [array PascalString discoveryUrls count 'noOfDiscoveryUrls']
+            [simple PascalString networkName]
+            [simple uint 16 port]
+            [implicit int 32 noOfEndpointUrls 'endpointUrls == null ? -1 : COUNT(endpointUrls)']
+            [array PascalString endpointUrls count 'noOfEndpointUrls']
+            [implicit int 32 noOfSecuritySettingNames 'securitySettingNames == null ? -1 : COUNT(securitySettingNames)']
+            [array PascalString securitySettingNames count 'noOfSecuritySettingNames']
+            [simple PascalString transportProfileUri]
+            [implicit int 32 noOfUserTokenSettingNames 'userTokenSettingNames == null ? -1 : COUNT(userTokenSettingNames)']
+            [array PascalString userTokenSettingNames count 'noOfUserTokenSettingNames']
+            [implicit int 32 noOfReverseConnectUrls 'reverseConnectUrls == null ? -1 : COUNT(reverseConnectUrls)']
+            [array PascalString reverseConnectUrls count 'noOfReverseConnectUrls']
+        ]
+        ['15561' SecuritySettingsDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+            [implicit int 32 noOfSecurityModes 'securityModes == null ? -1 : COUNT(securityModes)']
+            [array MessageSecurityMode securityModes count 'noOfSecurityModes']
+            [implicit int 32 noOfSecurityPolicyUris 'securityPolicyUris == null ? -1 : COUNT(securityPolicyUris)']
+            [array PascalString securityPolicyUris count 'noOfSecurityPolicyUris']
+            [simple PascalString certificateGroupName]
+        ]
+        ['15562' UserTokenSettingsDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+            [simple UserTokenType tokenType]
+            [simple PascalString issuedTokenType]
+            [simple PascalString issuerEndpointUrl]
+            [simple PascalString securityPolicyUri]
+            [simple PascalString certificateGroupName]
+            [simple PascalString authorizationServiceName]
+        ]
+        ['19447' AuthorizationServiceConfigurationDataType
+            [simple PascalString name]
+            [implicit int 32 noOfRecordProperties 'recordProperties == null ? -1 : COUNT(recordProperties)']
+            [array KeyValuePair('14535') recordProperties count 'noOfRecordProperties']
+            [simple PascalString serviceUri]
+            [implicit int 32 noOfServiceCertificate 'serviceCertificate == null ? -1 : COUNT(serviceCertificate)']
+            [array PascalByteString serviceCertificate count 'noOfServiceCertificate']
+            [simple PascalString issuerEndpointSettings]
         ]
         ['15536' DataTypeSchemaHeader
             [implicit int 32 noOfNamespaces 'namespaces == null ? -1 : COUNT(namespaces)']
@@ -961,6 +1071,35 @@
             [reserved uint 7 '0x00']
             [simple bit isForward]
             [simple ExpandedNodeId targetNode]
+        ]
+        ['19363' LogRecord
+            [simple int 64 eventTime]
+            [simple uint 16 severity]
+            [simple NodeId eventType]
+            [simple NodeId sourceNode]
+            [simple PascalString sourceName]
+            [simple LocalizedText message]
+            [simple TraceContextDataType('19749') traceContext]
+            [implicit int 32 noOfAdditionalData 'additionalData == null ? -1 : COUNT(additionalData)']
+            [array NameValuePair('19750') additionalData count 'noOfAdditionalData']
+        ]
+        ['19747' LogRecordsDataType
+            [implicit int 32 noOfLogRecordArray 'logRecordArray == null ? -1 : COUNT(logRecordArray)']
+            [array LogRecord('19363') logRecordArray count 'noOfLogRecordArray']
+        ]
+        ['19748' SpanContextDataType
+            [simple GuidValue traceId]
+            [simple uint 64 spanId]
+        ]
+        ['19749' TraceContextDataType
+            [simple GuidValue traceId]
+            [simple uint 64 spanId]
+            [simple uint 64 parentSpanId]
+            [simple PascalString parentIdentifier]
+        ]
+        ['19750' NameValuePair
+            [simple PascalString name]
+            [simple Variant value]
         ]
         ['98' RolePermissionType
             [simple NodeId roleId]
@@ -2595,12 +2734,12 @@
 
 // node type, with two leading reserved bytes
 [enum uint 6 NodeIdType
-    ['0' TwoByte         ]
-    ['1' FourByte        ]
-    ['2' Numeric         ]
-    ['3' String          ]
-    ['4' Guid            ]
-    ['5' ByteString      ]
+    ['0' TwoByte   ]
+    ['1' FourByte  ]
+    ['2' Numeric   ]
+    ['3' String    ]
+    ['4' Guid      ]
+    ['5' ByteString]
 ]
 
 [discriminatedType NodeIdTypeDefinition
@@ -2757,49 +2896,40 @@
 // EnumeratedTypes
 
 
-[enum uint 6 NodeIdType
-// The possible encodings for a NodeId value.
+[enum uint 6 NodeIdType// The possible encodings for a NodeId value.
     ['0' nodeIdTypeTwoByte]
     ['1' nodeIdTypeFourByte]
     ['2' nodeIdTypeNumeric]
     ['3' nodeIdTypeString]
     ['4' nodeIdTypeGuid]
     ['5' nodeIdTypeByteString]
-    
-]
+    ]
             
 
 [enum uint 32 NamingRuleType
-
     ['1' namingRuleTypeMandatory]
     ['2' namingRuleTypeOptional]
     ['3' namingRuleTypeConstraint]
-    
-]
+    ]
             
 
 [enum uint 32 RedundantServerMode
-
     ['0' redundantServerModePrimaryWithBackup]
     ['1' redundantServerModePrimaryOnly]
     ['2' redundantServerModeBackupReady]
     ['3' redundantServerModeBackupNotReady]
-    
-]
+    ]
             
 
 [enum uint 32 OpenFileMode
-
     ['1' openFileModeRead]
     ['2' openFileModeWrite]
     ['4' openFileModeEraseExisting]
     ['8' openFileModeAppend]
-    
-]
+    ]
             
 
 [enum uint 32 IdentityCriteriaType
-
     ['1' identityCriteriaTypeUserName]
     ['2' identityCriteriaTypeThumbprint]
     ['3' identityCriteriaTypeRole]
@@ -2809,31 +2939,25 @@
     ['7' identityCriteriaTypeApplication]
     ['8' identityCriteriaTypeX509Subject]
     ['9' identityCriteriaTypeTrustedApplication]
-    
-]
+    ]
             
 
 [enum uint 32 ConversionLimitEnum
-
     ['0' conversionLimitEnumNoConversion]
     ['1' conversionLimitEnumLimited]
     ['2' conversionLimitEnumUnlimited]
-    
-]
+    ]
             
 
 [enum uint 16 AlarmMask
-
     ['0' alarmMaskNone]
     ['1' alarmMaskActive]
     ['2' alarmMaskUnacknowledged]
     ['4' alarmMaskUnconfirmed]
-    
-]
+    ]
             
 
 [enum uint 32 TrustListValidationOptions
-
     ['0' trustListValidationOptionsNone]
     ['1' trustListValidationOptionsSuppressCertificateExpired]
     ['2' trustListValidationOptionsSuppressHostNameInvalid]
@@ -2842,52 +2966,50 @@
     ['16' trustListValidationOptionsSuppressIssuerRevocationStatusUnknown]
     ['32' trustListValidationOptionsCheckRevocationStatusOnline]
     ['64' trustListValidationOptionsCheckRevocationStatusOffline]
-    
-]
+    ]
             
 
 [enum uint 32 TrustListMasks
-
     ['0' trustListMasksNone]
     ['1' trustListMasksTrustedCertificates]
     ['2' trustListMasksTrustedCrls]
     ['4' trustListMasksIssuerCertificates]
     ['8' trustListMasksIssuerCrls]
     ['15' trustListMasksAll]
-    
-]
+    ]
+            
+
+[enum uint 32 ConfigurationUpdateType
+    ['1' configurationUpdateTypeInsert]
+    ['2' configurationUpdateTypeReplace]
+    ['3' configurationUpdateTypeInsertOrReplace]
+    ['4' configurationUpdateTypeDelete]
+    ]
             
 
 [enum uint 32 PubSubState
-
     ['0' pubSubStateDisabled]
     ['1' pubSubStatePaused]
     ['2' pubSubStateOperational]
     ['3' pubSubStateError]
     ['4' pubSubStatePreOperational]
-    
-]
+    ]
             
 
 [enum uint 16 DataSetFieldFlags
-
     ['0' dataSetFieldFlagsNone]
     ['1' dataSetFieldFlagsPromotedField]
-    
-]
+    ]
             
 
 [enum uint 32 ActionState
-
     ['0' actionStateIdle]
     ['1' actionStateExecuting]
     ['2' actionStateDone]
-    
-]
+    ]
             
 
 [enum uint 32 DataSetFieldContentMask
-
     ['0' dataSetFieldContentMaskNone]
     ['1' dataSetFieldContentMaskStatusCode]
     ['2' dataSetFieldContentMaskSourceTimestamp]
@@ -2895,30 +3017,24 @@
     ['8' dataSetFieldContentMaskSourcePicoSeconds]
     ['16' dataSetFieldContentMaskServerPicoSeconds]
     ['32' dataSetFieldContentMaskRawData]
-    
-]
+    ]
             
 
 [enum uint 32 OverrideValueHandling
-
     ['0' overrideValueHandlingDisabled]
     ['1' overrideValueHandlingLastUsableValue]
     ['2' overrideValueHandlingOverrideValue]
-    
-]
+    ]
             
 
 [enum uint 32 DataSetOrderingType
-
     ['0' dataSetOrderingTypeUndefined]
     ['1' dataSetOrderingTypeAscendingWriterId]
     ['2' dataSetOrderingTypeAscendingWriterIdSingle]
-    
-]
+    ]
             
 
 [enum uint 32 UadpNetworkMessageContentMask
-
     ['0' uadpNetworkMessageContentMaskNone]
     ['1' uadpNetworkMessageContentMaskPublisherId]
     ['2' uadpNetworkMessageContentMaskGroupHeader]
@@ -2931,12 +3047,10 @@
     ['256' uadpNetworkMessageContentMaskPicoSeconds]
     ['512' uadpNetworkMessageContentMaskDataSetClassId]
     ['1024' uadpNetworkMessageContentMaskPromotedFields]
-    
-]
+    ]
             
 
 [enum uint 32 UadpDataSetMessageContentMask
-
     ['0' uadpDataSetMessageContentMaskNone]
     ['1' uadpDataSetMessageContentMaskTimestamp]
     ['2' uadpDataSetMessageContentMaskPicoSeconds]
@@ -2944,12 +3058,10 @@
     ['8' uadpDataSetMessageContentMaskMajorVersion]
     ['16' uadpDataSetMessageContentMaskMinorVersion]
     ['32' uadpDataSetMessageContentMaskSequenceNumber]
-    
-]
+    ]
             
 
 [enum uint 32 JsonNetworkMessageContentMask
-
     ['0' jsonNetworkMessageContentMaskNone]
     ['1' jsonNetworkMessageContentMaskNetworkMessageHeader]
     ['2' jsonNetworkMessageContentMaskDataSetMessageHeader]
@@ -2958,12 +3070,10 @@
     ['16' jsonNetworkMessageContentMaskDataSetClassId]
     ['32' jsonNetworkMessageContentMaskReplyTo]
     ['64' jsonNetworkMessageContentMaskWriterGroupName]
-    
-]
+    ]
             
 
 [enum uint 32 JsonDataSetMessageContentMask
-
     ['0' jsonDataSetMessageContentMaskNone]
     ['1' jsonDataSetMessageContentMaskDataSetWriterId]
     ['2' jsonDataSetMessageContentMaskMetaDataVersion]
@@ -2977,23 +3087,19 @@
     ['512' jsonDataSetMessageContentMaskWriterGroupName]
     ['1024' jsonDataSetMessageContentMaskMinorVersion]
     ['2048' jsonDataSetMessageContentMaskFieldEncoding2]
-    
-]
+    ]
             
 
 [enum uint 32 BrokerTransportQualityOfService
-
     ['0' brokerTransportQualityOfServiceNotSpecified]
     ['1' brokerTransportQualityOfServiceBestEffort]
     ['2' brokerTransportQualityOfServiceAtLeastOnce]
     ['3' brokerTransportQualityOfServiceAtMostOnce]
     ['4' brokerTransportQualityOfServiceExactlyOnce]
-    
-]
+    ]
             
 
 [enum uint 32 PubSubConfigurationRefMask
-
     ['0' pubSubConfigurationRefMaskNone]
     ['1' pubSubConfigurationRefMaskElementAdd]
     ['2' pubSubConfigurationRefMaskElementMatch]
@@ -3008,31 +3114,25 @@
     ['1024' pubSubConfigurationRefMaskReferenceSubDataset]
     ['2048' pubSubConfigurationRefMaskReferenceSecurityGroup]
     ['4096' pubSubConfigurationRefMaskReferencePushTarget]
-    
-]
+    ]
             
 
 [enum uint 32 DiagnosticsLevel
-
     ['0' diagnosticsLevelBasic]
     ['1' diagnosticsLevelAdvanced]
     ['2' diagnosticsLevelInfo]
     ['3' diagnosticsLevelLog]
     ['4' diagnosticsLevelDebug]
-    
-]
+    ]
             
 
 [enum uint 32 PubSubDiagnosticsCounterClassification
-
     ['0' pubSubDiagnosticsCounterClassificationInformation]
     ['1' pubSubDiagnosticsCounterClassificationError]
-    
-]
+    ]
             
 
 [enum uint 32 PasswordOptionsMask
-
     ['0' passwordOptionsMaskNone]
     ['1' passwordOptionsMaskSupportInitialPasswordChange]
     ['2' passwordOptionsMaskSupportDisableUser]
@@ -3043,41 +3143,33 @@
     ['64' passwordOptionsMaskRequiresLowerCaseCharacters]
     ['128' passwordOptionsMaskRequiresDigitCharacters]
     ['256' passwordOptionsMaskRequiresSpecialCharacters]
-    
-]
+    ]
             
 
 [enum uint 32 UserConfigurationMask
-
     ['0' userConfigurationMaskNone]
     ['1' userConfigurationMaskNoDelete]
     ['2' userConfigurationMaskDisabled]
     ['4' userConfigurationMaskNoChangeByUser]
     ['8' userConfigurationMaskMustChangePassword]
-    
-]
+    ]
             
 
 [enum uint 32 Duplex
-
     ['0' duplexFull]
     ['1' duplexHalf]
     ['2' duplexUnknown]
-    
-]
+    ]
             
 
 [enum uint 32 InterfaceAdminStatus
-
     ['0' interfaceAdminStatusUp]
     ['1' interfaceAdminStatusDown]
     ['2' interfaceAdminStatusTesting]
-    
-]
+    ]
             
 
 [enum uint 32 InterfaceOperStatus
-
     ['0' interfaceOperStatusUp]
     ['1' interfaceOperStatusDown]
     ['2' interfaceOperStatusTesting]
@@ -3085,23 +3177,19 @@
     ['4' interfaceOperStatusDormant]
     ['5' interfaceOperStatusNotPresent]
     ['6' interfaceOperStatusLowerLayerDown]
-    
-]
+    ]
             
 
 [enum uint 32 NegotiationStatus
-
     ['0' negotiationStatusInProgress]
     ['1' negotiationStatusComplete]
     ['2' negotiationStatusFailed]
     ['3' negotiationStatusUnknown]
     ['4' negotiationStatusNoNegotiation]
-    
-]
+    ]
             
 
 [enum uint 32 TsnFailureCode
-
     ['0' tsnFailureCodeNoFailure]
     ['1' tsnFailureCodeInsufficientBandwidth]
     ['2' tsnFailureCodeInsufficientResources]
@@ -3128,42 +3216,34 @@
     ['23' tsnFailureCodeStreamTransformNotSupported]
     ['24' tsnFailureCodeStreamIdTypeNotSupported]
     ['25' tsnFailureCodeFeatureNotSupported]
-    
-]
+    ]
             
 
 [enum uint 32 TsnStreamState
-
     ['0' tsnStreamStateDisabled]
     ['1' tsnStreamStateConfiguring]
     ['2' tsnStreamStateReady]
     ['3' tsnStreamStateOperational]
     ['4' tsnStreamStateError]
-    
-]
+    ]
             
 
 [enum uint 32 TsnTalkerStatus
-
     ['0' tsnTalkerStatusNone]
     ['1' tsnTalkerStatusReady]
     ['2' tsnTalkerStatusFailed]
-    
-]
+    ]
             
 
 [enum uint 32 TsnListenerStatus
-
     ['0' tsnListenerStatusNone]
     ['1' tsnListenerStatusReady]
     ['2' tsnListenerStatusPartialFailed]
     ['3' tsnListenerStatusFailed]
-    
-]
+    ]
             
 
 [enum uint 32 ChassisIdSubtype
-
     ['1' chassisIdSubtypeChassisComponent]
     ['2' chassisIdSubtypeInterfaceAlias]
     ['3' chassisIdSubtypePortComponent]
@@ -3171,12 +3251,10 @@
     ['5' chassisIdSubtypeNetworkAddress]
     ['6' chassisIdSubtypeInterfaceName]
     ['7' chassisIdSubtypeLocal]
-    
-]
+    ]
             
 
 [enum uint 32 PortIdSubtype
-
     ['1' portIdSubtypeInterfaceAlias]
     ['2' portIdSubtypePortComponent]
     ['3' portIdSubtypeMacAddress]
@@ -3184,22 +3262,18 @@
     ['5' portIdSubtypeInterfaceName]
     ['6' portIdSubtypeAgentCircuitId]
     ['7' portIdSubtypeLocal]
-    
-]
+    ]
             
 
 [enum uint 32 ManAddrIfSubtype
-
     ['0' manAddrIfSubtypeNone]
     ['1' manAddrIfSubtypeUnknown]
     ['2' manAddrIfSubtypePortRef]
     ['3' manAddrIfSubtypeSystemPortNumber]
-    
-]
+    ]
             
 
 [enum uint 32 LldpSystemCapabilitiesMap
-
     ['0' lldpSystemCapabilitiesMapNone]
     ['1' lldpSystemCapabilitiesMapOther]
     ['2' lldpSystemCapabilitiesMapRepeater]
@@ -3212,22 +3286,28 @@
     ['256' lldpSystemCapabilitiesMapCvlanComponent]
     ['512' lldpSystemCapabilitiesMapSvlanComponent]
     ['1024' lldpSystemCapabilitiesMapTwoPortMacRelay]
-    
-]
+    ]
+            
+
+[enum uint 32 LogRecordMask
+    ['0' logRecordMaskNone]
+    ['1' logRecordMaskEventType]
+    ['2' logRecordMaskSourceNode]
+    ['4' logRecordMaskSourceName]
+    ['8' logRecordMaskTraceContext]
+    ['16' logRecordMaskAdditionalData]
+    ]
             
 
 [enum uint 32 IdType
-
     ['0' idTypeNumeric]
     ['1' idTypeString]
     ['2' idTypeGuid]
     ['3' idTypeOpaque]
-    
-]
+    ]
             
 
 [enum uint 32 NodeClass
-
     ['0' nodeClassUnspecified]
     ['1' nodeClassObject]
     ['2' nodeClassVariable]
@@ -3237,12 +3317,10 @@
     ['32' nodeClassReferenceType]
     ['64' nodeClassDataType]
     ['128' nodeClassView]
-    
-]
+    ]
             
 
 [enum uint 32 PermissionType
-
     ['0' permissionTypeNone]
     ['1' permissionTypeBrowse]
     ['2' permissionTypeReadRolePermissions]
@@ -3261,12 +3339,10 @@
     ['16384' permissionTypeRemoveReference]
     ['32768' permissionTypeDeleteNode]
     ['65536' permissionTypeAddNode]
-    
-]
+    ]
             
 
 [enum uint 8 AccessLevelType
-
     ['0' accessLevelTypeNone]
     ['1' accessLevelTypeCurrentRead]
     ['2' accessLevelTypeCurrentWrite]
@@ -3275,12 +3351,10 @@
     ['16' accessLevelTypeSemanticChange]
     ['32' accessLevelTypeStatusWrite]
     ['64' accessLevelTypeTimestampWrite]
-    
-]
+    ]
             
 
 [enum uint 32 AccessLevelExType
-
     ['0' accessLevelExTypeNone]
     ['1' accessLevelExTypeCurrentRead]
     ['2' accessLevelExTypeCurrentWrite]
@@ -3295,82 +3369,66 @@
     ['2048' accessLevelExTypeNoSubDataTypes]
     ['4096' accessLevelExTypeNonVolatile]
     ['8192' accessLevelExTypeConstant]
-    
-]
+    ]
             
 
 [enum uint 8 EventNotifierType
-
     ['0' eventNotifierTypeNone]
     ['1' eventNotifierTypeSubscribeToEvents]
     ['4' eventNotifierTypeHistoryRead]
     ['8' eventNotifierTypeHistoryWrite]
-    
-]
+    ]
             
 
 [enum uint 16 AccessRestrictionType
-
     ['0' accessRestrictionTypeNone]
     ['1' accessRestrictionTypeSigningRequired]
     ['2' accessRestrictionTypeEncryptionRequired]
     ['4' accessRestrictionTypeSessionRequired]
     ['8' accessRestrictionTypeApplyRestrictionsToBrowse]
-    
-]
+    ]
             
 
 [enum uint 32 StructureType
-
     ['0' structureTypeStructure]
     ['1' structureTypeStructureWithOptionalFields]
     ['2' structureTypeUnion]
     ['3' structureTypeStructureWithSubtypedValues]
     ['4' structureTypeUnionWithSubtypedValues]
-    
-]
+    ]
             
 
 [enum uint 32 ApplicationType
-
     ['0' applicationTypeServer]
     ['1' applicationTypeClient]
     ['2' applicationTypeClientAndServer]
     ['3' applicationTypeDiscoveryServer]
-    
-]
+    ]
             
 
 [enum uint 32 MessageSecurityMode
-
     ['0' messageSecurityModeInvalid]
     ['1' messageSecurityModeNone]
     ['2' messageSecurityModeSign]
     ['3' messageSecurityModeSignAndEncrypt]
-    
-]
+    ]
             
 
 [enum uint 32 UserTokenType
-
     ['0' userTokenTypeAnonymous]
     ['1' userTokenTypeUserName]
     ['2' userTokenTypeCertificate]
     ['3' userTokenTypeIssuedToken]
-    
-]
+    ]
             
 
 [enum uint 32 SecurityTokenRequestType
-
     ['0' securityTokenRequestTypeIssue]
     ['1' securityTokenRequestTypeRenew]
-    
-]
+    ]
             
 
 [enum uint 32 NodeAttributesMask
-
     ['0' nodeAttributesMaskNone]
     ['1' nodeAttributesMaskAccessLevel]
     ['2' nodeAttributesMaskArrayDimensions]
@@ -3406,12 +3464,10 @@
     ['26632548' nodeAttributesMaskMethod]
     ['26537060' nodeAttributesMaskReferenceType]
     ['26501356' nodeAttributesMaskView]
-    
-]
+    ]
             
 
 [enum uint 32 AttributeWriteMask
-
     ['0' attributeWriteMaskNone]
     ['1' attributeWriteMaskAccessLevel]
     ['2' attributeWriteMaskArrayDimensions]
@@ -3439,22 +3495,18 @@
     ['8388608' attributeWriteMaskRolePermissions]
     ['16777216' attributeWriteMaskAccessRestrictions]
     ['33554432' attributeWriteMaskAccessLevelEx]
-    
-]
+    ]
             
 
 [enum uint 32 BrowseDirection
-
     ['0' browseDirectionForward]
     ['1' browseDirectionInverse]
     ['2' browseDirectionBoth]
     ['3' browseDirectionInvalid]
-    
-]
+    ]
             
 
 [enum uint 32 BrowseResultMask
-
     ['0' browseResultMaskNone]
     ['1' browseResultMaskReferenceTypeId]
     ['2' browseResultMaskIsForward]
@@ -3465,12 +3517,10 @@
     ['63' browseResultMaskAll]
     ['3' browseResultMaskReferenceTypeInfo]
     ['60' browseResultMaskTargetInfo]
-    
-]
+    ]
             
 
 [enum uint 32 FilterOperator
-
     ['0' filterOperatorEquals]
     ['1' filterOperatorIsNull]
     ['2' filterOperatorGreaterThan]
@@ -3489,90 +3539,72 @@
     ['15' filterOperatorRelatedTo]
     ['16' filterOperatorBitwiseAnd]
     ['17' filterOperatorBitwiseOr]
-    
-]
+    ]
             
 
 [enum uint 32 TimestampsToReturn
-
     ['0' timestampsToReturnSource]
     ['1' timestampsToReturnServer]
     ['2' timestampsToReturnBoth]
     ['3' timestampsToReturnNeither]
     ['4' timestampsToReturnInvalid]
-    
-]
+    ]
             
 
 [enum uint 32 SortOrderType
-
     ['0' sortOrderTypeAscending]
     ['1' sortOrderTypeDescending]
-    
-]
+    ]
             
 
 [enum uint 32 HistoryUpdateType
-
     ['1' historyUpdateTypeInsert]
     ['2' historyUpdateTypeReplace]
     ['3' historyUpdateTypeUpdate]
     ['4' historyUpdateTypeDelete]
-    
-]
+    ]
             
 
 [enum uint 32 PerformUpdateType
-
     ['1' performUpdateTypeInsert]
     ['2' performUpdateTypeReplace]
     ['3' performUpdateTypeUpdate]
     ['4' performUpdateTypeRemove]
-    
-]
+    ]
             
 
 [enum uint 32 MonitoringMode
-
     ['0' monitoringModeDisabled]
     ['1' monitoringModeSampling]
     ['2' monitoringModeReporting]
-    
-]
+    ]
             
 
 [enum uint 32 DataChangeTrigger
-
     ['0' dataChangeTriggerStatus]
     ['1' dataChangeTriggerStatusValue]
     ['2' dataChangeTriggerStatusValueTimestamp]
-    
-]
+    ]
             
 
 [enum uint 32 DeadbandType
-
     ['0' deadbandTypeNone]
     ['1' deadbandTypeAbsolute]
     ['2' deadbandTypePercent]
-    
-]
+    ]
             
 
 [enum uint 32 RedundancySupport
-
     ['0' redundancySupportNone]
     ['1' redundancySupportCold]
     ['2' redundancySupportWarm]
     ['3' redundancySupportHot]
     ['4' redundancySupportTransparent]
     ['5' redundancySupportHotAndMirrored]
-    
-]
+    ]
             
 
 [enum uint 32 ServerState
-
     ['0' serverStateRunning]
     ['1' serverStateFailed]
     ['2' serverStateNoConfiguration]
@@ -3581,39 +3613,32 @@
     ['5' serverStateTest]
     ['6' serverStateCommunicationFault]
     ['7' serverStateUnknown]
-    
-]
+    ]
             
 
 [enum uint 32 ModelChangeStructureVerbMask
-
     ['1' modelChangeStructureVerbMaskNodeAdded]
     ['2' modelChangeStructureVerbMaskNodeDeleted]
     ['4' modelChangeStructureVerbMaskReferenceAdded]
     ['8' modelChangeStructureVerbMaskReferenceDeleted]
     ['16' modelChangeStructureVerbMaskDataTypeChanged]
-    
-]
+    ]
             
 
 [enum uint 32 AxisScaleEnumeration
-
     ['0' axisScaleEnumerationLinear]
     ['1' axisScaleEnumerationLog]
     ['2' axisScaleEnumerationLn]
-    
-]
+    ]
             
 
 [enum uint 32 ExceptionDeviationFormat
-
     ['0' exceptionDeviationFormatAbsoluteValue]
     ['1' exceptionDeviationFormatPercentOfValue]
     ['2' exceptionDeviationFormatPercentOfRange]
     ['3' exceptionDeviationFormatPercentOfEURange]
     ['4' exceptionDeviationFormatUnknown]
-    
-]
+    ]
             
 
 // OpaqueType

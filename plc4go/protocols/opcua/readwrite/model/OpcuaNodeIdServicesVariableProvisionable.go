@@ -41,9 +41,48 @@ type IOpcuaNodeIdServicesVariableProvisionable interface {
 }
 
 const (
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size                                                                                            OpcuaNodeIdServicesVariableProvisionable = 16325
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable                                                                                        OpcuaNodeIdServicesVariableProvisionable = 16326
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable                                                                                    OpcuaNodeIdServicesVariableProvisionable = 16327
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount                                                                                       OpcuaNodeIdServicesVariableProvisionable = 16328
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType                                                                                        OpcuaNodeIdServicesVariableProvisionable = 16329
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength                                                                             OpcuaNodeIdServicesVariableProvisionable = 16330
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime                                                                                OpcuaNodeIdServicesVariableProvisionable = 16331
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments                                                                             OpcuaNodeIdServicesVariableProvisionable = 16333
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments                                                                            OpcuaNodeIdServicesVariableProvisionable = 16334
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments                                                                            OpcuaNodeIdServicesVariableProvisionable = 16336
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments                                                                             OpcuaNodeIdServicesVariableProvisionable = 16338
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments                                                                            OpcuaNodeIdServicesVariableProvisionable = 16339
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments                                                                            OpcuaNodeIdServicesVariableProvisionable = 16341
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments                                                                      OpcuaNodeIdServicesVariableProvisionable = 16343
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments                                                                     OpcuaNodeIdServicesVariableProvisionable = 16344
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments                                                                      OpcuaNodeIdServicesVariableProvisionable = 16346
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime                                                                                  OpcuaNodeIdServicesVariableProvisionable = 16347
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion                                                                                  OpcuaNodeIdServicesVariableProvisionable = 16365
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout                                                                                 OpcuaNodeIdServicesVariableProvisionable = 16366
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType                                                                               OpcuaNodeIdServicesVariableProvisionable = 16367
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments                                                                   OpcuaNodeIdServicesVariableProvisionable = 16369
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments                                                                  OpcuaNodeIdServicesVariableProvisionable = 16370
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments                                                                    OpcuaNodeIdServicesVariableProvisionable = 16536
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks                                                                               OpcuaNodeIdServicesVariableProvisionable = 16657
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts                                                                                  OpcuaNodeIdServicesVariableProvisionable = 16658
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris                                                                              OpcuaNodeIdServicesVariableProvisionable = 16659
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes                                                                                  OpcuaNodeIdServicesVariableProvisionable = 16660
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes                                                                                OpcuaNodeIdServicesVariableProvisionable = 16661
 	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames                                                                                                  OpcuaNodeIdServicesVariableProvisionable = 18664
 	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions                                                                                              OpcuaNodeIdServicesVariableProvisionable = 18775
 	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup                                                                                                OpcuaNodeIdServicesVariableProvisionable = 19310
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments                                                                        OpcuaNodeIdServicesVariableProvisionable = 19348
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments                                                                       OpcuaNodeIdServicesVariableProvisionable = 19349
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments                                                                                  OpcuaNodeIdServicesVariableProvisionable = 19351
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose                                                                 OpcuaNodeIdServicesVariableProvisionable = 19733
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose                                                                       OpcuaNodeIdServicesVariableProvisionable = 19734
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose                                                                   OpcuaNodeIdServicesVariableProvisionable = 19735
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints                                                                                    OpcuaNodeIdServicesVariableProvisionable = 19736
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups                                                                            OpcuaNodeIdServicesVariableProvisionable = 19737
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes                                                                        OpcuaNodeIdServicesVariableProvisionable = 19738
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments                                                                    OpcuaNodeIdServicesVariableProvisionable = 19741
+	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments                                                                   OpcuaNodeIdServicesVariableProvisionable = 19742
 	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_IsSingleton                                                                                                                                   OpcuaNodeIdServicesVariableProvisionable = 26872
 	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_RequestTickets_OutputArguments                                                                                                                OpcuaNodeIdServicesVariableProvisionable = 26874
 	OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_SetRegistrarEndpoints_InputArguments                                                                                                          OpcuaNodeIdServicesVariableProvisionable = 26876
@@ -1000,9 +1039,48 @@ var OpcuaNodeIdServicesVariableProvisionableValues []OpcuaNodeIdServicesVariable
 func init() {
 	_ = errors.New
 	OpcuaNodeIdServicesVariableProvisionableValues = []OpcuaNodeIdServicesVariableProvisionable{
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes,
 		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames,
 		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions,
 		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments,
+		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments,
 		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_IsSingleton,
 		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_RequestTickets_OutputArguments,
 		OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_SetRegistrarEndpoints_InputArguments,
@@ -1957,12 +2035,90 @@ func init() {
 
 func OpcuaNodeIdServicesVariableProvisionableByValue(value int32) (enum OpcuaNodeIdServicesVariableProvisionable, ok bool) {
 	switch value {
+	case 16325:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size, true
+	case 16326:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable, true
+	case 16327:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable, true
+	case 16328:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount, true
+	case 16329:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType, true
+	case 16330:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength, true
+	case 16331:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime, true
+	case 16333:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments, true
+	case 16334:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments, true
+	case 16336:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments, true
+	case 16338:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments, true
+	case 16339:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments, true
+	case 16341:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments, true
+	case 16343:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments, true
+	case 16344:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments, true
+	case 16346:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments, true
+	case 16347:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime, true
+	case 16365:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion, true
+	case 16366:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout, true
+	case 16367:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType, true
+	case 16369:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case 16370:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case 16536:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case 16657:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks, true
+	case 16658:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts, true
+	case 16659:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris, true
+	case 16660:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes, true
+	case 16661:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes, true
 	case 18664:
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames, true
 	case 18775:
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions, true
 	case 19310:
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup, true
+	case 19348:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments, true
+	case 19349:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments, true
+	case 19351:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments, true
+	case 19733:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case 19734:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case 19735:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case 19736:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints, true
+	case 19737:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups, true
+	case 19738:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes, true
+	case 19741:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments, true
+	case 19742:
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments, true
 	case 26872:
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_IsSingleton, true
 	case 26874:
@@ -3867,12 +4023,90 @@ func OpcuaNodeIdServicesVariableProvisionableByValue(value int32) (enum OpcuaNod
 
 func OpcuaNodeIdServicesVariableProvisionableByName(value string) (enum OpcuaNodeIdServicesVariableProvisionable, ok bool) {
 	switch value {
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes, true
 	case "ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames":
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames, true
 	case "ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions":
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions, true
 	case "ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup":
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments":
+		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments, true
 	case "ProvisionableDeviceType_IsSingleton":
 		return OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_IsSingleton, true
 	case "ProvisionableDeviceType_RequestTickets_OutputArguments":
@@ -5842,12 +6076,90 @@ func (e OpcuaNodeIdServicesVariableProvisionable) GetValue() int32 {
 // PLC4XEnumName returns the name that is used in code to identify this enum
 func (e OpcuaNodeIdServicesVariableProvisionable) PLC4XEnumName() string {
 	switch e {
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes"
 	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames:
 		return "ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames"
 	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions:
 		return "ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions"
 	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup:
 		return "ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments"
+	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments"
 	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_IsSingleton:
 		return "ProvisionableDeviceType_IsSingleton"
 	case OpcuaNodeIdServicesVariableProvisionable_ProvisionableDeviceType_RequestTickets_OutputArguments:

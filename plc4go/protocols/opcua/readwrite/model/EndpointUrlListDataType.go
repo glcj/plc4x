@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -97,7 +98,7 @@ type _EndpointUrlListDataTypeBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (EndpointUrlListDataTypeBuilder) = (*_EndpointUrlListDataTypeBuilder)(nil)
@@ -117,8 +118,8 @@ func (b *_EndpointUrlListDataTypeBuilder) WithEndpointUrlList(endpointUrlList ..
 }
 
 func (b *_EndpointUrlListDataTypeBuilder) Build() (EndpointUrlListDataType, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._EndpointUrlListDataType.deepCopy(), nil
 }
@@ -144,8 +145,8 @@ func (b *_EndpointUrlListDataTypeBuilder) buildForExtensionObjectDefinition() (E
 
 func (b *_EndpointUrlListDataTypeBuilder) DeepCopy() any {
 	_copy := b.CreateEndpointUrlListDataTypeBuilder().(*_EndpointUrlListDataTypeBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -220,9 +221,7 @@ func (m *_EndpointUrlListDataType) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.EndpointUrlList) > 0 {
 		for _curItem, element := range m.EndpointUrlList {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.EndpointUrlList), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

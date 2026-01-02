@@ -42,6 +42,7 @@ type IOpcuaNodeIdServicesVariableDelete interface {
 
 const (
 	OpcuaNodeIdServicesVariableDelete_DeleteFileMethodType_InputArguments                 OpcuaNodeIdServicesVariableDelete = 13349
+	OpcuaNodeIdServicesVariableDelete_DeleteCertificateMethodType_InputArguments          OpcuaNodeIdServicesVariableDelete = 19331
 	OpcuaNodeIdServicesVariableDelete_DeletePriorityMappingEntryMethodType_InputArguments OpcuaNodeIdServicesVariableDelete = 25236
 )
 
@@ -51,6 +52,7 @@ func init() {
 	_ = errors.New
 	OpcuaNodeIdServicesVariableDeleteValues = []OpcuaNodeIdServicesVariableDelete{
 		OpcuaNodeIdServicesVariableDelete_DeleteFileMethodType_InputArguments,
+		OpcuaNodeIdServicesVariableDelete_DeleteCertificateMethodType_InputArguments,
 		OpcuaNodeIdServicesVariableDelete_DeletePriorityMappingEntryMethodType_InputArguments,
 	}
 }
@@ -59,6 +61,8 @@ func OpcuaNodeIdServicesVariableDeleteByValue(value int32) (enum OpcuaNodeIdServ
 	switch value {
 	case 13349:
 		return OpcuaNodeIdServicesVariableDelete_DeleteFileMethodType_InputArguments, true
+	case 19331:
+		return OpcuaNodeIdServicesVariableDelete_DeleteCertificateMethodType_InputArguments, true
 	case 25236:
 		return OpcuaNodeIdServicesVariableDelete_DeletePriorityMappingEntryMethodType_InputArguments, true
 	}
@@ -69,6 +73,8 @@ func OpcuaNodeIdServicesVariableDeleteByName(value string) (enum OpcuaNodeIdServ
 	switch value {
 	case "DeleteFileMethodType_InputArguments":
 		return OpcuaNodeIdServicesVariableDelete_DeleteFileMethodType_InputArguments, true
+	case "DeleteCertificateMethodType_InputArguments":
+		return OpcuaNodeIdServicesVariableDelete_DeleteCertificateMethodType_InputArguments, true
 	case "DeletePriorityMappingEntryMethodType_InputArguments":
 		return OpcuaNodeIdServicesVariableDelete_DeletePriorityMappingEntryMethodType_InputArguments, true
 	}
@@ -144,6 +150,8 @@ func (e OpcuaNodeIdServicesVariableDelete) PLC4XEnumName() string {
 	switch e {
 	case OpcuaNodeIdServicesVariableDelete_DeleteFileMethodType_InputArguments:
 		return "DeleteFileMethodType_InputArguments"
+	case OpcuaNodeIdServicesVariableDelete_DeleteCertificateMethodType_InputArguments:
+		return "DeleteCertificateMethodType_InputArguments"
 	case OpcuaNodeIdServicesVariableDelete_DeletePriorityMappingEntryMethodType_InputArguments:
 		return "DeletePriorityMappingEntryMethodType_InputArguments"
 	}

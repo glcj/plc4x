@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -108,7 +109,7 @@ type _FindServersResponseBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (FindServersResponseBuilder) = (*_FindServersResponseBuilder)(nil)
@@ -132,10 +133,7 @@ func (b *_FindServersResponseBuilder) WithResponseHeaderBuilder(builderSupplier 
 	var err error
 	b.ResponseHeader, err = builder.Build()
 	if err != nil {
-		if b.err == nil {
-			b.err = &utils.MultiError{MainError: errors.New("sub builder failed")}
-		}
-		b.err.Append(errors.Wrap(err, "ResponseHeaderBuilder failed"))
+		b.collectedErr = append(b.collectedErr, errors.Wrap(err, "ResponseHeaderBuilder failed"))
 	}
 	return b
 }
@@ -147,13 +145,10 @@ func (b *_FindServersResponseBuilder) WithServers(servers ...ApplicationDescript
 
 func (b *_FindServersResponseBuilder) Build() (FindServersResponse, error) {
 	if b.ResponseHeader == nil {
-		if b.err == nil {
-			b.err = new(utils.MultiError)
-		}
-		b.err.Append(errors.New("mandatory field 'responseHeader' not set"))
+		b.collectedErr = append(b.collectedErr, errors.New("mandatory field 'responseHeader' not set"))
 	}
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._FindServersResponse.deepCopy(), nil
 }
@@ -179,8 +174,8 @@ func (b *_FindServersResponseBuilder) buildForExtensionObjectDefinition() (Exten
 
 func (b *_FindServersResponseBuilder) DeepCopy() any {
 	_copy := b.CreateFindServersResponseBuilder().(*_FindServersResponseBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -262,9 +257,7 @@ func (m *_FindServersResponse) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.Servers) > 0 {
 		for _curItem, element := range m.Servers {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.Servers), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

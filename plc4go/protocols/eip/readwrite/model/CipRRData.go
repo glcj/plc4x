@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -109,7 +110,7 @@ type _CipRRDataBuilder struct {
 
 	parentBuilder *_EipPacketBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (CipRRDataBuilder) = (*_CipRRDataBuilder)(nil)
@@ -139,8 +140,8 @@ func (b *_CipRRDataBuilder) WithTypeIds(typeIds ...TypeId) CipRRDataBuilder {
 }
 
 func (b *_CipRRDataBuilder) Build() (CipRRData, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._CipRRData.deepCopy(), nil
 }
@@ -166,8 +167,8 @@ func (b *_CipRRDataBuilder) buildForEipPacket() (EipPacket, error) {
 
 func (b *_CipRRDataBuilder) DeepCopy() any {
 	_copy := b.CreateCipRRDataBuilder().(*_CipRRDataBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -264,9 +265,7 @@ func (m *_CipRRData) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.TypeIds) > 0 {
 		for _curItem, element := range m.TypeIds {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.TypeIds), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

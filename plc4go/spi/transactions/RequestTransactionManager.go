@@ -26,6 +26,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"slices"
 	"sync"
 	"sync/atomic"
 	"syscall"
@@ -223,20 +224,18 @@ func (r *requestTransactionManager) endRequest(transaction *requestTransaction) 
 	r.runningRequestMutex.Lock()
 	transaction.log.Debug().Msg("Trying to find a existing transaction")
 	found := false
-	index := -1
-	for i, runningRequest := range r.runningRequests {
+	r.runningRequests = slices.DeleteFunc(r.runningRequests, func(runningRequest *requestTransaction) bool {
 		if runningRequest.transactionId == transaction.transactionId {
 			transaction.log.Debug().Msg("Found a existing transaction")
 			found = true
-			index = i
-			break
+			return true
 		}
-	}
+		return false
+	})
 	if !found {
 		return errors.New("Unknown Transaction or Transaction already finished!")
 	}
 	transaction.log.Debug().Msg("Removing the existing transaction transaction")
-	r.runningRequests = append(r.runningRequests[:index], r.runningRequests[index+1:]...)
 	r.runningRequestMutex.Unlock()
 	// Process the workLog, a slot should be free now
 	transaction.log.Debug().Msg("Processing the workLog")

@@ -25,6 +25,11 @@ import java.util.Map;
 
 public enum OpcuaNodeIdServicesVariableApplication {
   ApplicationType_EnumStrings((int) 7597L),
+  ApplicationConfigurationFileType_AvailableNetworks((int) 15551L),
+  ApplicationConfigurationFileType_AvailablePorts((int) 15552L),
+  ApplicationConfigurationFileType_SecurityPolicyUris((int) 15553L),
+  ApplicationConfigurationFileType_UserTokenTypes((int) 15554L),
+  ApplicationConfigurationFileType_CertificateTypes((int) 15555L),
   ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size(
       (int) 16710L),
   ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Writable(
@@ -1902,10 +1907,93 @@ public enum OpcuaNodeIdServicesVariableApplication {
       (int) 18552L),
   ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors(
       (int) 18553L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size(
+      (int) 18555L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable(
+      (int) 18556L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable(
+      (int) 18557L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount(
+      (int) 18558L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType(
+      (int) 18559L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength(
+      (int) 18560L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime(
+      (int) 18561L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments(
+      (int) 18563L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments(
+      (int) 18564L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments(
+      (int) 18566L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments(
+      (int) 18568L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments(
+      (int) 18569L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments(
+      (int) 18571L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments(
+      (int) 18573L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments(
+      (int) 18574L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments(
+      (int) 18576L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime(
+      (int) 18577L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion(
+      (int) 18578L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout(
+      (int) 18579L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType(
+      (int) 18580L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments(
+      (int) 18582L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments(
+      (int) 18583L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments(
+      (int) 18585L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks(
+      (int) 18587L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts(
+      (int) 18588L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris(
+      (int) 18589L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes(
+      (int) 18590L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes(
+      (int) 18591L),
   ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled((int) 18592L),
   ApplicationConfigurationFolderType_ApplicationName_Placeholder_ApplicationNames((int) 18658L),
   ApplicationConfigurationFolderType_ApplicationName_Placeholder_SupportsTransactions((int) 18659L),
   ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup((int) 19307L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments(
+      (int) 19333L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments(
+      (int) 19334L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments(
+      (int) 19336L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose(
+      (int) 19403L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose(
+      (int) 19404L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose(
+      (int) 19405L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints(
+      (int) 19406L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups(
+      (int) 19407L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes(
+      (int) 19408L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments(
+      (int) 19411L),
+  ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments(
+      (int) 19412L),
+  ApplicationConfigurationFileType_MaxEndpoints((int) 19414L),
+  ApplicationConfigurationFileType_MaxCertificateGroups((int) 19415L),
+  ApplicationConfigurationFileType_CertificateGroupPurposes((int) 19416L),
+  ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments((int) 19425L),
+  ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments((int) 19426L),
   ApplicationConfigurationType_Enabled((int) 26849L),
   ApplicationConfigurationType_ApplicationUri((int) 26850L),
   ApplicationConfigurationType_ProductUri((int) 26851L),

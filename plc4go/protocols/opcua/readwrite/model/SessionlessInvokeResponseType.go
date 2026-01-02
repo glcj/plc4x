@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -109,7 +110,7 @@ type _SessionlessInvokeResponseTypeBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (SessionlessInvokeResponseTypeBuilder) = (*_SessionlessInvokeResponseTypeBuilder)(nil)
@@ -139,8 +140,8 @@ func (b *_SessionlessInvokeResponseTypeBuilder) WithServiceId(serviceId uint32) 
 }
 
 func (b *_SessionlessInvokeResponseTypeBuilder) Build() (SessionlessInvokeResponseType, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._SessionlessInvokeResponseType.deepCopy(), nil
 }
@@ -166,8 +167,8 @@ func (b *_SessionlessInvokeResponseTypeBuilder) buildForExtensionObjectDefinitio
 
 func (b *_SessionlessInvokeResponseTypeBuilder) DeepCopy() any {
 	_copy := b.CreateSessionlessInvokeResponseTypeBuilder().(*_SessionlessInvokeResponseTypeBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -250,9 +251,7 @@ func (m *_SessionlessInvokeResponseType) GetLengthInBits(ctx context.Context) ui
 	if len(m.NamespaceUris) > 0 {
 		for _curItem, element := range m.NamespaceUris {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.NamespaceUris), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -263,9 +262,7 @@ func (m *_SessionlessInvokeResponseType) GetLengthInBits(ctx context.Context) ui
 	if len(m.ServerUris) > 0 {
 		for _curItem, element := range m.ServerUris {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.ServerUris), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

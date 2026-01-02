@@ -82,7 +82,7 @@ func (d *Device) getRandomValue(tag simulatedTag) *apiValues.PlcValue {
 	size := tag.GetDataTypeSize().DataTypeSize()
 	data := make([]byte, uint16(size)*tag.Quantity)
 	rand.Read(data)
-	ctxForModel := options.GetLoggerContextForModel(context.TODO(), d.log, options.WithPassLoggerToModel(d.passLogToModel))
+	ctxForModel := options.GetLoggerContextForModel(context.Background(), d.log, options.WithPassLoggerToModel(d.passLogToModel))
 	plcValue, err := readWriteModel.DataItemParse(ctxForModel, data, tag.DataTypeSize.String(), tag.Quantity)
 	if err != nil {
 		d.log.Err(err).Msg("Unable to parse random bytes")

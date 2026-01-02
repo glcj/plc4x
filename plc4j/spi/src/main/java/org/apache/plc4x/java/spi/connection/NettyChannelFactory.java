@@ -148,6 +148,7 @@ public abstract class NettyChannelFactory implements ChannelFactory {
             Thread.currentThread().interrupt();
             throw new PlcConnectionException("Error creating channel.", e);
         } catch (Throwable t) {
+            t.printStackTrace();
             throw new PlcConnectionException("Error creating channel.", t);
         }
     }

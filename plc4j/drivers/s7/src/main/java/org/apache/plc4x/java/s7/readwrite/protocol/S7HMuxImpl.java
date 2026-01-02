@@ -19,6 +19,7 @@
 package org.apache.plc4x.java.s7.readwrite.protocol;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -128,11 +129,12 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
      *  the Embeded channel when we created it.
      */
     @Override
-    protected void encode(ChannelHandlerContext ctx, ByteBuf outBB, List<Object> list) {
+    protected synchronized void encode(ChannelHandlerContext ctx, ByteBuf outBB, List<Object> list) throws InterruptedException {
         if ((embedCtx == null) && (ctx.channel() instanceof EmbeddedChannel)) embedCtx = ctx;
         if ((tcpChannel != null) && (embedCtx == ctx)) {
             tcpChannel.writeAndFlush(outBB.copy());
         }
+        logger.debug("ENCODE: " + ByteBufUtil.hexDump(outBB));  
         list.add(outBB.copy());
     }
 
@@ -143,6 +145,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
      */
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf inBB, List<Object> list) throws Exception {
+        logger.debug("DECODE: " + ByteBufUtil.hexDump(inBB));
         embedCtx.fireChannelRead(inBB.copy());
     }
 
@@ -174,7 +177,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        logger.info(LocalTime.now() + " userEventTriggered: " + ctx.name() + " Event: " + evt);
+        logger.debug(LocalTime.now() + " userEventTriggered: " + ctx.name() + " Event: " + evt);
 
         if (evt instanceof ConnectedEvent) {
             try {
@@ -184,7 +187,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
                 }
 
             } catch (Exception ex) {
-                logger.info(ex.toString());
+                logger.debug(ex.toString());
             }
             try {
                 if ((embededChannel.attr(READ_TIME_OUT).get() > 0) &&
@@ -197,12 +200,12 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
                     embededChannel.attr(IS_CONNECTED).set(false);
                 }
             } catch (Exception ex) {
-                logger.info(ex.toString());
+                logger.debug(ex.toString());
             }
         }
 
         if (evt instanceof DisconnectEvent) {
-//            logger.info("userEventTriggered -> DisconnectEvent");
+            logger.info("userEventTriggered -> DisconnectEvent");
         }
         
         // trigger other event handlers after IS_CONNECTED was set
@@ -232,7 +235,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
         super.channelUnregistered(ctx);
         logger.debug("{} channelUnregistered: {}", LocalTime.now(), ctx.name());
         String strCanal = (tcpChannel == primaryChannel) ? "PRIMARY" : "SECONDARY";
-        logger.info("Unregistered of channel: {}", strCanal);
+        logger.debug("Unregistered of channel: {}", strCanal);
         //TODO: If embedded channel is closed, we need close all channels
         if (ctx == embedCtx) return;
 
@@ -243,7 +246,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
         }
 
         if (embedCtx != null)
-            logger.info(embedCtx.executor().toString());
+            logger.debug(embedCtx.executor().toString());
 
         if ((tcpChannel == primaryChannel) &&
             (primaryChannel == ctx.channel()))
@@ -251,7 +254,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
                 (secondaryChannel != null))
                 if (secondaryChannel.isActive()) {
                     synchronized (tcpChannel) {
-                        logger.info("Using secondary TCP channel.");
+                        logger.debug("Using secondary TCP channel.");
                         tcpChannel = secondaryChannel;
                         embededChannel.attr(IS_PRIMARY).set(false);
                         embededChannel.pipeline().fireUserEventTriggered(new ConnectEvent());
@@ -265,7 +268,7 @@ public class S7HMuxImpl extends MessageToMessageCodec<ByteBuf, ByteBuf> implemen
                 (primaryChannel != null))
                 if (primaryChannel.isActive()) {
                     synchronized (tcpChannel) {
-                        logger.info("Using primary TCP channel.");
+                        logger.debug("Using primary TCP channel.");
                         tcpChannel = primaryChannel;
                         embededChannel.attr(IS_PRIMARY).set(true);
                         embededChannel.pipeline().fireUserEventTriggered(new ConnectEvent());

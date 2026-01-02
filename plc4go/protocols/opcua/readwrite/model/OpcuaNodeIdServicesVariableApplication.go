@@ -42,6 +42,11 @@ type IOpcuaNodeIdServicesVariableApplication interface {
 
 const (
 	OpcuaNodeIdServicesVariableApplication_ApplicationType_EnumStrings                                                                                                                                                      OpcuaNodeIdServicesVariableApplication = 7597
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailableNetworks                                                                                                                               OpcuaNodeIdServicesVariableApplication = 15551
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailablePorts                                                                                                                                  OpcuaNodeIdServicesVariableApplication = 15552
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_SecurityPolicyUris                                                                                                                              OpcuaNodeIdServicesVariableApplication = 15553
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_UserTokenTypes                                                                                                                                  OpcuaNodeIdServicesVariableApplication = 15554
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateTypes                                                                                                                                OpcuaNodeIdServicesVariableApplication = 15555
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size                                                          OpcuaNodeIdServicesVariableApplication = 16710
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Writable                                                      OpcuaNodeIdServicesVariableApplication = 16711
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_UserWritable                                                  OpcuaNodeIdServicesVariableApplication = 16712
@@ -984,10 +989,54 @@ const (
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedTrustLists                                                                         OpcuaNodeIdServicesVariableApplication = 18551
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedCertificateGroups                                                                  OpcuaNodeIdServicesVariableApplication = 18552
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors                                                                                     OpcuaNodeIdServicesVariableApplication = 18553
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size                                                                                            OpcuaNodeIdServicesVariableApplication = 18555
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable                                                                                        OpcuaNodeIdServicesVariableApplication = 18556
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable                                                                                    OpcuaNodeIdServicesVariableApplication = 18557
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount                                                                                       OpcuaNodeIdServicesVariableApplication = 18558
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType                                                                                        OpcuaNodeIdServicesVariableApplication = 18559
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength                                                                             OpcuaNodeIdServicesVariableApplication = 18560
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime                                                                                OpcuaNodeIdServicesVariableApplication = 18561
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments                                                                             OpcuaNodeIdServicesVariableApplication = 18563
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments                                                                            OpcuaNodeIdServicesVariableApplication = 18564
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments                                                                            OpcuaNodeIdServicesVariableApplication = 18566
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments                                                                             OpcuaNodeIdServicesVariableApplication = 18568
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments                                                                            OpcuaNodeIdServicesVariableApplication = 18569
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments                                                                            OpcuaNodeIdServicesVariableApplication = 18571
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments                                                                      OpcuaNodeIdServicesVariableApplication = 18573
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments                                                                     OpcuaNodeIdServicesVariableApplication = 18574
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments                                                                      OpcuaNodeIdServicesVariableApplication = 18576
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime                                                                                  OpcuaNodeIdServicesVariableApplication = 18577
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion                                                                                  OpcuaNodeIdServicesVariableApplication = 18578
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout                                                                                 OpcuaNodeIdServicesVariableApplication = 18579
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType                                                                               OpcuaNodeIdServicesVariableApplication = 18580
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments                                                                   OpcuaNodeIdServicesVariableApplication = 18582
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments                                                                  OpcuaNodeIdServicesVariableApplication = 18583
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments                                                                    OpcuaNodeIdServicesVariableApplication = 18585
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks                                                                               OpcuaNodeIdServicesVariableApplication = 18587
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts                                                                                  OpcuaNodeIdServicesVariableApplication = 18588
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris                                                                              OpcuaNodeIdServicesVariableApplication = 18589
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes                                                                                  OpcuaNodeIdServicesVariableApplication = 18590
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes                                                                                OpcuaNodeIdServicesVariableApplication = 18591
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled                                                                                                           OpcuaNodeIdServicesVariableApplication = 18592
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ApplicationNames                                                                                                  OpcuaNodeIdServicesVariableApplication = 18658
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_SupportsTransactions                                                                                              OpcuaNodeIdServicesVariableApplication = 18659
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup                                                                                                OpcuaNodeIdServicesVariableApplication = 19307
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments                                                                        OpcuaNodeIdServicesVariableApplication = 19333
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments                                                                       OpcuaNodeIdServicesVariableApplication = 19334
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments                                                                                  OpcuaNodeIdServicesVariableApplication = 19336
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose                                                                 OpcuaNodeIdServicesVariableApplication = 19403
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose                                                                       OpcuaNodeIdServicesVariableApplication = 19404
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose                                                                   OpcuaNodeIdServicesVariableApplication = 19405
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints                                                                                    OpcuaNodeIdServicesVariableApplication = 19406
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups                                                                            OpcuaNodeIdServicesVariableApplication = 19407
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes                                                                        OpcuaNodeIdServicesVariableApplication = 19408
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments                                                                    OpcuaNodeIdServicesVariableApplication = 19411
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments                                                                   OpcuaNodeIdServicesVariableApplication = 19412
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxEndpoints                                                                                                                                    OpcuaNodeIdServicesVariableApplication = 19414
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxCertificateGroups                                                                                                                            OpcuaNodeIdServicesVariableApplication = 19415
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateGroupPurposes                                                                                                                        OpcuaNodeIdServicesVariableApplication = 19416
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments                                                                                                      OpcuaNodeIdServicesVariableApplication = 19425
+	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments                                                                                                     OpcuaNodeIdServicesVariableApplication = 19426
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_Enabled                                                                                                                                             OpcuaNodeIdServicesVariableApplication = 26849
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_ApplicationUri                                                                                                                                      OpcuaNodeIdServicesVariableApplication = 26850
 	OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_ProductUri                                                                                                                                          OpcuaNodeIdServicesVariableApplication = 26851
@@ -1000,6 +1049,11 @@ func init() {
 	_ = errors.New
 	OpcuaNodeIdServicesVariableApplicationValues = []OpcuaNodeIdServicesVariableApplication{
 		OpcuaNodeIdServicesVariableApplication_ApplicationType_EnumStrings,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailableNetworks,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailablePorts,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_SecurityPolicyUris,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_UserTokenTypes,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateTypes,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Writable,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_UserWritable,
@@ -1942,10 +1996,54 @@ func init() {
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedTrustLists,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedCertificateGroups,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ApplicationNames,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_SupportsTransactions,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxEndpoints,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxCertificateGroups,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateGroupPurposes,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments,
+		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_Enabled,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_ApplicationUri,
 		OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_ProductUri,
@@ -1955,6 +2053,16 @@ func init() {
 
 func OpcuaNodeIdServicesVariableApplicationByValue(value int32) (enum OpcuaNodeIdServicesVariableApplication, ok bool) {
 	switch value {
+	case 15551:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailableNetworks, true
+	case 15552:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailablePorts, true
+	case 15553:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_SecurityPolicyUris, true
+	case 15554:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_UserTokenTypes, true
+	case 15555:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateTypes, true
 	case 16710:
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size, true
 	case 16711:
@@ -3839,6 +3947,62 @@ func OpcuaNodeIdServicesVariableApplicationByValue(value int32) (enum OpcuaNodeI
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedCertificateGroups, true
 	case 18553:
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors, true
+	case 18555:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size, true
+	case 18556:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable, true
+	case 18557:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable, true
+	case 18558:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount, true
+	case 18559:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType, true
+	case 18560:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength, true
+	case 18561:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime, true
+	case 18563:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments, true
+	case 18564:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments, true
+	case 18566:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments, true
+	case 18568:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments, true
+	case 18569:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments, true
+	case 18571:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments, true
+	case 18573:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments, true
+	case 18574:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments, true
+	case 18576:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments, true
+	case 18577:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime, true
+	case 18578:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion, true
+	case 18579:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout, true
+	case 18580:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType, true
+	case 18582:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case 18583:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case 18585:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case 18587:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks, true
+	case 18588:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts, true
+	case 18589:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris, true
+	case 18590:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes, true
+	case 18591:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes, true
 	case 18592:
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled, true
 	case 18658:
@@ -3847,6 +4011,38 @@ func OpcuaNodeIdServicesVariableApplicationByValue(value int32) (enum OpcuaNodeI
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_SupportsTransactions, true
 	case 19307:
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup, true
+	case 19333:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments, true
+	case 19334:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments, true
+	case 19336:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments, true
+	case 19403:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case 19404:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case 19405:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case 19406:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints, true
+	case 19407:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups, true
+	case 19408:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes, true
+	case 19411:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments, true
+	case 19412:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments, true
+	case 19414:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxEndpoints, true
+	case 19415:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxCertificateGroups, true
+	case 19416:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateGroupPurposes, true
+	case 19425:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments, true
+	case 19426:
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments, true
 	case 26849:
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_Enabled, true
 	case 26850:
@@ -3863,6 +4059,16 @@ func OpcuaNodeIdServicesVariableApplicationByValue(value int32) (enum OpcuaNodeI
 
 func OpcuaNodeIdServicesVariableApplicationByName(value string) (enum OpcuaNodeIdServicesVariableApplication, ok bool) {
 	switch value {
+	case "ApplicationConfigurationFileType_AvailableNetworks":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailableNetworks, true
+	case "ApplicationConfigurationFileType_AvailablePorts":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailablePorts, true
+	case "ApplicationConfigurationFileType_SecurityPolicyUris":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_SecurityPolicyUris, true
+	case "ApplicationConfigurationFileType_UserTokenTypes":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_UserTokenTypes, true
+	case "ApplicationConfigurationFileType_CertificateTypes":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateTypes, true
 	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size":
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size, true
 	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Writable":
@@ -5747,6 +5953,62 @@ func OpcuaNodeIdServicesVariableApplicationByName(value string) (enum OpcuaNodeI
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedCertificateGroups, true
 	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors":
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes, true
 	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled":
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled, true
 	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ApplicationNames":
@@ -5755,6 +6017,38 @@ func OpcuaNodeIdServicesVariableApplicationByName(value string) (enum OpcuaNodeI
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_SupportsTransactions, true
 	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup":
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments, true
+	case "ApplicationConfigurationFileType_MaxEndpoints":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxEndpoints, true
+	case "ApplicationConfigurationFileType_MaxCertificateGroups":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxCertificateGroups, true
+	case "ApplicationConfigurationFileType_CertificateGroupPurposes":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateGroupPurposes, true
+	case "ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments, true
+	case "ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments":
+		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments, true
 	case "ApplicationConfigurationType_Enabled":
 		return OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_Enabled, true
 	case "ApplicationConfigurationType_ApplicationUri":
@@ -5836,6 +6130,16 @@ func (e OpcuaNodeIdServicesVariableApplication) GetValue() int32 {
 // PLC4XEnumName returns the name that is used in code to identify this enum
 func (e OpcuaNodeIdServicesVariableApplication) PLC4XEnumName() string {
 	switch e {
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailableNetworks:
+		return "ApplicationConfigurationFileType_AvailableNetworks"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_AvailablePorts:
+		return "ApplicationConfigurationFileType_AvailablePorts"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_SecurityPolicyUris:
+		return "ApplicationConfigurationFileType_SecurityPolicyUris"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_UserTokenTypes:
+		return "ApplicationConfigurationFileType_UserTokenTypes"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateTypes:
+		return "ApplicationConfigurationFileType_CertificateTypes"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size:
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Writable:
@@ -7720,6 +8024,62 @@ func (e OpcuaNodeIdServicesVariableApplication) PLC4XEnumName() string {
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedCertificateGroups"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors:
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled:
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ApplicationNames:
@@ -7728,6 +8088,38 @@ func (e OpcuaNodeIdServicesVariableApplication) PLC4XEnumName() string {
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_SupportsTransactions"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup:
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxEndpoints:
+		return "ApplicationConfigurationFileType_MaxEndpoints"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_MaxCertificateGroups:
+		return "ApplicationConfigurationFileType_MaxCertificateGroups"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationFileType_CertificateGroupPurposes:
+		return "ApplicationConfigurationFileType_CertificateGroupPurposes"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments:
+		return "ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments"
+	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments:
+		return "ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_Enabled:
 		return "ApplicationConfigurationType_Enabled"
 	case OpcuaNodeIdServicesVariableApplication_ApplicationConfigurationType_ApplicationUri:

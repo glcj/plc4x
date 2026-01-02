@@ -1,5 +1,18 @@
 ==============================================================
-(Unreleased) Apache PLC4X 0.13.0-SNAPSHOT
+(Unreleased) Apache PLC4X 0.14.0-SNAPSHOT
+==============================================================
+
+New Features
+------------
+
+Incompatible changes
+--------------------
+
+Bug Fixes
+---------
+
+==============================================================
+Apache PLC4X 0.13.0
 ==============================================================
 
 New Features
@@ -37,6 +50,9 @@ New Features
 - Added auto-discovery to S7 in PLC4J.
 - Improved some things in the SPI, that caused issues with
   drivers under heavy load.
+- The Modbus driver uses the "Single Register Request" if a
+  tag fits into one register. This can help communicating with
+  devices that don't support "Multi Register Requests".
 
 Incompatible changes
 --------------------

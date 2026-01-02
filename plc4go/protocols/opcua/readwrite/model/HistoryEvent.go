@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -97,7 +98,7 @@ type _HistoryEventBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (HistoryEventBuilder) = (*_HistoryEventBuilder)(nil)
@@ -117,8 +118,8 @@ func (b *_HistoryEventBuilder) WithEvents(events ...HistoryEventFieldList) Histo
 }
 
 func (b *_HistoryEventBuilder) Build() (HistoryEvent, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._HistoryEvent.deepCopy(), nil
 }
@@ -144,8 +145,8 @@ func (b *_HistoryEventBuilder) buildForExtensionObjectDefinition() (ExtensionObj
 
 func (b *_HistoryEventBuilder) DeepCopy() any {
 	_copy := b.CreateHistoryEventBuilder().(*_HistoryEventBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -220,9 +221,7 @@ func (m *_HistoryEvent) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.Events) > 0 {
 		for _curItem, element := range m.Events {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.Events), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

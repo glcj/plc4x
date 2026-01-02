@@ -21,6 +21,7 @@ package ads
 
 import (
 	"context"
+	stdErrors "errors"
 	"runtime/debug"
 	"time"
 
@@ -191,34 +192,33 @@ func (m *Connection) processSubscriptionResponses(_ context.Context, subscriptio
 	m.log.Trace().Msg("Merging requests")
 	responseCodes := map[string]apiModel.PlcResponseCode{}
 	subscriptionHandles := map[string]apiModel.PlcSubscriptionHandle{}
-	var err error = nil
+	var collectedErrors []error
 	for _, subscriptionResult := range subscriptionResults {
 		if subErr := subscriptionResult.GetErr(); subErr != nil {
 			m.log.Debug().Err(subErr).Msg("Error during subscription")
-			if subErr == nil {
-				// Lazy initialization of multi error
-				subErr = &utils.MultiError{MainError: errors.New("while aggregating results"), Errors: []error{subErr}}
-			} else {
-				var multiError *utils.MultiError
-				if ok := errors.As(subErr, &multiError); ok {
-					multiError.Append(subErr)
-					multiError.Errors = append(multiError.Errors, subErr)
-				}
+			collectedErrors = append(collectedErrors, subErr)
+		} else if response := subscriptionResult.GetResponse(); response != nil {
+			request := response.GetRequest()
+			tagNames := request.GetTagNames()
+			if len(tagNames) > 1 {
+				m.log.Error().Int("numberOfTags", len(tagNames)).Msg("We should only get 1")
 			}
-		} else if subscriptionResult.GetResponse() != nil {
-			if len(subscriptionResult.GetResponse().GetRequest().GetTagNames()) > 1 {
-				m.log.Error().Int("numberOfTags", len(subscriptionResult.GetResponse().GetRequest().GetTagNames())).Msg("We should only get 1")
-			}
-			for _, tagName := range subscriptionResult.GetResponse().GetRequest().GetTagNames() {
-				handle, err := subscriptionResult.GetResponse().GetSubscriptionHandle(tagName)
+			for _, tagName := range tagNames {
+				handle, err := response.GetSubscriptionHandle(tagName)
 				if err != nil {
+					collectedErrors = append(collectedErrors, err)
 					responseCodes[tagName] = apiModel.PlcResponseCode_REMOTE_ERROR
+					subscriptionHandles[tagName] = nil
 				} else {
-					responseCodes[tagName] = subscriptionResult.GetResponse().GetResponseCode(tagName)
+					responseCodes[tagName] = response.GetResponseCode(tagName)
 					subscriptionHandles[tagName] = handle
 				}
 			}
 		}
+	}
+	var errResult error
+	if err := stdErrors.Join(collectedErrors...); err != nil {
+		errResult = errors.Wrap(err, "while aggregating results")
 	}
 	return spiModel.NewDefaultPlcSubscriptionRequestResult(
 		subscriptionRequest,
@@ -228,7 +228,7 @@ func (m *Connection) processSubscriptionResponses(_ context.Context, subscriptio
 			subscriptionHandles,
 			append(m._options, options.WithCustomLogger(m.log))...,
 		),
-		err,
+		errResult,
 	)
 }
 

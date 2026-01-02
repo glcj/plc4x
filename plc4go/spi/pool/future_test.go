@@ -42,7 +42,7 @@ func Test_future_AwaitCompletion(t *testing.T) {
 	}{
 		{
 			name: "completes with error",
-			args: args{ctx: context.TODO()},
+			args: args{ctx: t.Context()},
 			completer: func(wg *sync.WaitGroup, f *future) {
 				defer wg.Done()
 				f.Cancel(false, errors.New("Uh oh"))
@@ -51,7 +51,7 @@ func Test_future_AwaitCompletion(t *testing.T) {
 		},
 		{
 			name: "completes regular",
-			args: args{ctx: context.TODO()},
+			args: args{ctx: t.Context()},
 			completer: func(wg *sync.WaitGroup, f *future) {
 				defer wg.Done()
 				time.Sleep(30 * time.Millisecond)
@@ -74,7 +74,7 @@ func Test_future_AwaitCompletion(t *testing.T) {
 		},
 		{
 			name: "completes canceled without error",
-			args: args{ctx: context.TODO()},
+			args: args{ctx: t.Context()},
 			completer: func(wg *sync.WaitGroup, f *future) {
 				defer wg.Done()
 				time.Sleep(300 * time.Millisecond)
@@ -87,7 +87,7 @@ func Test_future_AwaitCompletion(t *testing.T) {
 		},
 		{
 			name: "completes canceled with particular error",
-			args: args{ctx: context.TODO()},
+			args: args{ctx: t.Context()},
 			completer: func(wg *sync.WaitGroup, f *future) {
 				defer wg.Done()
 				time.Sleep(300 * time.Millisecond)

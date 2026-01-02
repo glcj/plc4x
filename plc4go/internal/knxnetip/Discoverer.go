@@ -22,6 +22,7 @@ package knxnetip
 import (
 	"bytes"
 	"context"
+	stdErrors "errors"
 	"fmt"
 	"net"
 	"net/url"
@@ -220,7 +221,7 @@ func (d *Discoverer) createDeviceScanDispatcher(ctx context.Context, udpTranspor
 			append(d._options, options.WithCustomLogger(d.log))...,
 		)
 		// Explicitly start the worker
-		if err := codec.ConnectWithContext(context.TODO()); err != nil {
+		if err := codec.ConnectWithContext(ctx); err != nil {
 			d.log.Error().Err(err).Msg("Error connecting")
 			return
 		}
@@ -288,16 +289,19 @@ func (d *Discoverer) createDeviceScanDispatcher(ctx context.Context, udpTranspor
 func (d *Discoverer) Close() error {
 	defer utils.StopWarn(d.log)()
 	d.log.Trace().Msg("Closing discoverer")
-	finalErr := new(utils.MultiError)
+	var collectedErrors []error
 	d.log.Trace().Msg("Closing transport instance creation queue")
 	if err := d.transportInstanceCreationQueue.Close(); err != nil {
-		finalErr.Append(errors.Wrap(err, "failed to close transport instance creation queue"))
+		collectedErrors = append(collectedErrors, errors.Wrap(err, "error closing transport instance creation queue"))
 	}
 	d.log.Trace().Msg("Closing device scanning queue")
 	if err := d.deviceScanningQueue.Close(); err != nil {
-		finalErr.Append(errors.Wrap(err, "error closing device scanning queue"))
+		collectedErrors = append(collectedErrors, errors.Wrap(err, "error closing device scanning queue"))
 	}
 	d.log.Trace().Msg("waiting for wait group")
 	d.wg.Wait()
-	return finalErr.ToErrorIfAny()
+	if err := stdErrors.Join(collectedErrors...); err != nil {
+		return errors.Wrap(err, "error closing discoverer")
+	}
+	return nil
 }

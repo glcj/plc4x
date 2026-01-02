@@ -86,6 +86,7 @@ const (
 	OpcuaNodeIdServicesReferenceType_HasEffectUnsuppressed               OpcuaNodeIdServicesReferenceType = 17985
 	OpcuaNodeIdServicesReferenceType_HasWriterGroup                      OpcuaNodeIdServicesReferenceType = 18804
 	OpcuaNodeIdServicesReferenceType_HasReaderGroup                      OpcuaNodeIdServicesReferenceType = 18805
+	OpcuaNodeIdServicesReferenceType_HasLogHierarchy                     OpcuaNodeIdServicesReferenceType = 19371
 	OpcuaNodeIdServicesReferenceType_AliasFor                            OpcuaNodeIdServicesReferenceType = 23469
 	OpcuaNodeIdServicesReferenceType_IsDeprecated                        OpcuaNodeIdServicesReferenceType = 23562
 	OpcuaNodeIdServicesReferenceType_HasStructuredComponent              OpcuaNodeIdServicesReferenceType = 24136
@@ -165,6 +166,7 @@ func init() {
 		OpcuaNodeIdServicesReferenceType_HasEffectUnsuppressed,
 		OpcuaNodeIdServicesReferenceType_HasWriterGroup,
 		OpcuaNodeIdServicesReferenceType_HasReaderGroup,
+		OpcuaNodeIdServicesReferenceType_HasLogHierarchy,
 		OpcuaNodeIdServicesReferenceType_AliasFor,
 		OpcuaNodeIdServicesReferenceType_IsDeprecated,
 		OpcuaNodeIdServicesReferenceType_HasStructuredComponent,
@@ -235,6 +237,8 @@ func OpcuaNodeIdServicesReferenceTypeByValue(value int32) (enum OpcuaNodeIdServi
 		return OpcuaNodeIdServicesReferenceType_HasWriterGroup, true
 	case 18805:
 		return OpcuaNodeIdServicesReferenceType_HasReaderGroup, true
+	case 19371:
+		return OpcuaNodeIdServicesReferenceType_HasLogHierarchy, true
 	case 23469:
 		return OpcuaNodeIdServicesReferenceType_AliasFor, true
 	case 23562:
@@ -385,6 +389,8 @@ func OpcuaNodeIdServicesReferenceTypeByName(value string) (enum OpcuaNodeIdServi
 		return OpcuaNodeIdServicesReferenceType_HasWriterGroup, true
 	case "HasReaderGroup":
 		return OpcuaNodeIdServicesReferenceType_HasReaderGroup, true
+	case "HasLogHierarchy":
+		return OpcuaNodeIdServicesReferenceType_HasLogHierarchy, true
 	case "AliasFor":
 		return OpcuaNodeIdServicesReferenceType_AliasFor, true
 	case "IsDeprecated":
@@ -600,6 +606,8 @@ func (e OpcuaNodeIdServicesReferenceType) PLC4XEnumName() string {
 		return "HasWriterGroup"
 	case OpcuaNodeIdServicesReferenceType_HasReaderGroup:
 		return "HasReaderGroup"
+	case OpcuaNodeIdServicesReferenceType_HasLogHierarchy:
+		return "HasLogHierarchy"
 	case OpcuaNodeIdServicesReferenceType_AliasFor:
 		return "AliasFor"
 	case OpcuaNodeIdServicesReferenceType_IsDeprecated:

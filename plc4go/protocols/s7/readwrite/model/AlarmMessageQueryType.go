@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -108,7 +109,7 @@ func NewAlarmMessageQueryTypeBuilder() AlarmMessageQueryTypeBuilder {
 type _AlarmMessageQueryTypeBuilder struct {
 	*_AlarmMessageQueryType
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (AlarmMessageQueryTypeBuilder) = (*_AlarmMessageQueryTypeBuilder)(nil)
@@ -143,8 +144,8 @@ func (b *_AlarmMessageQueryTypeBuilder) WithMessageObjects(messageObjects ...Ala
 }
 
 func (b *_AlarmMessageQueryTypeBuilder) Build() (AlarmMessageQueryType, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._AlarmMessageQueryType.deepCopy(), nil
 }
@@ -159,8 +160,8 @@ func (b *_AlarmMessageQueryTypeBuilder) MustBuild() AlarmMessageQueryType {
 
 func (b *_AlarmMessageQueryTypeBuilder) DeepCopy() any {
 	_copy := b.CreateAlarmMessageQueryTypeBuilder().(*_AlarmMessageQueryTypeBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -258,9 +259,7 @@ func (m *_AlarmMessageQueryType) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.MessageObjects) > 0 {
 		for _curItem, element := range m.MessageObjects {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.MessageObjects), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -103,7 +104,7 @@ type _ContentFilterElementBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (ContentFilterElementBuilder) = (*_ContentFilterElementBuilder)(nil)
@@ -128,8 +129,8 @@ func (b *_ContentFilterElementBuilder) WithFilterOperands(filterOperands ...Exte
 }
 
 func (b *_ContentFilterElementBuilder) Build() (ContentFilterElement, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._ContentFilterElement.deepCopy(), nil
 }
@@ -155,8 +156,8 @@ func (b *_ContentFilterElementBuilder) buildForExtensionObjectDefinition() (Exte
 
 func (b *_ContentFilterElementBuilder) DeepCopy() any {
 	_copy := b.CreateContentFilterElementBuilder().(*_ContentFilterElementBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -238,9 +239,7 @@ func (m *_ContentFilterElement) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.FilterOperands) > 0 {
 		for _curItem, element := range m.FilterOperands {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.FilterOperands), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

@@ -22,6 +22,7 @@ package _default
 import (
 	"context"
 	"runtime/debug"
+	"slices"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -208,35 +209,31 @@ func (m *defaultCodec) SendRequest(ctx context.Context, message spi.Message, acc
 func (m *defaultCodec) TimeoutExpectations(now time.Time) {
 	m.expectationsChangeMutex.Lock() // TODO: Note: would be nice if this is a read mutex which can be upgraded
 	defer m.expectationsChangeMutex.Unlock()
-	for i := 0; i < len(m.expectations); i++ {
-		expectation := m.expectations[i]
+	m.expectations = slices.DeleteFunc(m.expectations, func(expectation spi.Expectation) bool {
 		// Check if this expectation has expired.
 		if now.After(expectation.GetExpiration()) {
 			// Remove this expectation from the list.
 			m.log.Info().Stringer("expectation", expectation).Msg("timeout expectation")
-			m.expectations = append(m.expectations[:i], m.expectations[i+1:]...)
-			i--
 			// Call the error handler.
 			go func(expectation spi.Expectation) {
 				if err := expectation.GetHandleError()(utils.NewTimeoutError(expectation.GetExpiration().Sub(expectation.GetCreationTime()))); err != nil {
 					m.log.Error().Err(err).Msg("Got an error handling error on expectation")
 				}
 			}(expectation)
-			continue
+			return true
 		}
 		if err := expectation.GetContext().Err(); err != nil {
 			m.log.Info().Err(err).Stringer("expectation", expectation).Msg("expectation canceled")
 			// Remove this expectation from the list.
-			m.expectations = append(m.expectations[:i], m.expectations[i+1:]...)
-			i--
 			go func(expectation spi.Expectation) {
 				if err := expectation.GetHandleError()(err); err != nil {
 					m.log.Error().Err(err).Msg("Got an error handling error on expectation")
 				}
 			}(expectation)
-			continue
+			return true
 		}
-	}
+		return false
+	})
 }
 
 func (m *defaultCodec) HandleMessages(message spi.Message) bool {
@@ -244,8 +241,7 @@ func (m *defaultCodec) HandleMessages(message spi.Message) bool {
 	defer m.expectationsChangeMutex.Unlock()
 	messageHandled := false
 	m.log.Trace().Int("nExpectations", len(m.expectations)).Msg("Current number of expectations")
-	for i := 0; i < len(m.expectations); i++ {
-		expectation := m.expectations[i]
+	m.expectations = slices.DeleteFunc(m.expectations, func(expectation spi.Expectation) bool {
 		expectationLog := m.log.With().Stringer("expectation", expectation).Logger()
 		expectationLog.Trace().Msg("Checking expectation")
 		// Check if the current message matches the expectations
@@ -256,20 +252,21 @@ func (m *defaultCodec) HandleMessages(message spi.Message) bool {
 			if err := expectation.GetHandleMessage()(message); err != nil {
 				expectationLog.Debug().Err(err).Msg("errored handling the message")
 				// Pass the error to the error handler.
-				// TODO: decouple from worker thread
-				if err := expectation.GetHandleError()(err); err != nil {
-					expectationLog.Error().Err(err).Msg("Got an error handling error on expectation")
-				}
-				continue
+				go func(expectation spi.Expectation) {
+					if err := expectation.GetHandleError()(err); err != nil {
+						m.log.Error().Err(err).Msg("Got an error handling error on expectation")
+					}
+				}(expectation)
+				return false
 			}
 			m.log.Trace().Msg("message handled")
 			messageHandled = true
-			m.expectations = append(m.expectations[:i], m.expectations[i+1:]...)
-			i--
+			return true
 		} else {
 			expectationLog.Trace().Msg("doesn't accept message")
+			return false
 		}
-	}
+	})
 	m.log.Trace().Bool("messageHandled", messageHandled).Msg("finished message handling")
 	return messageHandled
 }

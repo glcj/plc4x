@@ -106,12 +106,10 @@
         <xsl:choose>
             <xsl:when test="opc:EnumeratedValue"><xsl:text>
 
-</xsl:text>[enum uint <xsl:value-of select="@LengthInBits"/><xsl:text> </xsl:text><xsl:value-of select="@Name"/><xsl:text>
-</xsl:text>
+</xsl:text>[enum uint <xsl:value-of select="@LengthInBits"/><xsl:text> </xsl:text><xsl:value-of select="@Name"/>
         <xsl:apply-templates select="opc:Documentation"/><xsl:text>
     </xsl:text>
-        <xsl:apply-templates select="opc:EnumeratedValue"/>
-]
+        <xsl:apply-templates select="opc:EnumeratedValue"/>]
             </xsl:when>
         </xsl:choose>
     </xsl:template>

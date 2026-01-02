@@ -263,6 +263,7 @@ const (
 	OpcuaStatusCode_BadRequestNotAllowed                                            OpcuaStatusCode = 0x80E40000
 	OpcuaStatusCode_BadRequestNotComplete                                           OpcuaStatusCode = 0x81130000
 	OpcuaStatusCode_BadTransactionPending                                           OpcuaStatusCode = 0x80E80000
+	OpcuaStatusCode_BadTransactionFailed                                            OpcuaStatusCode = 0x80F10000
 	OpcuaStatusCode_BadTicketRequired                                               OpcuaStatusCode = 0x811F0000
 	OpcuaStatusCode_BadTicketInvalid                                                OpcuaStatusCode = 0x81200000
 	OpcuaStatusCode_BadLocked                                                       OpcuaStatusCode = 0x80E90000
@@ -541,6 +542,7 @@ func init() {
 		OpcuaStatusCode_BadRequestNotAllowed,
 		OpcuaStatusCode_BadRequestNotComplete,
 		OpcuaStatusCode_BadTransactionPending,
+		OpcuaStatusCode_BadTransactionFailed,
 		OpcuaStatusCode_BadTicketRequired,
 		OpcuaStatusCode_BadTicketInvalid,
 		OpcuaStatusCode_BadLocked,
@@ -1103,6 +1105,8 @@ func OpcuaStatusCodeByValue(value uint32) (enum OpcuaStatusCode, ok bool) {
 		return OpcuaStatusCode_BadServerTooBusy, true
 	case 0x80F00000:
 		return OpcuaStatusCode_BadNoValue, true
+	case 0x80F10000:
+		return OpcuaStatusCode_BadTransactionFailed, true
 	case 0x810D0000:
 		return OpcuaStatusCode_BadCertificateChainIncomplete, true
 	case 0x810E0000:
@@ -1651,6 +1655,8 @@ func OpcuaStatusCodeByName(value string) (enum OpcuaStatusCode, ok bool) {
 		return OpcuaStatusCode_BadServerTooBusy, true
 	case "BadNoValue":
 		return OpcuaStatusCode_BadNoValue, true
+	case "BadTransactionFailed":
+		return OpcuaStatusCode_BadTransactionFailed, true
 	case "BadCertificateChainIncomplete":
 		return OpcuaStatusCode_BadCertificateChainIncomplete, true
 	case "BadLicenseExpired":
@@ -2264,6 +2270,8 @@ func (e OpcuaStatusCode) PLC4XEnumName() string {
 		return "BadServerTooBusy"
 	case OpcuaStatusCode_BadNoValue:
 		return "BadNoValue"
+	case OpcuaStatusCode_BadTransactionFailed:
+		return "BadTransactionFailed"
 	case OpcuaStatusCode_BadCertificateChainIncomplete:
 		return "BadCertificateChainIncomplete"
 	case OpcuaStatusCode_BadLicenseExpired:

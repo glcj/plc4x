@@ -157,6 +157,11 @@ const (
 	OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_TrustList_RemoveCertificate_InputArguments                              OpcuaNodeIdServicesVariableCertificate = 13948
 	OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_CertificateTypes                                                        OpcuaNodeIdServicesVariableCertificate = 13949
 	OpcuaNodeIdServicesVariableCertificate_CertificateExpirationAlarmType_ExpirationLimit                                                                                 OpcuaNodeIdServicesVariableCertificate = 14900
+	OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_Purpose                                                                                                   OpcuaNodeIdServicesVariableCertificate = 19398
+	OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultApplicationGroup_Purpose                                                                     OpcuaNodeIdServicesVariableCertificate = 19399
+	OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultHttpsGroup_Purpose                                                                           OpcuaNodeIdServicesVariableCertificate = 19400
+	OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultUserTokenGroup_Purpose                                                                       OpcuaNodeIdServicesVariableCertificate = 19401
+	OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose                                                                 OpcuaNodeIdServicesVariableCertificate = 19402
 	OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_TrustList_UpdateFrequency                                                                                 OpcuaNodeIdServicesVariableCertificate = 19449
 	OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_CertificateExpired_EventId                                                                                OpcuaNodeIdServicesVariableCertificate = 19451
 	OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_CertificateExpired_EventType                                                                              OpcuaNodeIdServicesVariableCertificate = 19452
@@ -1705,6 +1710,11 @@ func init() {
 		OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_TrustList_RemoveCertificate_InputArguments,
 		OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_CertificateTypes,
 		OpcuaNodeIdServicesVariableCertificate_CertificateExpirationAlarmType_ExpirationLimit,
+		OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_Purpose,
+		OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultApplicationGroup_Purpose,
+		OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultHttpsGroup_Purpose,
+		OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultUserTokenGroup_Purpose,
+		OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose,
 		OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_TrustList_UpdateFrequency,
 		OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_CertificateExpired_EventId,
 		OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_CertificateExpired_EventType,
@@ -3367,6 +3377,16 @@ func OpcuaNodeIdServicesVariableCertificateByValue(value int32) (enum OpcuaNodeI
 		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_CertificateTypes, true
 	case 14900:
 		return OpcuaNodeIdServicesVariableCertificate_CertificateExpirationAlarmType_ExpirationLimit, true
+	case 19398:
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_Purpose, true
+	case 19399:
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultApplicationGroup_Purpose, true
+	case 19400:
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultHttpsGroup_Purpose, true
+	case 19401:
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultUserTokenGroup_Purpose, true
+	case 19402:
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose, true
 	case 19449:
 		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_TrustList_UpdateFrequency, true
 	case 19451:
@@ -6455,6 +6475,16 @@ func OpcuaNodeIdServicesVariableCertificateByName(value string) (enum OpcuaNodeI
 		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_CertificateTypes, true
 	case "CertificateExpirationAlarmType_ExpirationLimit":
 		return OpcuaNodeIdServicesVariableCertificate_CertificateExpirationAlarmType_ExpirationLimit, true
+	case "CertificateGroupType_Purpose":
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_Purpose, true
+	case "CertificateGroupFolderType_DefaultApplicationGroup_Purpose":
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultApplicationGroup_Purpose, true
+	case "CertificateGroupFolderType_DefaultHttpsGroup_Purpose":
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultHttpsGroup_Purpose, true
+	case "CertificateGroupFolderType_DefaultUserTokenGroup_Purpose":
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultUserTokenGroup_Purpose, true
+	case "CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose":
+		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose, true
 	case "CertificateGroupType_TrustList_UpdateFrequency":
 		return OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_TrustList_UpdateFrequency, true
 	case "CertificateGroupType_CertificateExpired_EventId":
@@ -9608,6 +9638,16 @@ func (e OpcuaNodeIdServicesVariableCertificate) PLC4XEnumName() string {
 		return "CertificateGroupFolderType_AdditionalGroup_Placeholder_CertificateTypes"
 	case OpcuaNodeIdServicesVariableCertificate_CertificateExpirationAlarmType_ExpirationLimit:
 		return "CertificateExpirationAlarmType_ExpirationLimit"
+	case OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_Purpose:
+		return "CertificateGroupType_Purpose"
+	case OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultApplicationGroup_Purpose:
+		return "CertificateGroupFolderType_DefaultApplicationGroup_Purpose"
+	case OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultHttpsGroup_Purpose:
+		return "CertificateGroupFolderType_DefaultHttpsGroup_Purpose"
+	case OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_DefaultUserTokenGroup_Purpose:
+		return "CertificateGroupFolderType_DefaultUserTokenGroup_Purpose"
+	case OpcuaNodeIdServicesVariableCertificate_CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose:
+		return "CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose"
 	case OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_TrustList_UpdateFrequency:
 		return "CertificateGroupType_TrustList_UpdateFrequency"
 	case OpcuaNodeIdServicesVariableCertificate_CertificateGroupType_CertificateExpired_EventId:

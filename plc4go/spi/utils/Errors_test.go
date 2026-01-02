@@ -23,54 +23,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestMultiError_Error(t *testing.T) {
-	type fields struct {
-		MainError error
-		Errors    []error
-	}
-	tests := []struct {
-		name   string
-		fields fields
-		want   string
-	}{
-		{
-			name: "empty multi error",
-			want: "",
-		},
-		{
-			name: "some error",
-			fields: fields{
-				MainError: errors.New("I failed hard"),
-			},
-			want: "Main Error: I failed hard\nChild errors:\nNo errors",
-		},
-		{
-			name: "some error with children",
-			fields: fields{
-				MainError: errors.New("I failed hard"),
-				Errors: []error{
-					errors.New("first error"),
-					errors.New("second error"),
-					errors.New("third error"),
-				},
-			},
-			want: "Main Error: I failed hard\nChild errors:\nfirst error\nsecond error\nthird error",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			m := MultiError{
-				MainError: tt.fields.MainError,
-				Errors:    tt.fields.Errors,
-			}
-			assert.Equalf(t, tt.want, m.Error(), "Error()")
-		})
-	}
-}
 
 func TestNewTimeoutError(t *testing.T) {
 	type args struct {

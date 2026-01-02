@@ -21,6 +21,7 @@ package plc4go
 
 import (
 	"context"
+	stdErrors "errors"
 	"io"
 	"net/url"
 
@@ -314,11 +315,8 @@ func (m *plcDriverManger) Close() error {
 			aggregatedErrors = append(aggregatedErrors, err)
 		}
 	}
-	if len(aggregatedErrors) > 0 {
-		return &utils.MultiError{
-			MainError: errors.New("error closing everything"),
-			Errors:    aggregatedErrors,
-		}
+	if err := stdErrors.Join(aggregatedErrors...); err != nil {
+		return errors.Wrap(err, "error closing everything")
 	}
 	return nil
 }

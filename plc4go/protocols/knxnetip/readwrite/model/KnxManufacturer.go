@@ -436,7 +436,7 @@ const (
 	KnxManufacturer_M_MOORGEN_DEUTSCHLAND_GMBH                           KnxManufacturer = 390
 	KnxManufacturer_M_CULLMANN_TECH                                      KnxManufacturer = 391
 	KnxManufacturer_M_EYRISE_B_V                                         KnxManufacturer = 392
-	KnxManufacturer_M_ABEGO                                              KnxManufacturer = 393
+	KnxManufacturer_M_DOBNEL                                             KnxManufacturer = 393
 	KnxManufacturer_M_MYGEKKO                                            KnxManufacturer = 394
 	KnxManufacturer_M_ERGO3_SARL                                         KnxManufacturer = 395
 	KnxManufacturer_M_STMICROELECTRONICS_INTERNATIONAL_N_V_              KnxManufacturer = 396
@@ -465,7 +465,7 @@ const (
 	KnxManufacturer_M_ONTROL                                             KnxManufacturer = 419
 	KnxManufacturer_M_STARNET                                            KnxManufacturer = 420
 	KnxManufacturer_M_BETA_CAVI                                          KnxManufacturer = 421
-	KnxManufacturer_M_EASEMORE                                           KnxManufacturer = 422
+	KnxManufacturer_M_HANGZHOU_YIYUE_TECHNOLOGY_CO___LTD_                KnxManufacturer = 422
 	KnxManufacturer_M_VIVALDI_SRL                                        KnxManufacturer = 423
 	KnxManufacturer_M_GREE_ELECTRIC_APPLIANCES_INC__OF_ZHUHAI            KnxManufacturer = 424
 	KnxManufacturer_M_HWISCON                                            KnxManufacturer = 425
@@ -698,7 +698,7 @@ const (
 	KnxManufacturer_M_RHOMBUS_EUROPE                                     KnxManufacturer = 652
 	KnxManufacturer_M_TURING_THINK                                       KnxManufacturer = 653
 	KnxManufacturer_M_MICHOI                                             KnxManufacturer = 654
-	KnxManufacturer_M_CAV_AUDIOGUANGZHOUCO__LTD                          KnxManufacturer = 655
+	KnxManufacturer_M_CAV_SMARTGUANGZHOUCO__LTD                          KnxManufacturer = 655
 	KnxManufacturer_M_HELKAMA_BICA_OY                                    KnxManufacturer = 656
 	KnxManufacturer_M_MODULYTE                                           KnxManufacturer = 657
 	KnxManufacturer_M_CONSOLINNO_ENERGY_GMBH                             KnxManufacturer = 658
@@ -767,8 +767,34 @@ const (
 	KnxManufacturer_M_ORENDA_ELECTRIC                                    KnxManufacturer = 721
 	KnxManufacturer_M_ERSE_KABLO                                         KnxManufacturer = 722
 	KnxManufacturer_M_PRADO_EUROPE_BV                                    KnxManufacturer = 723
-	KnxManufacturer_M_ABB___RESERVED                                     KnxManufacturer = 724
-	KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED                    KnxManufacturer = 725
+	KnxManufacturer_M_E2S_GBR                                            KnxManufacturer = 724
+	KnxManufacturer_M_UNITLINK                                           KnxManufacturer = 725
+	KnxManufacturer_M_ONNA                                               KnxManufacturer = 726
+	KnxManufacturer_M_CENTERSVET_LLC                                     KnxManufacturer = 727
+	KnxManufacturer_M_ADVECO_TECHNOLOGY_CO___LTD_                        KnxManufacturer = 728
+	KnxManufacturer_M_FR__LUERSSEN_WERFT                                 KnxManufacturer = 729
+	KnxManufacturer_M_MYLYR                                              KnxManufacturer = 730
+	KnxManufacturer_M_HYUNDAI_HT                                         KnxManufacturer = 731
+	KnxManufacturer_M_GUANGDONG_YUEJINGRUN_TECHNOLOGY_CO__LTD            KnxManufacturer = 732
+	KnxManufacturer_M_SMATEK_ELECTRONICS_LIMITED                         KnxManufacturer = 733
+	KnxManufacturer_M_ANYTEK_ELECTRONIC_TECHNOLOGY_SZ_CO___LTD_          KnxManufacturer = 734
+	KnxManufacturer_M_MORELINKS_SMART_HOME                               KnxManufacturer = 735
+	KnxManufacturer_M_CIRTX_GMBH                                         KnxManufacturer = 736
+	KnxManufacturer_M_QLITE                                              KnxManufacturer = 737
+	KnxManufacturer_M_ZHONGSHAN_ILLUS_LIGHTING_CO__LTD                   KnxManufacturer = 738
+	KnxManufacturer_M_HANGZHOU_KONKE_INFORMATION_TECHNOLOGY_CO___LTD_    KnxManufacturer = 739
+	KnxManufacturer_M_SHANGHAI_FANTE_DIGITAL_TECHNOLOGY_CO___LTD         KnxManufacturer = 740
+	KnxManufacturer_M_CONFIO                                             KnxManufacturer = 741
+	KnxManufacturer_M_SONIC_TECHNOLOGIES                                 KnxManufacturer = 742
+	KnxManufacturer_M_SHANGHAI_INNOVATECH_INFORMATION_TECHNOLOGY_CO___LT KnxManufacturer = 743
+	KnxManufacturer_M_ABI_SICHERHEITSSYSTEME_GMBH                        KnxManufacturer = 744
+	KnxManufacturer_M_RYT                                                KnxManufacturer = 745
+	KnxManufacturer_M_AURIGA_SYSTEMS                                     KnxManufacturer = 746
+	KnxManufacturer_M_ALZINGERANDVOGEL_SOFTWAREENTWICKLUNGS_GMBH         KnxManufacturer = 747
+	KnxManufacturer_M_GIANFRANCO_SMART_SOLUTIONS_LTD                     KnxManufacturer = 748
+	KnxManufacturer_M_ROGERWELL_CONTROL_SYSTEM_LIMITED                   KnxManufacturer = 749
+	KnxManufacturer_M_ABB___RESERVED                                     KnxManufacturer = 750
+	KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED                    KnxManufacturer = 751
 )
 
 var KnxManufacturerValues []KnxManufacturer
@@ -1169,7 +1195,7 @@ func init() {
 		KnxManufacturer_M_MOORGEN_DEUTSCHLAND_GMBH,
 		KnxManufacturer_M_CULLMANN_TECH,
 		KnxManufacturer_M_EYRISE_B_V,
-		KnxManufacturer_M_ABEGO,
+		KnxManufacturer_M_DOBNEL,
 		KnxManufacturer_M_MYGEKKO,
 		KnxManufacturer_M_ERGO3_SARL,
 		KnxManufacturer_M_STMICROELECTRONICS_INTERNATIONAL_N_V_,
@@ -1198,7 +1224,7 @@ func init() {
 		KnxManufacturer_M_ONTROL,
 		KnxManufacturer_M_STARNET,
 		KnxManufacturer_M_BETA_CAVI,
-		KnxManufacturer_M_EASEMORE,
+		KnxManufacturer_M_HANGZHOU_YIYUE_TECHNOLOGY_CO___LTD_,
 		KnxManufacturer_M_VIVALDI_SRL,
 		KnxManufacturer_M_GREE_ELECTRIC_APPLIANCES_INC__OF_ZHUHAI,
 		KnxManufacturer_M_HWISCON,
@@ -1431,7 +1457,7 @@ func init() {
 		KnxManufacturer_M_RHOMBUS_EUROPE,
 		KnxManufacturer_M_TURING_THINK,
 		KnxManufacturer_M_MICHOI,
-		KnxManufacturer_M_CAV_AUDIOGUANGZHOUCO__LTD,
+		KnxManufacturer_M_CAV_SMARTGUANGZHOUCO__LTD,
 		KnxManufacturer_M_HELKAMA_BICA_OY,
 		KnxManufacturer_M_MODULYTE,
 		KnxManufacturer_M_CONSOLINNO_ENERGY_GMBH,
@@ -1500,6 +1526,32 @@ func init() {
 		KnxManufacturer_M_ORENDA_ELECTRIC,
 		KnxManufacturer_M_ERSE_KABLO,
 		KnxManufacturer_M_PRADO_EUROPE_BV,
+		KnxManufacturer_M_E2S_GBR,
+		KnxManufacturer_M_UNITLINK,
+		KnxManufacturer_M_ONNA,
+		KnxManufacturer_M_CENTERSVET_LLC,
+		KnxManufacturer_M_ADVECO_TECHNOLOGY_CO___LTD_,
+		KnxManufacturer_M_FR__LUERSSEN_WERFT,
+		KnxManufacturer_M_MYLYR,
+		KnxManufacturer_M_HYUNDAI_HT,
+		KnxManufacturer_M_GUANGDONG_YUEJINGRUN_TECHNOLOGY_CO__LTD,
+		KnxManufacturer_M_SMATEK_ELECTRONICS_LIMITED,
+		KnxManufacturer_M_ANYTEK_ELECTRONIC_TECHNOLOGY_SZ_CO___LTD_,
+		KnxManufacturer_M_MORELINKS_SMART_HOME,
+		KnxManufacturer_M_CIRTX_GMBH,
+		KnxManufacturer_M_QLITE,
+		KnxManufacturer_M_ZHONGSHAN_ILLUS_LIGHTING_CO__LTD,
+		KnxManufacturer_M_HANGZHOU_KONKE_INFORMATION_TECHNOLOGY_CO___LTD_,
+		KnxManufacturer_M_SHANGHAI_FANTE_DIGITAL_TECHNOLOGY_CO___LTD,
+		KnxManufacturer_M_CONFIO,
+		KnxManufacturer_M_SONIC_TECHNOLOGIES,
+		KnxManufacturer_M_SHANGHAI_INNOVATECH_INFORMATION_TECHNOLOGY_CO___LT,
+		KnxManufacturer_M_ABI_SICHERHEITSSYSTEME_GMBH,
+		KnxManufacturer_M_RYT,
+		KnxManufacturer_M_AURIGA_SYSTEMS,
+		KnxManufacturer_M_ALZINGERANDVOGEL_SOFTWAREENTWICKLUNGS_GMBH,
+		KnxManufacturer_M_GIANFRANCO_SMART_SOLUTIONS_LTD,
+		KnxManufacturer_M_ROGERWELL_CONTROL_SYSTEM_LIMITED,
 		KnxManufacturer_M_ABB___RESERVED,
 		KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED,
 	}
@@ -4289,23 +4341,127 @@ func (e KnxManufacturer) Number() uint16 {
 		}
 	case 724:
 		{ /* '724' */
-			return 43954
+			return 785
 		}
 	case 725:
 		{ /* '725' */
-			return 43959
+			return 786
+		}
+	case 726:
+		{ /* '726' */
+			return 787
+		}
+	case 727:
+		{ /* '727' */
+			return 788
+		}
+	case 728:
+		{ /* '728' */
+			return 789
+		}
+	case 729:
+		{ /* '729' */
+			return 790
 		}
 	case 73:
 		{ /* '73' */
 			return 112
 		}
+	case 730:
+		{ /* '730' */
+			return 791
+		}
+	case 731:
+		{ /* '731' */
+			return 792
+		}
+	case 732:
+		{ /* '732' */
+			return 793
+		}
+	case 733:
+		{ /* '733' */
+			return 794
+		}
+	case 734:
+		{ /* '734' */
+			return 795
+		}
+	case 735:
+		{ /* '735' */
+			return 796
+		}
+	case 736:
+		{ /* '736' */
+			return 797
+		}
+	case 737:
+		{ /* '737' */
+			return 798
+		}
+	case 738:
+		{ /* '738' */
+			return 799
+		}
+	case 739:
+		{ /* '739' */
+			return 800
+		}
 	case 74:
 		{ /* '74' */
 			return 113
 		}
+	case 740:
+		{ /* '740' */
+			return 801
+		}
+	case 741:
+		{ /* '741' */
+			return 802
+		}
+	case 742:
+		{ /* '742' */
+			return 803
+		}
+	case 743:
+		{ /* '743' */
+			return 804
+		}
+	case 744:
+		{ /* '744' */
+			return 805
+		}
+	case 745:
+		{ /* '745' */
+			return 806
+		}
+	case 746:
+		{ /* '746' */
+			return 807
+		}
+	case 747:
+		{ /* '747' */
+			return 808
+		}
+	case 748:
+		{ /* '748' */
+			return 809
+		}
+	case 749:
+		{ /* '749' */
+			return 810
+		}
 	case 75:
 		{ /* '75' */
 			return 114
+		}
+	case 750:
+		{ /* '750' */
+			return 43954
+		}
+	case 751:
+		{ /* '751' */
+			return 43959
 		}
 	case 76:
 		{ /* '76' */
@@ -5739,7 +5895,7 @@ func (e KnxManufacturer) Name() string {
 		}
 	case 393:
 		{ /* '393' */
-			return "ABEGO"
+			return "Dobnel"
 		}
 	case 394:
 		{ /* '394' */
@@ -5871,7 +6027,7 @@ func (e KnxManufacturer) Name() string {
 		}
 	case 422:
 		{ /* '422' */
-			return "EaseMore"
+			return "Hangzhou YiYue Technology Co., Ltd."
 		}
 	case 423:
 		{ /* '423' */
@@ -6903,7 +7059,7 @@ func (e KnxManufacturer) Name() string {
 		}
 	case 655:
 		{ /* '655' */
-			return "CAV AUDIO(GUANGZHOU)CO.,LTD"
+			return "CAV SMART(GUANGZHOU)CO.,LTD"
 		}
 	case 656:
 		{ /* '656' */
@@ -7211,23 +7367,127 @@ func (e KnxManufacturer) Name() string {
 		}
 	case 724:
 		{ /* '724' */
-			return "ABB - reserved"
+			return "e2s GbR"
 		}
 	case 725:
 		{ /* '725' */
-			return "Busch-Jaeger Elektro - reserved"
+			return "UnitLink"
+		}
+	case 726:
+		{ /* '726' */
+			return "ONNA"
+		}
+	case 727:
+		{ /* '727' */
+			return "CENTERSVET LLC"
+		}
+	case 728:
+		{ /* '728' */
+			return "Adveco Technology Co., Ltd."
+		}
+	case 729:
+		{ /* '729' */
+			return "Fr. Lürssen Werft"
 		}
 	case 73:
 		{ /* '73' */
 			return "AGFEO"
 		}
+	case 730:
+		{ /* '730' */
+			return "mylyr"
+		}
+	case 731:
+		{ /* '731' */
+			return "HYUNDAI HT"
+		}
+	case 732:
+		{ /* '732' */
+			return "Guangdong Yuejingrun Technology Co.,Ltd"
+		}
+	case 733:
+		{ /* '733' */
+			return "SMATEK ELECTRONICS LIMITED"
+		}
+	case 734:
+		{ /* '734' */
+			return "Anytek Electronic Technology (SZ) Co., Ltd."
+		}
+	case 735:
+		{ /* '735' */
+			return "Morelinks Smart Home"
+		}
+	case 736:
+		{ /* '736' */
+			return "Cirtx GmbH"
+		}
+	case 737:
+		{ /* '737' */
+			return "QLITE"
+		}
+	case 738:
+		{ /* '738' */
+			return "Zhongshan Illus LIghting Co.,Ltd"
+		}
+	case 739:
+		{ /* '739' */
+			return "Hangzhou Konke Information Technology Co., Ltd."
+		}
 	case 74:
 		{ /* '74' */
 			return "Zennio"
 		}
+	case 740:
+		{ /* '740' */
+			return "Shanghai Fante Digital Technology Co., Ltd"
+		}
+	case 741:
+		{ /* '741' */
+			return "CONFIO"
+		}
+	case 742:
+		{ /* '742' */
+			return "Sonic Technologies"
+		}
+	case 743:
+		{ /* '743' */
+			return "Shanghai Innovatech Information Technology Co., Lt"
+		}
+	case 744:
+		{ /* '744' */
+			return "ABI Sicherheitssysteme GmbH"
+		}
+	case 745:
+		{ /* '745' */
+			return "RYT"
+		}
+	case 746:
+		{ /* '746' */
+			return "Auriga Systems"
+		}
+	case 747:
+		{ /* '747' */
+			return "Alzinger&Vogel Softwareentwicklungs GmbH"
+		}
+	case 748:
+		{ /* '748' */
+			return "Gianfranco Smart Solutions Ltd"
+		}
+	case 749:
+		{ /* '749' */
+			return "Rogerwell Control System Limited"
+		}
 	case 75:
 		{ /* '75' */
 			return "TAPKO Technologies"
+		}
+	case 750:
+		{ /* '750' */
+			return "ABB - reserved"
+		}
+	case 751:
+		{ /* '751' */
+			return "Busch-Jaeger Elektro - reserved"
 		}
 	case 76:
 		{ /* '76' */
@@ -8005,7 +8265,7 @@ func KnxManufacturerByValue(value uint16) (enum KnxManufacturer, ok bool) {
 	case 392:
 		return KnxManufacturer_M_EYRISE_B_V, true
 	case 393:
-		return KnxManufacturer_M_ABEGO, true
+		return KnxManufacturer_M_DOBNEL, true
 	case 394:
 		return KnxManufacturer_M_MYGEKKO, true
 	case 395:
@@ -8071,7 +8331,7 @@ func KnxManufacturerByValue(value uint16) (enum KnxManufacturer, ok bool) {
 	case 421:
 		return KnxManufacturer_M_BETA_CAVI, true
 	case 422:
-		return KnxManufacturer_M_EASEMORE, true
+		return KnxManufacturer_M_HANGZHOU_YIYUE_TECHNOLOGY_CO___LTD_, true
 	case 423:
 		return KnxManufacturer_M_VIVALDI_SRL, true
 	case 424:
@@ -8587,7 +8847,7 @@ func KnxManufacturerByValue(value uint16) (enum KnxManufacturer, ok bool) {
 	case 654:
 		return KnxManufacturer_M_MICHOI, true
 	case 655:
-		return KnxManufacturer_M_CAV_AUDIOGUANGZHOUCO__LTD, true
+		return KnxManufacturer_M_CAV_SMARTGUANGZHOUCO__LTD, true
 	case 656:
 		return KnxManufacturer_M_HELKAMA_BICA_OY, true
 	case 657:
@@ -8741,15 +9001,67 @@ func KnxManufacturerByValue(value uint16) (enum KnxManufacturer, ok bool) {
 	case 723:
 		return KnxManufacturer_M_PRADO_EUROPE_BV, true
 	case 724:
-		return KnxManufacturer_M_ABB___RESERVED, true
+		return KnxManufacturer_M_E2S_GBR, true
 	case 725:
-		return KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED, true
+		return KnxManufacturer_M_UNITLINK, true
+	case 726:
+		return KnxManufacturer_M_ONNA, true
+	case 727:
+		return KnxManufacturer_M_CENTERSVET_LLC, true
+	case 728:
+		return KnxManufacturer_M_ADVECO_TECHNOLOGY_CO___LTD_, true
+	case 729:
+		return KnxManufacturer_M_FR__LUERSSEN_WERFT, true
 	case 73:
 		return KnxManufacturer_M_AGFEO, true
+	case 730:
+		return KnxManufacturer_M_MYLYR, true
+	case 731:
+		return KnxManufacturer_M_HYUNDAI_HT, true
+	case 732:
+		return KnxManufacturer_M_GUANGDONG_YUEJINGRUN_TECHNOLOGY_CO__LTD, true
+	case 733:
+		return KnxManufacturer_M_SMATEK_ELECTRONICS_LIMITED, true
+	case 734:
+		return KnxManufacturer_M_ANYTEK_ELECTRONIC_TECHNOLOGY_SZ_CO___LTD_, true
+	case 735:
+		return KnxManufacturer_M_MORELINKS_SMART_HOME, true
+	case 736:
+		return KnxManufacturer_M_CIRTX_GMBH, true
+	case 737:
+		return KnxManufacturer_M_QLITE, true
+	case 738:
+		return KnxManufacturer_M_ZHONGSHAN_ILLUS_LIGHTING_CO__LTD, true
+	case 739:
+		return KnxManufacturer_M_HANGZHOU_KONKE_INFORMATION_TECHNOLOGY_CO___LTD_, true
 	case 74:
 		return KnxManufacturer_M_ZENNIO, true
+	case 740:
+		return KnxManufacturer_M_SHANGHAI_FANTE_DIGITAL_TECHNOLOGY_CO___LTD, true
+	case 741:
+		return KnxManufacturer_M_CONFIO, true
+	case 742:
+		return KnxManufacturer_M_SONIC_TECHNOLOGIES, true
+	case 743:
+		return KnxManufacturer_M_SHANGHAI_INNOVATECH_INFORMATION_TECHNOLOGY_CO___LT, true
+	case 744:
+		return KnxManufacturer_M_ABI_SICHERHEITSSYSTEME_GMBH, true
+	case 745:
+		return KnxManufacturer_M_RYT, true
+	case 746:
+		return KnxManufacturer_M_AURIGA_SYSTEMS, true
+	case 747:
+		return KnxManufacturer_M_ALZINGERANDVOGEL_SOFTWAREENTWICKLUNGS_GMBH, true
+	case 748:
+		return KnxManufacturer_M_GIANFRANCO_SMART_SOLUTIONS_LTD, true
+	case 749:
+		return KnxManufacturer_M_ROGERWELL_CONTROL_SYSTEM_LIMITED, true
 	case 75:
 		return KnxManufacturer_M_TAPKO_TECHNOLOGIES, true
+	case 750:
+		return KnxManufacturer_M_ABB___RESERVED, true
+	case 751:
+		return KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED, true
 	case 76:
 		return KnxManufacturer_M_HDL, true
 	case 77:
@@ -9462,8 +9774,8 @@ func KnxManufacturerByName(value string) (enum KnxManufacturer, ok bool) {
 		return KnxManufacturer_M_CULLMANN_TECH, true
 	case "M_EYRISE_B_V":
 		return KnxManufacturer_M_EYRISE_B_V, true
-	case "M_ABEGO":
-		return KnxManufacturer_M_ABEGO, true
+	case "M_DOBNEL":
+		return KnxManufacturer_M_DOBNEL, true
 	case "M_MYGEKKO":
 		return KnxManufacturer_M_MYGEKKO, true
 	case "M_ERGO3_SARL":
@@ -9528,8 +9840,8 @@ func KnxManufacturerByName(value string) (enum KnxManufacturer, ok bool) {
 		return KnxManufacturer_M_STARNET, true
 	case "M_BETA_CAVI":
 		return KnxManufacturer_M_BETA_CAVI, true
-	case "M_EASEMORE":
-		return KnxManufacturer_M_EASEMORE, true
+	case "M_HANGZHOU_YIYUE_TECHNOLOGY_CO___LTD_":
+		return KnxManufacturer_M_HANGZHOU_YIYUE_TECHNOLOGY_CO___LTD_, true
 	case "M_VIVALDI_SRL":
 		return KnxManufacturer_M_VIVALDI_SRL, true
 	case "M_GREE_ELECTRIC_APPLIANCES_INC__OF_ZHUHAI":
@@ -10044,8 +10356,8 @@ func KnxManufacturerByName(value string) (enum KnxManufacturer, ok bool) {
 		return KnxManufacturer_M_TURING_THINK, true
 	case "M_MICHOI":
 		return KnxManufacturer_M_MICHOI, true
-	case "M_CAV_AUDIOGUANGZHOUCO__LTD":
-		return KnxManufacturer_M_CAV_AUDIOGUANGZHOUCO__LTD, true
+	case "M_CAV_SMARTGUANGZHOUCO__LTD":
+		return KnxManufacturer_M_CAV_SMARTGUANGZHOUCO__LTD, true
 	case "M_HELKAMA_BICA_OY":
 		return KnxManufacturer_M_HELKAMA_BICA_OY, true
 	case "M_MODULYTE":
@@ -10198,16 +10510,68 @@ func KnxManufacturerByName(value string) (enum KnxManufacturer, ok bool) {
 		return KnxManufacturer_M_ERSE_KABLO, true
 	case "M_PRADO_EUROPE_BV":
 		return KnxManufacturer_M_PRADO_EUROPE_BV, true
+	case "M_E2S_GBR":
+		return KnxManufacturer_M_E2S_GBR, true
+	case "M_UNITLINK":
+		return KnxManufacturer_M_UNITLINK, true
+	case "M_ONNA":
+		return KnxManufacturer_M_ONNA, true
+	case "M_CENTERSVET_LLC":
+		return KnxManufacturer_M_CENTERSVET_LLC, true
+	case "M_ADVECO_TECHNOLOGY_CO___LTD_":
+		return KnxManufacturer_M_ADVECO_TECHNOLOGY_CO___LTD_, true
+	case "M_FR__LUERSSEN_WERFT":
+		return KnxManufacturer_M_FR__LUERSSEN_WERFT, true
+	case "M_AGFEO":
+		return KnxManufacturer_M_AGFEO, true
+	case "M_MYLYR":
+		return KnxManufacturer_M_MYLYR, true
+	case "M_HYUNDAI_HT":
+		return KnxManufacturer_M_HYUNDAI_HT, true
+	case "M_GUANGDONG_YUEJINGRUN_TECHNOLOGY_CO__LTD":
+		return KnxManufacturer_M_GUANGDONG_YUEJINGRUN_TECHNOLOGY_CO__LTD, true
+	case "M_SMATEK_ELECTRONICS_LIMITED":
+		return KnxManufacturer_M_SMATEK_ELECTRONICS_LIMITED, true
+	case "M_ANYTEK_ELECTRONIC_TECHNOLOGY_SZ_CO___LTD_":
+		return KnxManufacturer_M_ANYTEK_ELECTRONIC_TECHNOLOGY_SZ_CO___LTD_, true
+	case "M_MORELINKS_SMART_HOME":
+		return KnxManufacturer_M_MORELINKS_SMART_HOME, true
+	case "M_CIRTX_GMBH":
+		return KnxManufacturer_M_CIRTX_GMBH, true
+	case "M_QLITE":
+		return KnxManufacturer_M_QLITE, true
+	case "M_ZHONGSHAN_ILLUS_LIGHTING_CO__LTD":
+		return KnxManufacturer_M_ZHONGSHAN_ILLUS_LIGHTING_CO__LTD, true
+	case "M_HANGZHOU_KONKE_INFORMATION_TECHNOLOGY_CO___LTD_":
+		return KnxManufacturer_M_HANGZHOU_KONKE_INFORMATION_TECHNOLOGY_CO___LTD_, true
+	case "M_ZENNIO":
+		return KnxManufacturer_M_ZENNIO, true
+	case "M_SHANGHAI_FANTE_DIGITAL_TECHNOLOGY_CO___LTD":
+		return KnxManufacturer_M_SHANGHAI_FANTE_DIGITAL_TECHNOLOGY_CO___LTD, true
+	case "M_CONFIO":
+		return KnxManufacturer_M_CONFIO, true
+	case "M_SONIC_TECHNOLOGIES":
+		return KnxManufacturer_M_SONIC_TECHNOLOGIES, true
+	case "M_SHANGHAI_INNOVATECH_INFORMATION_TECHNOLOGY_CO___LT":
+		return KnxManufacturer_M_SHANGHAI_INNOVATECH_INFORMATION_TECHNOLOGY_CO___LT, true
+	case "M_ABI_SICHERHEITSSYSTEME_GMBH":
+		return KnxManufacturer_M_ABI_SICHERHEITSSYSTEME_GMBH, true
+	case "M_RYT":
+		return KnxManufacturer_M_RYT, true
+	case "M_AURIGA_SYSTEMS":
+		return KnxManufacturer_M_AURIGA_SYSTEMS, true
+	case "M_ALZINGERANDVOGEL_SOFTWAREENTWICKLUNGS_GMBH":
+		return KnxManufacturer_M_ALZINGERANDVOGEL_SOFTWAREENTWICKLUNGS_GMBH, true
+	case "M_GIANFRANCO_SMART_SOLUTIONS_LTD":
+		return KnxManufacturer_M_GIANFRANCO_SMART_SOLUTIONS_LTD, true
+	case "M_ROGERWELL_CONTROL_SYSTEM_LIMITED":
+		return KnxManufacturer_M_ROGERWELL_CONTROL_SYSTEM_LIMITED, true
+	case "M_TAPKO_TECHNOLOGIES":
+		return KnxManufacturer_M_TAPKO_TECHNOLOGIES, true
 	case "M_ABB___RESERVED":
 		return KnxManufacturer_M_ABB___RESERVED, true
 	case "M_BUSCH_JAEGER_ELEKTRO___RESERVED":
 		return KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED, true
-	case "M_AGFEO":
-		return KnxManufacturer_M_AGFEO, true
-	case "M_ZENNIO":
-		return KnxManufacturer_M_ZENNIO, true
-	case "M_TAPKO_TECHNOLOGIES":
-		return KnxManufacturer_M_TAPKO_TECHNOLOGIES, true
 	case "M_HDL":
 		return KnxManufacturer_M_HDL, true
 	case "M_UPONOR":
@@ -10992,8 +11356,8 @@ func (e KnxManufacturer) PLC4XEnumName() string {
 		return "M_CULLMANN_TECH"
 	case KnxManufacturer_M_EYRISE_B_V:
 		return "M_EYRISE_B_V"
-	case KnxManufacturer_M_ABEGO:
-		return "M_ABEGO"
+	case KnxManufacturer_M_DOBNEL:
+		return "M_DOBNEL"
 	case KnxManufacturer_M_MYGEKKO:
 		return "M_MYGEKKO"
 	case KnxManufacturer_M_ERGO3_SARL:
@@ -11058,8 +11422,8 @@ func (e KnxManufacturer) PLC4XEnumName() string {
 		return "M_STARNET"
 	case KnxManufacturer_M_BETA_CAVI:
 		return "M_BETA_CAVI"
-	case KnxManufacturer_M_EASEMORE:
-		return "M_EASEMORE"
+	case KnxManufacturer_M_HANGZHOU_YIYUE_TECHNOLOGY_CO___LTD_:
+		return "M_HANGZHOU_YIYUE_TECHNOLOGY_CO___LTD_"
 	case KnxManufacturer_M_VIVALDI_SRL:
 		return "M_VIVALDI_SRL"
 	case KnxManufacturer_M_GREE_ELECTRIC_APPLIANCES_INC__OF_ZHUHAI:
@@ -11574,8 +11938,8 @@ func (e KnxManufacturer) PLC4XEnumName() string {
 		return "M_TURING_THINK"
 	case KnxManufacturer_M_MICHOI:
 		return "M_MICHOI"
-	case KnxManufacturer_M_CAV_AUDIOGUANGZHOUCO__LTD:
-		return "M_CAV_AUDIOGUANGZHOUCO__LTD"
+	case KnxManufacturer_M_CAV_SMARTGUANGZHOUCO__LTD:
+		return "M_CAV_SMARTGUANGZHOUCO__LTD"
 	case KnxManufacturer_M_HELKAMA_BICA_OY:
 		return "M_HELKAMA_BICA_OY"
 	case KnxManufacturer_M_MODULYTE:
@@ -11728,16 +12092,68 @@ func (e KnxManufacturer) PLC4XEnumName() string {
 		return "M_ERSE_KABLO"
 	case KnxManufacturer_M_PRADO_EUROPE_BV:
 		return "M_PRADO_EUROPE_BV"
+	case KnxManufacturer_M_E2S_GBR:
+		return "M_E2S_GBR"
+	case KnxManufacturer_M_UNITLINK:
+		return "M_UNITLINK"
+	case KnxManufacturer_M_ONNA:
+		return "M_ONNA"
+	case KnxManufacturer_M_CENTERSVET_LLC:
+		return "M_CENTERSVET_LLC"
+	case KnxManufacturer_M_ADVECO_TECHNOLOGY_CO___LTD_:
+		return "M_ADVECO_TECHNOLOGY_CO___LTD_"
+	case KnxManufacturer_M_FR__LUERSSEN_WERFT:
+		return "M_FR__LUERSSEN_WERFT"
+	case KnxManufacturer_M_AGFEO:
+		return "M_AGFEO"
+	case KnxManufacturer_M_MYLYR:
+		return "M_MYLYR"
+	case KnxManufacturer_M_HYUNDAI_HT:
+		return "M_HYUNDAI_HT"
+	case KnxManufacturer_M_GUANGDONG_YUEJINGRUN_TECHNOLOGY_CO__LTD:
+		return "M_GUANGDONG_YUEJINGRUN_TECHNOLOGY_CO__LTD"
+	case KnxManufacturer_M_SMATEK_ELECTRONICS_LIMITED:
+		return "M_SMATEK_ELECTRONICS_LIMITED"
+	case KnxManufacturer_M_ANYTEK_ELECTRONIC_TECHNOLOGY_SZ_CO___LTD_:
+		return "M_ANYTEK_ELECTRONIC_TECHNOLOGY_SZ_CO___LTD_"
+	case KnxManufacturer_M_MORELINKS_SMART_HOME:
+		return "M_MORELINKS_SMART_HOME"
+	case KnxManufacturer_M_CIRTX_GMBH:
+		return "M_CIRTX_GMBH"
+	case KnxManufacturer_M_QLITE:
+		return "M_QLITE"
+	case KnxManufacturer_M_ZHONGSHAN_ILLUS_LIGHTING_CO__LTD:
+		return "M_ZHONGSHAN_ILLUS_LIGHTING_CO__LTD"
+	case KnxManufacturer_M_HANGZHOU_KONKE_INFORMATION_TECHNOLOGY_CO___LTD_:
+		return "M_HANGZHOU_KONKE_INFORMATION_TECHNOLOGY_CO___LTD_"
+	case KnxManufacturer_M_ZENNIO:
+		return "M_ZENNIO"
+	case KnxManufacturer_M_SHANGHAI_FANTE_DIGITAL_TECHNOLOGY_CO___LTD:
+		return "M_SHANGHAI_FANTE_DIGITAL_TECHNOLOGY_CO___LTD"
+	case KnxManufacturer_M_CONFIO:
+		return "M_CONFIO"
+	case KnxManufacturer_M_SONIC_TECHNOLOGIES:
+		return "M_SONIC_TECHNOLOGIES"
+	case KnxManufacturer_M_SHANGHAI_INNOVATECH_INFORMATION_TECHNOLOGY_CO___LT:
+		return "M_SHANGHAI_INNOVATECH_INFORMATION_TECHNOLOGY_CO___LT"
+	case KnxManufacturer_M_ABI_SICHERHEITSSYSTEME_GMBH:
+		return "M_ABI_SICHERHEITSSYSTEME_GMBH"
+	case KnxManufacturer_M_RYT:
+		return "M_RYT"
+	case KnxManufacturer_M_AURIGA_SYSTEMS:
+		return "M_AURIGA_SYSTEMS"
+	case KnxManufacturer_M_ALZINGERANDVOGEL_SOFTWAREENTWICKLUNGS_GMBH:
+		return "M_ALZINGERANDVOGEL_SOFTWAREENTWICKLUNGS_GMBH"
+	case KnxManufacturer_M_GIANFRANCO_SMART_SOLUTIONS_LTD:
+		return "M_GIANFRANCO_SMART_SOLUTIONS_LTD"
+	case KnxManufacturer_M_ROGERWELL_CONTROL_SYSTEM_LIMITED:
+		return "M_ROGERWELL_CONTROL_SYSTEM_LIMITED"
+	case KnxManufacturer_M_TAPKO_TECHNOLOGIES:
+		return "M_TAPKO_TECHNOLOGIES"
 	case KnxManufacturer_M_ABB___RESERVED:
 		return "M_ABB___RESERVED"
 	case KnxManufacturer_M_BUSCH_JAEGER_ELEKTRO___RESERVED:
 		return "M_BUSCH_JAEGER_ELEKTRO___RESERVED"
-	case KnxManufacturer_M_AGFEO:
-		return "M_AGFEO"
-	case KnxManufacturer_M_ZENNIO:
-		return "M_ZENNIO"
-	case KnxManufacturer_M_TAPKO_TECHNOLOGIES:
-		return "M_TAPKO_TECHNOLOGIES"
 	case KnxManufacturer_M_HDL:
 		return "M_HDL"
 	case KnxManufacturer_M_UPONOR:

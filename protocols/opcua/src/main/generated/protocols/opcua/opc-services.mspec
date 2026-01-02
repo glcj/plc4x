@@ -346,6 +346,9 @@
   ['15400' TestConcreteStructure]
   ['15406' AccessLevelExType]
   ['15432' TestEnumeration]
+  ['15434' BaseConfigurationDataType]
+  ['15435' BaseConfigurationRecordDataType]
+  ['15436' CertificateGroupDataType]
   ['15480' WriterGroupDataType]
   ['15487' StructureDescription]
   ['15488' EnumDescription]
@@ -356,6 +359,14 @@
   ['15530' PubSubConfigurationDataType]
   ['15532' DatagramWriterGroupTransportDataType]
   ['15534' DataTypeSchemaHeader]
+  ['15538' ConfigurationUpdateTargetType]
+  ['15539' ConfigurationUpdateType]
+  ['15549' ApplicationConfigurationDataType]
+  ['15556' ApplicationIdentityDataType]
+  ['15557' EndpointDataType]
+  ['15558' ServerEndpointDataType]
+  ['15559' SecuritySettingsDataType]
+  ['15560' UserTokenSettingsDataType]
   ['15578' PublishedDataSetDataType]
   ['15580' PublishedDataSetSourceDataType]
   ['15581' PublishedDataItemsDataType]
@@ -442,11 +453,18 @@
   ['19320' JsonActionNetworkMessage]
   ['19321' JsonActionRequestMessage]
   ['19322' JsonActionResponseMessage]
+  ['19361' LogRecord]
   ['19431' TestUnion]
   ['19432' TestOptionalFields]
   ['19433' TestOptionSet]
+  ['19445' AuthorizationServiceConfigurationDataType]
   ['19723' DiagnosticsLevel]
   ['19730' PubSubDiagnosticsCounterClassification]
+  ['19745' LogRecordsDataType]
+  ['19746' SpanContextDataType]
+  ['19747' TraceContextDataType]
+  ['19748' NameValuePair]
+  ['19749' LogRecordMask]
   ['20408' DataSetOrderingType]
   ['20998' VersionTime]
   ['20999' SessionlessInvokeResponseType]
@@ -504,7 +522,6 @@
   ['32660' ReferenceListEntryDataType]
   ['32799' ReadEventDetails2]
   ['32824' HistoryModifiedEvent]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesReferenceType
@@ -553,6 +570,7 @@
   ['17985' HasEffectUnsuppressed]
   ['18804' HasWriterGroup]
   ['18805' HasReaderGroup]
+  ['19371' HasLogHierarchy]
   ['23469' AliasFor]
   ['23562' IsDeprecated]
   ['24136' HasStructuredComponent]
@@ -580,7 +598,6 @@
   ['32633' HasCurrentData]
   ['32634' HasCurrentEvent]
   ['32679' HasReferenceDescription]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesObjectType
@@ -725,11 +742,14 @@
   ['15305' DataSetWriterTransportType]
   ['15306' DataSetReaderType]
   ['15319' DataSetReaderTransportType]
+  ['15437' ConfigurationFileType]
   ['15452' SecurityGroupFolderType]
   ['15471' SecurityGroupType]
   ['15489' ExtensionFieldsType]
   ['15535' PubSubStatusEventType]
+  ['15541' ConfigurationUpdatedAuditEventType]
   ['15548' PubSubTransportLimitsExceedEventType]
+  ['15550' ApplicationConfigurationFileType]
   ['15563' PubSubCommunicationFailureEventType]
   ['15607' RoleSetType]
   ['15620' RoleType]
@@ -774,6 +794,14 @@
   ['19033' LldpRemoteSystemType]
   ['19095' AuditHistoryAnnotationUpdateEventType]
   ['19297' TrustListOutOfDateAlarmType]
+  ['19323' UserCertificateType]
+  ['19324' TlsCertificateType]
+  ['19325' TlsServerCertificateType]
+  ['19326' TlsClientCertificateType]
+  ['19352' LogObjectType]
+  ['19362' BaseLogEventType]
+  ['19369' LogOverflowEventType]
+  ['19370' LogEntryConditionClassType]
   ['19677' PubSubDiagnosticsType]
   ['19732' PubSubDiagnosticsRootType]
   ['19786' PubSubDiagnosticsConnectionType]
@@ -853,7 +881,6 @@
   ['32625' HistoricalExternalEventSourceType]
   ['32758' AuditHistoryConfigurationChangeEventType]
   ['32803' AuditHistoryBulkInsertEventType]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableType
@@ -919,7 +946,6 @@
   ['32244' AlarmStateVariableType]
   ['32431' BitFieldType]
   ['32657' ReferenceDescriptionVariableType]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesObject
@@ -1824,6 +1850,7 @@
   ['15481' PublishedDataSetType_ExtensionFields]
   ['15529' SimpleTypeDescription_Encoding_DefaultXml]
   ['15531' UABinaryFileDataType_Encoding_DefaultXml]
+  ['15564' ServerConfigurationType_ConfigurationFile]
   ['15579' BrokerConnectionTransportDataType_Encoding_DefaultXml]
   ['15589' StructureDescription_Encoding_DefaultXml]
   ['15590' EnumDescription_Encoding_DefaultXml]
@@ -1888,6 +1915,7 @@
   ['15839' FileTransferStateMachineType_ApplyWriteToError]
   ['15841' FileTransferStateMachineType_ErrorToIdle]
   ['15844' PublishSubscribeType_Status]
+  ['15892' ServerConfiguration_ConfigurationFile]
   ['15902' SessionlessInvokeRequestType_Encoding_DefaultXml]
   ['15903' SessionlessInvokeRequestType_Encoding_DefaultBinary]
   ['15905' PublishSubscribeType_ConnectionName_Placeholder_TransportSettings]
@@ -1953,6 +1981,7 @@
   ['16311' SubscribedDataSetMirrorDataType_Encoding_DefaultJson]
   ['16314' FileSystem]
   ['16323' UadpWriterGroupMessageDataType_Encoding_DefaultJson]
+  ['16324' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile]
   ['16391' UadpDataSetWriterMessageDataType_Encoding_DefaultJson]
   ['16392' UadpDataSetReaderMessageDataType_Encoding_DefaultJson]
   ['16393' JsonWriterGroupMessageDataType_Encoding_DefaultJson]
@@ -1966,6 +1995,36 @@
   ['16525' BrokerDataSetWriterTransportDataType_Encoding_DefaultJson]
   ['16526' BrokerDataSetReaderTransportDataType_Encoding_DefaultJson]
   ['16530' AlarmGroupType_AlarmConditionInstance_Placeholder_FirstInGroup]
+  ['16538' BaseConfigurationDataType_Encoding_DefaultBinary]
+  ['16539' BaseConfigurationRecordDataType_Encoding_DefaultBinary]
+  ['16540' CertificateGroupDataType_Encoding_DefaultBinary]
+  ['16541' ConfigurationUpdateTargetType_Encoding_DefaultBinary]
+  ['16542' ApplicationConfigurationDataType_Encoding_DefaultBinary]
+  ['16543' ApplicationIdentityDataType_Encoding_DefaultBinary]
+  ['16544' EndpointDataType_Encoding_DefaultBinary]
+  ['16545' ServerEndpointDataType_Encoding_DefaultBinary]
+  ['16546' SecuritySettingsDataType_Encoding_DefaultBinary]
+  ['16547' UserTokenSettingsDataType_Encoding_DefaultBinary]
+  ['16587' BaseConfigurationDataType_Encoding_DefaultXml]
+  ['16588' BaseConfigurationRecordDataType_Encoding_DefaultXml]
+  ['16589' CertificateGroupDataType_Encoding_DefaultXml]
+  ['16590' ConfigurationUpdateTargetType_Encoding_DefaultXml]
+  ['16591' ApplicationConfigurationDataType_Encoding_DefaultXml]
+  ['16592' ApplicationIdentityDataType_Encoding_DefaultXml]
+  ['16593' EndpointDataType_Encoding_DefaultXml]
+  ['16594' ServerEndpointDataType_Encoding_DefaultXml]
+  ['16595' SecuritySettingsDataType_Encoding_DefaultXml]
+  ['16596' UserTokenSettingsDataType_Encoding_DefaultXml]
+  ['16632' BaseConfigurationDataType_Encoding_DefaultJson]
+  ['16633' BaseConfigurationRecordDataType_Encoding_DefaultJson]
+  ['16634' CertificateGroupDataType_Encoding_DefaultJson]
+  ['16635' ConfigurationUpdateTargetType_Encoding_DefaultJson]
+  ['16636' ApplicationConfigurationDataType_Encoding_DefaultJson]
+  ['16637' ApplicationIdentityDataType_Encoding_DefaultJson]
+  ['16642' EndpointDataType_Encoding_DefaultJson]
+  ['16643' ServerEndpointDataType_Encoding_DefaultJson]
+  ['16644' SecuritySettingsDataType_Encoding_DefaultJson]
+  ['16645' UserTokenSettingsDataType_Encoding_DefaultJson]
   ['16663' ApplicationConfigurationFolderType_ApplicationName_Placeholder]
   ['16706' ManagedApplications]
   ['16707' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups]
@@ -2051,6 +2110,7 @@
   ['18446' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_TrustListOutOfDate_ShelvingState]
   ['18490' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_TrustListOutOfDate_FirstInGroup]
   ['18547' ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics]
+  ['18554' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile]
   ['18598' ActionTargetDataType_Encoding_DefaultBinary]
   ['18599' PublishedActionDataType_Encoding_DefaultBinary]
   ['18600' ActionMethodDataType_Encoding_DefaultBinary]
@@ -2138,6 +2198,15 @@
   ['19299' LldpManagementAddressTxPortType_Encoding_DefaultJson]
   ['19300' LldpManagementAddressType_Encoding_DefaultJson]
   ['19301' LldpTlvType_Encoding_DefaultJson]
+  ['19372' ServerLog]
+  ['19378' Logs]
+  ['19379' LogRecord_Encoding_DefaultBinary]
+  ['19383' LogRecord_Encoding_DefaultXml]
+  ['19387' LogRecord_Encoding_DefaultJson]
+  ['19409' ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials]
+  ['19413' ApplicationConfigurationFolderType_ApplicationName_Placeholder_AuthorizationServices]
+  ['19423' ApplicationConfigurationType_KeyCredentials]
+  ['19427' ApplicationConfigurationType_AuthorizationServices]
   ['19435' TestUnion_Encoding_DefaultBinary]
   ['19436' TestOptionalFields_Encoding_DefaultBinary]
   ['19437' TestUnion_Encoding_DefaultXml]
@@ -2154,7 +2223,24 @@
   ['19654' DataSetReaderType_Diagnostics_LiveValues]
   ['19691' PubSubDiagnosticsType_Counters]
   ['19722' PubSubDiagnosticsType_LiveValues]
+  ['19739' ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials]
+  ['19743' ProvisionableDeviceType_ApplicationName_Placeholder_AuthorizationServices]
+  ['19752' AuthorizationServiceConfigurationDataType_Encoding_DefaultBinary]
+  ['19753' LogRecordsDataType_Encoding_DefaultBinary]
+  ['19754' SpanContextDataType_Encoding_DefaultBinary]
+  ['19755' TraceContextDataType_Encoding_DefaultBinary]
+  ['19756' NameValuePair_Encoding_DefaultBinary]
+  ['19772' AuthorizationServiceConfigurationDataType_Encoding_DefaultXml]
+  ['19773' LogRecordsDataType_Encoding_DefaultXml]
+  ['19774' SpanContextDataType_Encoding_DefaultXml]
+  ['19775' TraceContextDataType_Encoding_DefaultXml]
+  ['19776' NameValuePair_Encoding_DefaultXml]
   ['19777' PubSubDiagnosticsRootType_LiveValues]
+  ['19802' AuthorizationServiceConfigurationDataType_Encoding_DefaultJson]
+  ['19803' LogRecordsDataType_Encoding_DefaultJson]
+  ['19804' SpanContextDataType_Encoding_DefaultJson]
+  ['19805' TraceContextDataType_Encoding_DefaultJson]
+  ['19806' NameValuePair_Encoding_DefaultJson]
   ['19831' PubSubDiagnosticsConnectionType_LiveValues]
   ['19848' PubSubDiagnosticsWriterGroupType_Counters]
   ['19879' PubSubDiagnosticsWriterGroupType_LiveValues]
@@ -2443,7 +2529,6 @@
   ['32825' HistoryModifiedEvent_Encoding_DefaultBinary]
   ['32829' HistoryModifiedEvent_Encoding_DefaultXml]
   ['32833' HistoryModifiedEvent_Encoding_DefaultJson]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableData
@@ -2634,7 +2719,6 @@
   ['21101' DataSetReaderType_DataSetFieldContentMask]
   ['21102' DataSetReaderType_MessageReceiveTimeout]
   ['25524' DataSetFolderType_PublishedDataSetName_Placeholder_CyclicDataSet]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableServer
@@ -2991,6 +3075,46 @@
   ['14415' Server_ServerRedundancy_ServerNetworkGroups]
   ['15003' ServerType_UrisVersion]
   ['15004' Server_UrisVersion]
+  ['15565' ServerConfigurationType_ConfigurationFile_Size]
+  ['15566' ServerConfigurationType_ConfigurationFile_Writable]
+  ['15567' ServerConfigurationType_ConfigurationFile_UserWritable]
+  ['15568' ServerConfigurationType_ConfigurationFile_OpenCount]
+  ['15569' ServerConfigurationType_ConfigurationFile_MimeType]
+  ['15570' ServerConfigurationType_ConfigurationFile_MaxByteStringLength]
+  ['15571' ServerConfigurationType_ConfigurationFile_LastModifiedTime]
+  ['15573' ServerConfigurationType_ConfigurationFile_Open_InputArguments]
+  ['15574' ServerConfigurationType_ConfigurationFile_Open_OutputArguments]
+  ['15790' ServerConfigurationType_ConfigurationFile_Close_InputArguments]
+  ['15792' ServerConfigurationType_ConfigurationFile_Read_InputArguments]
+  ['15804' ServerConfigurationType_ConfigurationFile_Read_OutputArguments]
+  ['15806' ServerConfigurationType_ConfigurationFile_Write_InputArguments]
+  ['15808' ServerConfigurationType_ConfigurationFile_GetPosition_InputArguments]
+  ['15809' ServerConfigurationType_ConfigurationFile_GetPosition_OutputArguments]
+  ['15811' ServerConfigurationType_ConfigurationFile_SetPosition_InputArguments]
+  ['15812' ServerConfigurationType_ConfigurationFile_LastUpdateTime]
+  ['15813' ServerConfigurationType_ConfigurationFile_CurrentVersion]
+  ['15814' ServerConfigurationType_ConfigurationFile_ActivityTimeout]
+  ['15848' ServerConfigurationType_ConfigurationFile_SupportedDataType]
+  ['15850' ServerConfigurationType_ConfigurationFile_CloseAndUpdate_InputArguments]
+  ['15851' ServerConfigurationType_ConfigurationFile_CloseAndUpdate_OutputArguments]
+  ['15864' ServerConfigurationType_ConfigurationFile_ConfirmUpdate_InputArguments]
+  ['15893' ServerConfiguration_ConfigurationFile_Size]
+  ['15894' ServerConfiguration_ConfigurationFile_Writable]
+  ['15937' ServerConfiguration_ConfigurationFile_UserWritable]
+  ['15938' ServerConfiguration_ConfigurationFile_OpenCount]
+  ['15939' ServerConfiguration_ConfigurationFile_MimeType]
+  ['15989' ServerConfiguration_ConfigurationFile_MaxByteStringLength]
+  ['15994' ServerConfiguration_ConfigurationFile_LastModifiedTime]
+  ['16020' ServerConfiguration_ConfigurationFile_Open_InputArguments]
+  ['16059' ServerConfiguration_ConfigurationFile_Open_OutputArguments]
+  ['16061' ServerConfiguration_ConfigurationFile_Close_InputArguments]
+  ['16075' ServerConfiguration_ConfigurationFile_Read_InputArguments]
+  ['16076' ServerConfiguration_ConfigurationFile_Read_OutputArguments]
+  ['16102' ServerConfiguration_ConfigurationFile_Write_InputArguments]
+  ['16122' ServerConfiguration_ConfigurationFile_GetPosition_InputArguments]
+  ['16123' ServerConfiguration_ConfigurationFile_GetPosition_OutputArguments]
+  ['16160' ServerConfiguration_ConfigurationFile_SetPosition_InputArguments]
+  ['16283' ServerConfiguration_ConfigurationFile_LastUpdateTime]
   ['16291' ServerType_ServerCapabilities_RoleSet_AddRole_InputArguments]
   ['16292' ServerType_ServerCapabilities_RoleSet_AddRole_OutputArguments]
   ['16294' ServerType_ServerCapabilities_RoleSet_RemoveRole_InputArguments]
@@ -3000,6 +3124,22 @@
   ['16302' Server_ServerCapabilities_RoleSet_AddRole_InputArguments]
   ['16303' Server_ServerCapabilities_RoleSet_AddRole_OutputArguments]
   ['16305' Server_ServerCapabilities_RoleSet_RemoveRole_InputArguments]
+  ['16306' ServerConfiguration_ConfigurationFile_CurrentVersion]
+  ['16315' ServerConfiguration_ConfigurationFile_ActivityTimeout]
+  ['16316' ServerConfiguration_ConfigurationFile_SupportedDataType]
+  ['16318' ServerConfiguration_ConfigurationFile_CloseAndUpdate_InputArguments]
+  ['16319' ServerConfiguration_ConfigurationFile_CloseAndUpdate_OutputArguments]
+  ['16321' ServerConfiguration_ConfigurationFile_ConfirmUpdate_InputArguments]
+  ['16646' ServerConfigurationType_ConfigurationFile_AvailableNetworks]
+  ['16647' ServerConfigurationType_ConfigurationFile_AvailablePorts]
+  ['16648' ServerConfigurationType_ConfigurationFile_SecurityPolicyUris]
+  ['16649' ServerConfigurationType_ConfigurationFile_UserTokenTypes]
+  ['16650' ServerConfigurationType_ConfigurationFile_CertificateTypes]
+  ['16652' ServerConfiguration_ConfigurationFile_AvailableNetworks]
+  ['16653' ServerConfiguration_ConfigurationFile_AvailablePorts]
+  ['16654' ServerConfiguration_ConfigurationFile_SecurityPolicyUris]
+  ['16655' ServerConfiguration_ConfigurationFile_UserTokenTypes]
+  ['16656' ServerConfiguration_ConfigurationFile_CertificateTypes]
   ['17612' ServerType_LocalTime]
   ['17634' Server_LocalTime]
   ['18660' ServerConfigurationType_ApplicationNames]
@@ -3008,6 +3148,32 @@
   ['18663' ServerConfiguration_SupportsTransactions]
   ['19308' ServerConfigurationType_InApplicationSetup]
   ['19309' ServerConfiguration_InApplicationSetup]
+  ['19338' ServerConfigurationType_CreateSelfSignedCertificate_InputArguments]
+  ['19339' ServerConfigurationType_CreateSelfSignedCertificate_OutputArguments]
+  ['19341' ServerConfigurationType_DeleteCertificate_InputArguments]
+  ['19343' ServerConfiguration_CreateSelfSignedCertificate_InputArguments]
+  ['19344' ServerConfiguration_CreateSelfSignedCertificate_OutputArguments]
+  ['19346' ServerConfiguration_DeleteCertificate_InputArguments]
+  ['19374' ServerLog_GetRecords_InputArguments]
+  ['19375' ServerLog_GetRecords_OutputArguments]
+  ['19376' ServerLog_MaxRecords]
+  ['19377' ServerLog_MaxStorageDuration]
+  ['19417' ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_Purpose]
+  ['19418' ServerConfigurationType_CertificateGroups_DefaultHttpsGroup_Purpose]
+  ['19419' ServerConfigurationType_CertificateGroups_DefaultUserTokenGroup_Purpose]
+  ['19420' ServerConfigurationType_ConfigurationFile_MaxEndpoints]
+  ['19421' ServerConfigurationType_ConfigurationFile_MaxCertificateGroups]
+  ['19422' ServerConfigurationType_ConfigurationFile_CertificateGroupPurposes]
+  ['19428' ServerConfiguration_CertificateGroups_DefaultApplicationGroup_Purpose]
+  ['19429' ServerConfiguration_CertificateGroups_DefaultHttpsGroup_Purpose]
+  ['19430' ServerConfiguration_CertificateGroups_DefaultUserTokenGroup_Purpose]
+  ['19442' ServerConfiguration_ConfigurationFile_MaxEndpoints]
+  ['19443' ServerConfiguration_ConfigurationFile_MaxCertificateGroups]
+  ['19444' ServerConfiguration_ConfigurationFile_CertificateGroupPurposes]
+  ['19751' ServerLog_MinimumSeverity]
+  ['19807' ServerType_ServerCapabilities_MaxLogObjectContinuationPoints]
+  ['19809' ServerCapabilitiesType_MaxLogObjectContinuationPoints]
+  ['19812' Server_ServerCapabilities_MaxLogObjectContinuationPoints]
   ['21679' ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_TrustList_UpdateFrequency]
   ['21681' ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_CertificateExpired_EventId]
   ['21682' ServerConfigurationType_CertificateGroups_DefaultApplicationGroup_CertificateExpired_EventType]
@@ -4781,7 +4947,6 @@
   ['32592' ServerUnitType_AlternativeUnits_AlternativeUnit_Placeholder_LinearConversion]
   ['32593' ServerUnitType_AlternativeUnits_AlternativeUnit_Placeholder_MathMLConversion]
   ['32594' ServerUnitType_AlternativeUnits_AlternativeUnit_Placeholder_MathMLInverseConversion]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSessions
@@ -4843,7 +5008,6 @@
   ['12151' SessionsDiagnosticsSummaryType_ClientName_Placeholder_SessionSecurityDiagnostics_ClientCertificate]
   ['12152' SessionsDiagnosticsSummaryType_ClientName_Placeholder_SubscriptionDiagnosticsArray]
   ['19302' SessionsDiagnosticsSummaryType_ClientName_Placeholder_CurrentRoleIds]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSession
@@ -5009,13 +5173,11 @@
   ['12868' SessionSecurityDiagnosticsArrayType_SessionSecurityDiagnostics_SecurityPolicyUri]
   ['12869' SessionSecurityDiagnosticsArrayType_SessionSecurityDiagnostics_ClientCertificate]
   ['19303' SessionDiagnosticsObjectType_CurrentRoleIds]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTransparent
   ['2037' TransparentRedundancyType_CurrentServerId]
   ['2038' TransparentRedundancyType_RedundantServerArray]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableNon
@@ -5071,7 +5233,6 @@
   ['16858' NonExclusiveRateOfChangeAlarmType_EngineeringUnits]
   ['32413' NonTransparentBackupRedundancyType_RedundantServerArray]
   ['32415' NonTransparentBackupRedundancyType_Mode]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableBase
@@ -5087,11 +5248,14 @@
   ['17567' BaseAnalogType_InstrumentRange]
   ['17568' BaseAnalogType_EURange]
   ['17569' BaseAnalogType_EngineeringUnits]
+  ['19363' BaseLogEventType_ConditionClassId]
+  ['19364' BaseLogEventType_ConditionClassName]
+  ['19365' BaseLogEventType_ErrorCode]
+  ['19366' BaseLogEventType_ErrorCodeNode]
   ['31771' BaseEventType_ConditionClassId]
   ['31772' BaseEventType_ConditionClassName]
   ['31773' BaseEventType_ConditionSubClassId]
   ['31774' BaseEventType_ConditionSubClassName]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAudit
@@ -5177,12 +5341,10 @@
   ['32821' AuditHistoryBulkInsertEventType_UpdatedNode]
   ['32822' AuditHistoryBulkInsertEventType_StartTime]
   ['32823' AuditHistoryBulkInsertEventType_EndTime]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableGeneral
   ['2134' GeneralModelChangeEventType_Changes]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSampling
@@ -5195,7 +5357,6 @@
   ['12781' SamplingIntervalDiagnosticsArrayType_SamplingIntervalDiagnostics_SampledMonitoredItemsCount]
   ['12782' SamplingIntervalDiagnosticsArrayType_SamplingIntervalDiagnostics_MaxSampledMonitoredItemsCount]
   ['12783' SamplingIntervalDiagnosticsArrayType_SamplingIntervalDiagnostics_DisabledMonitoredItemsSamplingCount]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSubscription
@@ -5262,7 +5423,6 @@
   ['12813' SubscriptionDiagnosticsArrayType_SubscriptionDiagnostics_MonitoringQueueOverflowCount]
   ['12814' SubscriptionDiagnosticsArrayType_SubscriptionDiagnostics_NextSequenceNumber]
   ['12815' SubscriptionDiagnosticsArrayType_SubscriptionDiagnostics_EventQueueOverflowCount]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableState
@@ -5282,7 +5442,6 @@
   ['3726' StateMachineType_LastTransition_Number]
   ['3727' StateMachineType_LastTransition_TransitionTime]
   ['11458' StateMachineType_LastTransition_EffectiveTransitionTime]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTransition
@@ -5308,7 +5467,6 @@
   ['3757' TransitionEventType_Transition_TransitionTime]
   ['11456' TransitionVariableType_EffectiveTransitionTime]
   ['11460' TransitionEventType_Transition_EffectiveTransitionTime]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableHistorical
@@ -5338,7 +5496,6 @@
   ['32630' HistoricalExternalEventSourceType_IdentityTokenPolicy]
   ['32631' HistoricalExternalEventSourceType_TransportProfileUri]
   ['32632' HistoricalExternalEventSourceType_HistoricalEventFilter]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableHistory
@@ -5373,14 +5530,12 @@
   ['11884' HistoryUpdateType_EnumValues]
   ['19091' HistoryServerCapabilities_ServerTimestampSupported]
   ['19094' HistoryServerCapabilitiesType_ServerTimestampSupported]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAnalog
   ['2369' AnalogItemType_EURange]
   ['17502' AnalogUnitType_EngineeringUnits]
   ['17575' AnalogUnitRangeType_EngineeringUnits]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTwo
@@ -5391,7 +5546,6 @@
   ['9001' TwoStateVariableType_EffectiveTransitionTime]
   ['11110' TwoStateVariableType_TrueState]
   ['11111' TwoStateVariableType_FalseState]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableMulti
@@ -5401,7 +5555,6 @@
   ['19082' MultiStateDictionaryEntryDiscreteBaseType_EnumDictionaryEntries]
   ['19083' MultiStateDictionaryEntryDiscreteBaseType_ValueAsDictionaryEntries]
   ['19090' MultiStateDictionaryEntryDiscreteType_ValueAsDictionaryEntries]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableProgram
@@ -5478,7 +5631,6 @@
   ['15393' ProgramDiagnostic2Type_LastMethodOutputValues]
   ['15394' ProgramDiagnostic2Type_LastMethodCallTime]
   ['15395' ProgramDiagnostic2Type_LastMethodReturnStatus]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesMethod
@@ -5755,6 +5907,12 @@
   ['15494' ExtensionFieldsType_RemoveExtensionField]
   ['15496' AddExtensionFieldMethodType]
   ['15499' RemoveExtensionFieldMethodType]
+  ['15505' ConfigurationFileType_CloseAndUpdate]
+  ['15508' ConfigurationFileType_ConfirmUpdate]
+  ['15513' ConfigurationFileCloseAndUpdateMethodType]
+  ['15516' ConfigurationFileConfirmUpdateMethodType]
+  ['15572' ServerConfigurationType_ConfigurationFile_Open]
+  ['15575' ServerConfigurationType_ConfigurationFile_Close]
   ['15612' RoleSetType_RoleName_Placeholder_AddIdentity]
   ['15614' RoleSetType_RoleName_Placeholder_RemoveIdentity]
   ['15624' RoleType_AddIdentity]
@@ -5778,13 +5936,19 @@
   ['15746' TemporaryFileTransferType_GenerateFileForRead]
   ['15749' TemporaryFileTransferType_GenerateFileForWrite]
   ['15751' TemporaryFileTransferType_CloseAndCommit]
+  ['15791' ServerConfigurationType_ConfigurationFile_Read]
   ['15794' TemporaryFileTransferType_TransferState_Placeholder_Reset]
   ['15795' GenerateFileForReadMethodType]
   ['15798' GenerateFileForWriteMethodType]
   ['15800' CloseAndCommitMethodType]
+  ['15805' ServerConfigurationType_ConfigurationFile_Write]
+  ['15807' ServerConfigurationType_ConfigurationFile_GetPosition]
+  ['15810' ServerConfigurationType_ConfigurationFile_SetPosition]
   ['15843' FileTransferStateMachineType_Reset]
   ['15846' PublishSubscribeType_Status_Enable]
   ['15847' PublishSubscribeType_Status_Disable]
+  ['15849' ServerConfigurationType_ConfigurationFile_CloseAndUpdate]
+  ['15863' ServerConfigurationType_ConfigurationFile_ConfirmUpdate]
   ['15907' PubSubKeyServiceType_GetSecurityKeys]
   ['15910' PubSubKeyServiceType_GetSecurityGroup]
   ['15914' PubSubKeyServiceType_SecurityGroups_AddSecurityGroup]
@@ -5800,8 +5964,14 @@
   ['16000' RoleSetType_RemoveRole]
   ['16002' AddRoleMethodType]
   ['16005' RemoveRoleMethodType]
+  ['16013' ServerConfiguration_ConfigurationFile_Open]
   ['16041' WellKnownRole_Engineer_AddIdentity]
   ['16043' WellKnownRole_Engineer_RemoveIdentity]
+  ['16060' ServerConfiguration_ConfigurationFile_Close]
+  ['16074' ServerConfiguration_ConfigurationFile_Read]
+  ['16101' ServerConfiguration_ConfigurationFile_Write]
+  ['16103' ServerConfiguration_ConfigurationFile_GetPosition]
+  ['16124' ServerConfiguration_ConfigurationFile_SetPosition]
   ['16165' RoleSetType_RoleName_Placeholder_AddApplication]
   ['16167' RoleSetType_RoleName_Placeholder_RemoveApplication]
   ['16169' RoleSetType_RoleName_Placeholder_AddEndpoint]
@@ -5852,10 +6022,19 @@
   ['16299' ServerCapabilitiesType_RoleSet_RemoveRole]
   ['16301' Server_ServerCapabilities_RoleSet_AddRole]
   ['16304' Server_ServerCapabilities_RoleSet_RemoveRole]
+  ['16317' ServerConfiguration_ConfigurationFile_CloseAndUpdate]
+  ['16320' ServerConfiguration_ConfigurationFile_ConfirmUpdate]
+  ['16332' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open]
+  ['16335' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close]
+  ['16337' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read]
+  ['16340' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write]
+  ['16342' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition]
+  ['16345' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition]
   ['16348' FileSystem_CreateDirectory]
   ['16351' FileSystem_CreateFile]
   ['16354' FileSystem_DeleteFileSystemObject]
   ['16356' FileSystem_MoveOrCopy]
+  ['16368' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate]
   ['16402' AlarmConditionType_Silence]
   ['16403' AlarmConditionType_Suppress]
   ['16439' AlarmGroupType_AlarmConditionInstance_Placeholder_Disable]
@@ -5866,6 +6045,7 @@
   ['16515' AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_Unshelve]
   ['16516' AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_OneShotShelve]
   ['16517' AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve]
+  ['16523' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate]
   ['16533' AlarmGroupType_AlarmConditionInstance_Placeholder_Silence]
   ['16534' AlarmGroupType_AlarmConditionInstance_Placeholder_Suppress]
   ['16535' PublishSubscribeType_ConnectionName_Placeholder_AddWriterGroup]
@@ -6126,6 +6306,14 @@
   ['18541' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSigningRequest]
   ['18544' ApplicationConfigurationFolderType_ApplicationName_Placeholder_GetRejectedList]
   ['18546' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults]
+  ['18562' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open]
+  ['18565' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close]
+  ['18567' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read]
+  ['18570' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write]
+  ['18572' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition]
+  ['18575' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition]
+  ['18581' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate]
+  ['18584' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate]
   ['18632' WellKnownRole_TrustedApplication_AddIdentity]
   ['18634' WellKnownRole_TrustedApplication_RemoveIdentity]
   ['18636' WellKnownRole_TrustedApplication_AddApplication]
@@ -6139,6 +6327,21 @@
   ['19119' PubSubConnectionType_WriterGroupName_Placeholder_Diagnostics_Reset]
   ['19188' PubSubConnectionType_ReaderGroupName_Placeholder_Diagnostics_Reset]
   ['19253' PubSubConnectionType_Diagnostics_Reset]
+  ['19327' CreateSelfSignedCertificateMethodType]
+  ['19330' DeleteCertificateMethodType]
+  ['19332' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate]
+  ['19335' ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate]
+  ['19337' ServerConfigurationType_CreateSelfSignedCertificate]
+  ['19340' ServerConfigurationType_DeleteCertificate]
+  ['19342' ServerConfiguration_CreateSelfSignedCertificate]
+  ['19345' ServerConfiguration_DeleteCertificate]
+  ['19347' ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate]
+  ['19350' ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate]
+  ['19353' LogObjectType_GetRecords]
+  ['19358' GetRecordsMethodType]
+  ['19373' ServerLog_GetRecords]
+  ['19410' ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential]
+  ['19424' ApplicationConfigurationType_KeyCredentials_CreateCredential]
   ['19483' CertificateGroupType_CertificateExpired_Disable]
   ['19484' CertificateGroupType_CertificateExpired_Enable]
   ['19485' CertificateGroupType_CertificateExpired_AddComment]
@@ -6147,6 +6350,7 @@
   ['19562' DataSetWriterType_Diagnostics_Reset]
   ['19621' DataSetReaderType_Diagnostics_Reset]
   ['19689' PubSubDiagnosticsType_Reset]
+  ['19740' ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential]
   ['20097' CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve]
   ['20099' CertificateGroupType_CertificateExpired_ShelvingState_Unshelve]
   ['20100' CertificateGroupType_CertificateExpired_ShelvingState_OneShotShelve]
@@ -7015,12 +7219,10 @@
   ['32333' ServerConfiguration_GetCertificates]
   ['32359' ProvisionableDeviceType_ApplicationName_Placeholder_GetCertificates]
   ['32416' NonTransparentBackupRedundancyType_Failover]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSemantic
   ['2739' SemanticChangeEventType_Changes]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableFinite
@@ -7039,7 +7241,6 @@
   ['11459' FiniteStateMachineType_LastTransition_EffectiveTransitionTime]
   ['17635' FiniteStateMachineType_AvailableStates]
   ['17636' FiniteStateMachineType_AvailableTransitions]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableDialog
@@ -7071,7 +7272,6 @@
   ['9070' DialogConditionType_Respond_InputArguments]
   ['24313' DialogConditionType_Respond2_InputArguments]
   ['24315' DialogResponse2MethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableShelved
@@ -7089,7 +7289,6 @@
   ['24757' ShelvedStateMachineType_TimedShelve2_InputArguments]
   ['24759' ShelvedStateMachineType_Unshelve2_InputArguments]
   ['24761' ShelvedStateMachineType_OneShotShelve2_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableBuild
@@ -7099,45 +7298,37 @@
   ['3055' BuildInfoType_SoftwareVersion]
   ['3056' BuildInfoType_BuildNumber]
   ['3057' BuildInfoType_BuildDate]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableIcon
   ['3067' Icon]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableNode
   ['3068' NodeVersion]
   ['11878' NodeClass_EnumValues]
   ['11881' NodeAttributesMask_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableLocal
   ['3069' LocalTime]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAllow
   ['3070' AllowNulls]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableEnum
   ['3071' EnumValues]
   ['11432' EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableInput
   ['3072' InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOutput
   ['3073' OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAdd
@@ -7174,7 +7365,6 @@
   ['25378' AddPushTargetMethodType_OutputArguments]
   ['25382' AddPushTargetFolderMethodType_InputArguments]
   ['25383' AddPushTargetFolderMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableCondition
@@ -7208,23 +7398,19 @@
   ['16363' ConditionType_ConditionSubClassId]
   ['16364' ConditionType_ConditionSubClassName]
   ['32060' ConditionType_SupportsFilteredRetain]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTimed
   ['6103' TimedShelveMethodType_InputArguments]
   ['25158' TimedShelve2MethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableId
   ['7591' IdType_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableMessage
   ['7595' MessageSecurityMode_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableUser
@@ -7246,11 +7432,15 @@
   ['24307' UserManagement_ModifyUser_InputArguments]
   ['24309' UserManagement_RemoveUser_InputArguments]
   ['24311' UserManagement_ChangePassword_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableApplication
   ['7597' ApplicationType_EnumStrings]
+  ['15551' ApplicationConfigurationFileType_AvailableNetworks]
+  ['15552' ApplicationConfigurationFileType_AvailablePorts]
+  ['15553' ApplicationConfigurationFileType_SecurityPolicyUris]
+  ['15554' ApplicationConfigurationFileType_UserTokenTypes]
+  ['15555' ApplicationConfigurationFileType_CertificateTypes]
   ['16710' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Size]
   ['16711' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_Writable]
   ['16712' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_TrustList_UserWritable]
@@ -8193,15 +8383,58 @@
   ['18551' ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedTrustLists]
   ['18552' ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedCertificateGroups]
   ['18553' ApplicationConfigurationFolderType_ApplicationName_Placeholder_TransactionDiagnostics_Errors]
+  ['18555' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Size]
+  ['18556' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Writable]
+  ['18557' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserWritable]
+  ['18558' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_OpenCount]
+  ['18559' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MimeType]
+  ['18560' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength]
+  ['18561' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime]
+  ['18563' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments]
+  ['18564' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments]
+  ['18566' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments]
+  ['18568' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments]
+  ['18569' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments]
+  ['18571' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments]
+  ['18573' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments]
+  ['18574' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments]
+  ['18576' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments]
+  ['18577' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime]
+  ['18578' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion]
+  ['18579' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout]
+  ['18580' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType]
+  ['18582' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments]
+  ['18583' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments]
+  ['18585' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments]
+  ['18587' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks]
+  ['18588' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts]
+  ['18589' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris]
+  ['18590' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes]
+  ['18591' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes]
   ['18592' ApplicationConfigurationFolderType_ApplicationName_Placeholder_Enabled]
   ['18658' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ApplicationNames]
   ['18659' ApplicationConfigurationFolderType_ApplicationName_Placeholder_SupportsTransactions]
   ['19307' ApplicationConfigurationFolderType_ApplicationName_Placeholder_InApplicationSetup]
+  ['19333' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments]
+  ['19334' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments]
+  ['19336' ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate_InputArguments]
+  ['19403' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose]
+  ['19404' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose]
+  ['19405' ApplicationConfigurationFolderType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose]
+  ['19406' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints]
+  ['19407' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups]
+  ['19408' ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes]
+  ['19411' ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments]
+  ['19412' ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments]
+  ['19414' ApplicationConfigurationFileType_MaxEndpoints]
+  ['19415' ApplicationConfigurationFileType_MaxCertificateGroups]
+  ['19416' ApplicationConfigurationFileType_CertificateGroupPurposes]
+  ['19425' ApplicationConfigurationType_KeyCredentials_CreateCredential_InputArguments]
+  ['19426' ApplicationConfigurationType_KeyCredentials_CreateCredential_OutputArguments]
   ['26849' ApplicationConfigurationType_Enabled]
   ['26850' ApplicationConfigurationType_ApplicationUri]
   ['26851' ApplicationConfigurationType_ProductUri]
   ['26852' ApplicationConfigurationType_ApplicationType]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSecurity
@@ -8230,43 +8463,35 @@
   ['25314' SecurityGroupFolderType_AddSecurityGroupFolder_OutputArguments]
   ['25316' SecurityGroupFolderType_RemoveSecurityGroupFolder_InputArguments]
   ['25317' SecurityGroupFolderType_SupportedSecurityPolicyUris]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableBrowse
   ['7603' BrowseDirection_EnumStrings]
   ['11883' BrowseResultMask_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableFilter
   ['7605' FilterOperator_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTimestamps
   ['7606' TimestampsToReturn_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableMonitoring
   ['7608' MonitoringMode_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableDeadband
   ['7610' DeadbandType_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableRedundancy
   ['7611' RedundancySupport_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableException
   ['7614' ExceptionDeviationFormat_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOpc
@@ -8919,6 +9144,66 @@
   ['16147' OpcUa_XmlSchema_BrokerDataSetReaderTransportDataType]
   ['16148' OpcUa_XmlSchema_BrokerDataSetReaderTransportDataType_DataTypeVersion]
   ['16149' OpcUa_XmlSchema_BrokerDataSetReaderTransportDataType_DictionaryFragment]
+  ['16548' OpcUa_BinarySchema_BaseConfigurationDataType]
+  ['16549' OpcUa_BinarySchema_BaseConfigurationDataType_DataTypeVersion]
+  ['16550' OpcUa_BinarySchema_BaseConfigurationDataType_DictionaryFragment]
+  ['16551' OpcUa_BinarySchema_BaseConfigurationRecordDataType]
+  ['16552' OpcUa_BinarySchema_BaseConfigurationRecordDataType_DataTypeVersion]
+  ['16553' OpcUa_BinarySchema_BaseConfigurationRecordDataType_DictionaryFragment]
+  ['16554' OpcUa_BinarySchema_CertificateGroupDataType]
+  ['16555' OpcUa_BinarySchema_CertificateGroupDataType_DataTypeVersion]
+  ['16556' OpcUa_BinarySchema_CertificateGroupDataType_DictionaryFragment]
+  ['16557' OpcUa_BinarySchema_ConfigurationUpdateTargetType]
+  ['16562' OpcUa_BinarySchema_ConfigurationUpdateTargetType_DataTypeVersion]
+  ['16563' OpcUa_BinarySchema_ConfigurationUpdateTargetType_DictionaryFragment]
+  ['16564' OpcUa_BinarySchema_ApplicationConfigurationDataType]
+  ['16565' OpcUa_BinarySchema_ApplicationConfigurationDataType_DataTypeVersion]
+  ['16566' OpcUa_BinarySchema_ApplicationConfigurationDataType_DictionaryFragment]
+  ['16567' OpcUa_BinarySchema_ApplicationIdentityDataType]
+  ['16568' OpcUa_BinarySchema_ApplicationIdentityDataType_DataTypeVersion]
+  ['16569' OpcUa_BinarySchema_ApplicationIdentityDataType_DictionaryFragment]
+  ['16570' OpcUa_BinarySchema_EndpointDataType]
+  ['16576' OpcUa_BinarySchema_EndpointDataType_DataTypeVersion]
+  ['16577' OpcUa_BinarySchema_EndpointDataType_DictionaryFragment]
+  ['16578' OpcUa_BinarySchema_ServerEndpointDataType]
+  ['16579' OpcUa_BinarySchema_ServerEndpointDataType_DataTypeVersion]
+  ['16580' OpcUa_BinarySchema_ServerEndpointDataType_DictionaryFragment]
+  ['16581' OpcUa_BinarySchema_SecuritySettingsDataType]
+  ['16582' OpcUa_BinarySchema_SecuritySettingsDataType_DataTypeVersion]
+  ['16583' OpcUa_BinarySchema_SecuritySettingsDataType_DictionaryFragment]
+  ['16584' OpcUa_BinarySchema_UserTokenSettingsDataType]
+  ['16585' OpcUa_BinarySchema_UserTokenSettingsDataType_DataTypeVersion]
+  ['16586' OpcUa_BinarySchema_UserTokenSettingsDataType_DictionaryFragment]
+  ['16597' OpcUa_XmlSchema_BaseConfigurationDataType]
+  ['16602' OpcUa_XmlSchema_BaseConfigurationDataType_DataTypeVersion]
+  ['16603' OpcUa_XmlSchema_BaseConfigurationDataType_DictionaryFragment]
+  ['16604' OpcUa_XmlSchema_BaseConfigurationRecordDataType]
+  ['16605' OpcUa_XmlSchema_BaseConfigurationRecordDataType_DataTypeVersion]
+  ['16606' OpcUa_XmlSchema_BaseConfigurationRecordDataType_DictionaryFragment]
+  ['16607' OpcUa_XmlSchema_CertificateGroupDataType]
+  ['16608' OpcUa_XmlSchema_CertificateGroupDataType_DataTypeVersion]
+  ['16609' OpcUa_XmlSchema_CertificateGroupDataType_DictionaryFragment]
+  ['16610' OpcUa_XmlSchema_ConfigurationUpdateTargetType]
+  ['16612' OpcUa_XmlSchema_ConfigurationUpdateTargetType_DataTypeVersion]
+  ['16613' OpcUa_XmlSchema_ConfigurationUpdateTargetType_DictionaryFragment]
+  ['16614' OpcUa_XmlSchema_ApplicationConfigurationDataType]
+  ['16615' OpcUa_XmlSchema_ApplicationConfigurationDataType_DataTypeVersion]
+  ['16616' OpcUa_XmlSchema_ApplicationConfigurationDataType_DictionaryFragment]
+  ['16617' OpcUa_XmlSchema_ApplicationIdentityDataType]
+  ['16618' OpcUa_XmlSchema_ApplicationIdentityDataType_DataTypeVersion]
+  ['16619' OpcUa_XmlSchema_ApplicationIdentityDataType_DictionaryFragment]
+  ['16620' OpcUa_XmlSchema_EndpointDataType]
+  ['16621' OpcUa_XmlSchema_EndpointDataType_DataTypeVersion]
+  ['16622' OpcUa_XmlSchema_EndpointDataType_DictionaryFragment]
+  ['16623' OpcUa_XmlSchema_ServerEndpointDataType]
+  ['16624' OpcUa_XmlSchema_ServerEndpointDataType_DataTypeVersion]
+  ['16625' OpcUa_XmlSchema_ServerEndpointDataType_DictionaryFragment]
+  ['16626' OpcUa_XmlSchema_SecuritySettingsDataType]
+  ['16627' OpcUa_XmlSchema_SecuritySettingsDataType_DataTypeVersion]
+  ['16628' OpcUa_XmlSchema_SecuritySettingsDataType_DictionaryFragment]
+  ['16629' OpcUa_XmlSchema_UserTokenSettingsDataType]
+  ['16630' OpcUa_XmlSchema_UserTokenSettingsDataType_DataTypeVersion]
+  ['16631' OpcUa_XmlSchema_UserTokenSettingsDataType_DictionaryFragment]
   ['17469' OpcUa_BinarySchema_DatagramConnectionTransportDataType]
   ['17470' OpcUa_BinarySchema_DatagramConnectionTransportDataType_DataTypeVersion]
   ['17471' OpcUa_BinarySchema_DatagramConnectionTransportDataType_DictionaryFragment]
@@ -9063,6 +9348,42 @@
   ['19291' OpcUa_XmlSchema_LldpTlvType]
   ['19292' OpcUa_XmlSchema_LldpTlvType_DataTypeVersion]
   ['19298' OpcUa_XmlSchema_LldpTlvType_DictionaryFragment]
+  ['19380' OpcUa_BinarySchema_LogRecord]
+  ['19381' OpcUa_BinarySchema_LogRecord_DataTypeVersion]
+  ['19382' OpcUa_BinarySchema_LogRecord_DictionaryFragment]
+  ['19384' OpcUa_XmlSchema_LogRecord]
+  ['19385' OpcUa_XmlSchema_LogRecord_DataTypeVersion]
+  ['19386' OpcUa_XmlSchema_LogRecord_DictionaryFragment]
+  ['19757' OpcUa_BinarySchema_AuthorizationServiceConfigurationDataType]
+  ['19758' OpcUa_BinarySchema_AuthorizationServiceConfigurationDataType_DataTypeVersion]
+  ['19759' OpcUa_BinarySchema_AuthorizationServiceConfigurationDataType_DictionaryFragment]
+  ['19760' OpcUa_BinarySchema_LogRecordsDataType]
+  ['19761' OpcUa_BinarySchema_LogRecordsDataType_DataTypeVersion]
+  ['19762' OpcUa_BinarySchema_LogRecordsDataType_DictionaryFragment]
+  ['19763' OpcUa_BinarySchema_SpanContextDataType]
+  ['19764' OpcUa_BinarySchema_SpanContextDataType_DataTypeVersion]
+  ['19765' OpcUa_BinarySchema_SpanContextDataType_DictionaryFragment]
+  ['19766' OpcUa_BinarySchema_TraceContextDataType]
+  ['19767' OpcUa_BinarySchema_TraceContextDataType_DataTypeVersion]
+  ['19768' OpcUa_BinarySchema_TraceContextDataType_DictionaryFragment]
+  ['19769' OpcUa_BinarySchema_NameValuePair]
+  ['19770' OpcUa_BinarySchema_NameValuePair_DataTypeVersion]
+  ['19771' OpcUa_BinarySchema_NameValuePair_DictionaryFragment]
+  ['19787' OpcUa_XmlSchema_AuthorizationServiceConfigurationDataType]
+  ['19788' OpcUa_XmlSchema_AuthorizationServiceConfigurationDataType_DataTypeVersion]
+  ['19789' OpcUa_XmlSchema_AuthorizationServiceConfigurationDataType_DictionaryFragment]
+  ['19790' OpcUa_XmlSchema_LogRecordsDataType]
+  ['19791' OpcUa_XmlSchema_LogRecordsDataType_DataTypeVersion]
+  ['19792' OpcUa_XmlSchema_LogRecordsDataType_DictionaryFragment]
+  ['19793' OpcUa_XmlSchema_SpanContextDataType]
+  ['19794' OpcUa_XmlSchema_SpanContextDataType_DataTypeVersion]
+  ['19795' OpcUa_XmlSchema_SpanContextDataType_DictionaryFragment]
+  ['19796' OpcUa_XmlSchema_TraceContextDataType]
+  ['19797' OpcUa_XmlSchema_TraceContextDataType_DataTypeVersion]
+  ['19798' OpcUa_XmlSchema_TraceContextDataType_DictionaryFragment]
+  ['19799' OpcUa_XmlSchema_NameValuePair]
+  ['19800' OpcUa_XmlSchema_NameValuePair_DataTypeVersion]
+  ['19801' OpcUa_XmlSchema_NameValuePair_DictionaryFragment]
   ['21002' OpcUa_BinarySchema_FieldTargetDataType]
   ['21156' OpcUa_BinarySchema_WriterGroupDataType]
   ['21157' OpcUa_BinarySchema_WriterGroupDataType_DataTypeVersion]
@@ -9292,7 +9613,6 @@
   ['32830' OpcUa_XmlSchema_HistoryModifiedEvent]
   ['32831' OpcUa_XmlSchema_HistoryModifiedEvent_DataTypeVersion]
   ['32832' OpcUa_XmlSchema_HistoryModifiedEvent_DictionaryFragment]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAcknowledgeable
@@ -9325,7 +9645,6 @@
   ['9110' AcknowledgeableConditionType_ConfirmedState_FalseState]
   ['9112' AcknowledgeableConditionType_Acknowledge_InputArguments]
   ['9114' AcknowledgeableConditionType_Confirm_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAlarm
@@ -9575,7 +9894,6 @@
   ['32249' AlarmStateVariableType_UnconfirmedCount]
   ['32250' AlarmStateVariableType_Filter]
   ['32252' AlarmMask_OptionSetValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableExclusive
@@ -9612,7 +9930,6 @@
   ['16899' ExclusiveRateOfChangeAlarmType_EngineeringUnits]
   ['17670' ExclusiveLimitAlarmType_LimitState_AvailableStates]
   ['17671' ExclusiveLimitAlarmType_LimitState_AvailableTransitions]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableLimit
@@ -9632,12 +9949,10 @@
   ['24775' LimitAlarmType_HighDeadband]
   ['24776' LimitAlarmType_LowDeadband]
   ['24777' LimitAlarmType_LowLowDeadband]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOff
   ['11158' OffNormalAlarmType_NormalState]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAggregate
@@ -9645,7 +9960,6 @@
   ['11189' AggregateConfigurationType_PercentDataBad]
   ['11190' AggregateConfigurationType_PercentDataGood]
   ['11191' AggregateConfigurationType_UseSlopedExtrapolation]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableH
@@ -9664,17 +9978,14 @@
   ['19093' HAConfiguration_ServerTimestampSupported]
   ['32635' HAConfiguration_MaxTimeStoredValues]
   ['32636' HAConfiguration_MaxCountStoredValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAnnotations
   ['11214' Annotations]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableValue
   ['11433' ValueAsText]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOption
@@ -9682,7 +9993,6 @@
   ['11701' OptionSetType_BitMask]
   ['12745' OptionSetValues]
   ['32750' OptionSetLength]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableGet
@@ -9697,6 +10007,8 @@
   ['15451' GetSecurityGroupMethodType_OutputArguments]
   ['17532' GetEncryptingKeyMethodType_InputArguments]
   ['17533' GetEncryptingKeyMethodType_OutputArguments]
+  ['19359' GetRecordsMethodType_InputArguments]
+  ['19360' GetRecordsMethodType_OutputArguments]
   ['23727' GetConnectionMethodType_InputArguments]
   ['23728' GetConnectionMethodType_OutputArguments]
   ['23746' GetWriterGroupMethodType_InputArguments]
@@ -9708,7 +10020,6 @@
   ['25155' GetGroupMembershipsMethodType_OutputArguments]
   ['32283' GetCertificatesMethodType_InputArguments]
   ['32284' GetCertificatesMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableMax
@@ -9716,12 +10027,10 @@
   ['11512' MaxArrayLength]
   ['12908' MaxByteStringLength]
   ['15002' MaxCharacters]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableEngineering
   ['11513' EngineeringUnits]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOperation
@@ -9737,7 +10046,6 @@
   ['12162' OperationLimitsType_MaxNodesPerHistoryReadEvents]
   ['12163' OperationLimitsType_MaxNodesPerHistoryUpdateData]
   ['12164' OperationLimitsType_MaxNodesPerHistoryUpdateEvents]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableFile
@@ -9808,7 +10116,6 @@
   ['24248' FileDirectoryType_FileName_Placeholder_MaxByteStringLength]
   ['25200' FileType_LastModifiedTime]
   ['25204' FileDirectoryType_FileName_Placeholder_LastModifiedTime]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableNamespace
@@ -9840,7 +10147,6 @@
   ['25202' NamespaceMetadataType_NamespaceFile_LastModifiedTime]
   ['25267' NamespaceMetadataType_ConfigurationVersion]
   ['32419' NamespaceMetadataType_ModelVersion]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableNamespaces
@@ -9872,12 +10178,10 @@
   ['25203' NamespacesType_NamespaceIdentifier_Placeholder_NamespaceFile_LastModifiedTime]
   ['25268' NamespacesType_NamespaceIdentifier_Placeholder_ConfigurationVersion]
   ['32420' NamespacesType_NamespaceIdentifier_Placeholder_ModelVersion]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSystem
   ['11696' SystemStatusChangeEventType_SystemState]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOpen
@@ -9886,7 +10190,6 @@
   ['11940' OpenFileMode_EnumValues]
   ['12514' OpenWithMasksMethodType_InputArguments]
   ['12515' OpenWithMasksMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableClose
@@ -9895,18 +10198,15 @@
   ['12704' CloseAndUpdateMethodType_InputArguments]
   ['15801' CloseAndCommitMethodType_InputArguments]
   ['15802' CloseAndCommitMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableRead
   ['11744' ReadMethodType_InputArguments]
   ['11745' ReadMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableWrite
   ['11747' WriteMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSet
@@ -9915,17 +10215,14 @@
   ['12754' SetSubscriptionDurableMethodType_OutputArguments]
   ['17299' SetSecurityKeysMethodType_InputArguments]
   ['25730' SetRegistrarEndpointsMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePerform
   ['11885' PerformUpdateType_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableModel
   ['11942' ModelChangeStructureVerbMask_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableArray
@@ -9934,56 +10231,46 @@
   ['12026' ArrayItemType_EngineeringUnits]
   ['12027' ArrayItemType_Title]
   ['12028' ArrayItemType_AxisScaleType]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableY
   ['12037' YArrayItemType_XAxisDefinition]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableX
   ['12046' XYArrayItemType_XAxisDefinition]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableImage
   ['12055' ImageItemType_XAxisDefinition]
   ['12056' ImageItemType_YAxisDefinition]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableCube
   ['12065' CubeItemType_XAxisDefinition]
   ['12066' CubeItemType_YAxisDefinition]
   ['12067' CubeItemType_ZAxisDefinition]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableN
   ['12076' NDimensionArrayItemType_AxisDefinition]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAxis
   ['12078' AxisScaleEnumeration_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableNaming
   ['12169' NamingRuleType_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableView
   ['12170' ViewVersion]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableProgress
   ['12502' ProgressEventType_Context]
   ['12503' ProgressEventType_Progress]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableRemove
@@ -10002,7 +10289,6 @@
   ['25292' RemoveSecurityGroupFolderMethodType_InputArguments]
   ['25380' RemovePushTargetMethodType_InputArguments]
   ['25385' RemovePushTargetFolderMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTrust
@@ -10022,13 +10308,11 @@
   ['23565' TrustListValidationOptions_OptionSetValues]
   ['32254' TrustListType_ActivityTimeout]
   ['32281' TrustListUpdatedAuditEventType_TrustListId]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableUpdate
   ['12579' UpdateCertificateMethodType_InputArguments]
   ['12580' UpdateCertificateMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableCreate
@@ -10040,18 +10324,17 @@
   ['13347' CreateFileMethodType_OutputArguments]
   ['15253' CreateCredentialMethodType_InputArguments]
   ['17495' CreateCredentialMethodType_OutputArguments]
-
+  ['19328' CreateSelfSignedCertificateMethodType_InputArguments]
+  ['19329' CreateSelfSignedCertificateMethodType_OutputArguments]
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableResend
   ['12876' ResendDataMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableRequest
   ['12889' RequestServerStateChangeMethodType_InputArguments]
   ['25728' RequestTicketsMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableCertificate
@@ -10171,6 +10454,11 @@
   ['13948' CertificateGroupFolderType_AdditionalGroup_Placeholder_TrustList_RemoveCertificate_InputArguments]
   ['13949' CertificateGroupFolderType_AdditionalGroup_Placeholder_CertificateTypes]
   ['14900' CertificateExpirationAlarmType_ExpirationLimit]
+  ['19398' CertificateGroupType_Purpose]
+  ['19399' CertificateGroupFolderType_DefaultApplicationGroup_Purpose]
+  ['19400' CertificateGroupFolderType_DefaultHttpsGroup_Purpose]
+  ['19401' CertificateGroupFolderType_DefaultUserTokenGroup_Purpose]
+  ['19402' CertificateGroupFolderType_AdditionalGroup_Placeholder_Purpose]
   ['19449' CertificateGroupType_TrustList_UpdateFrequency]
   ['19451' CertificateGroupType_CertificateExpired_EventId]
   ['19452' CertificateGroupType_CertificateExpired_EventType]
@@ -11596,19 +11884,17 @@
   ['32257' CertificateGroupFolderType_DefaultHttpsGroup_TrustList_ActivityTimeout]
   ['32258' CertificateGroupFolderType_DefaultUserTokenGroup_TrustList_ActivityTimeout]
   ['32259' CertificateGroupFolderType_AdditionalGroup_Placeholder_TrustList_ActivityTimeout]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableDelete
   ['13349' DeleteFileMethodType_InputArguments]
+  ['19331' DeleteCertificateMethodType_InputArguments]
   ['25236' DeletePriorityMappingEntryMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableMove
   ['13351' MoveOrCopyMethodType_InputArguments]
   ['13352' MoveOrCopyMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePub
@@ -12184,7 +12470,6 @@
   ['32846' PubSubCapabilitiesType_MaxPublishedDataSets]
   ['32847' PubSubCapabilitiesType_MaxStandaloneSubscribedDataSets]
   ['32848' PubSubCapabilitiesType_SupportSecurityKeyServer]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePublish
@@ -12494,7 +12779,6 @@
   ['32841' PublishSubscribe_PubSubCapablities_MaxPublishedDataSets]
   ['32842' PublishSubscribe_PubSubCapablities_MaxStandaloneSubscribedDataSets]
   ['32843' PublishSubscribe_PubSubCapablities_SupportSecurityKeyServer]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePublished
@@ -12581,12 +12865,10 @@
   ['18928' PublishedDataSetType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MinorVersion]
   ['18929' PublishedDataSetType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MinorVersion_DiagnosticsLevel]
   ['25521' PublishedDataSetType_CyclicDataSet]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableStructure
   ['14528' StructureType_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableBroker
@@ -12608,36 +12890,30 @@
   ['21141' BrokerDataSetWriterTransportType_MetaDataUpdateTime]
   ['21143' BrokerDataSetReaderTransportType_QueueName]
   ['21144' BrokerDataSetReaderTransportType_MetaDataQueueName]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableBit
   ['15014' BitFieldType_OptionalFieldNamee_Placeholder]
   ['32432' BitFieldType_BitFieldsDefinitions]
   ['32433' BitFieldType_FieldName_Placeholder]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePermission
   ['15030' PermissionType_OptionSetValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAccess
   ['15032' AccessLevelType_OptionSetValues]
   ['15035' AccessRestrictionType_OptionSetValues]
   ['15407' AccessLevelExType_OptionSetValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableEvent
   ['15034' EventNotifierType_OptionSetValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAttribute
   ['15036' AttributeWriteMask_OptionSetValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTarget
@@ -12650,12 +12926,10 @@
   ['15123' TargetVariablesTypeAddTargetVariablesMethodType_OutputArguments]
   ['15125' TargetVariablesTypeRemoveTargetVariablesMethodType_InputArguments]
   ['15126' TargetVariablesTypeRemoveTargetVariablesMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableExpression
   ['15129' ExpressionGuardVariableType_Expression]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableDatagram
@@ -12684,7 +12958,6 @@
   ['25526' DatagramConnectionTransportType_DatagramQos]
   ['25527' DatagramWriterGroupTransportType_QosCategory]
   ['25528' DatagramDataSetReaderTransportType_QosCategory]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableRole
@@ -12715,7 +12988,6 @@
   ['16183' RoleType_RemoveEndpoint_InputArguments]
   ['24138' RoleSetType_RoleName_Placeholder_CustomConfiguration]
   ['24139' RoleType_CustomConfiguration]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableWell
@@ -12863,13 +13135,27 @@
   ['25617' WellKnownRole_SecurityKeyServerAccess_RemoveApplication_InputArguments]
   ['25619' WellKnownRole_SecurityKeyServerAccess_AddEndpoint_InputArguments]
   ['25621' WellKnownRole_SecurityKeyServerAccess_RemoveEndpoint_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTest
   ['15433' TestEnumeration_EnumValues]
   ['19441' TestOptionSet_OptionSetValues]
-
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableConfiguration
+  ['15438' ConfigurationFileType_LastUpdateTime]
+  ['15439' ConfigurationFileType_CurrentVersion]
+  ['15503' ConfigurationFileType_ActivityTimeout]
+  ['15504' ConfigurationFileType_SupportedDataType]
+  ['15506' ConfigurationFileType_CloseAndUpdate_InputArguments]
+  ['15507' ConfigurationFileType_CloseAndUpdate_OutputArguments]
+  ['15511' ConfigurationFileType_ConfirmUpdate_InputArguments]
+  ['15514' ConfigurationFileCloseAndUpdateMethodType_InputArguments]
+  ['15515' ConfigurationFileCloseAndUpdateMethodType_OutputArguments]
+  ['15536' ConfigurationFileConfirmUpdateMethodType_InputArguments]
+  ['15540' ConfigurationUpdateType_EnumValues]
+  ['15542' ConfigurationUpdatedAuditEventType_OldVersion]
+  ['15543' ConfigurationUpdatedAuditEventType_NewVersion]
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableExtension
@@ -12877,12 +13163,10 @@
   ['15492' ExtensionFieldsType_AddExtensionField_InputArguments]
   ['15493' ExtensionFieldsType_AddExtensionField_OutputArguments]
   ['15495' ExtensionFieldsType_RemoveExtensionField_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableIdentity
   ['15633' IdentityCriteriaType_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableUadp
@@ -12906,7 +13190,6 @@
   ['21123' UadpDataSetReaderMessageType_PublishingInterval]
   ['21124' UadpDataSetReaderMessageType_ProcessingOffset]
   ['21125' UadpDataSetReaderMessageType_ReceiveOffset]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableJson
@@ -12916,7 +13199,6 @@
   ['21129' JsonDataSetWriterMessageType_DataSetMessageContentMask]
   ['21131' JsonDataSetReaderMessageType_NetworkMessageContentMask]
   ['21132' JsonDataSetReaderMessageType_DataSetMessageContentMask]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTemporary
@@ -12940,7 +13222,6 @@
   ['16359' TemporaryFileTransferType_GenerateFileForWrite_InputArguments]
   ['17637' TemporaryFileTransferType_TransferState_Placeholder_AvailableStates]
   ['17638' TemporaryFileTransferType_TransferState_Placeholder_AvailableTransitions]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableGenerate
@@ -12948,12 +13229,10 @@
   ['15797' GenerateFileForReadMethodType_OutputArguments]
   ['15799' GenerateFileForWriteMethodType_OutputArguments]
   ['16360' GenerateFileForWriteMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOverride
   ['15875' OverrideValueHandling_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableO
@@ -12985,411 +13264,57 @@
   ['25199' OPCUANamespaceMetadata_NamespaceFile_LastModifiedTime]
   ['25266' OPCUANamespaceMetadata_ConfigurationVersion]
   ['32408' OPCUANamespaceMetadata_ModelVersion]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSelection
   ['16312' SelectionListType_RestrictToList]
   ['17632' SelectionListType_Selections]
   ['17633' SelectionListType_SelectionDescriptions]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableDiscrepancy
-  ['17215' DiscrepancyAlarmType_TargetValueNode]
-  ['17216' DiscrepancyAlarmType_ExpectedTime]
-  ['17217' DiscrepancyAlarmType_Tolerance]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableWriter
-  ['17490' WriterGroupType_DataSetWriterName_Placeholder_DataSetWriterProperties]
-  ['17559' WriterGroupType_HeaderLayoutUri]
-  ['17736' WriterGroupType_WriterGroupId]
-  ['17737' WriterGroupType_PublishingInterval]
-  ['17738' WriterGroupType_KeepAliveTime]
-  ['17739' WriterGroupType_Priority]
-  ['17740' WriterGroupType_LocaleIds]
-  ['17744' WriterGroupType_DataSetWriterName_Placeholder_DataSetWriterId]
-  ['17745' WriterGroupType_DataSetWriterName_Placeholder_DataSetFieldContentMask]
-  ['17746' WriterGroupType_DataSetWriterName_Placeholder_KeyFrameCount]
-  ['17750' WriterGroupType_DataSetWriterName_Placeholder_Status_State]
-  ['17754' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_DiagnosticsLevel]
-  ['17755' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation]
-  ['17756' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_Active]
-  ['17757' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_Classification]
-  ['17758' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_DiagnosticsLevel]
-  ['17759' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_TimeFirstChange]
-  ['17760' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError]
-  ['17761' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_Active]
-  ['17762' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_Classification]
-  ['17763' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_DiagnosticsLevel]
-  ['17764' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_TimeFirstChange]
-  ['17766' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_SubError]
-  ['17768' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError]
-  ['17769' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_Active]
-  ['17770' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_Classification]
-  ['17771' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_DiagnosticsLevel]
-  ['17772' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_TimeFirstChange]
-  ['17773' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod]
-  ['17774' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Active]
-  ['17775' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Classification]
-  ['17776' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
-  ['17777' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
-  ['17778' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent]
-  ['17779' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Active]
-  ['17780' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Classification]
-  ['17781' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
-  ['17782' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
-  ['17783' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError]
-  ['17784' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Active]
-  ['17785' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Classification]
-  ['17786' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
-  ['17787' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
-  ['17788' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent]
-  ['17789' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_Active]
-  ['17790' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_Classification]
-  ['17791' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
-  ['17792' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
-  ['17793' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod]
-  ['17794' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Active]
-  ['17795' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Classification]
-  ['17796' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
-  ['17797' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
-  ['17799' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages]
-  ['17800' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Active]
-  ['17801' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Classification]
-  ['17802' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_DiagnosticsLevel]
-  ['17803' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_TimeFirstChange]
-  ['17804' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber]
-  ['17805' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber_DiagnosticsLevel]
-  ['17806' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_StatusCode]
-  ['17807' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_StatusCode_DiagnosticsLevel]
-  ['17808' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MajorVersion]
-  ['17809' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MajorVersion_DiagnosticsLevel]
-  ['17810' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MinorVersion]
-  ['17811' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MinorVersion_DiagnosticsLevel]
-  ['17813' WriterGroupType_Diagnostics_DiagnosticsLevel]
-  ['17814' WriterGroupType_Diagnostics_TotalInformation]
-  ['17815' WriterGroupType_Diagnostics_TotalInformation_Active]
-  ['17816' WriterGroupType_Diagnostics_TotalInformation_Classification]
-  ['17817' WriterGroupType_Diagnostics_TotalInformation_DiagnosticsLevel]
-  ['17818' WriterGroupType_Diagnostics_TotalInformation_TimeFirstChange]
-  ['17819' WriterGroupType_Diagnostics_TotalError]
-  ['17820' WriterGroupType_Diagnostics_TotalError_Active]
-  ['17821' WriterGroupType_Diagnostics_TotalError_Classification]
-  ['17822' WriterGroupType_Diagnostics_TotalError_DiagnosticsLevel]
-  ['17823' WriterGroupType_Diagnostics_TotalError_TimeFirstChange]
-  ['17825' WriterGroupType_Diagnostics_SubError]
-  ['17827' WriterGroupType_Diagnostics_Counters_StateError]
-  ['17828' WriterGroupType_Diagnostics_Counters_StateError_Active]
-  ['17829' WriterGroupType_Diagnostics_Counters_StateError_Classification]
-  ['17830' WriterGroupType_Diagnostics_Counters_StateError_DiagnosticsLevel]
-  ['17831' WriterGroupType_Diagnostics_Counters_StateError_TimeFirstChange]
-  ['17832' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod]
-  ['17833' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_Active]
-  ['17834' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_Classification]
-  ['17835' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
-  ['17836' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
-  ['17837' WriterGroupType_Diagnostics_Counters_StateOperationalByParent]
-  ['17838' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_Active]
-  ['17839' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_Classification]
-  ['17840' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
-  ['17841' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
-  ['17842' WriterGroupType_Diagnostics_Counters_StateOperationalFromError]
-  ['17843' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_Active]
-  ['17844' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_Classification]
-  ['17845' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
-  ['17846' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
-  ['17847' WriterGroupType_Diagnostics_Counters_StatePausedByParent]
-  ['17848' WriterGroupType_Diagnostics_Counters_StatePausedByParent_Active]
-  ['17849' WriterGroupType_Diagnostics_Counters_StatePausedByParent_Classification]
-  ['17850' WriterGroupType_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
-  ['17851' WriterGroupType_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
-  ['17853' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod]
-  ['17854' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_Active]
-  ['17855' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_Classification]
-  ['17856' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
-  ['17857' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
-  ['17859' WriterGroupType_Diagnostics_Counters_SentNetworkMessages]
-  ['17864' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_Active]
-  ['17871' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_Classification]
-  ['17872' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_DiagnosticsLevel]
-  ['17873' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_TimeFirstChange]
-  ['17874' WriterGroupType_Diagnostics_Counters_FailedTransmissions]
-  ['17878' WriterGroupType_Diagnostics_Counters_FailedTransmissions_Active]
-  ['17885' WriterGroupType_Diagnostics_Counters_FailedTransmissions_Classification]
-  ['17892' WriterGroupType_Diagnostics_Counters_FailedTransmissions_DiagnosticsLevel]
-  ['17899' WriterGroupType_Diagnostics_Counters_FailedTransmissions_TimeFirstChange]
-  ['17900' WriterGroupType_Diagnostics_Counters_EncryptionErrors]
-  ['17901' WriterGroupType_Diagnostics_Counters_EncryptionErrors_Active]
-  ['17902' WriterGroupType_Diagnostics_Counters_EncryptionErrors_Classification]
-  ['17903' WriterGroupType_Diagnostics_Counters_EncryptionErrors_DiagnosticsLevel]
-  ['17906' WriterGroupType_Diagnostics_Counters_EncryptionErrors_TimeFirstChange]
-  ['17913' WriterGroupType_Diagnostics_LiveValues_ConfiguredDataSetWriters]
-  ['17920' WriterGroupType_Diagnostics_LiveValues_ConfiguredDataSetWriters_DiagnosticsLevel]
-  ['17927' WriterGroupType_Diagnostics_LiveValues_OperationalDataSetWriters]
-  ['17934' WriterGroupType_Diagnostics_LiveValues_OperationalDataSetWriters_DiagnosticsLevel]
-  ['17941' WriterGroupType_Diagnostics_LiveValues_SecurityTokenID]
-  ['17948' WriterGroupType_Diagnostics_LiveValues_SecurityTokenID_DiagnosticsLevel]
-  ['17955' WriterGroupType_Diagnostics_LiveValues_TimeToNextTokenID]
-  ['17962' WriterGroupType_Diagnostics_LiveValues_TimeToNextTokenID_DiagnosticsLevel]
-  ['17976' WriterGroupType_AddDataSetWriter_InputArguments]
-  ['17987' WriterGroupType_AddDataSetWriter_OutputArguments]
-  ['17993' WriterGroupType_RemoveDataSetWriter_InputArguments]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableReader
-  ['17492' ReaderGroupType_DataSetReaderName_Placeholder_DataSetReaderProperties]
-  ['17560' ReaderGroupType_DataSetReaderName_Placeholder_KeyFrameCount]
-  ['17562' ReaderGroupType_DataSetReaderName_Placeholder_HeaderLayoutUri]
-  ['18077' ReaderGroupType_DataSetReaderName_Placeholder_PublisherId]
-  ['18078' ReaderGroupType_DataSetReaderName_Placeholder_WriterGroupId]
-  ['18079' ReaderGroupType_DataSetReaderName_Placeholder_DataSetWriterId]
-  ['18080' ReaderGroupType_DataSetReaderName_Placeholder_DataSetMetaData]
-  ['18081' ReaderGroupType_DataSetReaderName_Placeholder_DataSetFieldContentMask]
-  ['18082' ReaderGroupType_DataSetReaderName_Placeholder_MessageReceiveTimeout]
-  ['18083' ReaderGroupType_DataSetReaderName_Placeholder_SecurityMode]
-  ['18084' ReaderGroupType_DataSetReaderName_Placeholder_SecurityGroupId]
-  ['18085' ReaderGroupType_DataSetReaderName_Placeholder_SecurityKeyServices]
-  ['18089' ReaderGroupType_DataSetReaderName_Placeholder_Status_State]
-  ['18093' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_DiagnosticsLevel]
-  ['18094' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation]
-  ['18095' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_Active]
-  ['18096' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_Classification]
-  ['18097' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_DiagnosticsLevel]
-  ['18098' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_TimeFirstChange]
-  ['18099' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError]
-  ['18100' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_Active]
-  ['18101' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_Classification]
-  ['18102' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_DiagnosticsLevel]
-  ['18103' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_TimeFirstChange]
-  ['18105' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_SubError]
-  ['18107' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError]
-  ['18108' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_Active]
-  ['18109' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_Classification]
-  ['18110' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_DiagnosticsLevel]
-  ['18111' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_TimeFirstChange]
-  ['18112' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod]
-  ['18113' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Active]
-  ['18114' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Classification]
-  ['18115' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
-  ['18116' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
-  ['18117' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent]
-  ['18118' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Active]
-  ['18119' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Classification]
-  ['18120' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
-  ['18121' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
-  ['18122' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError]
-  ['18123' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Active]
-  ['18124' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Classification]
-  ['18125' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
-  ['18126' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
-  ['18127' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent]
-  ['18128' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_Active]
-  ['18129' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_Classification]
-  ['18130' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
-  ['18131' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
-  ['18132' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod]
-  ['18133' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Active]
-  ['18134' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Classification]
-  ['18135' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
-  ['18136' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
-  ['18138' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages]
-  ['18139' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Active]
-  ['18140' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Classification]
-  ['18141' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_DiagnosticsLevel]
-  ['18142' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_TimeFirstChange]
-  ['18143' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors]
-  ['18144' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_Active]
-  ['18145' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_Classification]
-  ['18146' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_DiagnosticsLevel]
-  ['18147' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_TimeFirstChange]
-  ['18148' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber]
-  ['18149' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber_DiagnosticsLevel]
-  ['18150' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_StatusCode]
-  ['18151' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_StatusCode_DiagnosticsLevel]
-  ['18152' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MajorVersion]
-  ['18153' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MajorVersion_DiagnosticsLevel]
-  ['18154' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MinorVersion]
-  ['18158' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MinorVersion_DiagnosticsLevel]
-  ['20409' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_SecurityTokenID]
-  ['21003' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_SecurityTokenID_DiagnosticsLevel]
-  ['21004' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_TimeToNextTokenID]
-  ['21005' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_TimeToNextTokenID_DiagnosticsLevel]
-  ['21010' ReaderGroupType_DataSetReaderName_Placeholder_CreateTargetVariables_InputArguments]
-  ['21011' ReaderGroupType_DataSetReaderName_Placeholder_CreateTargetVariables_OutputArguments]
-  ['21013' ReaderGroupType_DataSetReaderName_Placeholder_CreateDataSetMirror_InputArguments]
-  ['21014' ReaderGroupType_DataSetReaderName_Placeholder_CreateDataSetMirror_OutputArguments]
-  ['21016' ReaderGroupType_Diagnostics_DiagnosticsLevel]
-  ['21017' ReaderGroupType_Diagnostics_TotalInformation]
-  ['21018' ReaderGroupType_Diagnostics_TotalInformation_Active]
-  ['21019' ReaderGroupType_Diagnostics_TotalInformation_Classification]
-  ['21020' ReaderGroupType_Diagnostics_TotalInformation_DiagnosticsLevel]
-  ['21021' ReaderGroupType_Diagnostics_TotalInformation_TimeFirstChange]
-  ['21022' ReaderGroupType_Diagnostics_TotalError]
-  ['21023' ReaderGroupType_Diagnostics_TotalError_Active]
-  ['21024' ReaderGroupType_Diagnostics_TotalError_Classification]
-  ['21025' ReaderGroupType_Diagnostics_TotalError_DiagnosticsLevel]
-  ['21026' ReaderGroupType_Diagnostics_TotalError_TimeFirstChange]
-  ['21028' ReaderGroupType_Diagnostics_SubError]
-  ['21030' ReaderGroupType_Diagnostics_Counters_StateError]
-  ['21031' ReaderGroupType_Diagnostics_Counters_StateError_Active]
-  ['21032' ReaderGroupType_Diagnostics_Counters_StateError_Classification]
-  ['21033' ReaderGroupType_Diagnostics_Counters_StateError_DiagnosticsLevel]
-  ['21034' ReaderGroupType_Diagnostics_Counters_StateError_TimeFirstChange]
-  ['21035' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod]
-  ['21036' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_Active]
-  ['21037' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_Classification]
-  ['21038' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
-  ['21039' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
-  ['21040' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent]
-  ['21041' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_Active]
-  ['21042' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_Classification]
-  ['21043' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
-  ['21044' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
-  ['21045' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError]
-  ['21046' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_Active]
-  ['21047' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_Classification]
-  ['21048' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
-  ['21049' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
-  ['21050' ReaderGroupType_Diagnostics_Counters_StatePausedByParent]
-  ['21051' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_Active]
-  ['21052' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_Classification]
-  ['21053' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
-  ['21054' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
-  ['21055' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod]
-  ['21056' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_Active]
-  ['21057' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_Classification]
-  ['21058' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
-  ['21059' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
-  ['21061' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages]
-  ['21062' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_Active]
-  ['21063' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_Classification]
-  ['21064' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_DiagnosticsLevel]
-  ['21065' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_TimeFirstChange]
-  ['21066' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages]
-  ['21067' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_Active]
-  ['21068' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_Classification]
-  ['21069' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_DiagnosticsLevel]
-  ['21070' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_TimeFirstChange]
-  ['21071' ReaderGroupType_Diagnostics_Counters_DecryptionErrors]
-  ['21072' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_Active]
-  ['21073' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_Classification]
-  ['21074' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_DiagnosticsLevel]
-  ['21075' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_TimeFirstChange]
-  ['21076' ReaderGroupType_Diagnostics_LiveValues_ConfiguredDataSetReaders]
-  ['21077' ReaderGroupType_Diagnostics_LiveValues_ConfiguredDataSetReaders_DiagnosticsLevel]
-  ['21078' ReaderGroupType_Diagnostics_LiveValues_OperationalDataSetReaders]
-  ['21079' ReaderGroupType_Diagnostics_LiveValues_OperationalDataSetReaders_DiagnosticsLevel]
-  ['21083' ReaderGroupType_AddDataSetReader_InputArguments]
-  ['21084' ReaderGroupType_AddDataSetReader_OutputArguments]
-  ['21086' ReaderGroupType_RemoveDataSetReader_InputArguments]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableKey
-  ['17512' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_ResourceUri]
-  ['17513' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_ProfileUri]
-  ['17514' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_EndpointUrls]
-  ['17515' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_ServiceStatus]
-  ['17517' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_GetEncryptingKey_InputArguments]
-  ['17518' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_GetEncryptingKey_OutputArguments]
-  ['17520' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_UpdateCredential_InputArguments]
-  ['17523' KeyCredentialConfigurationFolderType_CreateCredential_InputArguments]
-  ['17524' KeyCredentialConfigurationFolderType_CreateCredential_OutputArguments]
-  ['17529' KeyCredentialConfiguration_CreateCredential_InputArguments]
-  ['17530' KeyCredentialConfiguration_CreateCredential_OutputArguments]
-  ['17535' KeyCredentialConfigurationType_GetEncryptingKey_InputArguments]
-  ['17536' KeyCredentialConfigurationType_GetEncryptingKey_OutputArguments]
-  ['18004' KeyCredentialConfigurationType_EndpointUrls]
-  ['18005' KeyCredentialConfigurationType_ServiceStatus]
-  ['18007' KeyCredentialConfigurationType_UpdateCredential_InputArguments]
-  ['18010' KeyCredentialUpdateMethodType_InputArguments]
-  ['18028' KeyCredentialAuditEventType_ResourceUri]
-  ['18064' KeyCredentialDeletedAuditEventType_ResourceUri]
-  ['18069' KeyCredentialConfigurationType_ResourceUri]
-  ['18165' KeyCredentialConfigurationType_ProfileUri]
-  ['18656' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_CredentialId]
-  ['18657' KeyCredentialConfigurationType_CredentialId]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableNetwork
-  ['17582' NetworkAddressType_NetworkInterface_Selections]
-  ['17583' NetworkAddressType_NetworkInterface_SelectionDescriptions]
-  ['17584' NetworkAddressType_NetworkInterface_RestrictToList]
-  ['21146' NetworkAddressType_NetworkInterface]
-  ['21149' NetworkAddressUrlType_Url]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableDefault
-  ['17605' DefaultInstanceBrowseName]
-  ['18645' DefaultHEConfiguration_SortByEventFields]
-  ['32639' DefaultHAConfiguration_AggregateConfiguration_TreatUncertainAsBad]
-  ['32640' DefaultHAConfiguration_AggregateConfiguration_PercentDataBad]
-  ['32641' DefaultHAConfiguration_AggregateConfiguration_PercentDataGood]
-  ['32642' DefaultHAConfiguration_AggregateConfiguration_UseSlopedExtrapolation]
-  ['32644' DefaultHAConfiguration_Stepped]
-  ['32645' DefaultHAConfiguration_Definition]
-  ['32646' DefaultHAConfiguration_MaxTimeInterval]
-  ['32647' DefaultHAConfiguration_MinTimeInterval]
-  ['32648' DefaultHAConfiguration_ExceptionDeviation]
-  ['32649' DefaultHAConfiguration_ExceptionDeviationFormat]
-  ['32650' DefaultHAConfiguration_StartOfArchive]
-  ['32656' DefaultHAConfiguration_StartOfOnlineArchive]
-  ['32682' DefaultHAConfiguration_ServerTimestampSupported]
-  ['32752' DefaultHAConfiguration_MaxTimeStoredValues]
-  ['32753' DefaultHAConfiguration_MaxCountStoredValues]
-  ['32756' DefaultHEConfiguration_StartOfArchive]
-  ['32757' DefaultHEConfiguration_StartOfOnlineArchive]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableRational
-  ['17712' RationalNumberType_Numerator]
-  ['17713' RationalNumberType_Denominator]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableVector
-  ['17715' VectorType_VectorUnit]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableAuthorization
-  ['17860' AuthorizationServiceConfigurationType_ServiceCertificate]
-  ['18072' AuthorizationServiceConfigurationType_ServiceUri]
-  ['18073' AuthorizationServiceConfigurationType_IssuerEndpointUrl]
-  ['23558' AuthorizationServicesConfigurationFolderType_ServiceName_Placeholder_ServiceUri]
-  ['23559' AuthorizationServicesConfigurationFolderType_ServiceName_Placeholder_ServiceCertificate]
-  ['23560' AuthorizationServicesConfigurationFolderType_ServiceName_Placeholder_IssuerEndpointUrl]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableAudio
-  ['17988' AudioVariableType_ListId]
-  ['17989' AudioVariableType_AgencyId]
-  ['17990' AudioVariableType_VersionId]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableAction
-  ['18596' ActionState_EnumStrings]
-
-]
-        
-[enum int 32 OpcuaNodeIdServicesVariableSort
-  ['18647' SortOrderType_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableProvisionable
+  ['16325' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Size]
+  ['16326' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Writable]
+  ['16327' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserWritable]
+  ['16328' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_OpenCount]
+  ['16329' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MimeType]
+  ['16330' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxByteStringLength]
+  ['16331' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastModifiedTime]
+  ['16333' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_InputArguments]
+  ['16334' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open_OutputArguments]
+  ['16336' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close_InputArguments]
+  ['16338' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_InputArguments]
+  ['16339' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read_OutputArguments]
+  ['16341' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write_InputArguments]
+  ['16343' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_InputArguments]
+  ['16344' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition_OutputArguments]
+  ['16346' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition_InputArguments]
+  ['16347' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_LastUpdateTime]
+  ['16365' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CurrentVersion]
+  ['16366' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ActivityTimeout]
+  ['16367' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SupportedDataType]
+  ['16369' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_InputArguments]
+  ['16370' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate_OutputArguments]
+  ['16536' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate_InputArguments]
+  ['16657' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailableNetworks]
+  ['16658' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_AvailablePorts]
+  ['16659' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SecurityPolicyUris]
+  ['16660' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_UserTokenTypes]
+  ['16661' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateTypes]
   ['18664' ProvisionableDeviceType_ApplicationName_Placeholder_ApplicationNames]
   ['18775' ProvisionableDeviceType_ApplicationName_Placeholder_SupportsTransactions]
   ['19310' ProvisionableDeviceType_ApplicationName_Placeholder_InApplicationSetup]
+  ['19348' ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_InputArguments]
+  ['19349' ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate_OutputArguments]
+  ['19351' ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate_InputArguments]
+  ['19733' ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultApplicationGroup_Purpose]
+  ['19734' ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultHttpsGroup_Purpose]
+  ['19735' ProvisionableDeviceType_ApplicationName_Placeholder_CertificateGroups_DefaultUserTokenGroup_Purpose]
+  ['19736' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxEndpoints]
+  ['19737' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_MaxCertificateGroups]
+  ['19738' ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CertificateGroupPurposes]
+  ['19741' ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_InputArguments]
+  ['19742' ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential_OutputArguments]
   ['26872' ProvisionableDeviceType_IsSingleton]
   ['26874' ProvisionableDeviceType_RequestTickets_OutputArguments]
   ['26876' ProvisionableDeviceType_SetRegistrarEndpoints_InputArguments]
@@ -14339,7 +14264,385 @@
   ['32366' ProvisionableDeviceType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedTrustLists]
   ['32367' ProvisionableDeviceType_ApplicationName_Placeholder_TransactionDiagnostics_AffectedCertificateGroups]
   ['32368' ProvisionableDeviceType_ApplicationName_Placeholder_TransactionDiagnostics_Errors]
-
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableDiscrepancy
+  ['17215' DiscrepancyAlarmType_TargetValueNode]
+  ['17216' DiscrepancyAlarmType_ExpectedTime]
+  ['17217' DiscrepancyAlarmType_Tolerance]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableWriter
+  ['17490' WriterGroupType_DataSetWriterName_Placeholder_DataSetWriterProperties]
+  ['17559' WriterGroupType_HeaderLayoutUri]
+  ['17736' WriterGroupType_WriterGroupId]
+  ['17737' WriterGroupType_PublishingInterval]
+  ['17738' WriterGroupType_KeepAliveTime]
+  ['17739' WriterGroupType_Priority]
+  ['17740' WriterGroupType_LocaleIds]
+  ['17744' WriterGroupType_DataSetWriterName_Placeholder_DataSetWriterId]
+  ['17745' WriterGroupType_DataSetWriterName_Placeholder_DataSetFieldContentMask]
+  ['17746' WriterGroupType_DataSetWriterName_Placeholder_KeyFrameCount]
+  ['17750' WriterGroupType_DataSetWriterName_Placeholder_Status_State]
+  ['17754' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_DiagnosticsLevel]
+  ['17755' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation]
+  ['17756' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_Active]
+  ['17757' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_Classification]
+  ['17758' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_DiagnosticsLevel]
+  ['17759' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalInformation_TimeFirstChange]
+  ['17760' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError]
+  ['17761' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_Active]
+  ['17762' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_Classification]
+  ['17763' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_DiagnosticsLevel]
+  ['17764' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_TotalError_TimeFirstChange]
+  ['17766' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_SubError]
+  ['17768' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError]
+  ['17769' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_Active]
+  ['17770' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_Classification]
+  ['17771' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_DiagnosticsLevel]
+  ['17772' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateError_TimeFirstChange]
+  ['17773' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod]
+  ['17774' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Active]
+  ['17775' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Classification]
+  ['17776' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
+  ['17777' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
+  ['17778' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent]
+  ['17779' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Active]
+  ['17780' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Classification]
+  ['17781' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
+  ['17782' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
+  ['17783' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError]
+  ['17784' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Active]
+  ['17785' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Classification]
+  ['17786' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
+  ['17787' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
+  ['17788' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent]
+  ['17789' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_Active]
+  ['17790' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_Classification]
+  ['17791' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
+  ['17792' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
+  ['17793' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod]
+  ['17794' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Active]
+  ['17795' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Classification]
+  ['17796' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
+  ['17797' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
+  ['17799' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages]
+  ['17800' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Active]
+  ['17801' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Classification]
+  ['17802' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_DiagnosticsLevel]
+  ['17803' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_TimeFirstChange]
+  ['17804' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber]
+  ['17805' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber_DiagnosticsLevel]
+  ['17806' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_StatusCode]
+  ['17807' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_StatusCode_DiagnosticsLevel]
+  ['17808' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MajorVersion]
+  ['17809' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MajorVersion_DiagnosticsLevel]
+  ['17810' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MinorVersion]
+  ['17811' WriterGroupType_DataSetWriterName_Placeholder_Diagnostics_LiveValues_MinorVersion_DiagnosticsLevel]
+  ['17813' WriterGroupType_Diagnostics_DiagnosticsLevel]
+  ['17814' WriterGroupType_Diagnostics_TotalInformation]
+  ['17815' WriterGroupType_Diagnostics_TotalInformation_Active]
+  ['17816' WriterGroupType_Diagnostics_TotalInformation_Classification]
+  ['17817' WriterGroupType_Diagnostics_TotalInformation_DiagnosticsLevel]
+  ['17818' WriterGroupType_Diagnostics_TotalInformation_TimeFirstChange]
+  ['17819' WriterGroupType_Diagnostics_TotalError]
+  ['17820' WriterGroupType_Diagnostics_TotalError_Active]
+  ['17821' WriterGroupType_Diagnostics_TotalError_Classification]
+  ['17822' WriterGroupType_Diagnostics_TotalError_DiagnosticsLevel]
+  ['17823' WriterGroupType_Diagnostics_TotalError_TimeFirstChange]
+  ['17825' WriterGroupType_Diagnostics_SubError]
+  ['17827' WriterGroupType_Diagnostics_Counters_StateError]
+  ['17828' WriterGroupType_Diagnostics_Counters_StateError_Active]
+  ['17829' WriterGroupType_Diagnostics_Counters_StateError_Classification]
+  ['17830' WriterGroupType_Diagnostics_Counters_StateError_DiagnosticsLevel]
+  ['17831' WriterGroupType_Diagnostics_Counters_StateError_TimeFirstChange]
+  ['17832' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod]
+  ['17833' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_Active]
+  ['17834' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_Classification]
+  ['17835' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
+  ['17836' WriterGroupType_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
+  ['17837' WriterGroupType_Diagnostics_Counters_StateOperationalByParent]
+  ['17838' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_Active]
+  ['17839' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_Classification]
+  ['17840' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
+  ['17841' WriterGroupType_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
+  ['17842' WriterGroupType_Diagnostics_Counters_StateOperationalFromError]
+  ['17843' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_Active]
+  ['17844' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_Classification]
+  ['17845' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
+  ['17846' WriterGroupType_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
+  ['17847' WriterGroupType_Diagnostics_Counters_StatePausedByParent]
+  ['17848' WriterGroupType_Diagnostics_Counters_StatePausedByParent_Active]
+  ['17849' WriterGroupType_Diagnostics_Counters_StatePausedByParent_Classification]
+  ['17850' WriterGroupType_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
+  ['17851' WriterGroupType_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
+  ['17853' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod]
+  ['17854' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_Active]
+  ['17855' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_Classification]
+  ['17856' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
+  ['17857' WriterGroupType_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
+  ['17859' WriterGroupType_Diagnostics_Counters_SentNetworkMessages]
+  ['17864' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_Active]
+  ['17871' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_Classification]
+  ['17872' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_DiagnosticsLevel]
+  ['17873' WriterGroupType_Diagnostics_Counters_SentNetworkMessages_TimeFirstChange]
+  ['17874' WriterGroupType_Diagnostics_Counters_FailedTransmissions]
+  ['17878' WriterGroupType_Diagnostics_Counters_FailedTransmissions_Active]
+  ['17885' WriterGroupType_Diagnostics_Counters_FailedTransmissions_Classification]
+  ['17892' WriterGroupType_Diagnostics_Counters_FailedTransmissions_DiagnosticsLevel]
+  ['17899' WriterGroupType_Diagnostics_Counters_FailedTransmissions_TimeFirstChange]
+  ['17900' WriterGroupType_Diagnostics_Counters_EncryptionErrors]
+  ['17901' WriterGroupType_Diagnostics_Counters_EncryptionErrors_Active]
+  ['17902' WriterGroupType_Diagnostics_Counters_EncryptionErrors_Classification]
+  ['17903' WriterGroupType_Diagnostics_Counters_EncryptionErrors_DiagnosticsLevel]
+  ['17906' WriterGroupType_Diagnostics_Counters_EncryptionErrors_TimeFirstChange]
+  ['17913' WriterGroupType_Diagnostics_LiveValues_ConfiguredDataSetWriters]
+  ['17920' WriterGroupType_Diagnostics_LiveValues_ConfiguredDataSetWriters_DiagnosticsLevel]
+  ['17927' WriterGroupType_Diagnostics_LiveValues_OperationalDataSetWriters]
+  ['17934' WriterGroupType_Diagnostics_LiveValues_OperationalDataSetWriters_DiagnosticsLevel]
+  ['17941' WriterGroupType_Diagnostics_LiveValues_SecurityTokenID]
+  ['17948' WriterGroupType_Diagnostics_LiveValues_SecurityTokenID_DiagnosticsLevel]
+  ['17955' WriterGroupType_Diagnostics_LiveValues_TimeToNextTokenID]
+  ['17962' WriterGroupType_Diagnostics_LiveValues_TimeToNextTokenID_DiagnosticsLevel]
+  ['17976' WriterGroupType_AddDataSetWriter_InputArguments]
+  ['17987' WriterGroupType_AddDataSetWriter_OutputArguments]
+  ['17993' WriterGroupType_RemoveDataSetWriter_InputArguments]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableReader
+  ['17492' ReaderGroupType_DataSetReaderName_Placeholder_DataSetReaderProperties]
+  ['17560' ReaderGroupType_DataSetReaderName_Placeholder_KeyFrameCount]
+  ['17562' ReaderGroupType_DataSetReaderName_Placeholder_HeaderLayoutUri]
+  ['18077' ReaderGroupType_DataSetReaderName_Placeholder_PublisherId]
+  ['18078' ReaderGroupType_DataSetReaderName_Placeholder_WriterGroupId]
+  ['18079' ReaderGroupType_DataSetReaderName_Placeholder_DataSetWriterId]
+  ['18080' ReaderGroupType_DataSetReaderName_Placeholder_DataSetMetaData]
+  ['18081' ReaderGroupType_DataSetReaderName_Placeholder_DataSetFieldContentMask]
+  ['18082' ReaderGroupType_DataSetReaderName_Placeholder_MessageReceiveTimeout]
+  ['18083' ReaderGroupType_DataSetReaderName_Placeholder_SecurityMode]
+  ['18084' ReaderGroupType_DataSetReaderName_Placeholder_SecurityGroupId]
+  ['18085' ReaderGroupType_DataSetReaderName_Placeholder_SecurityKeyServices]
+  ['18089' ReaderGroupType_DataSetReaderName_Placeholder_Status_State]
+  ['18093' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_DiagnosticsLevel]
+  ['18094' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation]
+  ['18095' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_Active]
+  ['18096' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_Classification]
+  ['18097' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_DiagnosticsLevel]
+  ['18098' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalInformation_TimeFirstChange]
+  ['18099' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError]
+  ['18100' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_Active]
+  ['18101' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_Classification]
+  ['18102' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_DiagnosticsLevel]
+  ['18103' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_TotalError_TimeFirstChange]
+  ['18105' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_SubError]
+  ['18107' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError]
+  ['18108' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_Active]
+  ['18109' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_Classification]
+  ['18110' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_DiagnosticsLevel]
+  ['18111' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateError_TimeFirstChange]
+  ['18112' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod]
+  ['18113' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Active]
+  ['18114' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_Classification]
+  ['18115' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
+  ['18116' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
+  ['18117' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent]
+  ['18118' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Active]
+  ['18119' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_Classification]
+  ['18120' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
+  ['18121' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
+  ['18122' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError]
+  ['18123' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Active]
+  ['18124' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_Classification]
+  ['18125' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
+  ['18126' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
+  ['18127' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent]
+  ['18128' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_Active]
+  ['18129' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_Classification]
+  ['18130' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
+  ['18131' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
+  ['18132' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod]
+  ['18133' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Active]
+  ['18134' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_Classification]
+  ['18135' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
+  ['18136' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
+  ['18138' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages]
+  ['18139' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Active]
+  ['18140' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_Classification]
+  ['18141' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_DiagnosticsLevel]
+  ['18142' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_FailedDataSetMessages_TimeFirstChange]
+  ['18143' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors]
+  ['18144' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_Active]
+  ['18145' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_Classification]
+  ['18146' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_DiagnosticsLevel]
+  ['18147' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_Counters_DecryptionErrors_TimeFirstChange]
+  ['18148' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber]
+  ['18149' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MessageSequenceNumber_DiagnosticsLevel]
+  ['18150' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_StatusCode]
+  ['18151' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_StatusCode_DiagnosticsLevel]
+  ['18152' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MajorVersion]
+  ['18153' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MajorVersion_DiagnosticsLevel]
+  ['18154' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MinorVersion]
+  ['18158' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_MinorVersion_DiagnosticsLevel]
+  ['20409' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_SecurityTokenID]
+  ['21003' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_SecurityTokenID_DiagnosticsLevel]
+  ['21004' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_TimeToNextTokenID]
+  ['21005' ReaderGroupType_DataSetReaderName_Placeholder_Diagnostics_LiveValues_TimeToNextTokenID_DiagnosticsLevel]
+  ['21010' ReaderGroupType_DataSetReaderName_Placeholder_CreateTargetVariables_InputArguments]
+  ['21011' ReaderGroupType_DataSetReaderName_Placeholder_CreateTargetVariables_OutputArguments]
+  ['21013' ReaderGroupType_DataSetReaderName_Placeholder_CreateDataSetMirror_InputArguments]
+  ['21014' ReaderGroupType_DataSetReaderName_Placeholder_CreateDataSetMirror_OutputArguments]
+  ['21016' ReaderGroupType_Diagnostics_DiagnosticsLevel]
+  ['21017' ReaderGroupType_Diagnostics_TotalInformation]
+  ['21018' ReaderGroupType_Diagnostics_TotalInformation_Active]
+  ['21019' ReaderGroupType_Diagnostics_TotalInformation_Classification]
+  ['21020' ReaderGroupType_Diagnostics_TotalInformation_DiagnosticsLevel]
+  ['21021' ReaderGroupType_Diagnostics_TotalInformation_TimeFirstChange]
+  ['21022' ReaderGroupType_Diagnostics_TotalError]
+  ['21023' ReaderGroupType_Diagnostics_TotalError_Active]
+  ['21024' ReaderGroupType_Diagnostics_TotalError_Classification]
+  ['21025' ReaderGroupType_Diagnostics_TotalError_DiagnosticsLevel]
+  ['21026' ReaderGroupType_Diagnostics_TotalError_TimeFirstChange]
+  ['21028' ReaderGroupType_Diagnostics_SubError]
+  ['21030' ReaderGroupType_Diagnostics_Counters_StateError]
+  ['21031' ReaderGroupType_Diagnostics_Counters_StateError_Active]
+  ['21032' ReaderGroupType_Diagnostics_Counters_StateError_Classification]
+  ['21033' ReaderGroupType_Diagnostics_Counters_StateError_DiagnosticsLevel]
+  ['21034' ReaderGroupType_Diagnostics_Counters_StateError_TimeFirstChange]
+  ['21035' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod]
+  ['21036' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_Active]
+  ['21037' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_Classification]
+  ['21038' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_DiagnosticsLevel]
+  ['21039' ReaderGroupType_Diagnostics_Counters_StateOperationalByMethod_TimeFirstChange]
+  ['21040' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent]
+  ['21041' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_Active]
+  ['21042' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_Classification]
+  ['21043' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_DiagnosticsLevel]
+  ['21044' ReaderGroupType_Diagnostics_Counters_StateOperationalByParent_TimeFirstChange]
+  ['21045' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError]
+  ['21046' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_Active]
+  ['21047' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_Classification]
+  ['21048' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_DiagnosticsLevel]
+  ['21049' ReaderGroupType_Diagnostics_Counters_StateOperationalFromError_TimeFirstChange]
+  ['21050' ReaderGroupType_Diagnostics_Counters_StatePausedByParent]
+  ['21051' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_Active]
+  ['21052' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_Classification]
+  ['21053' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_DiagnosticsLevel]
+  ['21054' ReaderGroupType_Diagnostics_Counters_StatePausedByParent_TimeFirstChange]
+  ['21055' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod]
+  ['21056' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_Active]
+  ['21057' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_Classification]
+  ['21058' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_DiagnosticsLevel]
+  ['21059' ReaderGroupType_Diagnostics_Counters_StateDisabledByMethod_TimeFirstChange]
+  ['21061' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages]
+  ['21062' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_Active]
+  ['21063' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_Classification]
+  ['21064' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_DiagnosticsLevel]
+  ['21065' ReaderGroupType_Diagnostics_Counters_ReceivedNetworkMessages_TimeFirstChange]
+  ['21066' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages]
+  ['21067' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_Active]
+  ['21068' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_Classification]
+  ['21069' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_DiagnosticsLevel]
+  ['21070' ReaderGroupType_Diagnostics_Counters_ReceivedInvalidNetworkMessages_TimeFirstChange]
+  ['21071' ReaderGroupType_Diagnostics_Counters_DecryptionErrors]
+  ['21072' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_Active]
+  ['21073' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_Classification]
+  ['21074' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_DiagnosticsLevel]
+  ['21075' ReaderGroupType_Diagnostics_Counters_DecryptionErrors_TimeFirstChange]
+  ['21076' ReaderGroupType_Diagnostics_LiveValues_ConfiguredDataSetReaders]
+  ['21077' ReaderGroupType_Diagnostics_LiveValues_ConfiguredDataSetReaders_DiagnosticsLevel]
+  ['21078' ReaderGroupType_Diagnostics_LiveValues_OperationalDataSetReaders]
+  ['21079' ReaderGroupType_Diagnostics_LiveValues_OperationalDataSetReaders_DiagnosticsLevel]
+  ['21083' ReaderGroupType_AddDataSetReader_InputArguments]
+  ['21084' ReaderGroupType_AddDataSetReader_OutputArguments]
+  ['21086' ReaderGroupType_RemoveDataSetReader_InputArguments]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableKey
+  ['17512' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_ResourceUri]
+  ['17513' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_ProfileUri]
+  ['17514' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_EndpointUrls]
+  ['17515' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_ServiceStatus]
+  ['17517' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_GetEncryptingKey_InputArguments]
+  ['17518' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_GetEncryptingKey_OutputArguments]
+  ['17520' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_UpdateCredential_InputArguments]
+  ['17523' KeyCredentialConfigurationFolderType_CreateCredential_InputArguments]
+  ['17524' KeyCredentialConfigurationFolderType_CreateCredential_OutputArguments]
+  ['17529' KeyCredentialConfiguration_CreateCredential_InputArguments]
+  ['17530' KeyCredentialConfiguration_CreateCredential_OutputArguments]
+  ['17535' KeyCredentialConfigurationType_GetEncryptingKey_InputArguments]
+  ['17536' KeyCredentialConfigurationType_GetEncryptingKey_OutputArguments]
+  ['18004' KeyCredentialConfigurationType_EndpointUrls]
+  ['18005' KeyCredentialConfigurationType_ServiceStatus]
+  ['18007' KeyCredentialConfigurationType_UpdateCredential_InputArguments]
+  ['18010' KeyCredentialUpdateMethodType_InputArguments]
+  ['18028' KeyCredentialAuditEventType_ResourceUri]
+  ['18064' KeyCredentialDeletedAuditEventType_ResourceUri]
+  ['18069' KeyCredentialConfigurationType_ResourceUri]
+  ['18165' KeyCredentialConfigurationType_ProfileUri]
+  ['18656' KeyCredentialConfigurationFolderType_ServiceName_Placeholder_CredentialId]
+  ['18657' KeyCredentialConfigurationType_CredentialId]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableNetwork
+  ['17582' NetworkAddressType_NetworkInterface_Selections]
+  ['17583' NetworkAddressType_NetworkInterface_SelectionDescriptions]
+  ['17584' NetworkAddressType_NetworkInterface_RestrictToList]
+  ['21146' NetworkAddressType_NetworkInterface]
+  ['21149' NetworkAddressUrlType_Url]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableDefault
+  ['17605' DefaultInstanceBrowseName]
+  ['18645' DefaultHEConfiguration_SortByEventFields]
+  ['32639' DefaultHAConfiguration_AggregateConfiguration_TreatUncertainAsBad]
+  ['32640' DefaultHAConfiguration_AggregateConfiguration_PercentDataBad]
+  ['32641' DefaultHAConfiguration_AggregateConfiguration_PercentDataGood]
+  ['32642' DefaultHAConfiguration_AggregateConfiguration_UseSlopedExtrapolation]
+  ['32644' DefaultHAConfiguration_Stepped]
+  ['32645' DefaultHAConfiguration_Definition]
+  ['32646' DefaultHAConfiguration_MaxTimeInterval]
+  ['32647' DefaultHAConfiguration_MinTimeInterval]
+  ['32648' DefaultHAConfiguration_ExceptionDeviation]
+  ['32649' DefaultHAConfiguration_ExceptionDeviationFormat]
+  ['32650' DefaultHAConfiguration_StartOfArchive]
+  ['32656' DefaultHAConfiguration_StartOfOnlineArchive]
+  ['32682' DefaultHAConfiguration_ServerTimestampSupported]
+  ['32752' DefaultHAConfiguration_MaxTimeStoredValues]
+  ['32753' DefaultHAConfiguration_MaxCountStoredValues]
+  ['32756' DefaultHEConfiguration_StartOfArchive]
+  ['32757' DefaultHEConfiguration_StartOfOnlineArchive]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableRational
+  ['17712' RationalNumberType_Numerator]
+  ['17713' RationalNumberType_Denominator]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableVector
+  ['17715' VectorType_VectorUnit]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableAuthorization
+  ['17860' AuthorizationServiceConfigurationType_ServiceCertificate]
+  ['18072' AuthorizationServiceConfigurationType_ServiceUri]
+  ['18073' AuthorizationServiceConfigurationType_IssuerEndpointUrl]
+  ['23558' AuthorizationServicesConfigurationFolderType_ServiceName_Placeholder_ServiceUri]
+  ['23559' AuthorizationServicesConfigurationFolderType_ServiceName_Placeholder_ServiceCertificate]
+  ['23560' AuthorizationServicesConfigurationFolderType_ServiceName_Placeholder_IssuerEndpointUrl]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableAudio
+  ['17988' AudioVariableType_ListId]
+  ['17989' AudioVariableType_AgencyId]
+  ['17990' AudioVariableType_VersionId]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableAction
+  ['18596' ActionState_EnumStrings]
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableSort
+  ['18647' SortOrderType_EnumStrings]
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableThree
@@ -14363,17 +14666,14 @@
   ['19074' ThreeDFrameType_Orientation_A]
   ['19075' ThreeDFrameType_Orientation_B]
   ['19076' ThreeDFrameType_Orientation_C]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableCartesian
   ['18773' CartesianCoordinatesType_LengthUnit]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOrientation
   ['18780' OrientationType_AngleUnit]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableFrame
@@ -14384,22 +14684,18 @@
   ['18801' FrameType_CartesianCoordinates]
   ['18802' FrameType_CartesianCoordinates_LengthUnit]
   ['18803' FrameType_Orientation_AngleUnit]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableChassis
   ['18948' ChassisIdSubtype_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePort
   ['18950' PortIdSubtype_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableMan
   ['18952' ManAddrIfSubtype_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableLldp
@@ -14468,7 +14764,6 @@
   ['19046' LldpRemoteSystemType_RemoteTooManyNeighbors]
   ['19047' LldpRemoteSystemType_ManagementAddress]
   ['19078' LldpRemoteSystemType_RemoteUnknownTlv]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableL
@@ -14483,12 +14778,19 @@
   ['18969' LLDP_LocalSystemData_SystemDescription]
   ['18970' LLDP_LocalSystemData_SystemCapabilitiesSupported]
   ['18971' LLDP_LocalSystemData_SystemCapabilitiesEnabled]
-
+]
+        
+[enum int 32 OpcuaNodeIdServicesVariableLog
+  ['19354' LogObjectType_GetRecords_InputArguments]
+  ['19355' LogObjectType_GetRecords_OutputArguments]
+  ['19356' LogObjectType_MaxRecords]
+  ['19357' LogObjectType_MaxStorageDuration]
+  ['19744' LogObjectType_MinimumSeverity]
+  ['19750' LogRecordMask_OptionSetValues]
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableDiagnostics
   ['19724' DiagnosticsLevel_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAlias
@@ -14498,39 +14800,33 @@
   ['23464' AliasNameCategoryType_FindAlias_OutputArguments]
   ['32849' AliasNameCategoryType_SubAliasNameCategories_Placeholder_LastChange]
   ['32850' AliasNameCategoryType_LastChange]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableFind
   ['23466' FindAliasMethodType_InputArguments]
   ['23467' FindAliasMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAliases
   ['23477' Aliases_FindAlias_InputArguments]
   ['23478' Aliases_FindAlias_OutputArguments]
   ['32852' Aliases_LastChange]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTag
   ['23486' TagVariables_FindAlias_InputArguments]
   ['23487' TagVariables_FindAlias_OutputArguments]
   ['32854' TagVariables_LastChange]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTopics
   ['23495' Topics_FindAlias_InputArguments]
   ['23496' Topics_FindAlias_OutputArguments]
   ['32856' Topics_LastChange]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableCurrency
   ['23501' CurrencyUnit]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableI
@@ -14582,13 +14878,11 @@
   ['24209' IPriorityMappingEntryType_PriorityValue_DSCP]
   ['24234' IIeeeAutoNegotiationStatusType_NegotiationStatus]
   ['25219' IVlanIdType_VlanId]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableOrdered
   ['23521' OrderedListType_OrderedObject_Placeholder_NumberInList]
   ['23525' OrderedListType_NodeVersion]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableModify
@@ -14603,7 +14897,6 @@
   ['23793' ModifyDataSetReaderMethodType_InputArguments]
   ['23794' ModifyDataSetReaderMethodType_OutputArguments]
   ['24285' ModifyUserMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSubscribed
@@ -14621,29 +14914,24 @@
   ['23817' SubscribedDataSetFolderType_AddDataSetFolder_InputArguments]
   ['23818' SubscribedDataSetFolderType_AddDataSetFolder_OutputArguments]
   ['23820' SubscribedDataSetFolderType_RemoveDataSetFolder_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableStandalone
   ['23830' StandaloneSubscribedDataSetType_DataSetMetaData]
   ['23831' StandaloneSubscribedDataSetType_IsConnected]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableDuplex
   ['24235' Duplex_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableInterface
   ['24236' InterfaceAdminStatus_EnumValues]
   ['24237' InterfaceOperStatus_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableNegotiation
   ['24238' NegotiationStatus_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTsn
@@ -14651,22 +14939,18 @@
   ['24240' TsnStreamState_EnumValues]
   ['24241' TsnTalkerStatus_EnumValues]
   ['24242' TsnListenerStatus_EnumValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePassword
   ['24278' PasswordOptionsMask_OptionSetValues]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableChange
   ['24289' ChangePasswordMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableWith
   ['24327' WithCommentMethodType_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableIetf
@@ -14679,26 +14963,22 @@
   ['25250' IetfBaseNetworkInterfaceType_Speed_InstrumentRange]
   ['25251' IetfBaseNetworkInterfaceType_Speed_EURange]
   ['25252' IetfBaseNetworkInterfaceType_Speed_EngineeringUnits]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariablePriority
   ['25228' PriorityMappingTableType_PriorityMapppingEntries]
   ['25230' PriorityMappingTableType_AddPriorityMappingEntry_InputArguments]
   ['25232' PriorityMappingTableType_DeletePriorityMappingEntry_InputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableConnect
   ['25332' ConnectSecurityGroupsMethodType_InputArguments]
   ['25333' ConnectSecurityGroupsMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableDisconnect
   ['25335' DisconnectSecurityGroupsMethodType_InputArguments]
   ['25336' DisconnectSecurityGroupsMethodType_OutputArguments]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableTransaction
@@ -14708,36 +14988,30 @@
   ['32290' TransactionDiagnosticsType_AffectedTrustLists]
   ['32291' TransactionDiagnosticsType_AffectedCertificateGroups]
   ['32292' TransactionDiagnosticsType_Errors]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableRedundant
   ['32418' RedundantServerMode_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableConversion
   ['32437' ConversionLimitEnum_EnumStrings]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableSyntax
   ['32441' SyntaxReferenceEntryType_CommonName]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableUnit
   ['32443' UnitType_Symbol]
   ['32445' UnitType_UnitSystem]
   ['32446' UnitType_Discipline]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableAlternative
   ['32472' AlternativeUnitType_LinearConversion]
   ['32473' AlternativeUnitType_MathMLConversion]
   ['32474' AlternativeUnitType_MathMLInverseConversion]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableQuantity
@@ -14752,7 +15026,6 @@
   ['32498' QuantityType_ServerUnits_ServerUnit_Placeholder_CoherentUnit_Symbol]
   ['32500' QuantityType_ServerUnits_ServerUnit_Placeholder_CoherentUnit_UnitSystem]
   ['32501' QuantityType_ServerUnits_ServerUnit_Placeholder_CoherentUnit_Discipline]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableQuantities
@@ -14760,11 +15033,9 @@
   ['32506' QuantitiesFolderType_Quantity_Placeholder_Annotation]
   ['32507' QuantitiesFolderType_Quantity_Placeholder_ConversionService]
   ['32508' QuantitiesFolderType_Quantity_Placeholder_Dimension]
-
 ]
         
 [enum int 32 OpcuaNodeIdServicesVariableReference
   ['32658' ReferenceDescriptionVariableType_ReferenceRefinement]
-
 ]
         

@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -103,7 +104,7 @@ type _VariantDiagnosticInfoBuilder struct {
 
 	parentBuilder *_VariantBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (VariantDiagnosticInfoBuilder) = (*_VariantDiagnosticInfoBuilder)(nil)
@@ -128,8 +129,8 @@ func (b *_VariantDiagnosticInfoBuilder) WithValue(value ...DiagnosticInfo) Varia
 }
 
 func (b *_VariantDiagnosticInfoBuilder) Build() (VariantDiagnosticInfo, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._VariantDiagnosticInfo.deepCopy(), nil
 }
@@ -155,8 +156,8 @@ func (b *_VariantDiagnosticInfoBuilder) buildForVariant() (Variant, error) {
 
 func (b *_VariantDiagnosticInfoBuilder) DeepCopy() any {
 	_copy := b.CreateVariantDiagnosticInfoBuilder().(*_VariantDiagnosticInfoBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -237,9 +238,7 @@ func (m *_VariantDiagnosticInfo) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.Value) > 0 {
 		for _curItem, element := range m.Value {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.Value), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -122,8 +123,30 @@ type ExtensionObjectDefinitionBuilder interface {
 	AsQuantityDimension() QuantityDimensionBuilder
 	// AsTrustListDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
 	AsTrustListDataType() TrustListDataTypeBuilder
+	// AsBaseConfigurationDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsBaseConfigurationDataType() BaseConfigurationDataTypeBuilder
+	// AsBaseConfigurationRecordDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsBaseConfigurationRecordDataType() BaseConfigurationRecordDataTypeBuilder
+	// AsCertificateGroupDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsCertificateGroupDataType() CertificateGroupDataTypeBuilder
+	// AsConfigurationUpdateTargetType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsConfigurationUpdateTargetType() ConfigurationUpdateTargetTypeBuilder
 	// AsTransactionErrorType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
 	AsTransactionErrorType() TransactionErrorTypeBuilder
+	// AsApplicationConfigurationDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsApplicationConfigurationDataType() ApplicationConfigurationDataTypeBuilder
+	// AsApplicationIdentityDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsApplicationIdentityDataType() ApplicationIdentityDataTypeBuilder
+	// AsEndpointDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsEndpointDataType() EndpointDataTypeBuilder
+	// AsServerEndpointDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsServerEndpointDataType() ServerEndpointDataTypeBuilder
+	// AsSecuritySettingsDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsSecuritySettingsDataType() SecuritySettingsDataTypeBuilder
+	// AsUserTokenSettingsDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsUserTokenSettingsDataType() UserTokenSettingsDataTypeBuilder
+	// AsAuthorizationServiceConfigurationDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsAuthorizationServiceConfigurationDataType() AuthorizationServiceConfigurationDataTypeBuilder
 	// AsDataTypeSchemaHeader converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
 	AsDataTypeSchemaHeader() DataTypeSchemaHeaderBuilder
 	// AsDataTypeDescription converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
@@ -308,6 +331,16 @@ type ExtensionObjectDefinitionBuilder interface {
 	AsReferenceDescriptionDataType() ReferenceDescriptionDataTypeBuilder
 	// AsReferenceListEntryDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
 	AsReferenceListEntryDataType() ReferenceListEntryDataTypeBuilder
+	// AsLogRecord converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsLogRecord() LogRecordBuilder
+	// AsLogRecordsDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsLogRecordsDataType() LogRecordsDataTypeBuilder
+	// AsSpanContextDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsSpanContextDataType() SpanContextDataTypeBuilder
+	// AsTraceContextDataType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsTraceContextDataType() TraceContextDataTypeBuilder
+	// AsNameValuePair converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
+	AsNameValuePair() NameValuePairBuilder
 	// AsRolePermissionType converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
 	AsRolePermissionType() RolePermissionTypeBuilder
 	// AsDataTypeDefinition converts this build to a subType of ExtensionObjectDefinition. It is always possible to return to current builder using Done()
@@ -778,7 +811,7 @@ type _ExtensionObjectDefinitionBuilder struct {
 
 	childBuilder _ExtensionObjectDefinitionChildBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (ExtensionObjectDefinitionBuilder) = (*_ExtensionObjectDefinitionBuilder)(nil)
@@ -788,8 +821,8 @@ func (b *_ExtensionObjectDefinitionBuilder) WithMandatoryFields() ExtensionObjec
 }
 
 func (b *_ExtensionObjectDefinitionBuilder) PartialBuild() (ExtensionObjectDefinitionContract, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._ExtensionObjectDefinition.deepCopy(), nil
 }
@@ -982,11 +1015,121 @@ func (b *_ExtensionObjectDefinitionBuilder) AsTrustListDataType() TrustListDataT
 	return cb
 }
 
+func (b *_ExtensionObjectDefinitionBuilder) AsBaseConfigurationDataType() BaseConfigurationDataTypeBuilder {
+	if cb, ok := b.childBuilder.(BaseConfigurationDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewBaseConfigurationDataTypeBuilder().(*_BaseConfigurationDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsBaseConfigurationRecordDataType() BaseConfigurationRecordDataTypeBuilder {
+	if cb, ok := b.childBuilder.(BaseConfigurationRecordDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewBaseConfigurationRecordDataTypeBuilder().(*_BaseConfigurationRecordDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsCertificateGroupDataType() CertificateGroupDataTypeBuilder {
+	if cb, ok := b.childBuilder.(CertificateGroupDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewCertificateGroupDataTypeBuilder().(*_CertificateGroupDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsConfigurationUpdateTargetType() ConfigurationUpdateTargetTypeBuilder {
+	if cb, ok := b.childBuilder.(ConfigurationUpdateTargetTypeBuilder); ok {
+		return cb
+	}
+	cb := NewConfigurationUpdateTargetTypeBuilder().(*_ConfigurationUpdateTargetTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
 func (b *_ExtensionObjectDefinitionBuilder) AsTransactionErrorType() TransactionErrorTypeBuilder {
 	if cb, ok := b.childBuilder.(TransactionErrorTypeBuilder); ok {
 		return cb
 	}
 	cb := NewTransactionErrorTypeBuilder().(*_TransactionErrorTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsApplicationConfigurationDataType() ApplicationConfigurationDataTypeBuilder {
+	if cb, ok := b.childBuilder.(ApplicationConfigurationDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewApplicationConfigurationDataTypeBuilder().(*_ApplicationConfigurationDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsApplicationIdentityDataType() ApplicationIdentityDataTypeBuilder {
+	if cb, ok := b.childBuilder.(ApplicationIdentityDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewApplicationIdentityDataTypeBuilder().(*_ApplicationIdentityDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsEndpointDataType() EndpointDataTypeBuilder {
+	if cb, ok := b.childBuilder.(EndpointDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewEndpointDataTypeBuilder().(*_EndpointDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsServerEndpointDataType() ServerEndpointDataTypeBuilder {
+	if cb, ok := b.childBuilder.(ServerEndpointDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewServerEndpointDataTypeBuilder().(*_ServerEndpointDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsSecuritySettingsDataType() SecuritySettingsDataTypeBuilder {
+	if cb, ok := b.childBuilder.(SecuritySettingsDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewSecuritySettingsDataTypeBuilder().(*_SecuritySettingsDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsUserTokenSettingsDataType() UserTokenSettingsDataTypeBuilder {
+	if cb, ok := b.childBuilder.(UserTokenSettingsDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewUserTokenSettingsDataTypeBuilder().(*_UserTokenSettingsDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsAuthorizationServiceConfigurationDataType() AuthorizationServiceConfigurationDataTypeBuilder {
+	if cb, ok := b.childBuilder.(AuthorizationServiceConfigurationDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewAuthorizationServiceConfigurationDataTypeBuilder().(*_AuthorizationServiceConfigurationDataTypeBuilder)
 	cb.parentBuilder = b
 	b.childBuilder = cb
 	return cb
@@ -1907,6 +2050,56 @@ func (b *_ExtensionObjectDefinitionBuilder) AsReferenceListEntryDataType() Refer
 		return cb
 	}
 	cb := NewReferenceListEntryDataTypeBuilder().(*_ReferenceListEntryDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsLogRecord() LogRecordBuilder {
+	if cb, ok := b.childBuilder.(LogRecordBuilder); ok {
+		return cb
+	}
+	cb := NewLogRecordBuilder().(*_LogRecordBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsLogRecordsDataType() LogRecordsDataTypeBuilder {
+	if cb, ok := b.childBuilder.(LogRecordsDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewLogRecordsDataTypeBuilder().(*_LogRecordsDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsSpanContextDataType() SpanContextDataTypeBuilder {
+	if cb, ok := b.childBuilder.(SpanContextDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewSpanContextDataTypeBuilder().(*_SpanContextDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsTraceContextDataType() TraceContextDataTypeBuilder {
+	if cb, ok := b.childBuilder.(TraceContextDataTypeBuilder); ok {
+		return cb
+	}
+	cb := NewTraceContextDataTypeBuilder().(*_TraceContextDataTypeBuilder)
+	cb.parentBuilder = b
+	b.childBuilder = cb
+	return cb
+}
+
+func (b *_ExtensionObjectDefinitionBuilder) AsNameValuePair() NameValuePairBuilder {
+	if cb, ok := b.childBuilder.(NameValuePairBuilder); ok {
+		return cb
+	}
+	cb := NewNameValuePairBuilder().(*_NameValuePairBuilder)
 	cb.parentBuilder = b
 	b.childBuilder = cb
 	return cb
@@ -4156,8 +4349,8 @@ func (b *_ExtensionObjectDefinitionBuilder) DeepCopy() any {
 	_copy := b.CreateExtensionObjectDefinitionBuilder().(*_ExtensionObjectDefinitionBuilder)
 	_copy.childBuilder = b.childBuilder.DeepCopy().(_ExtensionObjectDefinitionChildBuilder)
 	_copy.childBuilder.setParent(_copy)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -4317,9 +4510,53 @@ func (m *_ExtensionObjectDefinition) parse(ctx context.Context, readBuffer utils
 		if _child, err = new(_TrustListDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
 			return nil, errors.Wrap(err, "Error parsing sub-type TrustListDataType for type-switch of ExtensionObjectDefinition")
 		}
+	case extensionId == int32(15436): // BaseConfigurationDataType
+		if _child, err = new(_BaseConfigurationDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type BaseConfigurationDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15437): // BaseConfigurationRecordDataType
+		if _child, err = new(_BaseConfigurationRecordDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type BaseConfigurationRecordDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15438): // CertificateGroupDataType
+		if _child, err = new(_CertificateGroupDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type CertificateGroupDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15540): // ConfigurationUpdateTargetType
+		if _child, err = new(_ConfigurationUpdateTargetType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type ConfigurationUpdateTargetType for type-switch of ExtensionObjectDefinition")
+		}
 	case extensionId == int32(32287): // TransactionErrorType
 		if _child, err = new(_TransactionErrorType).parse(ctx, readBuffer, m, extensionId); err != nil {
 			return nil, errors.Wrap(err, "Error parsing sub-type TransactionErrorType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15551): // ApplicationConfigurationDataType
+		if _child, err = new(_ApplicationConfigurationDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type ApplicationConfigurationDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15558): // ApplicationIdentityDataType
+		if _child, err = new(_ApplicationIdentityDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type ApplicationIdentityDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15559): // EndpointDataType
+		if _child, err = new(_EndpointDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type EndpointDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15560): // ServerEndpointDataType
+		if _child, err = new(_ServerEndpointDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type ServerEndpointDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15561): // SecuritySettingsDataType
+		if _child, err = new(_SecuritySettingsDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type SecuritySettingsDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(15562): // UserTokenSettingsDataType
+		if _child, err = new(_UserTokenSettingsDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type UserTokenSettingsDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(19447): // AuthorizationServiceConfigurationDataType
+		if _child, err = new(_AuthorizationServiceConfigurationDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type AuthorizationServiceConfigurationDataType for type-switch of ExtensionObjectDefinition")
 		}
 	case extensionId == int32(15536): // DataTypeSchemaHeader
 		if _child, err = new(_DataTypeSchemaHeader).parse(ctx, readBuffer, m, extensionId); err != nil {
@@ -4688,6 +4925,26 @@ func (m *_ExtensionObjectDefinition) parse(ctx context.Context, readBuffer utils
 	case extensionId == int32(32662): // ReferenceListEntryDataType
 		if _child, err = new(_ReferenceListEntryDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
 			return nil, errors.Wrap(err, "Error parsing sub-type ReferenceListEntryDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(19363): // LogRecord
+		if _child, err = new(_LogRecord).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type LogRecord for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(19747): // LogRecordsDataType
+		if _child, err = new(_LogRecordsDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type LogRecordsDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(19748): // SpanContextDataType
+		if _child, err = new(_SpanContextDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type SpanContextDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(19749): // TraceContextDataType
+		if _child, err = new(_TraceContextDataType).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type TraceContextDataType for type-switch of ExtensionObjectDefinition")
+		}
+	case extensionId == int32(19750): // NameValuePair
+		if _child, err = new(_NameValuePair).parse(ctx, readBuffer, m, extensionId); err != nil {
+			return nil, errors.Wrap(err, "Error parsing sub-type NameValuePair for type-switch of ExtensionObjectDefinition")
 		}
 	case extensionId == int32(98): // RolePermissionType
 		if _child, err = new(_RolePermissionType).parse(ctx, readBuffer, m, extensionId); err != nil {

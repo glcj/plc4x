@@ -21,7 +21,6 @@ package cbus
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"testing"
 	"time"
@@ -30,78 +29,16 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	plc4go "github.com/apache/plc4x/plc4go/pkg/api"
-	apiModel "github.com/apache/plc4x/plc4go/pkg/api/model"
 	_default "github.com/apache/plc4x/plc4go/spi/default"
-	"github.com/apache/plc4x/plc4go/spi/options"
 	"github.com/apache/plc4x/plc4go/spi/testutils"
 	"github.com/apache/plc4x/plc4go/spi/transactions"
 	"github.com/apache/plc4x/plc4go/spi/transports"
 	"github.com/apache/plc4x/plc4go/spi/transports/test"
 )
 
-func TestDriver_DiscoverWithContext(t *testing.T) {
-	type fields struct {
-		DefaultDriver           _default.DefaultDriver
-		discoverer              *Discoverer
-		tm                      transactions.RequestTransactionManager
-		awaitSetupComplete      bool
-		awaitDisconnectComplete bool
-	}
-	type args struct {
-		ctx              context.Context
-		callback         func(event apiModel.PlcDiscoveryItem)
-		discoveryOptions []options.WithDiscoveryOption
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		setup   func(t *testing.T, fields *fields, args *args)
-		wantErr assert.ErrorAssertionFunc
-	}{
-		{
-			name: "localhost discovery",
-			args: args{
-				callback: func(event apiModel.PlcDiscoveryItem) {
-					t.Log(event)
-				},
-				discoveryOptions: []options.WithDiscoveryOption{options.WithDiscoveryOptionLocalAddress("localhost")},
-			},
-			setup: func(t *testing.T, fields *fields, args *args) {
-				fields.discoverer = NewDiscoverer(options.WithCustomLogger(testutils.ProduceTestingLogger(t)))
-				ctx, cancelFunc := context.WithCancel(context.Background())
-				t.Cleanup(func() {
-					cancelFunc()
-					// We give it on second to settle, so it can stop everything
-					time.Sleep(200 * time.Millisecond)
-				})
-				args.ctx = ctx
-			},
-			wantErr: assert.NoError,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if tt.setup != nil {
-				tt.setup(t, &tt.fields, &tt.args)
-			}
-			m := &Driver{
-				DefaultDriver:           tt.fields.DefaultDriver,
-				discoverer:              tt.fields.discoverer,
-				tm:                      tt.fields.tm,
-				awaitSetupComplete:      tt.fields.awaitSetupComplete,
-				awaitDisconnectComplete: tt.fields.awaitDisconnectComplete,
-				log:                     testutils.ProduceTestingLogger(t),
-			}
-			tt.wantErr(t, m.DiscoverWithContext(tt.args.ctx, tt.args.callback, tt.args.discoveryOptions...), fmt.Sprintf("DiscoverWithContext(%v, func()*, %v)", tt.args.ctx, tt.args.discoveryOptions))
-		})
-	}
-}
-
 func TestDriver_GetConnectionWithContext(t *testing.T) {
 	type fields struct {
 		DefaultDriver           _default.DefaultDriver
-		discoverer              *Discoverer
 		tm                      transactions.RequestTransactionManager
 		awaitSetupComplete      bool
 		awaitDisconnectComplete bool
@@ -252,7 +189,6 @@ func TestDriver_GetConnectionWithContext(t *testing.T) {
 			}
 			m := &Driver{
 				DefaultDriver:           tt.fields.DefaultDriver,
-				discoverer:              tt.fields.discoverer,
 				awaitSetupComplete:      tt.fields.awaitSetupComplete,
 				awaitDisconnectComplete: tt.fields.awaitDisconnectComplete,
 			}
@@ -295,7 +231,6 @@ func TestNewDriver(t *testing.T) {
 			name: "create",
 			want: func() *Driver {
 				driver := &Driver{
-					discoverer:              NewDiscoverer(),
 					tm:                      transactions.NewRequestTransactionManager(1),
 					awaitSetupComplete:      true,
 					awaitDisconnectComplete: true,
@@ -315,7 +250,6 @@ func TestNewDriver(t *testing.T) {
 func TestDriver_reportError(t *testing.T) {
 	type fields struct {
 		DefaultDriver           _default.DefaultDriver
-		discoverer              *Discoverer
 		tm                      transactions.RequestTransactionManager
 		awaitSetupComplete      bool
 		awaitDisconnectComplete bool
@@ -351,7 +285,6 @@ func TestDriver_reportError(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &Driver{
 				DefaultDriver:           tt.fields.DefaultDriver,
-				discoverer:              tt.fields.discoverer,
 				tm:                      tt.fields.tm,
 				awaitSetupComplete:      tt.fields.awaitSetupComplete,
 				awaitDisconnectComplete: tt.fields.awaitDisconnectComplete,

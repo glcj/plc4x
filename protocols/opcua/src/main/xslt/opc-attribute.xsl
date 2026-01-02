@@ -70,8 +70,7 @@
 
     <xsl:template name="csvParser">
         <xsl:variable name="tokenizedLine" select="tokenize($csvFile, '\r\n|\r|\n')" />
-[enum uint 32 AttributeId
-        <xsl:for-each select="$tokenizedLine">
+[enum uint 32 AttributeId<xsl:for-each select="$tokenizedLine">
             <xsl:variable select="tokenize(., ',')" name="values" />
             <xsl:if test="$values[1] != ''"><xsl:text>
         </xsl:text><xsl:value-of select="concat('[''', $values[2], ''' ', $values[1], ']')" /></xsl:if>

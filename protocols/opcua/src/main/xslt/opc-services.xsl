@@ -78,8 +78,7 @@
                     <xsl:when test="$values[2]">  ['<xsl:value-of select="$values[2]"/>' <xsl:value-of select="$values[1]"/>]<xsl:text>&#xa;</xsl:text>
                     </xsl:when>
                 </xsl:choose>
-            </xsl:for-each>
-]
+            </xsl:for-each>]
         </xsl:for-each-group>
     </xsl:template>
 </xsl:stylesheet>

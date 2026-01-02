@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -111,7 +112,7 @@ type _PubSubConfigurationDataTypeBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (PubSubConfigurationDataTypeBuilder) = (*_PubSubConfigurationDataTypeBuilder)(nil)
@@ -141,8 +142,8 @@ func (b *_PubSubConfigurationDataTypeBuilder) WithEnabled(enabled bool) PubSubCo
 }
 
 func (b *_PubSubConfigurationDataTypeBuilder) Build() (PubSubConfigurationDataType, error) {
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._PubSubConfigurationDataType.deepCopy(), nil
 }
@@ -168,8 +169,8 @@ func (b *_PubSubConfigurationDataTypeBuilder) buildForExtensionObjectDefinition(
 
 func (b *_PubSubConfigurationDataTypeBuilder) DeepCopy() any {
 	_copy := b.CreatePubSubConfigurationDataTypeBuilder().(*_PubSubConfigurationDataTypeBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -252,9 +253,7 @@ func (m *_PubSubConfigurationDataType) GetLengthInBits(ctx context.Context) uint
 	if len(m.PublishedDataSets) > 0 {
 		for _curItem, element := range m.PublishedDataSets {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.PublishedDataSets), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -265,9 +264,7 @@ func (m *_PubSubConfigurationDataType) GetLengthInBits(ctx context.Context) uint
 	if len(m.Connections) > 0 {
 		for _curItem, element := range m.Connections {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.Connections), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

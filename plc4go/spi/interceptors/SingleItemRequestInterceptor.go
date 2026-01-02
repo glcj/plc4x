@@ -21,6 +21,7 @@ package interceptors
 
 import (
 	"context"
+	stdErrors "errors"
 
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog"
@@ -29,7 +30,6 @@ import (
 	"github.com/apache/plc4x/plc4go/pkg/api/values"
 	"github.com/apache/plc4x/plc4go/spi"
 	"github.com/apache/plc4x/plc4go/spi/options"
-	"github.com/apache/plc4x/plc4go/spi/utils"
 )
 
 type ReaderExposer interface {
@@ -201,14 +201,14 @@ func (m SingleItemRequestInterceptor) ProcessReadResponses(ctx context.Context, 
 			}
 		}
 	}
-	var err error
-	if len(collectedErrors) > 0 {
-		err = &utils.MultiError{MainError: errors.New("error aggregating"), Errors: collectedErrors}
+	var errResult error
+	if err := stdErrors.Join(collectedErrors...); err != nil {
+		errResult = errors.Wrap(err, "error aggregating")
 	}
 	return &interceptedPlcReadRequestResult{
 		Request:  readRequest,
 		Response: m.readResponseFactory(readRequest, responseCodes, val),
-		Err:      err,
+		Err:      errResult,
 	}
 }
 
@@ -269,13 +269,13 @@ func (m SingleItemRequestInterceptor) ProcessWriteResponses(ctx context.Context,
 			}
 		}
 	}
-	var err error
-	if len(collectedErrors) > 0 {
-		err = &utils.MultiError{MainError: errors.New("while aggregating results"), Errors: collectedErrors}
+	var errResult error
+	if err := stdErrors.Join(collectedErrors...); err != nil {
+		errResult = errors.Wrap(err, "error aggregating results")
 	}
 	return &interceptedPlcWriteRequestResult{
 		Request:  writeRequest,
 		Response: m.writeResponseFactory(writeRequest, responseCodes),
-		Err:      err,
+		Err:      errResult,
 	}
 }

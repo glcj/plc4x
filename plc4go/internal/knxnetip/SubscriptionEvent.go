@@ -67,7 +67,7 @@ func (m SubscriptionEvent) GetAddress(name string) string {
 	tag := m.DefaultPlcSubscriptionEvent.GetTag(name)
 	var groupAddress driverModel.KnxGroupAddress
 	var err error
-	ctxForModel := options.GetLoggerContextForModel(context.TODO(), m.log, options.WithPassLoggerToModel(m.passLogToModel))
+	ctxForModel := options.GetLoggerContextForModel(context.Background(), m.log, options.WithPassLoggerToModel(m.passLogToModel))
 	switch tag.(type) {
 	case GroupAddress3LevelPlcTag:
 		groupAddress, err = driverModel.KnxGroupAddressParse[driverModel.KnxGroupAddress](ctxForModel, rawAddress, 3)

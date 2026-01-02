@@ -20,7 +20,6 @@
 package tests
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -38,6 +37,6 @@ func TestManualBacnet(t *testing.T) {
 		/*00000050*/ 0xff, 0xff, 0xff, 0xff, 0x0c, 0x00, 0xc0, 0x00, 0x01, 0x19, 0x55, 0x3c, 0xff, 0xff, 0xff, 0xff, //|..........U<....|
 		/*00000060*/ 0x3f, //|?|
 	}
-	_, err := readWriteModel.BVLCParse[readWriteModel.BVLC](context.TODO(), rawBytes[42:])
+	_, err := readWriteModel.BVLCParse[readWriteModel.BVLC](t.Context(), rawBytes[42:])
 	require.NoError(t, err)
 }

@@ -285,7 +285,7 @@ func Test_executor_Submit(t *testing.T) {
 					// We do something for 3 seconds
 					<-time.NewTimer(3 * time.Second).C
 				},
-				context: context.TODO(),
+				context: t.Context(),
 			},
 			completionFutureValidator: func(t *testing.T, completionFuture CompletionFuture) bool {
 				completed := completionFuture.(*future).completed.Load()
@@ -309,7 +309,7 @@ func Test_executor_Submit(t *testing.T) {
 				runnable: func() {
 					// NOOP
 				},
-				context: context.TODO(),
+				context: t.Context(),
 			},
 			completionFutureValidator: func(t *testing.T, completionFuture CompletionFuture) bool {
 				completed := completionFuture.(*future).completed.Load()

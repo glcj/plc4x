@@ -243,6 +243,7 @@
         ['0x80E40000'  BadRequestNotAllowed]
         ['0x81130000'  BadRequestNotComplete]
         ['0x80E80000'  BadTransactionPending]
+        ['0x80F10000'  BadTransactionFailed]
         ['0x811F0000'  BadTicketRequired]
         ['0x81200000'  BadTicketInvalid]
         ['0x80E90000'  BadLocked]

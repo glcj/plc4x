@@ -131,9 +131,52 @@ public abstract class ExtensionObjectDefinition implements Message {
     } else if (EvaluationHelper.equals(extensionId, (int) 12556)) {
       builder =
           TrustListDataType.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15436)) {
+      builder =
+          BaseConfigurationDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15437)) {
+      builder =
+          BaseConfigurationRecordDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15438)) {
+      builder =
+          CertificateGroupDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15540)) {
+      builder =
+          ConfigurationUpdateTargetType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
     } else if (EvaluationHelper.equals(extensionId, (int) 32287)) {
       builder =
           TransactionErrorType.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15551)) {
+      builder =
+          ApplicationConfigurationDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15558)) {
+      builder =
+          ApplicationIdentityDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15559)) {
+      builder =
+          EndpointDataType.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15560)) {
+      builder =
+          ServerEndpointDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15561)) {
+      builder =
+          SecuritySettingsDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 15562)) {
+      builder =
+          UserTokenSettingsDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 19447)) {
+      builder =
+          AuthorizationServiceConfigurationDataType.staticParseExtensionObjectDefinitionBuilder(
+              readBuffer, extensionId);
     } else if (EvaluationHelper.equals(extensionId, (int) 15536)) {
       builder =
           DataTypeSchemaHeader.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
@@ -476,6 +519,19 @@ public abstract class ExtensionObjectDefinition implements Message {
       builder =
           ReferenceListEntryDataType.staticParseExtensionObjectDefinitionBuilder(
               readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 19363)) {
+      builder = LogRecord.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 19747)) {
+      builder =
+          LogRecordsDataType.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 19748)) {
+      builder =
+          SpanContextDataType.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 19749)) {
+      builder =
+          TraceContextDataType.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
+    } else if (EvaluationHelper.equals(extensionId, (int) 19750)) {
+      builder = NameValuePair.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);
     } else if (EvaluationHelper.equals(extensionId, (int) 98)) {
       builder =
           RolePermissionType.staticParseExtensionObjectDefinitionBuilder(readBuffer, extensionId);

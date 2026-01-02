@@ -69,6 +69,7 @@ public enum OpcuaNodeIdServicesReferenceType {
   HasEffectUnsuppressed((int) 17985L),
   HasWriterGroup((int) 18804L),
   HasReaderGroup((int) 18805L),
+  HasLogHierarchy((int) 19371L),
   AliasFor((int) 23469L),
   IsDeprecated((int) 23562L),
   HasStructuredComponent((int) 24136L),

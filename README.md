@@ -74,22 +74,23 @@ And brings stand-alone (Java) utils such as:
 * PLC4X Server: Enables you to communicate with a central PLC4X Server which then communicates with devices via PLC4X.
 
 It also provides (Java) tools for usage inside an application:
+Both the integration modules as also the OPC-UA Server and PLC4X Server are being released as part of the plc4x-extras release.
 
-* Connection Cache: New implementation of our framework for re-using and sharing PLC-connections
+* Connection Cache: New implementation of our framework for re-using and sharing PLC connections
 * OPM: Object-Plc-Mapping: Allows binding PLC fields to properties in java POJOs similar to JPA
 * Scraper: Utility to do scheduled and repeated data collection.
 
 ## Getting started
 
-Depending on the programming language, the usage will differ, therefore please go to the
+Depending on the programming language, the usage will differ. Therefore, please go to the
 [Getting Started](https://plc4x.apache.org/plc4x/latest/users/getting-started/plc4j.html) on the PLC4X website to look up
 the language of choice.
 
 ### Java
 
 NOTE: Currently the minimum Java version is `Java 11`, and we have tested it up to `Java 24`. 
-The project is currently split up into 3 repositories, the `plc4x-extras` repository.  
-When building the `plc4x-extras` repo, in order to be able to build all parts, at least `Java 17` is required.
+The project is currently split up into three repositories, the `plc4x`, `plc4x-build-tools` and `plc4x-extras` repository.  
+To be able to build all parts of the `plc4x-extras` repository, at least `Java 17` is required.
 
 See the PLC4J user guide on the website to start using PLC4X in your Java application:
 [https://plc4x.apache.org/plc4x/latest/users/getting-started/plc4j.html](https://plc4x.apache.org/users/getting-started/plc4j.html)
@@ -106,10 +107,11 @@ Currently, the project is configured to require the following software:
 4. (Optional, for running all tests) `Docker` for running some tests making use of `Testcontainers`
 5. (Optional, for building the website) [Graphviz](https://www.graphviz.org/) : For generating the graphs in the documentation
 
-WARNING: The code generation uses a utility which requires some additional VM settings. When running a build from the root, the settings in the `.mvn/jvm.config` are automatically applied. When building only a sub module, it is important to set the vm args: `--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED`. 
-In Intellij for example set these in the IDE settings under: Preferences | Build, Execution, Deployment | Build Tools | Maven | Runner: JVM Options.
+WARNING: The code generation uses a utility which requires some additional VM settings. When running a build from the root, the settings in the `.mvn/jvm.config` are automatically applied. 
+When building only a submodule, it is important to set the vm-args: `--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED`. 
+In Intellij, for example, set these in the IDE settings under: Preferences | Build, Execution, Deployment | Build Tools | Maven | Runner: JVM Options.
 
-The when doing a build, we automatically run a prerequisite check and fail the build with an explanation, if not all requirements are meet.
+When doing a full build, we automatically run a prerequisite check and fail the build with an explanation of what to do, if not all requirements are meet.
 
 A more detailed description is available on our website:
 
@@ -130,7 +132,7 @@ All requirements are retrieved by the build itself
 
 #### For building `PLC4Net` we also need:
 
-1. DotNet SDK 6.0 or above
+1. DotNet SDK 7.0 or above
 
 ### Building with Docker
 
@@ -147,21 +149,23 @@ This will build a local Docker container able to build all parts of PLC4X and wi
 
 The default build will run a local release-build, so it can also be used to ensure reproducible builds when releasing.
 
-Per default will it store files locally:
+Per default, it will store files locally:
 - Downloaded maven artifacts will go to `out/.repository`
 
-The reason for this is, that otherwise the artifacts would be packaged in with the source-release artifact, resulting in a 12GB or more zip archive.
+The reason for this is that otherwise the artifacts would be packaged in with the source-release artifact, resulting in a 12GB or more zip archive.
 However, saving it in the main `target` directory would make the build delete the local repo every time a `mvn clean` is run.
 The `out` directory however is excluded per default from the assembly descriptor, and therefore it is not included in the source zim.
 
 ### Getting Started
 
-You must have at least Java 11 installed on your system and connectivity to Maven Central
-(for downloading external third party dependencies). Maven 3.6 is required to build, so be sure it's installed and available on your system.
+You must have at least Java 11 installed on your system and connectivity to Maven Central for downloading external third party dependencies. 
+Maven 3.6 is required to build, so be sure it's installed and available on your system.
 
-NOTE: There is a convenience Maven-Wrapper installed in the repo, when used, this automatically downloads and installs Maven. If you want to use this, please use `./mvnw` or `mvnw` instead of the normal `mvn` command.
+NOTE: There is a convenience Maven-Wrapper installed in the repo, when used, this automatically downloads and installs Maven. 
+If you want to use this, please use `./mvnw` or `mvnw` instead of the normal `mvn` command.
 
-NOTE: When running from sources-zip, the `mvnw` might not be executable on `Mac` or `Linux`. This can easily be fixed by running the following command in the directory.
+NOTE: When running from sources-zip, the `mvnw` might not be executable on `Mac` or `Linux`. 
+This can easily be fixed by running the following command in the directory.
 
 ```
 $ chmod +x mvnw
@@ -186,7 +190,7 @@ The `Go` drivers can be built by enabling the `with-go` profile:
 ```
 
 The `C# / .Net` implementation is currently in a `work in progress` state.
-In order to be able to build the `C# / .Net` module, you currently need to activate the:
+To be able to build the `C# / .Net` module, you currently need to activate the:
 `with-dotnet` profiles.
 
 ```
@@ -194,18 +198,33 @@ In order to be able to build the `C# / .Net` module, you currently need to activ
 ```
 
 The Python implementation is currently in a somewhat unclean state and still needs refactoring.
-In order to be able to build the Python module, you currently need to activate the:
+To be able to build the Python module, you currently need to activate the:
 `with-python` profiles.
 
 ```
 ./mvnw -P with-python install
 ```
 
-In order to build everything the following command should work:
+To build everything, the following command should work:
 
 ```
 ./mvnw -P with-c,with-dotnet,with-go,with-java,with-python,enable-all-checks install
 ```
+
+### Updating the generated code
+
+In the past the build used to generate the code in every run.
+Especially when it comes to reproducible builds, this was problematic.
+We have recently updated the build to only generate the code if explicitly asked to do it.
+
+By enabling the `update-generated-code` profile, this can be enabled.
+
+So to build absolutely everything, the following command does the trick:
+
+```
+./mvnw -P with-c,with-dotnet,with-go,with-java,with-python,update-generated-code,enable-all-checks install
+```
+If you don't enable a language, the code for this language remains untouched by the build.
 
 ## Community
 

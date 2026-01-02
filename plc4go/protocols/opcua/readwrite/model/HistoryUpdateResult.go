@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -114,7 +115,7 @@ type _HistoryUpdateResultBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (HistoryUpdateResultBuilder) = (*_HistoryUpdateResultBuilder)(nil)
@@ -138,10 +139,7 @@ func (b *_HistoryUpdateResultBuilder) WithStatusCodeBuilder(builderSupplier func
 	var err error
 	b.StatusCode, err = builder.Build()
 	if err != nil {
-		if b.err == nil {
-			b.err = &utils.MultiError{MainError: errors.New("sub builder failed")}
-		}
-		b.err.Append(errors.Wrap(err, "StatusCodeBuilder failed"))
+		b.collectedErr = append(b.collectedErr, errors.Wrap(err, "StatusCodeBuilder failed"))
 	}
 	return b
 }
@@ -158,13 +156,10 @@ func (b *_HistoryUpdateResultBuilder) WithDiagnosticInfos(diagnosticInfos ...Dia
 
 func (b *_HistoryUpdateResultBuilder) Build() (HistoryUpdateResult, error) {
 	if b.StatusCode == nil {
-		if b.err == nil {
-			b.err = new(utils.MultiError)
-		}
-		b.err.Append(errors.New("mandatory field 'statusCode' not set"))
+		b.collectedErr = append(b.collectedErr, errors.New("mandatory field 'statusCode' not set"))
 	}
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._HistoryUpdateResult.deepCopy(), nil
 }
@@ -190,8 +185,8 @@ func (b *_HistoryUpdateResultBuilder) buildForExtensionObjectDefinition() (Exten
 
 func (b *_HistoryUpdateResultBuilder) DeepCopy() any {
 	_copy := b.CreateHistoryUpdateResultBuilder().(*_HistoryUpdateResultBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -277,9 +272,7 @@ func (m *_HistoryUpdateResult) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.OperationResults) > 0 {
 		for _curItem, element := range m.OperationResults {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.OperationResults), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -290,9 +283,7 @@ func (m *_HistoryUpdateResult) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.DiagnosticInfos) > 0 {
 		for _curItem, element := range m.DiagnosticInfos {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.DiagnosticInfos), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

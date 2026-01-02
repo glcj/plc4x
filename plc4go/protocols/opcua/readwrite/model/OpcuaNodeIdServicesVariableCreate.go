@@ -41,14 +41,16 @@ type IOpcuaNodeIdServicesVariableCreate interface {
 }
 
 const (
-	OpcuaNodeIdServicesVariableCreate_CreateSigningRequestMethodType_InputArguments  OpcuaNodeIdServicesVariableCreate = 12742
-	OpcuaNodeIdServicesVariableCreate_CreateSigningRequestMethodType_OutputArguments OpcuaNodeIdServicesVariableCreate = 12743
-	OpcuaNodeIdServicesVariableCreate_CreateDirectoryMethodType_InputArguments       OpcuaNodeIdServicesVariableCreate = 13343
-	OpcuaNodeIdServicesVariableCreate_CreateDirectoryMethodType_OutputArguments      OpcuaNodeIdServicesVariableCreate = 13344
-	OpcuaNodeIdServicesVariableCreate_CreateFileMethodType_InputArguments            OpcuaNodeIdServicesVariableCreate = 13346
-	OpcuaNodeIdServicesVariableCreate_CreateFileMethodType_OutputArguments           OpcuaNodeIdServicesVariableCreate = 13347
-	OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_InputArguments      OpcuaNodeIdServicesVariableCreate = 15253
-	OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_OutputArguments     OpcuaNodeIdServicesVariableCreate = 17495
+	OpcuaNodeIdServicesVariableCreate_CreateSigningRequestMethodType_InputArguments         OpcuaNodeIdServicesVariableCreate = 12742
+	OpcuaNodeIdServicesVariableCreate_CreateSigningRequestMethodType_OutputArguments        OpcuaNodeIdServicesVariableCreate = 12743
+	OpcuaNodeIdServicesVariableCreate_CreateDirectoryMethodType_InputArguments              OpcuaNodeIdServicesVariableCreate = 13343
+	OpcuaNodeIdServicesVariableCreate_CreateDirectoryMethodType_OutputArguments             OpcuaNodeIdServicesVariableCreate = 13344
+	OpcuaNodeIdServicesVariableCreate_CreateFileMethodType_InputArguments                   OpcuaNodeIdServicesVariableCreate = 13346
+	OpcuaNodeIdServicesVariableCreate_CreateFileMethodType_OutputArguments                  OpcuaNodeIdServicesVariableCreate = 13347
+	OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_InputArguments             OpcuaNodeIdServicesVariableCreate = 15253
+	OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_OutputArguments            OpcuaNodeIdServicesVariableCreate = 17495
+	OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_InputArguments  OpcuaNodeIdServicesVariableCreate = 19328
+	OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_OutputArguments OpcuaNodeIdServicesVariableCreate = 19329
 )
 
 var OpcuaNodeIdServicesVariableCreateValues []OpcuaNodeIdServicesVariableCreate
@@ -64,6 +66,8 @@ func init() {
 		OpcuaNodeIdServicesVariableCreate_CreateFileMethodType_OutputArguments,
 		OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_InputArguments,
 		OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_OutputArguments,
+		OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_InputArguments,
+		OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_OutputArguments,
 	}
 }
 
@@ -85,6 +89,10 @@ func OpcuaNodeIdServicesVariableCreateByValue(value int32) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_InputArguments, true
 	case 17495:
 		return OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_OutputArguments, true
+	case 19328:
+		return OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_InputArguments, true
+	case 19329:
+		return OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_OutputArguments, true
 	}
 	return 0, false
 }
@@ -107,6 +115,10 @@ func OpcuaNodeIdServicesVariableCreateByName(value string) (enum OpcuaNodeIdServ
 		return OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_InputArguments, true
 	case "CreateCredentialMethodType_OutputArguments":
 		return OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_OutputArguments, true
+	case "CreateSelfSignedCertificateMethodType_InputArguments":
+		return OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_InputArguments, true
+	case "CreateSelfSignedCertificateMethodType_OutputArguments":
+		return OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_OutputArguments, true
 	}
 	return 0, false
 }
@@ -194,6 +206,10 @@ func (e OpcuaNodeIdServicesVariableCreate) PLC4XEnumName() string {
 		return "CreateCredentialMethodType_InputArguments"
 	case OpcuaNodeIdServicesVariableCreate_CreateCredentialMethodType_OutputArguments:
 		return "CreateCredentialMethodType_OutputArguments"
+	case OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_InputArguments:
+		return "CreateSelfSignedCertificateMethodType_InputArguments"
+	case OpcuaNodeIdServicesVariableCreate_CreateSelfSignedCertificateMethodType_OutputArguments:
+		return "CreateSelfSignedCertificateMethodType_OutputArguments"
 	}
 	return fmt.Sprintf("Unknown(%v)", int32(e))
 }

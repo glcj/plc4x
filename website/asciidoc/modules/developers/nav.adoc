@@ -48,6 +48,7 @@
 
 ** xref:release/index.adoc[]
 *** xref:release/release.adoc[]
+*** xref:release/extras.adoc[]
 *** xref:release/validation.adoc[]
 *** xref:release/build-tools.adoc[]
 

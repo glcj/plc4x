@@ -314,6 +314,12 @@ const (
 	OpcuaNodeIdServicesMethod_ExtensionFieldsType_RemoveExtensionField                                                                                                                 OpcuaNodeIdServicesMethod = 15494
 	OpcuaNodeIdServicesMethod_AddExtensionFieldMethodType                                                                                                                              OpcuaNodeIdServicesMethod = 15496
 	OpcuaNodeIdServicesMethod_RemoveExtensionFieldMethodType                                                                                                                           OpcuaNodeIdServicesMethod = 15499
+	OpcuaNodeIdServicesMethod_ConfigurationFileType_CloseAndUpdate                                                                                                                     OpcuaNodeIdServicesMethod = 15505
+	OpcuaNodeIdServicesMethod_ConfigurationFileType_ConfirmUpdate                                                                                                                      OpcuaNodeIdServicesMethod = 15508
+	OpcuaNodeIdServicesMethod_ConfigurationFileCloseAndUpdateMethodType                                                                                                                OpcuaNodeIdServicesMethod = 15513
+	OpcuaNodeIdServicesMethod_ConfigurationFileConfirmUpdateMethodType                                                                                                                 OpcuaNodeIdServicesMethod = 15516
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Open                                                                                                           OpcuaNodeIdServicesMethod = 15572
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Close                                                                                                          OpcuaNodeIdServicesMethod = 15575
 	OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddIdentity                                                                                                             OpcuaNodeIdServicesMethod = 15612
 	OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_RemoveIdentity                                                                                                          OpcuaNodeIdServicesMethod = 15614
 	OpcuaNodeIdServicesMethod_RoleType_AddIdentity                                                                                                                                     OpcuaNodeIdServicesMethod = 15624
@@ -337,13 +343,19 @@ const (
 	OpcuaNodeIdServicesMethod_TemporaryFileTransferType_GenerateFileForRead                                                                                                            OpcuaNodeIdServicesMethod = 15746
 	OpcuaNodeIdServicesMethod_TemporaryFileTransferType_GenerateFileForWrite                                                                                                           OpcuaNodeIdServicesMethod = 15749
 	OpcuaNodeIdServicesMethod_TemporaryFileTransferType_CloseAndCommit                                                                                                                 OpcuaNodeIdServicesMethod = 15751
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Read                                                                                                           OpcuaNodeIdServicesMethod = 15791
 	OpcuaNodeIdServicesMethod_TemporaryFileTransferType_TransferState_Placeholder_Reset                                                                                                OpcuaNodeIdServicesMethod = 15794
 	OpcuaNodeIdServicesMethod_GenerateFileForReadMethodType                                                                                                                            OpcuaNodeIdServicesMethod = 15795
 	OpcuaNodeIdServicesMethod_GenerateFileForWriteMethodType                                                                                                                           OpcuaNodeIdServicesMethod = 15798
 	OpcuaNodeIdServicesMethod_CloseAndCommitMethodType                                                                                                                                 OpcuaNodeIdServicesMethod = 15800
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Write                                                                                                          OpcuaNodeIdServicesMethod = 15805
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_GetPosition                                                                                                    OpcuaNodeIdServicesMethod = 15807
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_SetPosition                                                                                                    OpcuaNodeIdServicesMethod = 15810
 	OpcuaNodeIdServicesMethod_FileTransferStateMachineType_Reset                                                                                                                       OpcuaNodeIdServicesMethod = 15843
 	OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Enable                                                                                                                       OpcuaNodeIdServicesMethod = 15846
 	OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Disable                                                                                                                      OpcuaNodeIdServicesMethod = 15847
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_CloseAndUpdate                                                                                                 OpcuaNodeIdServicesMethod = 15849
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_ConfirmUpdate                                                                                                  OpcuaNodeIdServicesMethod = 15863
 	OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityKeys                                                                                                                     OpcuaNodeIdServicesMethod = 15907
 	OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityGroup                                                                                                                    OpcuaNodeIdServicesMethod = 15910
 	OpcuaNodeIdServicesMethod_PubSubKeyServiceType_SecurityGroups_AddSecurityGroup                                                                                                     OpcuaNodeIdServicesMethod = 15914
@@ -359,8 +371,14 @@ const (
 	OpcuaNodeIdServicesMethod_RoleSetType_RemoveRole                                                                                                                                   OpcuaNodeIdServicesMethod = 16000
 	OpcuaNodeIdServicesMethod_AddRoleMethodType                                                                                                                                        OpcuaNodeIdServicesMethod = 16002
 	OpcuaNodeIdServicesMethod_RemoveRoleMethodType                                                                                                                                     OpcuaNodeIdServicesMethod = 16005
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Open                                                                                                               OpcuaNodeIdServicesMethod = 16013
 	OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_AddIdentity                                                                                                                       OpcuaNodeIdServicesMethod = 16041
 	OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_RemoveIdentity                                                                                                                    OpcuaNodeIdServicesMethod = 16043
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Close                                                                                                              OpcuaNodeIdServicesMethod = 16060
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Read                                                                                                               OpcuaNodeIdServicesMethod = 16074
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Write                                                                                                              OpcuaNodeIdServicesMethod = 16101
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_GetPosition                                                                                                        OpcuaNodeIdServicesMethod = 16103
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_SetPosition                                                                                                        OpcuaNodeIdServicesMethod = 16124
 	OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddApplication                                                                                                          OpcuaNodeIdServicesMethod = 16165
 	OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_RemoveApplication                                                                                                       OpcuaNodeIdServicesMethod = 16167
 	OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddEndpoint                                                                                                             OpcuaNodeIdServicesMethod = 16169
@@ -411,10 +429,19 @@ const (
 	OpcuaNodeIdServicesMethod_ServerCapabilitiesType_RoleSet_RemoveRole                                                                                                                OpcuaNodeIdServicesMethod = 16299
 	OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_AddRole                                                                                                                OpcuaNodeIdServicesMethod = 16301
 	OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_RemoveRole                                                                                                             OpcuaNodeIdServicesMethod = 16304
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_CloseAndUpdate                                                                                                     OpcuaNodeIdServicesMethod = 16317
+	OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_ConfirmUpdate                                                                                                      OpcuaNodeIdServicesMethod = 16320
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open                                                                               OpcuaNodeIdServicesMethod = 16332
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close                                                                              OpcuaNodeIdServicesMethod = 16335
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read                                                                               OpcuaNodeIdServicesMethod = 16337
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write                                                                              OpcuaNodeIdServicesMethod = 16340
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition                                                                        OpcuaNodeIdServicesMethod = 16342
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition                                                                        OpcuaNodeIdServicesMethod = 16345
 	OpcuaNodeIdServicesMethod_FileSystem_CreateDirectory                                                                                                                               OpcuaNodeIdServicesMethod = 16348
 	OpcuaNodeIdServicesMethod_FileSystem_CreateFile                                                                                                                                    OpcuaNodeIdServicesMethod = 16351
 	OpcuaNodeIdServicesMethod_FileSystem_DeleteFileSystemObject                                                                                                                        OpcuaNodeIdServicesMethod = 16354
 	OpcuaNodeIdServicesMethod_FileSystem_MoveOrCopy                                                                                                                                    OpcuaNodeIdServicesMethod = 16356
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate                                                                     OpcuaNodeIdServicesMethod = 16368
 	OpcuaNodeIdServicesMethod_AlarmConditionType_Silence                                                                                                                               OpcuaNodeIdServicesMethod = 16402
 	OpcuaNodeIdServicesMethod_AlarmConditionType_Suppress                                                                                                                              OpcuaNodeIdServicesMethod = 16403
 	OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Disable                                                                                                OpcuaNodeIdServicesMethod = 16439
@@ -425,6 +452,7 @@ const (
 	OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_Unshelve                                                                                 OpcuaNodeIdServicesMethod = 16515
 	OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_OneShotShelve                                                                            OpcuaNodeIdServicesMethod = 16516
 	OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve                                                                              OpcuaNodeIdServicesMethod = 16517
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate                                                                      OpcuaNodeIdServicesMethod = 16523
 	OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Silence                                                                                                OpcuaNodeIdServicesMethod = 16533
 	OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Suppress                                                                                               OpcuaNodeIdServicesMethod = 16534
 	OpcuaNodeIdServicesMethod_PublishSubscribeType_ConnectionName_Placeholder_AddWriterGroup                                                                                           OpcuaNodeIdServicesMethod = 16535
@@ -685,6 +713,14 @@ const (
 	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSigningRequest                                                                      OpcuaNodeIdServicesMethod = 18541
 	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_GetRejectedList                                                                           OpcuaNodeIdServicesMethod = 18544
 	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults                                                                     OpcuaNodeIdServicesMethod = 18546
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open                                                                    OpcuaNodeIdServicesMethod = 18562
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close                                                                   OpcuaNodeIdServicesMethod = 18565
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read                                                                    OpcuaNodeIdServicesMethod = 18567
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write                                                                   OpcuaNodeIdServicesMethod = 18570
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition                                                             OpcuaNodeIdServicesMethod = 18572
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition                                                             OpcuaNodeIdServicesMethod = 18575
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate                                                          OpcuaNodeIdServicesMethod = 18581
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate                                                           OpcuaNodeIdServicesMethod = 18584
 	OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_AddIdentity                                                                                                             OpcuaNodeIdServicesMethod = 18632
 	OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_RemoveIdentity                                                                                                          OpcuaNodeIdServicesMethod = 18634
 	OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_AddApplication                                                                                                          OpcuaNodeIdServicesMethod = 18636
@@ -698,6 +734,21 @@ const (
 	OpcuaNodeIdServicesMethod_PubSubConnectionType_WriterGroupName_Placeholder_Diagnostics_Reset                                                                                       OpcuaNodeIdServicesMethod = 19119
 	OpcuaNodeIdServicesMethod_PubSubConnectionType_ReaderGroupName_Placeholder_Diagnostics_Reset                                                                                       OpcuaNodeIdServicesMethod = 19188
 	OpcuaNodeIdServicesMethod_PubSubConnectionType_Diagnostics_Reset                                                                                                                   OpcuaNodeIdServicesMethod = 19253
+	OpcuaNodeIdServicesMethod_CreateSelfSignedCertificateMethodType                                                                                                                    OpcuaNodeIdServicesMethod = 19327
+	OpcuaNodeIdServicesMethod_DeleteCertificateMethodType                                                                                                                              OpcuaNodeIdServicesMethod = 19330
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate                                                               OpcuaNodeIdServicesMethod = 19332
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate                                                                         OpcuaNodeIdServicesMethod = 19335
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_CreateSelfSignedCertificate                                                                                                      OpcuaNodeIdServicesMethod = 19337
+	OpcuaNodeIdServicesMethod_ServerConfigurationType_DeleteCertificate                                                                                                                OpcuaNodeIdServicesMethod = 19340
+	OpcuaNodeIdServicesMethod_ServerConfiguration_CreateSelfSignedCertificate                                                                                                          OpcuaNodeIdServicesMethod = 19342
+	OpcuaNodeIdServicesMethod_ServerConfiguration_DeleteCertificate                                                                                                                    OpcuaNodeIdServicesMethod = 19345
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate                                                                          OpcuaNodeIdServicesMethod = 19347
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate                                                                                    OpcuaNodeIdServicesMethod = 19350
+	OpcuaNodeIdServicesMethod_LogObjectType_GetRecords                                                                                                                                 OpcuaNodeIdServicesMethod = 19353
+	OpcuaNodeIdServicesMethod_GetRecordsMethodType                                                                                                                                     OpcuaNodeIdServicesMethod = 19358
+	OpcuaNodeIdServicesMethod_ServerLog_GetRecords                                                                                                                                     OpcuaNodeIdServicesMethod = 19373
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential                                                           OpcuaNodeIdServicesMethod = 19410
+	OpcuaNodeIdServicesMethod_ApplicationConfigurationType_KeyCredentials_CreateCredential                                                                                             OpcuaNodeIdServicesMethod = 19424
 	OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Disable                                                                                                          OpcuaNodeIdServicesMethod = 19483
 	OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Enable                                                                                                           OpcuaNodeIdServicesMethod = 19484
 	OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_AddComment                                                                                                       OpcuaNodeIdServicesMethod = 19485
@@ -706,6 +757,7 @@ const (
 	OpcuaNodeIdServicesMethod_DataSetWriterType_Diagnostics_Reset                                                                                                                      OpcuaNodeIdServicesMethod = 19562
 	OpcuaNodeIdServicesMethod_DataSetReaderType_Diagnostics_Reset                                                                                                                      OpcuaNodeIdServicesMethod = 19621
 	OpcuaNodeIdServicesMethod_PubSubDiagnosticsType_Reset                                                                                                                              OpcuaNodeIdServicesMethod = 19689
+	OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential                                                                      OpcuaNodeIdServicesMethod = 19740
 	OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve                                                                                        OpcuaNodeIdServicesMethod = 20097
 	OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_Unshelve                                                                                           OpcuaNodeIdServicesMethod = 20099
 	OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_OneShotShelve                                                                                      OpcuaNodeIdServicesMethod = 20100
@@ -1854,6 +1906,12 @@ func init() {
 		OpcuaNodeIdServicesMethod_ExtensionFieldsType_RemoveExtensionField,
 		OpcuaNodeIdServicesMethod_AddExtensionFieldMethodType,
 		OpcuaNodeIdServicesMethod_RemoveExtensionFieldMethodType,
+		OpcuaNodeIdServicesMethod_ConfigurationFileType_CloseAndUpdate,
+		OpcuaNodeIdServicesMethod_ConfigurationFileType_ConfirmUpdate,
+		OpcuaNodeIdServicesMethod_ConfigurationFileCloseAndUpdateMethodType,
+		OpcuaNodeIdServicesMethod_ConfigurationFileConfirmUpdateMethodType,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Open,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Close,
 		OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddIdentity,
 		OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_RemoveIdentity,
 		OpcuaNodeIdServicesMethod_RoleType_AddIdentity,
@@ -1877,13 +1935,19 @@ func init() {
 		OpcuaNodeIdServicesMethod_TemporaryFileTransferType_GenerateFileForRead,
 		OpcuaNodeIdServicesMethod_TemporaryFileTransferType_GenerateFileForWrite,
 		OpcuaNodeIdServicesMethod_TemporaryFileTransferType_CloseAndCommit,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Read,
 		OpcuaNodeIdServicesMethod_TemporaryFileTransferType_TransferState_Placeholder_Reset,
 		OpcuaNodeIdServicesMethod_GenerateFileForReadMethodType,
 		OpcuaNodeIdServicesMethod_GenerateFileForWriteMethodType,
 		OpcuaNodeIdServicesMethod_CloseAndCommitMethodType,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Write,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_GetPosition,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_SetPosition,
 		OpcuaNodeIdServicesMethod_FileTransferStateMachineType_Reset,
 		OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Enable,
 		OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Disable,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_CloseAndUpdate,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_ConfirmUpdate,
 		OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityKeys,
 		OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityGroup,
 		OpcuaNodeIdServicesMethod_PubSubKeyServiceType_SecurityGroups_AddSecurityGroup,
@@ -1899,8 +1963,14 @@ func init() {
 		OpcuaNodeIdServicesMethod_RoleSetType_RemoveRole,
 		OpcuaNodeIdServicesMethod_AddRoleMethodType,
 		OpcuaNodeIdServicesMethod_RemoveRoleMethodType,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Open,
 		OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_AddIdentity,
 		OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_RemoveIdentity,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Close,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Read,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Write,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_GetPosition,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_SetPosition,
 		OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddApplication,
 		OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_RemoveApplication,
 		OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddEndpoint,
@@ -1951,10 +2021,19 @@ func init() {
 		OpcuaNodeIdServicesMethod_ServerCapabilitiesType_RoleSet_RemoveRole,
 		OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_AddRole,
 		OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_RemoveRole,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_CloseAndUpdate,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_ConfirmUpdate,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition,
 		OpcuaNodeIdServicesMethod_FileSystem_CreateDirectory,
 		OpcuaNodeIdServicesMethod_FileSystem_CreateFile,
 		OpcuaNodeIdServicesMethod_FileSystem_DeleteFileSystemObject,
 		OpcuaNodeIdServicesMethod_FileSystem_MoveOrCopy,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate,
 		OpcuaNodeIdServicesMethod_AlarmConditionType_Silence,
 		OpcuaNodeIdServicesMethod_AlarmConditionType_Suppress,
 		OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Disable,
@@ -1965,6 +2044,7 @@ func init() {
 		OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_Unshelve,
 		OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_OneShotShelve,
 		OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate,
 		OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Silence,
 		OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Suppress,
 		OpcuaNodeIdServicesMethod_PublishSubscribeType_ConnectionName_Placeholder_AddWriterGroup,
@@ -2225,6 +2305,14 @@ func init() {
 		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSigningRequest,
 		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_GetRejectedList,
 		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate,
 		OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_AddIdentity,
 		OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_RemoveIdentity,
 		OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_AddApplication,
@@ -2238,6 +2326,21 @@ func init() {
 		OpcuaNodeIdServicesMethod_PubSubConnectionType_WriterGroupName_Placeholder_Diagnostics_Reset,
 		OpcuaNodeIdServicesMethod_PubSubConnectionType_ReaderGroupName_Placeholder_Diagnostics_Reset,
 		OpcuaNodeIdServicesMethod_PubSubConnectionType_Diagnostics_Reset,
+		OpcuaNodeIdServicesMethod_CreateSelfSignedCertificateMethodType,
+		OpcuaNodeIdServicesMethod_DeleteCertificateMethodType,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_CreateSelfSignedCertificate,
+		OpcuaNodeIdServicesMethod_ServerConfigurationType_DeleteCertificate,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_CreateSelfSignedCertificate,
+		OpcuaNodeIdServicesMethod_ServerConfiguration_DeleteCertificate,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate,
+		OpcuaNodeIdServicesMethod_LogObjectType_GetRecords,
+		OpcuaNodeIdServicesMethod_GetRecordsMethodType,
+		OpcuaNodeIdServicesMethod_ServerLog_GetRecords,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential,
+		OpcuaNodeIdServicesMethod_ApplicationConfigurationType_KeyCredentials_CreateCredential,
 		OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Disable,
 		OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Enable,
 		OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_AddComment,
@@ -2246,6 +2349,7 @@ func init() {
 		OpcuaNodeIdServicesMethod_DataSetWriterType_Diagnostics_Reset,
 		OpcuaNodeIdServicesMethod_DataSetReaderType_Diagnostics_Reset,
 		OpcuaNodeIdServicesMethod_PubSubDiagnosticsType_Reset,
+		OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential,
 		OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve,
 		OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_Unshelve,
 		OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_OneShotShelve,
@@ -3621,6 +3725,18 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_AddExtensionFieldMethodType, true
 	case 15499:
 		return OpcuaNodeIdServicesMethod_RemoveExtensionFieldMethodType, true
+	case 15505:
+		return OpcuaNodeIdServicesMethod_ConfigurationFileType_CloseAndUpdate, true
+	case 15508:
+		return OpcuaNodeIdServicesMethod_ConfigurationFileType_ConfirmUpdate, true
+	case 15513:
+		return OpcuaNodeIdServicesMethod_ConfigurationFileCloseAndUpdateMethodType, true
+	case 15516:
+		return OpcuaNodeIdServicesMethod_ConfigurationFileConfirmUpdateMethodType, true
+	case 15572:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Open, true
+	case 15575:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Close, true
 	case 15612:
 		return OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddIdentity, true
 	case 15614:
@@ -3667,6 +3783,8 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_TemporaryFileTransferType_GenerateFileForWrite, true
 	case 15751:
 		return OpcuaNodeIdServicesMethod_TemporaryFileTransferType_CloseAndCommit, true
+	case 15791:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Read, true
 	case 15794:
 		return OpcuaNodeIdServicesMethod_TemporaryFileTransferType_TransferState_Placeholder_Reset, true
 	case 15795:
@@ -3675,12 +3793,22 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_GenerateFileForWriteMethodType, true
 	case 15800:
 		return OpcuaNodeIdServicesMethod_CloseAndCommitMethodType, true
+	case 15805:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Write, true
+	case 15807:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_GetPosition, true
+	case 15810:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_SetPosition, true
 	case 15843:
 		return OpcuaNodeIdServicesMethod_FileTransferStateMachineType_Reset, true
 	case 15846:
 		return OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Enable, true
 	case 15847:
 		return OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Disable, true
+	case 15849:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_CloseAndUpdate, true
+	case 15863:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_ConfirmUpdate, true
 	case 15907:
 		return OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityKeys, true
 	case 15910:
@@ -3711,10 +3839,22 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_AddRoleMethodType, true
 	case 16005:
 		return OpcuaNodeIdServicesMethod_RemoveRoleMethodType, true
+	case 16013:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Open, true
 	case 16041:
 		return OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_AddIdentity, true
 	case 16043:
 		return OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_RemoveIdentity, true
+	case 16060:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Close, true
+	case 16074:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Read, true
+	case 16101:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Write, true
+	case 16103:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_GetPosition, true
+	case 16124:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_SetPosition, true
 	case 16165:
 		return OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddApplication, true
 	case 16167:
@@ -3815,6 +3955,22 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_AddRole, true
 	case 16304:
 		return OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_RemoveRole, true
+	case 16317:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_CloseAndUpdate, true
+	case 16320:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_ConfirmUpdate, true
+	case 16332:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open, true
+	case 16335:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close, true
+	case 16337:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read, true
+	case 16340:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write, true
+	case 16342:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition, true
+	case 16345:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition, true
 	case 16348:
 		return OpcuaNodeIdServicesMethod_FileSystem_CreateDirectory, true
 	case 16351:
@@ -3823,6 +3979,8 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_FileSystem_DeleteFileSystemObject, true
 	case 16356:
 		return OpcuaNodeIdServicesMethod_FileSystem_MoveOrCopy, true
+	case 16368:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate, true
 	case 16402:
 		return OpcuaNodeIdServicesMethod_AlarmConditionType_Silence, true
 	case 16403:
@@ -3843,6 +4001,8 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_OneShotShelve, true
 	case 16517:
 		return OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve, true
+	case 16523:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate, true
 	case 16533:
 		return OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Silence, true
 	case 16534:
@@ -4363,6 +4523,22 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_GetRejectedList, true
 	case 18546:
 		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults, true
+	case 18562:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open, true
+	case 18565:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close, true
+	case 18567:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read, true
+	case 18570:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write, true
+	case 18572:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition, true
+	case 18575:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition, true
+	case 18581:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate, true
+	case 18584:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate, true
 	case 18632:
 		return OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_AddIdentity, true
 	case 18634:
@@ -4389,6 +4565,36 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_PubSubConnectionType_ReaderGroupName_Placeholder_Diagnostics_Reset, true
 	case 19253:
 		return OpcuaNodeIdServicesMethod_PubSubConnectionType_Diagnostics_Reset, true
+	case 19327:
+		return OpcuaNodeIdServicesMethod_CreateSelfSignedCertificateMethodType, true
+	case 19330:
+		return OpcuaNodeIdServicesMethod_DeleteCertificateMethodType, true
+	case 19332:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate, true
+	case 19335:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate, true
+	case 19337:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_CreateSelfSignedCertificate, true
+	case 19340:
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_DeleteCertificate, true
+	case 19342:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_CreateSelfSignedCertificate, true
+	case 19345:
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_DeleteCertificate, true
+	case 19347:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate, true
+	case 19350:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate, true
+	case 19353:
+		return OpcuaNodeIdServicesMethod_LogObjectType_GetRecords, true
+	case 19358:
+		return OpcuaNodeIdServicesMethod_GetRecordsMethodType, true
+	case 19373:
+		return OpcuaNodeIdServicesMethod_ServerLog_GetRecords, true
+	case 19410:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential, true
+	case 19424:
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationType_KeyCredentials_CreateCredential, true
 	case 19483:
 		return OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Disable, true
 	case 19484:
@@ -4405,6 +4611,8 @@ func OpcuaNodeIdServicesMethodByValue(value int32) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_DataSetReaderType_Diagnostics_Reset, true
 	case 19689:
 		return OpcuaNodeIdServicesMethod_PubSubDiagnosticsType_Reset, true
+	case 19740:
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential, true
 	case 20097:
 		return OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve, true
 	case 20099:
@@ -6693,6 +6901,18 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_AddExtensionFieldMethodType, true
 	case "RemoveExtensionFieldMethodType":
 		return OpcuaNodeIdServicesMethod_RemoveExtensionFieldMethodType, true
+	case "ConfigurationFileType_CloseAndUpdate":
+		return OpcuaNodeIdServicesMethod_ConfigurationFileType_CloseAndUpdate, true
+	case "ConfigurationFileType_ConfirmUpdate":
+		return OpcuaNodeIdServicesMethod_ConfigurationFileType_ConfirmUpdate, true
+	case "ConfigurationFileCloseAndUpdateMethodType":
+		return OpcuaNodeIdServicesMethod_ConfigurationFileCloseAndUpdateMethodType, true
+	case "ConfigurationFileConfirmUpdateMethodType":
+		return OpcuaNodeIdServicesMethod_ConfigurationFileConfirmUpdateMethodType, true
+	case "ServerConfigurationType_ConfigurationFile_Open":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Open, true
+	case "ServerConfigurationType_ConfigurationFile_Close":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Close, true
 	case "RoleSetType_RoleName_Placeholder_AddIdentity":
 		return OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddIdentity, true
 	case "RoleSetType_RoleName_Placeholder_RemoveIdentity":
@@ -6739,6 +6959,8 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_TemporaryFileTransferType_GenerateFileForWrite, true
 	case "TemporaryFileTransferType_CloseAndCommit":
 		return OpcuaNodeIdServicesMethod_TemporaryFileTransferType_CloseAndCommit, true
+	case "ServerConfigurationType_ConfigurationFile_Read":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Read, true
 	case "TemporaryFileTransferType_TransferState_Placeholder_Reset":
 		return OpcuaNodeIdServicesMethod_TemporaryFileTransferType_TransferState_Placeholder_Reset, true
 	case "GenerateFileForReadMethodType":
@@ -6747,12 +6969,22 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_GenerateFileForWriteMethodType, true
 	case "CloseAndCommitMethodType":
 		return OpcuaNodeIdServicesMethod_CloseAndCommitMethodType, true
+	case "ServerConfigurationType_ConfigurationFile_Write":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Write, true
+	case "ServerConfigurationType_ConfigurationFile_GetPosition":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_GetPosition, true
+	case "ServerConfigurationType_ConfigurationFile_SetPosition":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_SetPosition, true
 	case "FileTransferStateMachineType_Reset":
 		return OpcuaNodeIdServicesMethod_FileTransferStateMachineType_Reset, true
 	case "PublishSubscribeType_Status_Enable":
 		return OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Enable, true
 	case "PublishSubscribeType_Status_Disable":
 		return OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Disable, true
+	case "ServerConfigurationType_ConfigurationFile_CloseAndUpdate":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_CloseAndUpdate, true
+	case "ServerConfigurationType_ConfigurationFile_ConfirmUpdate":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_ConfirmUpdate, true
 	case "PubSubKeyServiceType_GetSecurityKeys":
 		return OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityKeys, true
 	case "PubSubKeyServiceType_GetSecurityGroup":
@@ -6783,10 +7015,22 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_AddRoleMethodType, true
 	case "RemoveRoleMethodType":
 		return OpcuaNodeIdServicesMethod_RemoveRoleMethodType, true
+	case "ServerConfiguration_ConfigurationFile_Open":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Open, true
 	case "WellKnownRole_Engineer_AddIdentity":
 		return OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_AddIdentity, true
 	case "WellKnownRole_Engineer_RemoveIdentity":
 		return OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_RemoveIdentity, true
+	case "ServerConfiguration_ConfigurationFile_Close":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Close, true
+	case "ServerConfiguration_ConfigurationFile_Read":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Read, true
+	case "ServerConfiguration_ConfigurationFile_Write":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Write, true
+	case "ServerConfiguration_ConfigurationFile_GetPosition":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_GetPosition, true
+	case "ServerConfiguration_ConfigurationFile_SetPosition":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_SetPosition, true
 	case "RoleSetType_RoleName_Placeholder_AddApplication":
 		return OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddApplication, true
 	case "RoleSetType_RoleName_Placeholder_RemoveApplication":
@@ -6887,6 +7131,22 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_AddRole, true
 	case "Server_ServerCapabilities_RoleSet_RemoveRole":
 		return OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_RemoveRole, true
+	case "ServerConfiguration_ConfigurationFile_CloseAndUpdate":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_CloseAndUpdate, true
+	case "ServerConfiguration_ConfigurationFile_ConfirmUpdate":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_ConfirmUpdate, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition, true
 	case "FileSystem_CreateDirectory":
 		return OpcuaNodeIdServicesMethod_FileSystem_CreateDirectory, true
 	case "FileSystem_CreateFile":
@@ -6895,6 +7155,8 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_FileSystem_DeleteFileSystemObject, true
 	case "FileSystem_MoveOrCopy":
 		return OpcuaNodeIdServicesMethod_FileSystem_MoveOrCopy, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate, true
 	case "AlarmConditionType_Silence":
 		return OpcuaNodeIdServicesMethod_AlarmConditionType_Silence, true
 	case "AlarmConditionType_Suppress":
@@ -6915,6 +7177,8 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_OneShotShelve, true
 	case "AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve":
 		return OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate, true
 	case "AlarmGroupType_AlarmConditionInstance_Placeholder_Silence":
 		return OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Silence, true
 	case "AlarmGroupType_AlarmConditionInstance_Placeholder_Suppress":
@@ -7435,6 +7699,22 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_GetRejectedList, true
 	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults":
 		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate, true
 	case "WellKnownRole_TrustedApplication_AddIdentity":
 		return OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_AddIdentity, true
 	case "WellKnownRole_TrustedApplication_RemoveIdentity":
@@ -7461,6 +7741,36 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_PubSubConnectionType_ReaderGroupName_Placeholder_Diagnostics_Reset, true
 	case "PubSubConnectionType_Diagnostics_Reset":
 		return OpcuaNodeIdServicesMethod_PubSubConnectionType_Diagnostics_Reset, true
+	case "CreateSelfSignedCertificateMethodType":
+		return OpcuaNodeIdServicesMethod_CreateSelfSignedCertificateMethodType, true
+	case "DeleteCertificateMethodType":
+		return OpcuaNodeIdServicesMethod_DeleteCertificateMethodType, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate, true
+	case "ServerConfigurationType_CreateSelfSignedCertificate":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_CreateSelfSignedCertificate, true
+	case "ServerConfigurationType_DeleteCertificate":
+		return OpcuaNodeIdServicesMethod_ServerConfigurationType_DeleteCertificate, true
+	case "ServerConfiguration_CreateSelfSignedCertificate":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_CreateSelfSignedCertificate, true
+	case "ServerConfiguration_DeleteCertificate":
+		return OpcuaNodeIdServicesMethod_ServerConfiguration_DeleteCertificate, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate, true
+	case "LogObjectType_GetRecords":
+		return OpcuaNodeIdServicesMethod_LogObjectType_GetRecords, true
+	case "GetRecordsMethodType":
+		return OpcuaNodeIdServicesMethod_GetRecordsMethodType, true
+	case "ServerLog_GetRecords":
+		return OpcuaNodeIdServicesMethod_ServerLog_GetRecords, true
+	case "ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential, true
+	case "ApplicationConfigurationType_KeyCredentials_CreateCredential":
+		return OpcuaNodeIdServicesMethod_ApplicationConfigurationType_KeyCredentials_CreateCredential, true
 	case "CertificateGroupType_CertificateExpired_Disable":
 		return OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Disable, true
 	case "CertificateGroupType_CertificateExpired_Enable":
@@ -7477,6 +7787,8 @@ func OpcuaNodeIdServicesMethodByName(value string) (enum OpcuaNodeIdServicesMeth
 		return OpcuaNodeIdServicesMethod_DataSetReaderType_Diagnostics_Reset, true
 	case "PubSubDiagnosticsType_Reset":
 		return OpcuaNodeIdServicesMethod_PubSubDiagnosticsType_Reset, true
+	case "ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential":
+		return OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential, true
 	case "CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve":
 		return OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve, true
 	case "CertificateGroupType_CertificateExpired_ShelvingState_Unshelve":
@@ -9830,6 +10142,18 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "AddExtensionFieldMethodType"
 	case OpcuaNodeIdServicesMethod_RemoveExtensionFieldMethodType:
 		return "RemoveExtensionFieldMethodType"
+	case OpcuaNodeIdServicesMethod_ConfigurationFileType_CloseAndUpdate:
+		return "ConfigurationFileType_CloseAndUpdate"
+	case OpcuaNodeIdServicesMethod_ConfigurationFileType_ConfirmUpdate:
+		return "ConfigurationFileType_ConfirmUpdate"
+	case OpcuaNodeIdServicesMethod_ConfigurationFileCloseAndUpdateMethodType:
+		return "ConfigurationFileCloseAndUpdateMethodType"
+	case OpcuaNodeIdServicesMethod_ConfigurationFileConfirmUpdateMethodType:
+		return "ConfigurationFileConfirmUpdateMethodType"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Open:
+		return "ServerConfigurationType_ConfigurationFile_Open"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Close:
+		return "ServerConfigurationType_ConfigurationFile_Close"
 	case OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddIdentity:
 		return "RoleSetType_RoleName_Placeholder_AddIdentity"
 	case OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_RemoveIdentity:
@@ -9876,6 +10200,8 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "TemporaryFileTransferType_GenerateFileForWrite"
 	case OpcuaNodeIdServicesMethod_TemporaryFileTransferType_CloseAndCommit:
 		return "TemporaryFileTransferType_CloseAndCommit"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Read:
+		return "ServerConfigurationType_ConfigurationFile_Read"
 	case OpcuaNodeIdServicesMethod_TemporaryFileTransferType_TransferState_Placeholder_Reset:
 		return "TemporaryFileTransferType_TransferState_Placeholder_Reset"
 	case OpcuaNodeIdServicesMethod_GenerateFileForReadMethodType:
@@ -9884,12 +10210,22 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "GenerateFileForWriteMethodType"
 	case OpcuaNodeIdServicesMethod_CloseAndCommitMethodType:
 		return "CloseAndCommitMethodType"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_Write:
+		return "ServerConfigurationType_ConfigurationFile_Write"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_GetPosition:
+		return "ServerConfigurationType_ConfigurationFile_GetPosition"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_SetPosition:
+		return "ServerConfigurationType_ConfigurationFile_SetPosition"
 	case OpcuaNodeIdServicesMethod_FileTransferStateMachineType_Reset:
 		return "FileTransferStateMachineType_Reset"
 	case OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Enable:
 		return "PublishSubscribeType_Status_Enable"
 	case OpcuaNodeIdServicesMethod_PublishSubscribeType_Status_Disable:
 		return "PublishSubscribeType_Status_Disable"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_CloseAndUpdate:
+		return "ServerConfigurationType_ConfigurationFile_CloseAndUpdate"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_ConfigurationFile_ConfirmUpdate:
+		return "ServerConfigurationType_ConfigurationFile_ConfirmUpdate"
 	case OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityKeys:
 		return "PubSubKeyServiceType_GetSecurityKeys"
 	case OpcuaNodeIdServicesMethod_PubSubKeyServiceType_GetSecurityGroup:
@@ -9920,10 +10256,22 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "AddRoleMethodType"
 	case OpcuaNodeIdServicesMethod_RemoveRoleMethodType:
 		return "RemoveRoleMethodType"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Open:
+		return "ServerConfiguration_ConfigurationFile_Open"
 	case OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_AddIdentity:
 		return "WellKnownRole_Engineer_AddIdentity"
 	case OpcuaNodeIdServicesMethod_WellKnownRole_Engineer_RemoveIdentity:
 		return "WellKnownRole_Engineer_RemoveIdentity"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Close:
+		return "ServerConfiguration_ConfigurationFile_Close"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Read:
+		return "ServerConfiguration_ConfigurationFile_Read"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_Write:
+		return "ServerConfiguration_ConfigurationFile_Write"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_GetPosition:
+		return "ServerConfiguration_ConfigurationFile_GetPosition"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_SetPosition:
+		return "ServerConfiguration_ConfigurationFile_SetPosition"
 	case OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_AddApplication:
 		return "RoleSetType_RoleName_Placeholder_AddApplication"
 	case OpcuaNodeIdServicesMethod_RoleSetType_RoleName_Placeholder_RemoveApplication:
@@ -10024,6 +10372,22 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "Server_ServerCapabilities_RoleSet_AddRole"
 	case OpcuaNodeIdServicesMethod_Server_ServerCapabilities_RoleSet_RemoveRole:
 		return "Server_ServerCapabilities_RoleSet_RemoveRole"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_CloseAndUpdate:
+		return "ServerConfiguration_ConfigurationFile_CloseAndUpdate"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_ConfigurationFile_ConfirmUpdate:
+		return "ServerConfiguration_ConfigurationFile_ConfirmUpdate"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Open"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Close"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Read"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_Write"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_GetPosition"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_SetPosition"
 	case OpcuaNodeIdServicesMethod_FileSystem_CreateDirectory:
 		return "FileSystem_CreateDirectory"
 	case OpcuaNodeIdServicesMethod_FileSystem_CreateFile:
@@ -10032,6 +10396,8 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "FileSystem_DeleteFileSystemObject"
 	case OpcuaNodeIdServicesMethod_FileSystem_MoveOrCopy:
 		return "FileSystem_MoveOrCopy"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate"
 	case OpcuaNodeIdServicesMethod_AlarmConditionType_Silence:
 		return "AlarmConditionType_Silence"
 	case OpcuaNodeIdServicesMethod_AlarmConditionType_Suppress:
@@ -10052,6 +10418,8 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_OneShotShelve"
 	case OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve:
 		return "AlarmGroupType_AlarmConditionInstance_Placeholder_ShelvingState_TimedShelve"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate"
 	case OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Silence:
 		return "AlarmGroupType_AlarmConditionInstance_Placeholder_Silence"
 	case OpcuaNodeIdServicesMethod_AlarmGroupType_AlarmConditionInstance_Placeholder_Suppress:
@@ -10572,6 +10940,22 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_GetRejectedList"
 	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults:
 		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ResetToServerDefaults"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Open"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Close"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Read"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_Write"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_GetPosition"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_SetPosition"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_CloseAndUpdate"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_ConfigurationFile_ConfirmUpdate"
 	case OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_AddIdentity:
 		return "WellKnownRole_TrustedApplication_AddIdentity"
 	case OpcuaNodeIdServicesMethod_WellKnownRole_TrustedApplication_RemoveIdentity:
@@ -10598,6 +10982,36 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "PubSubConnectionType_ReaderGroupName_Placeholder_Diagnostics_Reset"
 	case OpcuaNodeIdServicesMethod_PubSubConnectionType_Diagnostics_Reset:
 		return "PubSubConnectionType_Diagnostics_Reset"
+	case OpcuaNodeIdServicesMethod_CreateSelfSignedCertificateMethodType:
+		return "CreateSelfSignedCertificateMethodType"
+	case OpcuaNodeIdServicesMethod_DeleteCertificateMethodType:
+		return "DeleteCertificateMethodType"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_CreateSelfSignedCertificate"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_DeleteCertificate"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_CreateSelfSignedCertificate:
+		return "ServerConfigurationType_CreateSelfSignedCertificate"
+	case OpcuaNodeIdServicesMethod_ServerConfigurationType_DeleteCertificate:
+		return "ServerConfigurationType_DeleteCertificate"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_CreateSelfSignedCertificate:
+		return "ServerConfiguration_CreateSelfSignedCertificate"
+	case OpcuaNodeIdServicesMethod_ServerConfiguration_DeleteCertificate:
+		return "ServerConfiguration_DeleteCertificate"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_CreateSelfSignedCertificate"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_DeleteCertificate"
+	case OpcuaNodeIdServicesMethod_LogObjectType_GetRecords:
+		return "LogObjectType_GetRecords"
+	case OpcuaNodeIdServicesMethod_GetRecordsMethodType:
+		return "GetRecordsMethodType"
+	case OpcuaNodeIdServicesMethod_ServerLog_GetRecords:
+		return "ServerLog_GetRecords"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential:
+		return "ApplicationConfigurationFolderType_ApplicationName_Placeholder_KeyCredentials_CreateCredential"
+	case OpcuaNodeIdServicesMethod_ApplicationConfigurationType_KeyCredentials_CreateCredential:
+		return "ApplicationConfigurationType_KeyCredentials_CreateCredential"
 	case OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Disable:
 		return "CertificateGroupType_CertificateExpired_Disable"
 	case OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_Enable:
@@ -10614,6 +11028,8 @@ func (e OpcuaNodeIdServicesMethod) PLC4XEnumName() string {
 		return "DataSetReaderType_Diagnostics_Reset"
 	case OpcuaNodeIdServicesMethod_PubSubDiagnosticsType_Reset:
 		return "PubSubDiagnosticsType_Reset"
+	case OpcuaNodeIdServicesMethod_ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential:
+		return "ProvisionableDeviceType_ApplicationName_Placeholder_KeyCredentials_CreateCredential"
 	case OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve:
 		return "CertificateGroupType_CertificateExpired_ShelvingState_TimedShelve"
 	case OpcuaNodeIdServicesMethod_CertificateGroupType_CertificateExpired_ShelvingState_Unshelve:

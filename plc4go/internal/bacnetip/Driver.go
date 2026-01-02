@@ -21,6 +21,7 @@ package bacnetip
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 	"math"
 	"net"
@@ -131,16 +132,19 @@ func (d *Driver) DiscoverWithContext(ctx context.Context, callback func(event ap
 func (d *Driver) Close() error {
 	defer utils.StopWarn(d.log)()
 	d.log.Trace().Msg("Closing driver")
-	finalErr := new(utils.MultiError)
+	var collectedErrors []error
 	d.log.Trace().Msg("Closing discoverer")
 	if err := d.discoverer.Close(); err != nil {
-		finalErr.Append(errors.Wrap(err, "failed to close discoverer"))
+		collectedErrors = append(collectedErrors, errors.Wrap(err, "failed to close discoverer"))
 	}
 	d.log.Trace().Msg("Closing transaction manager")
 	if err := d.tm.Close(); err != nil {
-		finalErr.Append(errors.Wrap(err, "error closing transaction manager"))
+		collectedErrors = append(collectedErrors, errors.Wrap(err, "error closing transaction manager"))
 	}
-	return finalErr.ToErrorIfAny()
+	if err := stdErrors.Join(collectedErrors...); err != nil {
+		return errors.Wrap(err, "error closing driver")
+	}
+	return nil
 }
 
 type ApplicationManager struct {

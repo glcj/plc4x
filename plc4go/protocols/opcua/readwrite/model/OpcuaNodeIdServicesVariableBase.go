@@ -53,6 +53,10 @@ const (
 	OpcuaNodeIdServicesVariableBase_BaseAnalogType_InstrumentRange      OpcuaNodeIdServicesVariableBase = 17567
 	OpcuaNodeIdServicesVariableBase_BaseAnalogType_EURange              OpcuaNodeIdServicesVariableBase = 17568
 	OpcuaNodeIdServicesVariableBase_BaseAnalogType_EngineeringUnits     OpcuaNodeIdServicesVariableBase = 17569
+	OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassId   OpcuaNodeIdServicesVariableBase = 19363
+	OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassName OpcuaNodeIdServicesVariableBase = 19364
+	OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCode          OpcuaNodeIdServicesVariableBase = 19365
+	OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCodeNode      OpcuaNodeIdServicesVariableBase = 19366
 	OpcuaNodeIdServicesVariableBase_BaseEventType_ConditionClassId      OpcuaNodeIdServicesVariableBase = 31771
 	OpcuaNodeIdServicesVariableBase_BaseEventType_ConditionClassName    OpcuaNodeIdServicesVariableBase = 31772
 	OpcuaNodeIdServicesVariableBase_BaseEventType_ConditionSubClassId   OpcuaNodeIdServicesVariableBase = 31773
@@ -76,6 +80,10 @@ func init() {
 		OpcuaNodeIdServicesVariableBase_BaseAnalogType_InstrumentRange,
 		OpcuaNodeIdServicesVariableBase_BaseAnalogType_EURange,
 		OpcuaNodeIdServicesVariableBase_BaseAnalogType_EngineeringUnits,
+		OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassId,
+		OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassName,
+		OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCode,
+		OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCodeNode,
 		OpcuaNodeIdServicesVariableBase_BaseEventType_ConditionClassId,
 		OpcuaNodeIdServicesVariableBase_BaseEventType_ConditionClassName,
 		OpcuaNodeIdServicesVariableBase_BaseEventType_ConditionSubClassId,
@@ -91,6 +99,14 @@ func OpcuaNodeIdServicesVariableBaseByValue(value int32) (enum OpcuaNodeIdServic
 		return OpcuaNodeIdServicesVariableBase_BaseAnalogType_EURange, true
 	case 17569:
 		return OpcuaNodeIdServicesVariableBase_BaseAnalogType_EngineeringUnits, true
+	case 19363:
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassId, true
+	case 19364:
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassName, true
+	case 19365:
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCode, true
+	case 19366:
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCodeNode, true
 	case 2042:
 		return OpcuaNodeIdServicesVariableBase_BaseEventType_EventId, true
 	case 2043:
@@ -129,6 +145,14 @@ func OpcuaNodeIdServicesVariableBaseByName(value string) (enum OpcuaNodeIdServic
 		return OpcuaNodeIdServicesVariableBase_BaseAnalogType_EURange, true
 	case "BaseAnalogType_EngineeringUnits":
 		return OpcuaNodeIdServicesVariableBase_BaseAnalogType_EngineeringUnits, true
+	case "BaseLogEventType_ConditionClassId":
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassId, true
+	case "BaseLogEventType_ConditionClassName":
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassName, true
+	case "BaseLogEventType_ErrorCode":
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCode, true
+	case "BaseLogEventType_ErrorCodeNode":
+		return OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCodeNode, true
 	case "BaseEventType_EventId":
 		return OpcuaNodeIdServicesVariableBase_BaseEventType_EventId, true
 	case "BaseEventType_EventType":
@@ -232,6 +256,14 @@ func (e OpcuaNodeIdServicesVariableBase) PLC4XEnumName() string {
 		return "BaseAnalogType_EURange"
 	case OpcuaNodeIdServicesVariableBase_BaseAnalogType_EngineeringUnits:
 		return "BaseAnalogType_EngineeringUnits"
+	case OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassId:
+		return "BaseLogEventType_ConditionClassId"
+	case OpcuaNodeIdServicesVariableBase_BaseLogEventType_ConditionClassName:
+		return "BaseLogEventType_ConditionClassName"
+	case OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCode:
+		return "BaseLogEventType_ErrorCode"
+	case OpcuaNodeIdServicesVariableBase_BaseLogEventType_ErrorCodeNode:
+		return "BaseLogEventType_ErrorCodeNode"
 	case OpcuaNodeIdServicesVariableBase_BaseEventType_EventId:
 		return "BaseEventType_EventId"
 	case OpcuaNodeIdServicesVariableBase_BaseEventType_EventType:

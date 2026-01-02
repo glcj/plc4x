@@ -21,6 +21,7 @@ package model
 
 import (
 	"context"
+	stdErrors "errors"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -143,7 +144,7 @@ type _UABinaryFileDataTypeBuilder struct {
 
 	parentBuilder *_ExtensionObjectDefinitionBuilder
 
-	err *utils.MultiError
+	collectedErr []error
 }
 
 var _ (UABinaryFileDataTypeBuilder) = (*_UABinaryFileDataTypeBuilder)(nil)
@@ -187,10 +188,7 @@ func (b *_UABinaryFileDataTypeBuilder) WithSchemaLocationBuilder(builderSupplier
 	var err error
 	b.SchemaLocation, err = builder.Build()
 	if err != nil {
-		if b.err == nil {
-			b.err = &utils.MultiError{MainError: errors.New("sub builder failed")}
-		}
-		b.err.Append(errors.Wrap(err, "PascalStringBuilder failed"))
+		b.collectedErr = append(b.collectedErr, errors.Wrap(err, "PascalStringBuilder failed"))
 	}
 	return b
 }
@@ -210,29 +208,20 @@ func (b *_UABinaryFileDataTypeBuilder) WithBodyBuilder(builderSupplier func(Vari
 	var err error
 	b.Body, err = builder.Build()
 	if err != nil {
-		if b.err == nil {
-			b.err = &utils.MultiError{MainError: errors.New("sub builder failed")}
-		}
-		b.err.Append(errors.Wrap(err, "VariantBuilder failed"))
+		b.collectedErr = append(b.collectedErr, errors.Wrap(err, "VariantBuilder failed"))
 	}
 	return b
 }
 
 func (b *_UABinaryFileDataTypeBuilder) Build() (UABinaryFileDataType, error) {
 	if b.SchemaLocation == nil {
-		if b.err == nil {
-			b.err = new(utils.MultiError)
-		}
-		b.err.Append(errors.New("mandatory field 'schemaLocation' not set"))
+		b.collectedErr = append(b.collectedErr, errors.New("mandatory field 'schemaLocation' not set"))
 	}
 	if b.Body == nil {
-		if b.err == nil {
-			b.err = new(utils.MultiError)
-		}
-		b.err.Append(errors.New("mandatory field 'body' not set"))
+		b.collectedErr = append(b.collectedErr, errors.New("mandatory field 'body' not set"))
 	}
-	if b.err != nil {
-		return nil, errors.Wrap(b.err, "error occurred during build")
+	if err := stdErrors.Join(b.collectedErr...); err != nil {
+		return nil, errors.Wrap(err, "error occurred during build")
 	}
 	return b._UABinaryFileDataType.deepCopy(), nil
 }
@@ -258,8 +247,8 @@ func (b *_UABinaryFileDataTypeBuilder) buildForExtensionObjectDefinition() (Exte
 
 func (b *_UABinaryFileDataTypeBuilder) DeepCopy() any {
 	_copy := b.CreateUABinaryFileDataTypeBuilder().(*_UABinaryFileDataTypeBuilder)
-	if b.err != nil {
-		_copy.err = b.err.DeepCopy().(*utils.MultiError)
+	if b.collectedErr != nil {
+		copy(_copy.collectedErr, b.collectedErr)
 	}
 	return _copy
 }
@@ -358,9 +347,7 @@ func (m *_UABinaryFileDataType) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.Namespaces) > 0 {
 		for _curItem, element := range m.Namespaces {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.Namespaces), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -371,9 +358,7 @@ func (m *_UABinaryFileDataType) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.StructureDataTypes) > 0 {
 		for _curItem, element := range m.StructureDataTypes {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.StructureDataTypes), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -384,9 +369,7 @@ func (m *_UABinaryFileDataType) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.EnumDataTypes) > 0 {
 		for _curItem, element := range m.EnumDataTypes {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.EnumDataTypes), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -397,9 +380,7 @@ func (m *_UABinaryFileDataType) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.SimpleDataTypes) > 0 {
 		for _curItem, element := range m.SimpleDataTypes {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.SimpleDataTypes), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 
@@ -413,9 +394,7 @@ func (m *_UABinaryFileDataType) GetLengthInBits(ctx context.Context) uint16 {
 	if len(m.FileHeader) > 0 {
 		for _curItem, element := range m.FileHeader {
 			arrayCtx := utils.CreateArrayContext(ctx, len(m.FileHeader), _curItem)
-			_ = arrayCtx
-			_ = _curItem
-			lengthInBits += element.(interface{ GetLengthInBits(context.Context) uint16 }).GetLengthInBits(arrayCtx)
+			lengthInBits += element.GetLengthInBits(arrayCtx)
 		}
 	}
 

@@ -187,7 +187,7 @@ public class RequestTransactionManager {
         }
 
         public void submit(Runnable operation) {
-            logger.trace("Submission of transaction {}", transactionId);
+            logger.info("Submission of transaction {}", transactionId);
             setOperation(new TransactionOperation(transactionId, operation));
             parent.submit(this);
         }
@@ -221,9 +221,9 @@ public class RequestTransactionManager {
         public void run() {
             //try (final MDC.MDCCloseable closeable = MDC.putCloseable("plc4x.transactionId", Integer.toString(transactionId))) {
             try{    
-                logger.trace("Start execution of transaction {}", transactionId);
+                logger.info("Start execution of transaction {}", transactionId);
                 delegate.run();
-                logger.trace("Completed execution of transaction {}", transactionId);
+                logger.info("Completed execution of transaction {}", transactionId);
             }  catch (Exception e) {
                 logger.info("Got an error executing transaction", e);
             }

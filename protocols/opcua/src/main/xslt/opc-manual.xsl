@@ -239,7 +239,6 @@
     [typeSwitch extensionId
         ['0' NullExtension
         ]
-
         <xsl:for-each select="/opc:TypeDictionary/opc:StructuredType[((@BaseType = 'ua:ExtensionObject') or (starts-with(@BaseType, 'tns:')))]">
             <xsl:variable name="extensionName" select="@Name"/>
             <xsl:apply-templates select="$file/node:UANodeSet/node:UADataType[@BrowseName=$extensionName]"/>
@@ -361,12 +360,12 @@
 
 // node type, with two leading reserved bytes
 [enum uint 6 NodeIdType
-    ['0' TwoByte         ]
-    ['1' FourByte        ]
-    ['2' Numeric         ]
-    ['3' String          ]
-    ['4' Guid            ]
-    ['5' ByteString      ]
+    ['0' TwoByte   ]
+    ['1' FourByte  ]
+    ['2' Numeric   ]
+    ['3' String    ]
+    ['4' Guid      ]
+    ['5' ByteString]
 ]
 
 [discriminatedType NodeIdTypeDefinition

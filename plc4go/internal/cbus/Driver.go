@@ -28,7 +28,6 @@ import (
 	"github.com/rs/zerolog"
 
 	"github.com/apache/plc4x/plc4go/pkg/api"
-	apiModel "github.com/apache/plc4x/plc4go/pkg/api/model"
 	readWriteModel "github.com/apache/plc4x/plc4go/protocols/cbus/readwrite/model"
 	_default "github.com/apache/plc4x/plc4go/spi/default"
 	"github.com/apache/plc4x/plc4go/spi/options"
@@ -39,8 +38,6 @@ import (
 
 type Driver struct {
 	_default.DefaultDriver
-
-	discoverer *Discoverer
 
 	tm                      transactions.RequestTransactionManager
 	awaitSetupComplete      bool
@@ -53,7 +50,6 @@ type Driver struct {
 func NewDriver(_options ...options.WithOption) plc4go.PlcDriver {
 	customLogger := options.ExtractCustomLoggerOrDefaultToGlobal(_options...)
 	driver := &Driver{
-		discoverer:              NewDiscoverer(_options...),
 		tm:                      transactions.NewRequestTransactionManager(1, _options...),
 		awaitSetupComplete:      true,
 		awaitDisconnectComplete: true,
@@ -136,25 +132,12 @@ func (d *Driver) SetAwaitDisconnectComplete(awaitComplete bool) {
 	d.awaitDisconnectComplete = awaitComplete
 }
 
-func (d *Driver) SupportsDiscovery() bool {
-	return true
-}
-
-func (d *Driver) DiscoverWithContext(ctx context.Context, callback func(event apiModel.PlcDiscoveryItem), discoveryOptions ...options.WithDiscoveryOption) error {
-	return d.discoverer.Discover(ctx, callback, discoveryOptions...)
-}
-
 func (d *Driver) Close() error {
 	defer utils.StopWarn(d.log)()
 	d.log.Trace().Msg("Closing driver")
-	finalErr := new(utils.MultiError)
-	d.log.Trace().Msg("Closing discoverer")
-	if err := d.discoverer.Close(); err != nil {
-		finalErr.Append(errors.Wrap(err, "failed to close discoverer"))
-	}
 	d.log.Trace().Msg("Closing transaction manager")
 	if err := d.tm.Close(); err != nil {
-		finalErr.Append(errors.Wrap(err, "error closing transaction manager"))
+		return errors.Wrap(err, "error closing transaction manager")
 	}
-	return finalErr.ToErrorIfAny()
+	return nil
 }

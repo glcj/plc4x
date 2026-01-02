@@ -86,7 +86,7 @@ public class S7ProtocolLogic extends Plc4xProtocolBase<TPKTPacket> {
 
     private static final Logger logger = LoggerFactory.getLogger(S7ProtocolLogic.class);
 
-    public static final Duration REQUEST_TIMEOUT = Duration.ofMillis(10000);
+    public static final Duration REQUEST_TIMEOUT = Duration.ofMillis(10_000);
     private final AtomicInteger tpduGenerator = new AtomicInteger(10);
 
     /*
